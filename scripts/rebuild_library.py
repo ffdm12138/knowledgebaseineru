@@ -28,6 +28,7 @@ from loguru import logger
 from config.settings import (
     RAW_DIR, LEGACY_PARSED_DIR, MINERU_TMP_DIR, SUPPORTED_FORMATS,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
+    MINERU_TIMEOUT,
 )
 from config.paper_ids import RAW_STEM_TO_PAPER_ID, DUPLICATE_RAW_STEMS
 from src.cleaner import MinerUOutputCleaner
@@ -72,7 +73,7 @@ def reconvert(f: Path, paper_id: str, backend: str, method: str, effort: str,
     if api_url:
         cmd.extend(["--api-url", api_url])
     result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                            errors="replace", env={**os.environ}, timeout=900)
+                            errors="replace", env={**os.environ}, timeout=MINERU_TIMEOUT)
     if result.returncode != 0:
         logger.error(f"  转换失败: {result.stderr[-300:]}")
         return None

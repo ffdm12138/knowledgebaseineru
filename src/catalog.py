@@ -40,18 +40,30 @@ class Catalog:
     def _lock_path(self) -> Path:
         return self.path.with_suffix(self.path.suffix + ".lock")
 
-    def _load_raw(self) -> dict:
-        """无锁读取原始 JSON（调用方持有锁时使用）"""
+    @staticmethod
+    def _empty_data() -> dict:
+        return {"version": "0.1", "description": "", "papers": []}
+
+    def _load_raw(self, strict: bool = False) -> dict:
+        """无锁读取原始 JSON。
+
+        strict=False：只读场景，JSON 损坏时 warning + 返回空结构。
+        strict=True：写操作场景，JSON 损坏时抛 RuntimeError，防止静默覆盖空库。
+        """
         if not self.path.exists():
-            return {"version": "0.1", "description": "", "papers": []}
+            return self._empty_data()
         try:
             return json.loads(self.path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError) as e:
             logger.error(f"catalog JSON 解析失败: {e}")
-            return {"version": "0.1", "description": "", "papers": []}
+            if strict:
+                raise RuntimeError(
+                    f"catalog JSON 损坏 ({self.path})，"
+                    f"拒绝写操作以防静默覆盖。请手动修复或从备份恢复。") from e
+            return self._empty_data()
 
     def load(self) -> dict:
-        return self._load_raw()
+        return self._load_raw(strict=False)
 
     def _save_raw_unlocked(self, data: dict) -> None:
         """无锁原子写入：调用方已持有锁时使用（写 tmp → 校验 → os.replace）"""
@@ -70,10 +82,11 @@ class Catalog:
             self._save_raw_unlocked(data)
 
     def _locked_update(self, fn) -> None:
-        """事务级锁：锁住完整 load → modify → save 周期，避免并发覆盖"""
+        """事务级锁：锁住完整 load → modify → save 周期，避免并发覆盖。
+        JSON 损坏时抛 RuntimeError，防止静默覆盖成空库。"""
         lock = FileLock(str(self._lock_path))
         with lock:
-            data = self._load_raw()
+            data = self._load_raw(strict=True)
             fn(data)
             self._save_raw_unlocked(data)
 

@@ -187,22 +187,37 @@ class JobManager:
                 f"请先完成前置步骤。")
 
     def create(self, topic: str | None = None, input_file: str | None = None,
-               target: str = "phd_thesis", language: str = "zh") -> dict:
-        """创建一个写作任务目录。topic 与 input_file 至少给一个。"""
+               target: str = "phd_thesis", language: str = "zh",
+               allow_input_file: bool = False,
+               input_base_dir: Path | None = None) -> dict:
+        """创建一个写作任务目录。topic 与 input_file 至少给一个。
+
+        input_file 安全策略：
+        - 默认 allow_input_file=False，传 input_file 直接 ValueError
+        - CLI 可显式 allow_input_file=True + input_base_dir=<write_inputs/>
+        - 即使 allow_input_file=True，也只用 safe_child 读取，拒绝 .. 和绝对路径
+        """
         if not topic and not input_file:
             raise ValueError("必须提供 topic 或 input_file")
 
         # 读取输入文件内容
         input_text = ""
         if input_file:
-            # 安全检查：拒绝绝对路径和路径穿越
-            if os.path.isabs(input_file) or ".." in input_file:
+            if not allow_input_file:
                 raise ValueError(
-                    f"input_file 不允许绝对路径或路径穿越: {input_file!r}。"
-                    f"请使用项目目录下的相对路径，或通过 topic 参数直接提供研究内容。")
-            ip = Path(input_file)
+                    "JobManager.create 默认不接受 input_file 路径。"
+                    "请通过 topic 参数直接传文本，"
+                    "或显式传 allow_input_file=True 并使用 write_inputs/ 目录。")
+            # 只允许纯文件名（无路径分隔符）
+            if os.path.isabs(input_file) or ".." in input_file \
+                    or "/" in input_file or "\\" in input_file:
+                raise ValueError(
+                    f"input_file 不允许路径分隔符或穿越: {input_file!r}")
+            base = input_base_dir or (self.write_dir / "_inputs")
+            from src.naming import safe_child
+            ip = safe_child(base, input_file)
             if not ip.exists():
-                raise FileNotFoundError(f"输入文件不存在: {input_file}")
+                raise FileNotFoundError(f"输入文件不存在: {ip}")
             input_text = ip.read_text(encoding="utf-8")
             if not topic:
                 topic = input_text[:60]

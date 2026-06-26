@@ -33,16 +33,26 @@ def test_two_instances_independent():
 
 
 def test_create_input_file_rejected_if_abs_path():
-    """JobManager.create 拒绝绝对路径 input_file"""
+    """JobManager.create 拒绝绝对路径 input_file（allow_input_file=True 时）"""
     with tempfile.TemporaryDirectory() as td:
         jm = JobManager(write_dir=Path(td))
-        with __import__("pytest").raises(ValueError, match="绝对路径|路径穿越"):
-            jm.create(topic="test", input_file="/etc/passwd")
+        with __import__("pytest").raises(ValueError, match="路径分隔符|路径穿越|不允许"):
+            jm.create(topic="test", input_file="/etc/passwd",
+                      allow_input_file=True, input_base_dir=Path(td) / "_inputs")
 
 
 def test_create_input_file_rejected_if_dotdot():
-    """JobManager.create 拒绝含 .. 的 input_file"""
+    """JobManager.create 拒绝含 .. 的 input_file（allow_input_file=True 时）"""
     with tempfile.TemporaryDirectory() as td:
         jm = JobManager(write_dir=Path(td))
-        with __import__("pytest").raises(ValueError, match="绝对路径|路径穿越"):
-            jm.create(topic="test", input_file="../../secret")
+        with __import__("pytest").raises(ValueError, match="路径分隔符|路径穿越|不允许"):
+            jm.create(topic="test", input_file="../../secret",
+                      allow_input_file=True, input_base_dir=Path(td) / "_inputs")
+
+
+def test_create_input_file_default_rejects():
+    """JobManager.create 默认 allow_input_file=False，传 input_file 直接 ValueError"""
+    with tempfile.TemporaryDirectory() as td:
+        jm = JobManager(write_dir=Path(td))
+        with __import__("pytest").raises(ValueError, match="默认不接受|allow_input_file"):
+            jm.create(topic="test", input_file="input.md")

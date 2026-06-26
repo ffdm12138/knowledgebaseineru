@@ -4,23 +4,37 @@ import pytest
 
 
 def test_env_int_bad_value_falls_back():
-    """环境变量填非法值时不崩，回退默认"""
-    os.environ["_TEST_MINERU_TIMEOUT"] = "abc"
-    # 重新 import 以触发配置读取
+    """环境变量 MINERU_TIMEOUT=abc 时不崩，回退默认"""
+    os.environ["MINERU_TIMEOUT"] = "abc"
     import importlib
     import config.settings
     importlib.reload(config.settings)
     assert config.settings.MINERU_TIMEOUT == 600  # 回退默认
-    del os.environ["_TEST_MINERU_TIMEOUT"]
+    del os.environ["MINERU_TIMEOUT"]
     importlib.reload(config.settings)
 
 
 def test_env_int_negative_falls_back():
-    """负数环境变量回退默认"""
-    os.environ["_TEST_MINERU_MAX_SIZE"] = "-1"  # not used by settings, just pattern test
-    # clean up
-    if "_TEST_MINERU_MAX_SIZE" in os.environ:
-        del os.environ["_TEST_MINERU_MAX_SIZE"]
+    """环境变量 MINERU_MAX_UPLOAD_SIZE=-1 回退默认"""
+    os.environ["MINERU_MAX_UPLOAD_SIZE"] = "-1"
+    import importlib
+    import config.settings
+    importlib.reload(config.settings)
+    # -1 < min_val=1，应回退
+    assert config.settings.MAX_UPLOAD_SIZE == 500 * 1024 * 1024
+    del os.environ["MINERU_MAX_UPLOAD_SIZE"]
+    importlib.reload(config.settings)
+
+
+def test_env_port_out_of_range_falls_back():
+    """API_PORT=99999 超出范围回退默认"""
+    os.environ["MINERU_API_PORT"] = "99999"
+    import importlib
+    import config.settings
+    importlib.reload(config.settings)
+    assert config.settings.API_PORT == 8080
+    del os.environ["MINERU_API_PORT"]
+    importlib.reload(config.settings)
 
 
 def test_research_domain_default_is_empty():

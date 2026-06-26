@@ -185,7 +185,6 @@ async def upload(
     tmp_fd, tmp_path = tempfile.mkstemp(
         dir=str(RAW_DIR), prefix=".upload_", suffix=".tmp")
     try:
-        # os.fdopen + wb 避免文本模式换行转换
         with os.fdopen(tmp_fd, 'wb') as tmpf:
             while True:
                 chunk = await file.read(CHUNK_SIZE)
@@ -199,17 +198,15 @@ async def upload(
                         f"(当前 {total_size} bytes)")
                 sha.update(chunk)
                 tmpf.write(chunk)
-        # 原子移动到目标位置
-        os.replace(tmp_path, str(save_path))
-        tmp_path = None  # 标记已成功处理
     except HTTPException:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
         raise
     except Exception as e:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
         logger.error(f"上传写入失败: {e}")
         raise HTTPException(500, f"上传失败: {str(e)}")
-    finally:
-        if tmp_path is not None and os.path.exists(tmp_path):
-            os.unlink(tmp_path)
 
     file_sha256 = sha.hexdigest()
     file_size = total_size
@@ -217,28 +214,43 @@ async def upload(
         f"收到文件: {file.filename} ({file_size} bytes, "
         f"sha256={file_sha256[:12]}…) -> paper_id={paper_id}")
 
-    # --- 去重检查：相同 sha256 不重复转换 ---
+    # --- 所有检查必须在 os.replace 之前完成，防覆盖/删除已有 raw ---
+
+    # 去重检查：相同 sha256 不重复转换
     existing = manifest.find_by_sha256(file_sha256)
     if existing:
-        # 删除刚上传的重复 raw 文件（或保留旧文件，不覆盖）
-        if os.path.exists(str(save_path)):
-            os.unlink(str(save_path))
+        os.unlink(tmp_path)  # 只删 tmp，不碰已有 raw
         return {
             "status": "duplicate",
             "paper_id": existing.get("paper_id"),
             "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
         }
 
-    # --- 冲突检查：文件名相同但 sha256 不同 ---
+    # 冲突检查：paper_id 已存在但 sha256 不同
     existing_by_pid = manifest.get(paper_id)
     if existing_by_pid and existing_by_pid.get("sha256") != file_sha256:
-        # paper_id 已存在但内容不同，默认拒绝覆盖
-        if os.path.exists(str(save_path)):
-            os.unlink(str(save_path))
+        os.unlink(tmp_path)  # 只删 tmp，不碰已有 raw
         raise HTTPException(
             409,
             f"paper_id={paper_id} 已存在但内容不同，"
             f"不允许覆盖。若需替换请先手动删除旧文献。")
+
+    # final_path 冲突检查：同名文件已存在但内容不同
+    if save_path.exists():
+        from src.file_fingerprint import compute_sha256
+        existing_raw_sha = compute_sha256(save_path)
+        if existing_raw_sha != file_sha256:
+            os.unlink(tmp_path)
+            raise HTTPException(
+                409,
+                f"同名文件 {safe_filename} 已存在且内容不同，"
+                f"不允许覆盖。请改名后重新上传。")
+        # 内容相同：复用已有 raw 文件，删除本次 tmp
+        os.unlink(tmp_path)
+        logger.info(f"同名同内容文件已存在，复用: {save_path}")
+    else:
+        # 安全检查全部通过，原子移动到目标位置
+        os.replace(tmp_path, str(save_path))
 
     tmp_out = MINERU_TMP_DIR / paper_id
     try:
@@ -298,6 +310,11 @@ async def list_papers():
 
 @app.get("/papers/{paper_id}")
 async def get_paper(paper_id: str):
+    try:
+        from src.naming import validate_paper_id
+        validate_paper_id(paper_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     entry = manifest.get(paper_id)
     if not entry:
         raise HTTPException(404, f"未找到文献: {paper_id}")
@@ -306,6 +323,11 @@ async def get_paper(paper_id: str):
 
 @app.get("/papers/{paper_id}/markdown", response_class=PlainTextResponse)
 async def get_paper_markdown(paper_id: str):
+    try:
+        from src.naming import validate_paper_id
+        validate_paper_id(paper_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     md = library.read_markdown(paper_id)
     if md is None:
         raise HTTPException(404, f"未找到 paper.md: {paper_id}")
@@ -314,6 +336,11 @@ async def get_paper_markdown(paper_id: str):
 
 @app.get("/papers/{paper_id}/images")
 async def get_paper_images(paper_id: str):
+    try:
+        from src.naming import validate_paper_id
+        validate_paper_id(paper_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     if not library.exists(paper_id):
         raise HTTPException(404, f"未找到文献: {paper_id}")
     return {"paper_id": paper_id, "images": library.list_images(paper_id)}
@@ -382,6 +409,11 @@ async def unsummarized():
 
 @app.post("/prompt/catalog-entry")
 async def prompt_catalog_entry(req: CatalogEntryRequest):
+    try:
+        from src.naming import validate_paper_id
+        validate_paper_id(req.paper_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     out = prompt_builder.build_catalog_entry_prompt(req.paper_id)
     if not out.get("success"):
         raise HTTPException(404, out.get("error", "失败"))
@@ -391,6 +423,11 @@ async def prompt_catalog_entry(req: CatalogEntryRequest):
 @app.post("/prompt/bib-entry")
 async def prompt_bib_entry(req: BibEntryRequest):
     """生成单篇文献 BibTeX 补全 prompt（不调 LLM）"""
+    try:
+        from src.naming import validate_paper_id
+        validate_paper_id(req.paper_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     out = prompt_builder.build_bib_completion_prompt(req.paper_id)
     if not out.get("success"):
         raise HTTPException(404, out.get("error", "失败"))
@@ -413,6 +450,12 @@ async def prompt_read_fulltext(req: FulltextRequest):
         raise HTTPException(400, "问题不能为空")
     if not req.paper_ids:
         raise HTTPException(400, "paper_ids 不能为空")
+    try:
+        from src.naming import validate_paper_id
+        for pid in req.paper_ids:
+            validate_paper_id(pid)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     out = prompt_builder.build_fulltext_prompt(req.question.strip(), req.paper_ids)
     if not out.get("success"):
         raise HTTPException(400, out.get("error", "失败"))

@@ -154,7 +154,7 @@ raw PDF → MinerU(tmp) → cleaner → data/papers/<paper_id>/paper.md + images
 | `MINERU_LANG` | `MINERU_LANG` | `ch` |
 | `MINERU_TIMEOUT` | `MINERU_TIMEOUT` | `600` |
 | `PAPER_MD_MAX_CHARS` | `MINERU_PAPER_MD_MAX_CHARS` | `12000` |
-| `RESEARCH_DOMAIN` | `MINERU_RESEARCH_DOMAIN` | `风吹雪 / 雪升华…` |
+| `RESEARCH_DOMAIN` | `MINERU_RESEARCH_DOMAIN` | `""` (未设置，由用户配置) |
 | `DATA_DIR` | `MINERU_DATA_DIR` | `data/` |
 
 若 `API_HOST` 非 localhost 且无认证，启动时打印 `RuntimeWarning`。

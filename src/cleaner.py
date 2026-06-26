@@ -27,14 +27,18 @@ class MinerUOutputCleaner:
                         stem: str | None = None) -> Path | None:
         """在 MinerU 输出目录中定位正文 Markdown。
 
-        MinerU 3.4 输出结构：
-          - <stem>/<method>/<stem>.md  (最常见)
-          - <stem>/<stem>.md
+        支持两种 source_dir 传入方式：
+          A. tmp_out/<stem>/   — converter 返回 output_dir/stem（最常见）
+          B. tmp_out/          — 直接传 MinerU 输出根目录
+
         选择规则（确定性，不依赖 rglob 顺序）：
-          a. 若提供 method + stem → exact <stem>/<method>/<stem>.md
-          b. 若 source_dir 下唯一 .md → 取它
-          c. 若 method 目录下唯一 .md → 取它
-          d. 多个 method 候选 → 返回 None 并列出候选
+          a. exact path（若提供 method + stem）：
+             source_dir / method / stem.md     (模式 A)
+             source_dir / stem / method / stem.md  (模式 B)
+          b. method 是指定硬约束，找不到不 fallback
+          c. source_dir 下唯一 .md → 取它
+          d. 唯一 method 候选 → 取它
+          e. 多候选 → 返回 None 并列出
         """
         source_dir = Path(source_dir)
         if not source_dir.exists():
@@ -42,13 +46,23 @@ class MinerUOutputCleaner:
 
         # a. exact path（若提供了 method 和 stem）
         if method and stem:
-            exact = source_dir / stem / method / f"{stem}.md"
-            if exact.is_file():
-                return exact
-            # fallback: 试试 auto
-            exact_auto = source_dir / stem / "auto" / f"{stem}.md"
-            if exact_auto.is_file():
-                return exact_auto
+            # 模式 A: source_dir 已是 <stem>/ 目录
+            exact_a = source_dir / method / f"{stem}.md"
+            if exact_a.is_file():
+                return exact_a
+            # 模式 B: source_dir 是 tmp_out 根目录
+            exact_b = source_dir / stem / method / f"{stem}.md"
+            if exact_b.is_file():
+                return exact_b
+            # 模式 C: source_dir 是旧输出或扁平结构
+            exact_c = source_dir / f"{stem}.md"
+            if exact_c.is_file():
+                return exact_c
+            # method 是硬约束，找不到不 fallback
+            logger.error(
+                f"未找到指定 method={method} stem={stem} 的正文 md，"
+                f"已检查: {exact_a}, {exact_b}, {exact_c}")
+            return None
 
         candidates = list(source_dir.rglob("*.md"))
         if not candidates:
@@ -65,19 +79,13 @@ class MinerUOutputCleaner:
             return method_cands[0]
 
         if len(method_cands) > 1:
-            # 多个 method 候选，按 method 优先级选（若指定了 method 则优先）
-            if method:
-                for c in method_cands:
-                    if c.parent.name == method or c.parent.name.endswith(f"_{method}"):
-                        return c
-            # 仍未唯一：报错列出所有候选
             names = ", ".join(str(c.relative_to(source_dir)) for c in method_cands)
             logger.error(
                 f"多个 method 目录候选 md 文件，无法确定正文: {names}。"
                 f"请指定 method 参数或清理残留输出。")
             return None
 
-        # c. 无 method 目录候选：报错列全部候选取向
+        # c. 无 method 目录候选：报错列全部候选
         names = ", ".join(str(c.relative_to(source_dir)) for c in candidates)
         logger.error(f"多个候选 md 文件且不在标准 method 目录，无法确定正文: {names}")
         return None

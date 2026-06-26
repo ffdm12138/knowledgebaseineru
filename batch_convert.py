@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from loguru import logger
 from config.settings import (
-    MINERU_TMP_DIR, SUPPORTED_FORMATS,
+    MINERU_TMP_DIR, SUPPORTED_FORMATS, MINERU_TIMEOUT,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
 )
 from src.cleaner import MinerUOutputCleaner
@@ -53,7 +53,7 @@ def run_mineru(input_path: str, output_dir: str, backend: str, method: str,
     if api_url:
         cmd.extend(["--api-url", api_url])
     result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                            errors="replace", env={**os.environ}, timeout=600)
+                            errors="replace", env={**os.environ}, timeout=MINERU_TIMEOUT)
     if result.returncode != 0:
         logger.error(f"  转换失败: {result.stderr[-300:] if result.stderr else '未知'}")
         return False
