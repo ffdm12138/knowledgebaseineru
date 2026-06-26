@@ -16,6 +16,19 @@ from filelock import FileLock
 
 from config.settings import MANIFEST_PATH
 
+# 合法 status 词表（状态机）：
+#   queued      已入账待转换（预留，当前上传直接进 converting）
+#   converting  转换中：阻止同 sha256 重复转换
+#   converted   转换完成：命中即 duplicate
+#   failed      转换失败：允许显式重试
+#   duplicate   重复（与 converted 等价的去重态，供查询语义使用）
+# SSOT：upload_service / watcher / batch_convert 写入的 status 必须在此集合内。
+VALID_STATUSES = {"queued", "converting", "converted", "failed", "duplicate"}
+
+# find_by_sha256 命中多条记录时的优先级（高 → 低）。
+# 含义：converted/duplicate 优先于 converting，converting 优先于 failed。
+_SHA_PRIORITY = {"converted": 0, "duplicate": 0, "converting": 1, "failed": 2}
+
 
 class PaperManifest:
     """papers_manifest.json 读写（原子 + 锁）"""
@@ -71,6 +84,47 @@ class PaperManifest:
     def list_all(self) -> list[dict]:
         return self._load().get("papers", [])
 
+    def migrate(self) -> int:
+        """一次性迁移旧记录到 SSOT 字段结构。
+
+        旧记录可能用 backend 字段表示调用通道（cli/api），语义与新结构冲突。
+        迁移规则（幂等）：
+          - 删除旧 backend 字段
+          - mineru_backend 缺失 → "hybrid-engine"（产品固定）
+          - effort 缺失 → "medium"
+          - runner 缺失 → 旧 backend 值或 "cli"
+          - status 不在词表 → "converted"
+        返回迁移的记录数。
+        """
+        migrated = 0
+
+        def _migrate(data):
+            nonlocal migrated
+            for p in data.get("papers", []):
+                old_backend = p.pop("backend", None)
+                changed = False
+                if "mineru_backend" not in p or not p["mineru_backend"]:
+                    p["mineru_backend"] = "hybrid-engine"
+                    changed = True
+                if "effort" not in p or not p["effort"]:
+                    p["effort"] = "medium"
+                    changed = True
+                if "runner" not in p or not p["runner"]:
+                    p["runner"] = old_backend or "cli"
+                    changed = True
+                if p.get("status") not in VALID_STATUSES:
+                    p["status"] = "converted"
+                    changed = True
+                if old_backend is not None:
+                    changed = True
+                if changed:
+                    migrated += 1
+
+        self._locked_update(_migrate)
+        if migrated:
+            logger.info(f"manifest 迁移完成: {migrated} 条记录更新为 SSOT 字段")
+        return migrated
+
     def get(self, paper_id: str) -> dict | None:
         for p in self.list_all():
             if p.get("paper_id") == paper_id:
@@ -81,11 +135,16 @@ class PaperManifest:
         return self.get(paper_id) is not None
 
     def find_by_sha256(self, sha256: str) -> dict | None:
-        """按原始文件 sha256 查找记录（用于去重）"""
-        for p in self.list_all():
-            if p.get("sha256") == sha256:
-                return p
-        return None
+        """按原始文件 sha256 查找记录（用于去重）。
+
+        命中多条时按状态优先级返回：converted/duplicate > converting > failed。
+        即同一文件的旧 failed 记录不会遮蔽已成功的 converted 记录。
+        """
+        matches = [p for p in self.list_all() if p.get("sha256") == sha256]
+        if not matches:
+            return None
+        matches.sort(key=lambda p: _SHA_PRIORITY.get(p.get("status", ""), 3))
+        return matches[0]
 
     def _locked_update(self, fn) -> None:
         """事务级锁：锁住完整的读-改-写周期，避免并发覆盖。
@@ -101,8 +160,20 @@ class PaperManifest:
                converted_at: str | None = None,
                raw_filename: str = "", raw_stem: str = "",
                sha256: str = "", file_size: int = 0, mtime: str = "",
-               backend: str = "", method: str = "") -> dict:
-        """新增或更新一条记录（事务级原子写入）"""
+               mineru_backend: str = "", method: str = "",
+               effort: str = "", runner: str = "") -> dict:
+        """新增或更新一条记录（事务级原子写入）。
+
+        SSOT 字段语义：
+          mineru_backend : MinerU 解析后端（hybrid-engine/pipeline/vlm-engine），
+                           来自 config.MINERU_BACKEND，不是 cli/api。
+          method         : 解析方法 auto/ocr/txt。
+          effort         : hybrid-engine 解析强度 medium/high。
+          runner         : 本次调用通道 cli/api（来自 converter 返回）。
+        """
+        if status not in VALID_STATUSES:
+            raise ValueError(
+                f"非法 status: {status}，允许: {sorted(VALID_STATUSES)}")
         entry_out = {}
 
         def _upsert(data):
@@ -118,8 +189,10 @@ class PaperManifest:
                 "markdown": markdown,
                 "images_dir": images_dir,
                 "status": status,
-                "backend": backend,
+                "mineru_backend": mineru_backend,
                 "method": method,
+                "effort": effort,
+                "runner": runner,
                 "images_count": images_count,
                 "md_chars": md_chars,
                 "converted_at": converted_at or datetime.now().isoformat(timespec="seconds"),

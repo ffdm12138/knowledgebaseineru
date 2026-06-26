@@ -19,7 +19,7 @@ import gradio as gr
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config.settings import (
-    RAW_DIR, MINERU_TMP_DIR, PAPERS_DIR,
+    PAPERS_DIR,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
 )
 from src.converter import MinerUConverter
@@ -28,7 +28,7 @@ from src.manifest import PaperManifest
 from src.library import PaperLibrary
 from src.catalog import Catalog
 from src.prompt_builder import PromptBuilder
-from src.naming import derive_paper_id
+from src.upload_service import upload_from_bytes, UploadError
 
 # ========== 初始化 ==========
 converter = MinerUConverter()
@@ -42,40 +42,50 @@ prompt_builder = PromptBuilder(catalog=catalog, library=library)
 # ========== 核心功能 ==========
 
 def upload_and_convert(file, progress=gr.Progress()):
-    """上传文件并转换清理入库"""
+    """上传文件并转换清理入库。
+
+    仅作为 UI 层：不直接写 raw 目录，不直接调 converter/cleaner/manifest，
+    全部走系统单一管道 src.upload_service.upload_from_bytes，与 FastAPI /upload
+    共享同一套流式写入、sha256 去重、converting 状态机、转换流程。
+    """
     if file is None:
         return "请选择文件"
-    import shutil
     filename = Path(file.name).name
-    save_path = RAW_DIR / filename
-    shutil.copy2(file.name, str(save_path))
+    # Gradio 把上传文件落到系统临时目录，读 bytes 后交由单一管道处理
+    data = Path(file.name).read_bytes()
 
-    paper_id = derive_paper_id(filename)
     progress(0.1, desc="MinerU 转换中...")
-    result = converter.convert(save_path, MINERU_TMP_DIR / paper_id,
-                                backend=MINERU_BACKEND, method=MINERU_METHOD,
-                                lang=MINERU_LANG, effort=MINERU_EFFORT)
-    if not result["success"]:
-        return f"❌ 转换失败: {result.get('error')}"
+    try:
+        result = upload_from_bytes(
+            filename=filename,
+            data=data,
+            converter=converter,
+            cleaner=cleaner,
+            manifest=manifest,
+            method=MINERU_METHOD,
+            backend=MINERU_BACKEND,
+            effort=MINERU_EFFORT,
+            lang=MINERU_LANG,
+        )
+    except UploadError as e:
+        return f"❌ {e.message}"
+    finally:
+        progress(1.0, desc="完成")
 
-    progress(0.7, desc="清理输出中...")
-    clean = cleaner.extract(result["output_dir"], paper_id, overwrite=False,
-                            method=MINERU_METHOD, stem=Path(filename).stem,
-                            backend=MINERU_BACKEND)
-    if not clean["success"]:
-        return f"❌ 清理失败: {clean.get('error')}"
+    status = result.get("status")
+    if status == "duplicate":
+        return f"⚠️ 重复文件: {result.get('message')}"
+    if status == "in_progress":
+        return f"⏳ {result.get('message')}"
+    if status != "success":
+        return f"❌ 未知状态: {result}"
 
-    manifest.upsert(paper_id=paper_id, raw_pdf=str(save_path),
-                    markdown=clean["markdown_path"], images_dir=clean["images_dir"],
-                    status="converted", images_count=clean["images_count"],
-                    md_chars=clean["char_count"])
-    progress(1.0, desc="完成")
     return f"""✅ 转换完成
 
-📄 paper_id: `{paper_id}`
-📝 字符: {clean['char_count']}
-🖼️ 图片: {clean['images_count']}
-📁 Markdown: {clean['markdown_path']}"""
+📄 paper_id: `{result['paper_id']}`
+📝 字符: {result['md_chars']}
+🖼️ 图片: {result['images_count']}
+📁 Markdown: {result['markdown_path']}"""
 
 
 def list_papers():

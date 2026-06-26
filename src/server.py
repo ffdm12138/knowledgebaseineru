@@ -36,7 +36,6 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from config.settings import (
     API_HOST, API_PORT, RAW_DIR, MINERU_TMP_DIR, PAPERS_DIR,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
-    SUPPORTED_FORMATS,
 )
 
 from src.converter import MinerUConverter
@@ -45,7 +44,6 @@ from src.manifest import PaperManifest
 from src.library import PaperLibrary
 from src.catalog import Catalog
 from src.prompt_builder import PromptBuilder
-from src.naming import derive_paper_id
 from src.writer.job_manager import JobManager
 from src.writer.topic_parser import normalize_task
 from src.writer.catalog_matcher import match_catalog, confirm_selected_papers
@@ -83,6 +81,9 @@ library = PaperLibrary(manifest=manifest)
 catalog = Catalog()
 prompt_builder = PromptBuilder(catalog=catalog, library=library)
 job_manager = JobManager()
+
+# 启动时迁移旧 manifest 记录到 SSOT 字段结构（幂等）
+manifest.migrate()
 
 logger.info(f"服务初始化完成，监听 {API_HOST}:{API_PORT}")
 
@@ -152,203 +153,28 @@ async def upload(
 ):
     """上传文件 -> MinerU 转 tmp -> cleaner 提取 paper.md+images -> manifest 记录
     固定使用 hybrid-engine + medium + auto，不暴露 backend/effort 选择。
+
+    系统唯一上传管道：实现在 src/upload_service.upload_core，本端点只做 HTTP 适配。
+    Gradio / CLI 同样调用 upload_service，确保 raw 写入、去重、converting 状态机
+    全系统单入口。
     """
-    from config.settings import MAX_UPLOAD_SIZE, MINERU_BACKEND, MINERU_EFFORT
-    backend, effort = MINERU_BACKEND, MINERU_EFFORT
-    # 校验 method 参数枚举
-    if method not in ("auto", "ocr", "txt"):
-        raise HTTPException(400, f"非法 method: {method}，允许: auto, ocr, txt")
-
-    suffix = Path(file.filename).suffix.lower()
-    if suffix not in SUPPORTED_FORMATS:
-        raise HTTPException(400, f"不支持的格式: {suffix}，支持: {SUPPORTED_FORMATS}")
-
-    paper_id = derive_paper_id(file.filename)
+    from src.upload_service import upload_core, UploadError
     try:
-        from src.naming import validate_paper_id
-        validate_paper_id(paper_id)
-    except ValueError as e:
-        raise HTTPException(400, str(e))
-
-    # 净化文件名：只取 name，拒绝路径穿越
-    safe_filename = Path(file.filename).name
-    if safe_filename != file.filename:
-        raise HTTPException(400, f"非法文件名（含路径）: {file.filename}")
-    save_path = RAW_DIR / safe_filename
-    # 二次校验：resolve 后仍必须在 RAW_DIR 内
-    try:
-        from src.naming import safe_child
-        safe_child(RAW_DIR, safe_filename)
-    except ValueError:
-        raise HTTPException(400, f"非法文件名: {file.filename}")
-
-    # 流式写入临时文件（防内存尖峰），边读边累计大小 + 计算 sha256
-    import hashlib
-    import tempfile
-    sha = hashlib.sha256()
-    total_size = 0
-    CHUNK_SIZE = 1024 * 1024  # 1MB
-    tmp_fd, tmp_path = tempfile.mkstemp(
-        dir=str(RAW_DIR), prefix=".upload_", suffix=".tmp")
-    try:
-        with os.fdopen(tmp_fd, 'wb') as tmpf:
-            while True:
-                chunk = await file.read(CHUNK_SIZE)
-                if not chunk:
-                    break
-                total_size += len(chunk)
-                if total_size > MAX_UPLOAD_SIZE:
-                    raise HTTPException(
-                        413,
-                        f"文件过大: > {MAX_UPLOAD_SIZE} bytes "
-                        f"(当前 {total_size} bytes)")
-                sha.update(chunk)
-                tmpf.write(chunk)
-    except HTTPException:
-        if os.path.exists(tmp_path):
-            os.unlink(tmp_path)
-        raise
-    except Exception as e:
-        if os.path.exists(tmp_path):
-            os.unlink(tmp_path)
-        logger.error(f"上传写入失败: {e}")
-        raise HTTPException(500, f"上传失败: {str(e)}")
-
-    file_sha256 = sha.hexdigest()
-    file_size = total_size
-    logger.info(
-        f"收到文件: {file.filename} ({file_size} bytes, "
-        f"sha256={file_sha256[:12]}…) -> paper_id={paper_id}")
-
-    # --- 上传事务锁：防并发 TOCTOU + converting 状态机 ---
-    from filelock import FileLock
-    upload_lock = FileLock(str(RAW_DIR / ".upload.lock"))
-
-    with upload_lock:
-        # 去重检查：已有 converted 或 converting 状态
-        existing = manifest.find_by_sha256(file_sha256)
-        if existing:
-            status = existing.get("status", "")
-            os.unlink(tmp_path)
-            if status == "converting":
-                return {
-                    "status": "in_progress",
-                    "paper_id": existing.get("paper_id"),
-                    "message": "相同文件正在转换中，请稍后查看",
-                }
-            if status == "converted":
-                return {
-                    "status": "duplicate",
-                    "paper_id": existing.get("paper_id"),
-                    "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
-                }
-            # status=failed: 允许重试，继续往下走
-            logger.info(f"上次转换失败 ({existing.get('paper_id')})，允许重试")
-
-        # 冲突检查：paper_id 已存在但 sha256 不同（非 failed 状态）
-        existing_by_pid = manifest.get(paper_id)
-        if existing_by_pid and existing_by_pid.get("sha256") != file_sha256 \
-                and existing_by_pid.get("status") not in ("failed", None):
-            os.unlink(tmp_path)
-            raise HTTPException(
-                409,
-                f"paper_id={paper_id} 已存在但内容不同，"
-                f"不允许覆盖。若需替换请先手动删除旧文献。")
-
-        # final_path 冲突检查
-        if save_path.exists():
-            from src.file_fingerprint import compute_sha256
-            existing_raw_sha = compute_sha256(save_path)
-            if existing_raw_sha != file_sha256:
-                os.unlink(tmp_path)
-                raise HTTPException(
-                    409,
-                    f"同名文件 {safe_filename} 已存在且内容不同，"
-                    f"不允许覆盖。请改名后重新上传。")
-            os.unlink(tmp_path)
-            logger.info(f"同名同内容文件已存在，复用: {save_path}")
-        else:
-            os.replace(tmp_path, str(save_path))
-
-        # 写入 converting 状态，防止并发重复转换
-        from datetime import datetime
-        manifest.upsert(
-            paper_id=paper_id,
-            raw_pdf=str(save_path),
-            markdown="",
-            images_dir="",
-            status="converting",
-            raw_filename=file.filename,
-            sha256=file_sha256, file_size=file_size,
-            mtime=datetime.now().isoformat(timespec="seconds"),
-            backend=backend, method=method,
+        return await upload_core(
+            filename=file.filename,
+            source=file,
+            converter=converter,
+            cleaner=cleaner,
+            manifest=manifest,
+            raw_dir=RAW_DIR,
+            tmp_dir=MINERU_TMP_DIR,
+            method=method,
+            backend=MINERU_BACKEND,
+            effort=MINERU_EFFORT,
+            lang=MINERU_LANG,
         )
-    # --- 锁释放 ---
-
-    tmp_out = MINERU_TMP_DIR / paper_id
-    try:
-        result = converter.convert(
-            save_path, tmp_out, backend=backend, method=method,
-            lang=MINERU_LANG, effort=effort,
-        )
-        if not result["success"]:
-            # 标记 failed
-            manifest.upsert(
-                paper_id=paper_id, raw_pdf=str(save_path),
-                markdown="", images_dir="",
-                status="failed",
-                raw_filename=file.filename, sha256=file_sha256,
-                file_size=file_size,
-                mtime=datetime.now().isoformat(timespec="seconds"),
-                backend=backend, method=method,
-            )
-            raise HTTPException(500, f"转换失败: {result.get('error')}")
-
-        stem = Path(file.filename).stem
-        clean = cleaner.extract(result["output_dir"], paper_id,
-                                overwrite=False, method=method, stem=stem,
-                                backend=backend)
-        if not clean["success"]:
-            manifest.upsert(
-                paper_id=paper_id, raw_pdf=str(save_path),
-                markdown="", images_dir="",
-                status="failed",
-                raw_filename=file.filename, sha256=file_sha256,
-                file_size=file_size,
-                mtime=datetime.now().isoformat(timespec="seconds"),
-                backend=backend, method=method,
-            )
-            raise HTTPException(500, f"清理失败: {clean.get('error')}")
-
-        file_mtime = datetime.fromtimestamp(
-            os.path.getmtime(str(save_path))).isoformat(timespec="seconds")
-        manifest.upsert(
-            paper_id=paper_id,
-            raw_pdf=str(save_path),
-            markdown=clean["markdown_path"],
-            images_dir=clean["images_dir"],
-            status="converted",
-            images_count=clean["images_count"],
-            md_chars=clean["char_count"],
-            raw_filename=file.filename,
-            sha256=file_sha256, file_size=file_size, mtime=file_mtime,
-            backend=result.get("backend", "cli"), method=method,
-        )
-
-        return {
-            "status": "success",
-            "paper_id": paper_id,
-            "filename": file.filename,
-            "markdown_path": clean["markdown_path"],
-            "images_count": clean["images_count"],
-            "md_chars": clean["char_count"],
-            "message": f"转换完成: {paper_id} ({clean['char_count']} 字符, {clean['images_count']} 图)",
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"处理失败: {e}")
-        raise HTTPException(500, f"处理失败: {str(e)}")
+    except UploadError as e:
+        raise HTTPException(e.status_code, e.message)
 
 
 # ========== 文献资产 ==========

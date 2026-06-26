@@ -119,6 +119,40 @@ class MinerUOutputCleaner:
         candidates = list(source_dir.rglob("*.md"))
         if not candidates:
             return None
+
+        # method 给定但 stem 未给：method 仍是硬约束。
+        # 只接受 parent.name 落在 _method_dirs(method) 内的候选，
+        # 禁止用目录名反向决定语义（例如 method=ocr 时 hybrid_auto 不得命中）。
+        if method:
+            allowed = set(self._method_dirs(method, backend))
+            method_cands = [c for c in candidates if c.parent.name in allowed]
+            if len(method_cands) == 1:
+                return method_cands[0]
+            if len(method_cands) > 1:
+                def _prio(cand):
+                    name = cand.parent.name
+                    if backend == "hybrid-engine" and name.startswith("hybrid_"):
+                        return 0
+                    if backend == "vlm-engine" and name.startswith("vlm_"):
+                        return 0
+                    if backend == "pipeline" and not name.startswith(("hybrid_", "vlm_")):
+                        return 0
+                    return 1
+                method_cands.sort(key=_prio)
+                if _prio(method_cands[0]) < _prio(method_cands[1]):
+                    return method_cands[0]
+                names = ", ".join(str(c.relative_to(source_dir)) for c in method_cands)
+                logger.error(
+                    f"method={method} 下多个候选 md 文件，无法确定正文: {names}。"
+                    f"请指定 stem/backend 或清理残留输出。")
+                return None
+            # method 给定但无任何匹配目录 → 硬约束失败，不 fallback 到非 method 目录
+            checked = sorted(c.parent.name for c in candidates)
+            logger.error(
+                f"method={method} backend={backend} 下未找到匹配目录的正文 md，"
+                f"现有目录: {checked}")
+            return None
+
         if len(candidates) == 1:
             return candidates[0]
 

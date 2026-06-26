@@ -11,7 +11,7 @@ def test_upsert_and_get():
         m = PaperManifest(p)
         m.upsert("test_pid", raw_pdf="raw/x.pdf", markdown="md/x.md",
                  images_dir="md/images", sha256="abc123", file_size=1000,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         entry = m.get("test_pid")
         assert entry is not None
         assert entry["paper_id"] == "test_pid"
@@ -25,10 +25,10 @@ def test_find_by_sha256():
         m = PaperManifest(p)
         m.upsert("a", raw_pdf="raw/a.pdf", markdown="md/a.md",
                  images_dir="md/images", sha256="aaa", file_size=100,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         m.upsert("b", raw_pdf="raw/b.pdf", markdown="md/b.md",
                  images_dir="md/images", sha256="bbb", file_size=200,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         assert m.find_by_sha256("aaa") is not None
         assert m.find_by_sha256("aaa")["paper_id"] == "a"
         assert m.find_by_sha256("bbb")["paper_id"] == "b"
@@ -41,7 +41,7 @@ def test_delete():
         m = PaperManifest(p)
         m.upsert("x", raw_pdf="raw/x.pdf", markdown="md/x.md",
                  images_dir="md/images", sha256="xxx", file_size=10,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         assert m.has("x")
         assert m.delete("x")
         assert not m.has("x")
@@ -55,7 +55,7 @@ def test_atomic_write_not_corrupted():
         m = PaperManifest(p)
         m.upsert("x", raw_pdf="raw/x.pdf", markdown="md/x.md",
                  images_dir="md/images", sha256="xxx", file_size=10,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         # 直接读文件确认是合法 JSON
         data = json.loads(p.read_text(encoding="utf-8"))
         assert len(data["papers"]) == 1
@@ -68,7 +68,7 @@ def test_list_all():
         assert m.list_all() == []
         m.upsert("x", raw_pdf="raw/x.pdf", markdown="md/x.md",
                  images_dir="md/images", sha256="x", file_size=1,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         assert len(m.list_all()) == 1
 
 
@@ -79,11 +79,11 @@ def test_stats():
         m.upsert("a", raw_pdf="raw/a.pdf", markdown="md/a.md",
                  images_dir="md/images", sha256="a", file_size=1,
                  images_count=3, md_chars=100,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         m.upsert("b", raw_pdf="raw/b.pdf", markdown="md/b.md",
                  images_dir="md/images", sha256="b", file_size=1,
                  images_count=5, md_chars=200,
-                 mtime="2026-01-01T00:00:00", backend="cli", method="auto")
+                 mtime="2026-01-01T00:00:00", mineru_backend="hybrid-engine", method="auto")
         s = m.stats()
         assert s["total_papers"] == 2
         assert s["total_images"] == 8

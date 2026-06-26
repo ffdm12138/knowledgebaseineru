@@ -38,6 +38,7 @@ from src.converter import MinerUConverter
 
 cleaner = MinerUOutputCleaner()
 manifest = PaperManifest()
+manifest.migrate()
 converter = MinerUConverter()
 
 # 旧版 MinerU 输出可能的 method 目录
@@ -122,7 +123,8 @@ def process_one(f: Path, reconvert_flag: bool, backend: str, method: str,
                     md_chars=clean["char_count"],
                     raw_filename=f.name, raw_stem=f.stem,
                     sha256=meta["sha256"], file_size=meta["file_size"],
-                    mtime=meta["mtime"], backend="cli", method=method)
+                    mtime=meta["mtime"], mineru_backend=backend, effort=effort,
+                    method=method, runner="cli")
     logger.info(f"  入库: {paper_id} ({clean['char_count']} 字符, {clean['images_count']} 图)")
     return True
 

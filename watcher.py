@@ -37,6 +37,7 @@ from src.watcher_utils import is_file_stable, is_uploading_temp
 converter = MinerUConverter()
 cleaner = MinerUOutputCleaner()
 manifest = PaperManifest()
+manifest.migrate()
 
 
 def resolve_paper_id(filename: str, sha256: str) -> str:
@@ -86,7 +87,7 @@ def process_file(f: Path, backend: str, method: str, effort: str,
         return False
 
     # 5. 转换
-    logger.info(f"  转换: {f.name} -> {paper_id} | sha256={sha[:12]} | backend={'api' if api_url else 'cli'}")
+    logger.info(f"  转换: {f.name} -> {paper_id} | sha256={sha[:12]} | runner={'api' if api_url else 'cli'}")
     tmp_out = MINERU_TMP_DIR / paper_id
     result = converter.convert(f, tmp_out, backend=backend, method=method,
                                lang=lang, effort=effort, api_url=api_url)
@@ -110,7 +111,8 @@ def process_file(f: Path, backend: str, method: str, effort: str,
         md_chars=clean["char_count"],
         raw_filename=f.name, raw_stem=f.stem,
         sha256=sha, file_size=meta["file_size"], mtime=meta["mtime"],
-        backend=result.get("backend", "cli"), method=method,
+        mineru_backend=backend, effort=effort, method=method,
+        runner=result.get("runner", "cli"),
     )
     logger.info(f"  完成: {paper_id} ({clean['char_count']} 字符, {clean['images_count']} 图)")
     return True
@@ -144,7 +146,7 @@ def main():
 
     backend_mode = "api" if args.api_url else "cli"
     logger.info(f"监控启动: {RAW_DIR}")
-    logger.info(f"[converter] backend = {backend_mode}" +
+    logger.info(f"[converter] runner = {backend_mode}" +
                 (f" ({args.api_url})" if args.api_url else " (CLI 子进程)"))
     logger.info(f"解析后端: {args.backend} | 方法: {args.method} | 强度: {args.effort} | 间隔: {args.interval}s")
 

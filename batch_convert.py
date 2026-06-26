@@ -42,6 +42,7 @@ if not os.path.exists(MINERU_EXE):
 
 cleaner = MinerUOutputCleaner()
 manifest = PaperManifest()
+manifest.migrate()
 
 
 def run_mineru(input_path: str, output_dir: str, backend: str, method: str,
@@ -105,7 +106,7 @@ def main():
             logger.info(f"[{i}/{len(files)}] 跳过 (已转换): {f.name} -> {paper_id}")
             continue
 
-        logger.info(f"[{i}/{len(files)}] 处理: {f.name} -> {paper_id} | sha256={sha[:12]} | backend={'api' if args.api_url else 'cli'}")
+        logger.info(f"[{i}/{len(files)}] 处理: {f.name} -> {paper_id} | sha256={sha[:12]} | runner={'api' if args.api_url else 'cli'}")
         tmp_out = MINERU_TMP_DIR / paper_id
         t0 = time.time()
         ok = run_mineru(str(f), str(tmp_out), args.backend, args.method,
@@ -128,7 +129,8 @@ def main():
                         raw_filename=f.name, raw_stem=f.stem,
                         sha256=meta["sha256"], file_size=meta["file_size"],
                         mtime=meta["mtime"],
-                        backend="api" if args.api_url else "cli", method=args.method)
+                        mineru_backend=args.backend, effort=args.effort, method=args.method,
+                        runner="api" if args.api_url else "cli")
         logger.info(f"  完成 ({time.time()-t0:.0f}s): {paper_id}")
 
     stats = manifest.stats()

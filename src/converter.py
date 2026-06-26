@@ -87,9 +87,13 @@ class MinerUConverter:
                 "md_path": str,
                 "output_dir": str,
                 "source_file": str,
-                "backend": "cli" | "api",
+                "runner": "cli" | "api",   # 调用通道（与 MinerU 后端 backend 区分）
                 "error": str (失败时),
             }
+
+        说明：backend 参数是 MinerU 解析后端（hybrid-engine 等），写入 manifest 的
+        mineru_backend 字段；runner 是本次调用走 CLI 还是 API（写入 manifest.runner）。
+        二者语义不同，不可混用。
         """
         if api_url:
             return self.convert_via_api(input_path, output_dir, backend, method,
@@ -111,9 +115,9 @@ class MinerUConverter:
         output_dir = Path(output_dir)
 
         if not input_path.exists():
-            return {"success": False, "error": f"文件不存在: {input_path}", "backend": "cli"}
+            return {"success": False, "error": f"文件不存在: {input_path}", "runner": "cli"}
 
-        logger.info(f"[converter] backend=cli | {input_path.name} (backend={backend}, method={method})")
+        logger.info(f"[converter] runner=cli | {input_path.name} (backend={backend}, method={method})")
 
         cmd = [
             MINERU_EXE,
@@ -140,7 +144,7 @@ class MinerUConverter:
             if result.returncode != 0:
                 error_msg = result.stderr[-500:] if result.stderr else "未知错误"
                 logger.error(f"转换失败: {error_msg}")
-                return {"success": False, "error": error_msg, "backend": "cli"}
+                return {"success": False, "error": error_msg, "runner": "cli"}
 
             # 查找生成的Markdown文件
             # 产品固定 hybrid-engine，优先 hybrid_auto / hybrid_ocr / hybrid_txt
@@ -160,20 +164,20 @@ class MinerUConverter:
                 md_content = ""
                 logger.warning(f"未找到Markdown输出 (method={method} backend={backend})")
 
-            logger.info(f"[converter] backend=cli 转换完成: {input_path.name}")
+            logger.info(f"[converter] runner=cli 转换完成: {input_path.name}")
             return {
                 "success": True,
                 "markdown": md_content,
                 "md_path": str(md_path) if md_path and md_path.exists() else "",
                 "output_dir": str(output_dir / stem),
                 "source_file": input_path.name,
-                "backend": "cli",
+                "runner": "cli",
             }
 
         except subprocess.TimeoutExpired:
-            return {"success": False, "error": f"转换超时({self.timeout}s)", "backend": "cli"}
+            return {"success": False, "error": f"转换超时({self.timeout}s)", "runner": "cli"}
         except Exception as e:
-            return {"success": False, "error": str(e), "backend": "cli"}
+            return {"success": False, "error": str(e), "runner": "cli"}
 
     def convert_via_api(
         self,

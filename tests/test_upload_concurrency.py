@@ -40,7 +40,7 @@ class FakeConverter:
             time.sleep(self._delay)
         return {
             "success": True, "markdown": "fake", "md_path": "/fake/md",
-            "output_dir": "/fake/out", "source_file": "test", "backend": "cli",
+            "output_dir": "/fake/out", "source_file": "test", "runner": "cli",
         }
 
 
@@ -142,7 +142,7 @@ def test_query_param_validation(monkeypatch):
     # Mock converter 避免真实调用
     def _fake_convert(*a, **kw):
         return {"success": True, "markdown": "ok", "md_path": "/f/md",
-                "output_dir": "/f/out", "source_file": "t", "backend": "cli"}
+                "output_dir": "/f/out", "source_file": "t", "runner": "cli"}
     monkeypatch.setattr(server_mod.converter, "convert", _fake_convert)
     monkeypatch.setattr(server_mod.cleaner, "extract", lambda *a, **kw: {
         "success": True, "paper_id": kw.get("paper_id", "t"),

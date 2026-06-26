@@ -20,7 +20,7 @@ def _sha(content: bytes) -> str:
 
 def _fake_convert_success(*args, **kwargs):
     return {"success": True, "markdown": "fake", "md_path": "/fake/md",
-            "output_dir": "/fake/out", "source_file": "test", "backend": "cli"}
+            "output_dir": "/fake/out", "source_file": "test", "runner": "cli"}
 
 
 def _fake_extract_success(*args, **kwargs):
@@ -142,7 +142,7 @@ def test_conversion_failure_does_not_leave_tmp(monkeypatch, tmp_path, isolate_ma
     raw_dir = tmp_path / "raw"
 
     def _fail_convert(*args, **kwargs):
-        return {"success": False, "error": "simulated failure", "backend": "cli"}
+        return {"success": False, "error": "simulated failure", "runner": "cli"}
 
     monkeypatch.setattr(server_mod.converter, "convert", _fail_convert)
 
