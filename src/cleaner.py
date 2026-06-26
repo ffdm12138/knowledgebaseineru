@@ -22,9 +22,29 @@ from config.settings import PAPERS_DIR
 class MinerUOutputCleaner:
     """清理 MinerU 输出，只保留 paper.md + images/"""
 
+    @staticmethod
+    def _method_dirs(method: str, backend: str | None = None) -> list[str]:
+        """返回给定 method 应搜索的目录名列表，按 backend 优先级排序。
+
+        method="auto" → ["auto", "hybrid_auto", "vlm_auto"] 等。
+        backend 可调整优先级：hybrid-engine 优先 hybrid_*，vlm-engine 优先 vlm_*。
+        """
+        _map = {
+            "auto": ["auto", "hybrid_auto", "vlm_auto"],
+            "ocr":  ["ocr", "hybrid_ocr", "vlm_ocr"],
+            "txt":  ["txt", "hybrid_txt", "vlm_txt"],
+        }
+        dirs = _map.get(method, [method])
+        if backend == "hybrid-engine":
+            dirs.sort(key=lambda d: 0 if d.startswith("hybrid_") else 1)
+        elif backend == "vlm-engine":
+            dirs.sort(key=lambda d: 0 if d.startswith("vlm_") else 1)
+        return dirs
+
     def locate_markdown(self, source_dir: Path,
                         method: str | None = None,
-                        stem: str | None = None) -> Path | None:
+                        stem: str | None = None,
+                        backend: str | None = None) -> Path | None:
         """在 MinerU 输出目录中定位正文 Markdown。
 
         支持两种 source_dir 传入方式：
@@ -33,12 +53,11 @@ class MinerUOutputCleaner:
 
         选择规则（确定性，不依赖 rglob 顺序）：
           a. exact path（若提供 method + stem）：
-             source_dir / method / stem.md     (模式 A)
-             source_dir / stem / method / stem.md  (模式 B)
-          b. method 是指定硬约束，找不到不 fallback
+             按 _method_dirs(method, backend) 依次检查各目录
+          b. method 是硬约束，找不到不 fallback
           c. source_dir 下唯一 .md → 取它
-          d. 唯一 method 候选 → 取它
-          e. 多候选 → 返回 None 并列出
+          d. 唯一 method 候选 → 取它（含 hybrid/vlm 变体）
+          e. 多候选 → 按 backend 优先级选一个，否则返回 None
         """
         source_dir = Path(source_dir)
         if not source_dir.exists():
@@ -46,22 +65,48 @@ class MinerUOutputCleaner:
 
         # a. exact path（若提供了 method 和 stem）
         if method and stem:
-            # 模式 A: source_dir 已是 <stem>/ 目录
-            exact_a = source_dir / method / f"{stem}.md"
-            if exact_a.is_file():
-                return exact_a
-            # 模式 B: source_dir 是 tmp_out 根目录
-            exact_b = source_dir / stem / method / f"{stem}.md"
-            if exact_b.is_file():
-                return exact_b
-            # 模式 C: source_dir 是旧输出或扁平结构
+            dirs = self._method_dirs(method, backend)
+            exact_matches = []
+            for d in dirs:
+                # 模式 A: source_dir 已是 <stem>/ 目录
+                exact_a = source_dir / d / f"{stem}.md"
+                if exact_a.is_file():
+                    exact_matches.append(exact_a)
+                # 模式 B: source_dir 是 tmp_out 根目录
+                exact_b = source_dir / stem / d / f"{stem}.md"
+                if exact_b.is_file():
+                    exact_matches.append(exact_b)
+            # 扁平结构兜底
             exact_c = source_dir / f"{stem}.md"
             if exact_c.is_file():
-                return exact_c
+                exact_matches.append(exact_c)
+
+            if len(exact_matches) == 1:
+                return exact_matches[0]
+            if len(exact_matches) > 1:
+                # 按 backend 优先级排序
+                def _prio(md_path):
+                    name = md_path.parent.name
+                    if backend == "hybrid-engine" and name.startswith("hybrid_"):
+                        return 0
+                    if backend == "vlm-engine" and name.startswith("vlm_"):
+                        return 0
+                    if backend == "pipeline" and not name.startswith(("hybrid_", "vlm_")):
+                        return 0
+                    return 1
+                exact_matches.sort(key=_prio)
+                if backend and _prio(exact_matches[0]) < _prio(exact_matches[1]):
+                    return exact_matches[0]
+                names = ", ".join(str(m.relative_to(source_dir)) for m in exact_matches)
+                logger.error(
+                    f"多个 exact match 候选 md 文件，无法确定正文: {names}。"
+                    f"请指定 backend 参数或清理残留输出。")
+                return None
             # method 是硬约束，找不到不 fallback
+            checked = [source_dir / d / f"{stem}.md" for d in dirs]
             logger.error(
-                f"未找到指定 method={method} stem={stem} 的正文 md，"
-                f"已检查: {exact_a}, {exact_b}, {exact_c}")
+                f"未找到指定 method={method} backend={backend} stem={stem} "
+                f"的正文 md，已检查: {[str(c) for c in checked]}")
             return None
 
         candidates = list(source_dir.rglob("*.md"))
@@ -71,18 +116,32 @@ class MinerUOutputCleaner:
             return candidates[0]
 
         # b. 多个候选：查找标准 method 目录下的 md
-        known_methods = {"auto", "txt", "ocr", "hybrid_auto", "hybrid_txt",
-                         "hybrid_ocr", "vlm_auto", "vlm_txt", "vlm_ocr"}
-        method_cands = [c for c in candidates if c.parent.name in known_methods]
+        all_method_dirs = set()
+        for m in ["auto", "ocr", "txt"]:
+            all_method_dirs.update(self._method_dirs(m, backend))
+        method_cands = [c for c in candidates if c.parent.name in all_method_dirs]
 
         if len(method_cands) == 1:
             return method_cands[0]
 
         if len(method_cands) > 1:
+            # 按 backend 优先级排序
+            def _prio(cand):
+                name = cand.parent.name
+                if backend == "hybrid-engine" and name.startswith("hybrid_"):
+                    return 0
+                if backend == "vlm-engine" and name.startswith("vlm_"):
+                    return 0
+                if backend == "pipeline" and not name.startswith(("hybrid_", "vlm_")):
+                    return 0
+                return 1
+            method_cands.sort(key=_prio)
+            if _prio(method_cands[0]) < _prio(method_cands[1]):
+                return method_cands[0]
             names = ", ".join(str(c.relative_to(source_dir)) for c in method_cands)
             logger.error(
                 f"多个 method 目录候选 md 文件，无法确定正文: {names}。"
-                f"请指定 method 参数或清理残留输出。")
+                f"请指定 method/backend 参数或清理残留输出。")
             return None
 
         # c. 无 method 目录候选：报错列全部候选
@@ -105,7 +164,8 @@ class MinerUOutputCleaner:
     def extract(self, source_dir: str | Path, paper_id: str,
                 overwrite: bool = False,
                 method: str | None = None,
-                stem: str | None = None) -> dict:
+                stem: str | None = None,
+                backend: str | None = None) -> dict:
         """从 MinerU 原始输出目录提取 paper.md + images 到 data/papers/<paper_id>/
 
         覆盖保护：默认 overwrite=False，目标已存在则报错；overwrite=True 先备份再重建。
@@ -113,6 +173,7 @@ class MinerUOutputCleaner:
         Args:
             method: MinerU 解析方法 (auto/ocr/txt)，用于确定性定位正文 md
             stem: 输入文件名 stem，用于 exact path 匹配
+            backend: 解析后端 (pipeline/hybrid-engine/vlm-engine)，影响 hybrid/vlm 目录优先级
 
         Returns:
             {
@@ -134,7 +195,8 @@ class MinerUOutputCleaner:
             return {"success": False, "paper_id": paper_id,
                     "error": f"Invalid paper_id: {e}"}
 
-        md_path = self.locate_markdown(source_dir, method=method, stem=stem)
+        md_path = self.locate_markdown(source_dir, method=method, stem=stem,
+                                       backend=backend)
         if md_path is None:
             msg = f"未在 {source_dir} 找到正文 Markdown"
             logger.error(msg)

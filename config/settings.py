@@ -83,6 +83,11 @@ PAPER_MD_MAX_CHARS = _env_int("MINERU_PAPER_MD_MAX_CHARS", 12000, min_val=1)
 # 默认不写死领域；用户通过环境变量 MINERU_RESEARCH_DOMAIN 配置
 RESEARCH_DOMAIN = _env_str("MINERU_RESEARCH_DOMAIN", "")
 
+# 写作/综述风格配置（用于 prompt builder）
+RESEARCH_QUESTION = _env_str("MINERU_RESEARCH_QUESTION", "")
+WRITING_STYLE = _env_str("MINERU_WRITING_STYLE", "technical Chinese academic writing")
+CITATION_STYLE = _env_str("MINERU_CITATION_STYLE", "author-year")
+
 # 支持的文件格式 (MinerU 3.4)
 SUPPORTED_FORMATS = {".pdf", ".docx", ".pptx", ".xlsx", ".png", ".jpg", ".jpeg"}
 

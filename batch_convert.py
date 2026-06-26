@@ -113,7 +113,9 @@ def main():
         if not ok:
             continue
         # MinerU 输出在 tmp_out/<stem>/<method>/，cleaner 递归定位
-        clean = cleaner.extract(tmp_out, paper_id, overwrite=True)
+        clean = cleaner.extract(tmp_out, paper_id, overwrite=True,
+                                method=args.method, stem=f.stem,
+                                backend=args.backend)
         if not clean["success"]:
             logger.error(f"  清理失败: {clean.get('error')}")
             continue

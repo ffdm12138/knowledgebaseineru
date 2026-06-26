@@ -108,7 +108,8 @@ def process_one(f: Path, reconvert_flag: bool, backend: str, method: str,
             return False
         logger.info(f"  重新转换完成 ({time.time()-t0:.0f}s): {source_dir}")
 
-    clean = cleaner.extract(source_dir, paper_id, overwrite=True)
+    clean = cleaner.extract(source_dir, paper_id, overwrite=True,
+                            method=method, stem=stem, backend=backend)
     if not clean["success"]:
         logger.error(f"  清理失败: {clean.get('error')}")
         return False

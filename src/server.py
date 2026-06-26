@@ -153,6 +153,14 @@ async def upload(
 ):
     """上传文件 -> MinerU 转 tmp -> cleaner 提取 paper.md+images -> manifest 记录"""
     from config.settings import MAX_UPLOAD_SIZE
+    # 校验 query 参数枚举
+    if method not in ("auto", "ocr", "txt"):
+        raise HTTPException(400, f"非法 method: {method}，允许: auto, ocr, txt")
+    if backend not in ("pipeline", "hybrid-engine", "vlm-engine"):
+        raise HTTPException(400, f"非法 backend: {backend}，允许: pipeline, hybrid-engine, vlm-engine")
+    if effort not in ("medium", "high"):
+        raise HTTPException(400, f"非法 effort: {effort}，允许: medium, high")
+
     suffix = Path(file.filename).suffix.lower()
     if suffix not in SUPPORTED_FORMATS:
         raise HTTPException(400, f"不支持的格式: {suffix}，支持: {SUPPORTED_FORMATS}")
@@ -214,43 +222,48 @@ async def upload(
         f"收到文件: {file.filename} ({file_size} bytes, "
         f"sha256={file_sha256[:12]}…) -> paper_id={paper_id}")
 
-    # --- 所有检查必须在 os.replace 之前完成，防覆盖/删除已有 raw ---
+    # --- 上传事务锁：防并发 TOCTOU（两个请求同时上传同名不同内容）---
+    from filelock import FileLock
+    upload_lock = FileLock(str(RAW_DIR / ".upload.lock"))
 
-    # 去重检查：相同 sha256 不重复转换
-    existing = manifest.find_by_sha256(file_sha256)
-    if existing:
-        os.unlink(tmp_path)  # 只删 tmp，不碰已有 raw
-        return {
-            "status": "duplicate",
-            "paper_id": existing.get("paper_id"),
-            "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
-        }
+    with upload_lock:
+        # 去重检查：相同 sha256 不重复转换
+        existing = manifest.find_by_sha256(file_sha256)
+        if existing:
+            os.unlink(tmp_path)
+            return {
+                "status": "duplicate",
+                "paper_id": existing.get("paper_id"),
+                "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
+            }
 
-    # 冲突检查：paper_id 已存在但 sha256 不同
-    existing_by_pid = manifest.get(paper_id)
-    if existing_by_pid and existing_by_pid.get("sha256") != file_sha256:
-        os.unlink(tmp_path)  # 只删 tmp，不碰已有 raw
-        raise HTTPException(
-            409,
-            f"paper_id={paper_id} 已存在但内容不同，"
-            f"不允许覆盖。若需替换请先手动删除旧文献。")
-
-    # final_path 冲突检查：同名文件已存在但内容不同
-    if save_path.exists():
-        from src.file_fingerprint import compute_sha256
-        existing_raw_sha = compute_sha256(save_path)
-        if existing_raw_sha != file_sha256:
+        # 冲突检查：paper_id 已存在但 sha256 不同
+        existing_by_pid = manifest.get(paper_id)
+        if existing_by_pid and existing_by_pid.get("sha256") != file_sha256:
             os.unlink(tmp_path)
             raise HTTPException(
                 409,
-                f"同名文件 {safe_filename} 已存在且内容不同，"
-                f"不允许覆盖。请改名后重新上传。")
-        # 内容相同：复用已有 raw 文件，删除本次 tmp
-        os.unlink(tmp_path)
-        logger.info(f"同名同内容文件已存在，复用: {save_path}")
-    else:
-        # 安全检查全部通过，原子移动到目标位置
-        os.replace(tmp_path, str(save_path))
+                f"paper_id={paper_id} 已存在但内容不同，"
+                f"不允许覆盖。若需替换请先手动删除旧文献。")
+
+        # final_path 冲突检查：同名文件已存在但内容不同
+        if save_path.exists():
+            from src.file_fingerprint import compute_sha256
+            existing_raw_sha = compute_sha256(save_path)
+            if existing_raw_sha != file_sha256:
+                os.unlink(tmp_path)
+                raise HTTPException(
+                    409,
+                    f"同名文件 {safe_filename} 已存在且内容不同，"
+                    f"不允许覆盖。请改名后重新上传。")
+            # 内容相同：复用已有 raw 文件，删除本次 tmp
+            os.unlink(tmp_path)
+            logger.info(f"同名同内容文件已存在，复用: {save_path}")
+        else:
+            # 安全检查全部通过，原子移动到目标位置
+            os.replace(tmp_path, str(save_path))
+
+    # --- 锁释放，后续转换不在锁内（避免长阻塞）---
 
     tmp_out = MINERU_TMP_DIR / paper_id
     try:
@@ -264,7 +277,8 @@ async def upload(
         # cleaner 默认不覆盖已有 paper 目录（与 dedup 一致）
         stem = Path(file.filename).stem
         clean = cleaner.extract(result["output_dir"], paper_id,
-                                overwrite=False, method=method, stem=stem)
+                                overwrite=False, method=method, stem=stem,
+                                backend=backend)
         if not clean["success"]:
             raise HTTPException(500, f"清理失败: {clean.get('error')}")
 

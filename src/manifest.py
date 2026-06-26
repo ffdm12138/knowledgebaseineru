@@ -27,16 +27,32 @@ class PaperManifest:
     def _lock_path(self) -> Path:
         return self.path.with_suffix(self.path.suffix + ".lock")
 
-    def _load(self) -> dict:
+    @staticmethod
+    def _empty_data() -> dict:
+        return {
+            "version": "0.1",
+            "description": "System-maintained file ledger of converted papers.",
+            "papers": [],
+        }
+
+    def _load(self, strict: bool = False) -> dict:
+        """读取 manifest JSON。
+
+        strict=False：只读场景，损坏时 warning + 返回空结构。
+        strict=True：写操作场景，损坏时抛 RuntimeError，防止静默覆盖。
+        """
         if not self.path.exists():
-            return {"version": "0.1", "description": "System-maintained file ledger of converted papers.",
-                    "papers": []}
+            return self._empty_data()
         try:
             return json.loads(self.path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError) as e:
-            logger.warning(f"manifest 读取失败，重建: {e}")
-            return {"version": "0.1", "description": "System-maintained file ledger of converted papers.",
-                    "papers": []}
+            logger.error(f"manifest JSON 解析失败: {e}")
+            if strict:
+                raise RuntimeError(
+                    f"manifest JSON 损坏 ({self.path})，"
+                    f"拒绝写操作以防静默覆盖。请手动修复或从备份恢复。") from e
+            logger.warning(f"manifest 读取失败，返回空结构（只读）: {e}")
+            return self._empty_data()
 
     def _save_raw(self, data: dict) -> None:
         """无锁原子写入：调用方已持有锁时使用"""
@@ -72,10 +88,11 @@ class PaperManifest:
         return None
 
     def _locked_update(self, fn) -> None:
-        """事务级锁：锁住完整的读-改-写周期，避免并发覆盖"""
+        """事务级锁：锁住完整的读-改-写周期，避免并发覆盖。
+        JSON 损坏时抛 RuntimeError，防止静默覆盖成空库。"""
         lock = FileLock(str(self._lock_path))
         with lock:
-            data = self._load()
+            data = self._load(strict=True)
             fn(data)
             self._save_raw(data)
 

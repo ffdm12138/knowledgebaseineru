@@ -1,0 +1,80 @@
+"""测试 cleaner hybrid_auto/vlm_auto 目录兼容 + backend 优先级"""
+import tempfile
+from pathlib import Path
+from src.cleaner import MinerUOutputCleaner
+
+
+def _make(path: Path, content: str = "# test"):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+
+
+def test_method_auto_finds_hybrid_auto():
+    """method=auto + backend=hybrid-engine 应命中 hybrid_auto"""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td) / "stem"
+        _make(d / "hybrid_auto" / "stem.md", "# hybrid auto content")
+        c = MinerUOutputCleaner()
+        found = c.locate_markdown(d, method="auto", stem="stem",
+                                  backend="hybrid-engine")
+        assert found is not None
+        assert found.parent.name == "hybrid_auto"
+
+
+def test_method_auto_finds_vlm_auto():
+    """method=auto + backend=vlm-engine 应命中 vlm_auto"""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td) / "stem"
+        _make(d / "vlm_auto" / "stem.md", "# vlm auto content")
+        c = MinerUOutputCleaner()
+        found = c.locate_markdown(d, method="auto", stem="stem",
+                                  backend="vlm-engine")
+        assert found is not None
+        assert found.parent.name == "vlm_auto"
+
+
+def test_method_ocr_only_hybrid_auto_exists_fails():
+    """method=ocr 但只有 hybrid_auto → 应失败，不 fallback"""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td) / "stem"
+        _make(d / "hybrid_auto" / "stem.md", "# wrong method")
+        c = MinerUOutputCleaner()
+        found = c.locate_markdown(d, method="ocr", stem="stem")
+        assert found is None  # ocr 不接受 hybrid_auto
+
+
+def test_auto_and_hybrid_auto_prioritizes_by_backend():
+    """auto + hybrid_auto 同时存在，backend=hybrid-engine → 选 hybrid_auto"""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td) / "stem"
+        _make(d / "auto" / "stem.md", "# plain auto")
+        _make(d / "hybrid_auto" / "stem.md", "# hybrid auto")
+        c = MinerUOutputCleaner()
+        found = c.locate_markdown(d, method="auto", stem="stem",
+                                  backend="hybrid-engine")
+        assert found is not None
+        assert found.parent.name == "hybrid_auto"
+
+
+def test_auto_and_hybrid_auto_no_backend_returns_none():
+    """auto + hybrid_auto 同时存在，backend=None → 返回 None（无法确定）"""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td) / "stem"
+        _make(d / "auto" / "stem.md", "# plain auto")
+        _make(d / "hybrid_auto" / "stem.md", "# hybrid auto")
+        c = MinerUOutputCleaner()
+        found = c.locate_markdown(d, method="auto", stem="stem", backend=None)
+        assert found is None  # 无法确定优先级
+
+
+def test_method_dirs_map():
+    """_method_dirs 返回正确的目录映射"""
+    c = MinerUOutputCleaner()
+    assert "auto" in c._method_dirs("auto")
+    assert "hybrid_auto" in c._method_dirs("auto")
+    assert "vlm_auto" in c._method_dirs("auto")
+    assert "ocr" in c._method_dirs("ocr")
+    assert "hybrid_ocr" in c._method_dirs("ocr")
+    # backend 优先级
+    dirs = c._method_dirs("auto", backend="hybrid-engine")
+    assert dirs[0] == "hybrid_auto"  # hybrid-engine 优先 hybrid_

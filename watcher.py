@@ -95,7 +95,8 @@ def process_file(f: Path, backend: str, method: str, effort: str,
         return False
 
     # 6. 清理
-    clean = cleaner.extract(result["output_dir"], paper_id, overwrite=False)
+    clean = cleaner.extract(result["output_dir"], paper_id, overwrite=False,
+                            method=method, stem=f.stem, backend=backend)
     if not clean["success"]:
         logger.error(f"  清理失败: {clean.get('error')}")
         return False
