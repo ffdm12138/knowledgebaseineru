@@ -217,6 +217,29 @@ async def upload(
         f"收到文件: {file.filename} ({file_size} bytes, "
         f"sha256={file_sha256[:12]}…) -> paper_id={paper_id}")
 
+    # --- 去重检查：相同 sha256 不重复转换 ---
+    existing = manifest.find_by_sha256(file_sha256)
+    if existing:
+        # 删除刚上传的重复 raw 文件（或保留旧文件，不覆盖）
+        if os.path.exists(str(save_path)):
+            os.unlink(str(save_path))
+        return {
+            "status": "duplicate",
+            "paper_id": existing.get("paper_id"),
+            "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
+        }
+
+    # --- 冲突检查：文件名相同但 sha256 不同 ---
+    existing_by_pid = manifest.get(paper_id)
+    if existing_by_pid and existing_by_pid.get("sha256") != file_sha256:
+        # paper_id 已存在但内容不同，默认拒绝覆盖
+        if os.path.exists(str(save_path)):
+            os.unlink(str(save_path))
+        raise HTTPException(
+            409,
+            f"paper_id={paper_id} 已存在但内容不同，"
+            f"不允许覆盖。若需替换请先手动删除旧文献。")
+
     tmp_out = MINERU_TMP_DIR / paper_id
     try:
         result = converter.convert(
@@ -226,8 +249,10 @@ async def upload(
         if not result["success"]:
             raise HTTPException(500, f"转换失败: {result.get('error')}")
 
-        # cleaner 从 tmp 提取到 papers/<paper_id>/
-        clean = cleaner.extract(result["output_dir"], paper_id, overwrite=True)
+        # cleaner 默认不覆盖已有 paper 目录（与 dedup 一致）
+        stem = Path(file.filename).stem
+        clean = cleaner.extract(result["output_dir"], paper_id,
+                                overwrite=False, method=method, stem=stem)
         if not clean["success"]:
             raise HTTPException(500, f"清理失败: {clean.get('error')}")
 
@@ -409,8 +434,14 @@ def _check_job_id(job_id: str) -> None:
 @app.post("/write/jobs")
 async def create_write_job(req: CreateJobRequest):
     """创建写作任务：生成 write/<job>/ 目录 + normalized_task 骨架"""
+    # API 不接受 input_file 路径（防本地任意文件读取）
+    if req.input_file:
+        raise HTTPException(
+            400,
+            "HTTP API 不接受本地 input_file 路径；请通过 topic 参数传入研究文本。"
+            "CLI 写作用 input_file 请用 scripts/write_review.py。")
     try:
-        info = job_manager.create(topic=req.topic, input_file=req.input_file,
+        info = job_manager.create(topic=req.topic, input_file=None,
                                   target=req.target, language=req.language)
     except (ValueError, FileNotFoundError) as e:
         raise HTTPException(400, str(e))

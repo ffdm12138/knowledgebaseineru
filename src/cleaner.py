@@ -22,35 +22,64 @@ from config.settings import PAPERS_DIR
 class MinerUOutputCleaner:
     """清理 MinerU 输出，只保留 paper.md + images/"""
 
-    def locate_markdown(self, source_dir: Path) -> Path | None:
+    def locate_markdown(self, source_dir: Path,
+                        method: str | None = None,
+                        stem: str | None = None) -> Path | None:
         """在 MinerU 输出目录中定位正文 Markdown。
 
-        MinerU 3.4 输出结构多变：
-          - <stem>/<method>/<stem>.md
-          - <stem>.md 直接在目录下
-        正文 md 文件名通常等于 stem，且不含 _model/_middle/_content_list 等。
+        MinerU 3.4 输出结构：
+          - <stem>/<method>/<stem>.md  (最常见)
+          - <stem>/<stem>.md
+        选择规则（确定性，不依赖 rglob 顺序）：
+          a. 若提供 method + stem → exact <stem>/<method>/<stem>.md
+          b. 若 source_dir 下唯一 .md → 取它
+          c. 若 method 目录下唯一 .md → 取它
+          d. 多个 method 候选 → 返回 None 并列出候选
         """
         source_dir = Path(source_dir)
         if not source_dir.exists():
             return None
 
-        # 递归找所有 .md，按确定性规则选择
+        # a. exact path（若提供了 method 和 stem）
+        if method and stem:
+            exact = source_dir / stem / method / f"{stem}.md"
+            if exact.is_file():
+                return exact
+            # fallback: 试试 auto
+            exact_auto = source_dir / stem / "auto" / f"{stem}.md"
+            if exact_auto.is_file():
+                return exact_auto
+
         candidates = list(source_dir.rglob("*.md"))
         if not candidates:
             return None
         if len(candidates) == 1:
             return candidates[0]
 
-        # 多个候选：优先 exact path <stem>/<method>/<stem>.md
+        # b. 多个候选：查找标准 method 目录下的 md
         known_methods = {"auto", "txt", "ocr", "hybrid_auto", "hybrid_txt",
                          "hybrid_ocr", "vlm_auto", "vlm_txt", "vlm_ocr"}
-        for cand in candidates:
-            if cand.parent.name in known_methods:
-                return cand
+        method_cands = [c for c in candidates if c.parent.name in known_methods]
 
-        # 仍不唯一：报错列出所有候选，让调用方决定（不静默选最大）
+        if len(method_cands) == 1:
+            return method_cands[0]
+
+        if len(method_cands) > 1:
+            # 多个 method 候选，按 method 优先级选（若指定了 method 则优先）
+            if method:
+                for c in method_cands:
+                    if c.parent.name == method or c.parent.name.endswith(f"_{method}"):
+                        return c
+            # 仍未唯一：报错列出所有候选
+            names = ", ".join(str(c.relative_to(source_dir)) for c in method_cands)
+            logger.error(
+                f"多个 method 目录候选 md 文件，无法确定正文: {names}。"
+                f"请指定 method 参数或清理残留输出。")
+            return None
+
+        # c. 无 method 目录候选：报错列全部候选取向
         names = ", ".join(str(c.relative_to(source_dir)) for c in candidates)
-        logger.error(f"多个候选 md 文件，无法确定正文: {names}")
+        logger.error(f"多个候选 md 文件且不在标准 method 目录，无法确定正文: {names}")
         return None
 
     def locate_images_dir(self, source_dir: Path, md_path: Path) -> Path | None:
@@ -66,10 +95,16 @@ class MinerUOutputCleaner:
         return None
 
     def extract(self, source_dir: str | Path, paper_id: str,
-                overwrite: bool = False) -> dict:
+                overwrite: bool = False,
+                method: str | None = None,
+                stem: str | None = None) -> dict:
         """从 MinerU 原始输出目录提取 paper.md + images 到 data/papers/<paper_id>/
 
         覆盖保护：默认 overwrite=False，目标已存在则报错；overwrite=True 先备份再重建。
+
+        Args:
+            method: MinerU 解析方法 (auto/ocr/txt)，用于确定性定位正文 md
+            stem: 输入文件名 stem，用于 exact path 匹配
 
         Returns:
             {
@@ -91,7 +126,7 @@ class MinerUOutputCleaner:
             return {"success": False, "paper_id": paper_id,
                     "error": f"Invalid paper_id: {e}"}
 
-        md_path = self.locate_markdown(source_dir)
+        md_path = self.locate_markdown(source_dir, method=method, stem=stem)
         if md_path is None:
             msg = f"未在 {source_dir} 找到正文 Markdown"
             logger.error(msg)

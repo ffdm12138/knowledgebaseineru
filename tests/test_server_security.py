@@ -132,11 +132,11 @@ def test_read_fulltext_empty_paper_ids():
     "..\\..\\windows\\system32\\config\\sam",
 ])
 def test_create_job_rejects_arbitrary_input_file(bad_input_file):
-    """create job 拒绝 input_file 绝对路径和路径穿越"""
+    """create job 拒绝所有 input_file（HTTP API 不接受本地文件路径）"""
     resp = client.post("/write/jobs", json={
         "topic": "test topic",
         "input_file": bad_input_file,
     })
     assert resp.status_code == 400, f"Expected 400, got {resp.status_code}: {resp.text}"
-    assert ("绝对路径" in resp.text or "路径穿越" in resp.text), \
-        f"Error message should mention path restriction: {resp.text}"
+    assert "input_file" in resp.text.lower() or "input_file" in resp.text, \
+        f"Error message should mention input_file restriction: {resp.text}"

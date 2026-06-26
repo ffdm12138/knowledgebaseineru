@@ -53,7 +53,7 @@ images 数量: {len(images)}
 - 不要编造书目信息，未知的留空
 - 用简洁技术中文填写 ai_summary 各子字段
 - main_findings 要具体，不要泛泛而谈
-- relevance_to_my_work 结合"{RESEARCH_DOMAIN}"研究方向
+- relevance_to_my_work 结合"{RESEARCH_DOMAIN or '用户当前研究主题或通用科研价值判断'}"研究方向
 - priority 取 1-5
 
 输出严格为单个 JSON 对象，字段齐全。

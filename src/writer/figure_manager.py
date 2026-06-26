@@ -37,23 +37,27 @@ def copy_figures(job_id: str, figures: list[dict] | None = None,
 
     copied = []
     used = []
+    skipped = []
     for item in figures:
         pid = item.get("paper_id")
         img = item.get("image")
         if not pid or not img:
+            skipped.append({"paper_id": pid, "image": img, "reason": "缺少 paper_id 或 image"})
             continue
         # 防路径穿越：校验 pid + img，使用 safe_child 拼接
         try:
             validate_paper_id(pid)
             validate_image_name(img)
-        except ValueError:
+            src = safe_child(PAPERS_DIR, pid, "images", img)
+            dest_dir = safe_child(jdir, "figures", pid)
+        except ValueError as e:
+            skipped.append({"paper_id": pid, "image": img, "reason": str(e)})
             continue
-        src = safe_child(PAPERS_DIR, pid, "images", img)
         if not src.is_file():
+            skipped.append({"paper_id": pid, "image": img, "reason": f"源文件不存在: {src}"})
             continue
-        dest_dir = jdir / "figures" / pid
         dest_dir.mkdir(parents=True, exist_ok=True)
-        dest = dest_dir / img
+        dest = dest_dir / img  # img 已通过 validate_image_name，不含路径分隔符
         shutil.copy2(src, dest)
 
         # source record README（按图追加，含 original_path）
@@ -81,4 +85,4 @@ def copy_figures(job_id: str, figures: list[dict] | None = None,
                      "original_path": f"data/papers/{pid}/images/{img}"})
 
     jm.set_step(job_id, "figures_copied", True, extra={"used_figures": used})
-    return {"copied": copied, "used_figures": used}
+    return {"copied": copied, "used_figures": used, "skipped": skipped}

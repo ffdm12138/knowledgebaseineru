@@ -36,12 +36,12 @@ def _slugify(topic: str) -> str:
     return s.strip() or "untitled"
 
 
-def _next_job_num() -> int:
-    """扫描 write/ 找最大编号 +1"""
-    if not WRITE_DIR.exists():
+def _next_job_num(write_dir: Path = WRITE_DIR) -> int:
+    """扫描 write_dir/ 找最大编号 +1"""
+    if not write_dir.exists():
         return 1
     max_n = 0
-    for d in WRITE_DIR.iterdir():
+    for d in write_dir.iterdir():
         m = re.match(r"^(\d+)_", d.name)
         if m:
             max_n = max(max_n, int(m.group(1)))
@@ -54,11 +54,11 @@ def _job_id_suffix() -> str:
     return format(datetime.now().microsecond, '06x')
 
 
-def _empty_run_meta(job_id: str, topic: str, input_type: str,
+def _empty_run_meta(job_id: str, job_dir: Path, topic: str, input_type: str,
                     target: str, language: str) -> dict:
     return {
         "job_id": job_id,
-        "job_dir": str(WRITE_DIR / job_id),
+        "job_dir": str(job_dir),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "updated_at": datetime.now().isoformat(timespec="seconds"),
         "input_type": input_type,
@@ -208,7 +208,7 @@ class JobManager:
                 topic = input_text[:60]
 
         slug = _slugify(topic or "untitled")
-        num = _next_job_num()
+        num = _next_job_num(self.write_dir)
         suffix = _job_id_suffix()
         job_id = f"{num:03d}_{slug}_{suffix}"
         jdir = self.job_dir(job_id)
@@ -221,7 +221,8 @@ class JobManager:
 
         # run_meta.json
         input_type = "input_file" if input_file else "topic_text"
-        meta = _empty_run_meta(job_id, topic or slug, input_type, target, language)
+        meta = _empty_run_meta(job_id, jdir, topic or slug, input_type,
+                               target, language)
         self.save_meta(job_id, meta)
 
         logger.info(f"创建写作任务: {job_id} -> {jdir}")

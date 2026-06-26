@@ -40,7 +40,8 @@ class Catalog:
     def _lock_path(self) -> Path:
         return self.path.with_suffix(self.path.suffix + ".lock")
 
-    def load(self) -> dict:
+    def _load_raw(self) -> dict:
+        """无锁读取原始 JSON（调用方持有锁时使用）"""
         if not self.path.exists():
             return {"version": "0.1", "description": "", "papers": []}
         try:
@@ -49,17 +50,32 @@ class Catalog:
             logger.error(f"catalog JSON 解析失败: {e}")
             return {"version": "0.1", "description": "", "papers": []}
 
-    def save(self, data: dict) -> None:
-        """原子写入：加锁 → 写 tmp → 校验 JSON → os.replace → 解锁"""
+    def load(self) -> dict:
+        return self._load_raw()
+
+    def _save_raw_unlocked(self, data: dict) -> None:
+        """无锁原子写入：调用方已持有锁时使用（写 tmp → 校验 → os.replace）"""
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        lock = FileLock(str(self._lock_path))
         raw = json.dumps(data, ensure_ascii=False, indent=2)
         tmp = self.path.with_suffix(self.path.suffix + ".tmp")
+        tmp.write_text(raw, encoding="utf-8")
+        # 校验写入完整性：回读确认可解析
+        json.loads(tmp.read_text(encoding="utf-8"))
+        os.replace(tmp, self.path)
+
+    def save(self, data: dict) -> None:
+        """原子写入：加锁 → 写 tmp → 校验 JSON → os.replace → 解锁"""
+        lock = FileLock(str(self._lock_path))
         with lock:
-            tmp.write_text(raw, encoding="utf-8")
-            # 校验写入完整性：回读确认可解析
-            json.loads(tmp.read_text(encoding="utf-8"))
-            os.replace(tmp, self.path)
+            self._save_raw_unlocked(data)
+
+    def _locked_update(self, fn) -> None:
+        """事务级锁：锁住完整 load → modify → save 周期，避免并发覆盖"""
+        lock = FileLock(str(self._lock_path))
+        with lock:
+            data = self._load_raw()
+            fn(data)
+            self._save_raw_unlocked(data)
 
     def list_papers(self) -> list[dict]:
         return self.load().get("papers", [])
@@ -74,26 +90,28 @@ class Catalog:
         return self.get(paper_id) is not None
 
     def upsert(self, entry: dict) -> None:
-        data = self.load()
-        papers = data.get("papers", [])
-        for i, p in enumerate(papers):
-            if p.get("paper_id") == entry.get("paper_id"):
-                papers[i] = entry
-                break
-        else:
-            papers.append(entry)
-        data["papers"] = papers
-        self.save(data)
+        def _fn(data):
+            papers = data.get("papers", [])
+            for i, p in enumerate(papers):
+                if p.get("paper_id") == entry.get("paper_id"):
+                    papers[i] = entry
+                    break
+            else:
+                papers.append(entry)
+            data["papers"] = papers
+        self._locked_update(_fn)
 
     def delete(self, paper_id: str) -> bool:
-        data = self.load()
-        papers = data.get("papers", [])
-        new = [p for p in papers if p.get("paper_id") != paper_id]
-        if len(new) == len(papers):
-            return False
-        data["papers"] = new
-        self.save(data)
-        return True
+        deleted = [False]
+
+        def _fn(data):
+            papers = data.get("papers", [])
+            new = [p for p in papers if p.get("paper_id") != paper_id]
+            if len(new) != len(papers):
+                data["papers"] = new
+                deleted[0] = True
+        self._locked_update(_fn)
+        return deleted[0]
 
     def validate(self) -> list[str]:
         """返回错误信息列表，空表示通过"""
