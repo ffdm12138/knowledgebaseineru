@@ -22,6 +22,9 @@ output/
 .DS_Store
 Thumbs.db
 
+# ===== 仓库快照 zip（pack_repo.py 生成，不入库）=====
+mineru_snapshot*.zip
+
 # ===== IDE =====
 .vscode/
 .idea/

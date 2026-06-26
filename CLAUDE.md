@@ -8,6 +8,9 @@ Claude Code 在本仓库工作的指南。
 
 > **重要**：本项目**不做向量检索 / RAG / 语义搜索**。重构时已删除 ChromaDB、chunker、indexer、retriever、embedding 模型。所有 `/prompt/*` 接口**只生成可复制粘贴的 prompt，不调用任何 LLM**——仓库里没有任何 LLM client。`data/raw/` 中的语料是雪科学 / 风吹雪文献，但代码与领域无关。
 
+> **⚠️ 每次代码改动完成后，必须运行 `python scripts/pack_repo.py` 生成 `mineru_snapshot.zip`。**
+> GitHub/Gitee 提交后缓存有延迟，zip 快照可直接分发当前最新代码。zip 已加入 `.gitignore`，不会死循环。
+
 ## 设计原则
 
 1. PDF 只放 `data/raw/`。
