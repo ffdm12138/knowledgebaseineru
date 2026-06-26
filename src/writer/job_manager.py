@@ -50,6 +50,7 @@ def _empty_run_meta(job_id: str, topic: str, input_type: str,
                     target: str, language: str) -> dict:
     return {
         "job_id": job_id,
+        "job_dir": str(WRITE_DIR / job_id),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "updated_at": datetime.now().isoformat(timespec="seconds"),
         "input_type": input_type,
@@ -58,16 +59,22 @@ def _empty_run_meta(job_id: str, topic: str, input_type: str,
         "topic": topic,
         "status": "created",
         "steps": {
-            "catalog_matched": False,
-            "deep_reading_done": False,
-            "story_built": False,
-            "tex_generated": False,
+            "catalog_match_prompt_generated": False,
+            "catalog_selection_confirmed": False,
+            "deep_read_prompt_generated": False,
+            "deep_read_notes_filled": False,
+            "story_prompt_generated": False,
+            "story_plan_filled": False,
+            "tex_template_generated": False,
+            "tex_content_filled": False,
             "figures_copied": False,
+            "bib_exported": False,
             "validated": False,
         },
         "selected_papers": [],
         "used_bib_keys": [],
         "used_figures": [],
+        "notes": [],
     }
 
 
@@ -106,16 +113,63 @@ class JobManager:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    def touch(self, job_id: str) -> None:
+        """仅刷新 updated_at"""
+        meta = self.load_meta(job_id)
+        if meta is not None:
+            self.save_meta(job_id, meta)
+
     def set_step(self, job_id: str, step: str, value: bool = True,
                  extra: dict | None = None) -> dict:
         meta = self.load_meta(job_id)
         if meta is None:
             raise FileNotFoundError(f"任务不存在: {job_id}")
+        if step not in meta["steps"]:
+            raise KeyError(f"未知 step: {step}")
         meta["steps"][step] = value
         if extra:
             meta.update(extra)
         self.save_meta(job_id, meta)
         return meta
+
+    def set_status(self, job_id: str, status: str) -> dict:
+        meta = self.load_meta(job_id)
+        if meta is None:
+            raise FileNotFoundError(f"任务不存在: {job_id}")
+        meta["status"] = status
+        self.save_meta(job_id, meta)
+        return meta
+
+    def set_selected_papers(self, job_id: str, paper_ids: list[str]) -> dict:
+        meta = self.load_meta(job_id)
+        if meta is None:
+            raise FileNotFoundError(f"任务不存在: {job_id}")
+        meta["selected_papers"] = list(paper_ids)
+        self.save_meta(job_id, meta)
+        return meta
+
+    def append_note(self, job_id: str, note: str) -> dict:
+        meta = self.load_meta(job_id)
+        if meta is None:
+            raise FileNotFoundError(f"任务不存在: {job_id}")
+        meta.setdefault("notes", []).append(
+            f"[{datetime.now().isoformat(timespec='seconds')}] {note}")
+        self.save_meta(job_id, meta)
+        return meta
+
+    def step_is(self, job_id: str, step: str) -> bool:
+        """安全查询某 step 是否为 True"""
+        meta = self.load_meta(job_id)
+        if meta is None:
+            return False
+        return bool(meta.get("steps", {}).get(step, False))
+
+    def require_step(self, job_id: str, step: str, action: str) -> None:
+        """前置校验：若 step 未完成则抛 RuntimeError，提示先做某动作"""
+        if not self.step_is(job_id, step):
+            raise RuntimeError(
+                f"Cannot {action}: run_meta.steps.{step} is not True. "
+                f"请先完成前置步骤。")
 
     def create(self, topic: str | None = None, input_file: str | None = None,
                target: str = "phd_thesis", language: str = "zh") -> dict:

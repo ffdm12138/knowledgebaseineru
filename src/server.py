@@ -47,12 +47,13 @@ from src.prompt_builder import PromptBuilder
 from src.naming import derive_paper_id
 from src.writer.job_manager import JobManager
 from src.writer.topic_parser import normalize_task
-from src.writer.catalog_matcher import match_catalog
-from src.writer.deep_reader import deep_read
-from src.writer.story_builder import build_story
-from src.writer.tex_project import build_tex
+from src.writer.catalog_matcher import match_catalog, confirm_selected_papers
+from src.writer.deep_reader import deep_read, mark_deep_reading_filled
+from src.writer.story_builder import build_story, mark_story_filled
+from src.writer.tex_project import build_tex, mark_tex_content_filled
 from src.writer.figure_manager import copy_figures
-from src.writer.bib_manager import validate_job_citations, portability_check
+from src.writer.bib_manager import (validate_job_citations, portability_check,
+                                    validate_catalog_citations)
 
 # ========== 初始化 ==========
 
@@ -107,7 +108,22 @@ class CreateJobRequest(BaseModel):
 
 
 class DeepReadRequest(BaseModel):
+    paper_ids: list[str] | None = None
+
+
+class ConfirmPapersRequest(BaseModel):
     paper_ids: list[str]
+    confirmed_by: str = "api"
+
+
+class CopyFiguresRequest(BaseModel):
+    figures: list[dict] | None = None
+
+
+class BuildTexRequest(BaseModel):
+    title: str | None = None
+    force: bool = False
+    template_only: bool = False
 
 
 # ========== 首页 ==========
@@ -342,60 +358,99 @@ async def write_match_catalog(job_id: str):
     return match_catalog(job_id, jm=job_manager, catalog=catalog)
 
 
-@app.post("/write/jobs/{job_id}/deep-read")
-async def write_deep_read(job_id: str, req: DeepReadRequest):
+@app.post("/write/jobs/{job_id}/confirm-papers")
+async def write_confirm_papers(job_id: str, req: ConfirmPapersRequest):
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     if not req.paper_ids:
         raise HTTPException(400, "paper_ids 不能为空")
-    return deep_read(job_id, req.paper_ids, jm=job_manager,
-                     library=library, catalog=catalog)
+    selected = [{"paper_id": pid, "reason": "", "expected_use": "", "priority": 3}
+                for pid in req.paper_ids]
+    try:
+        return confirm_selected_papers(job_id, selected,
+                                       confirmed_by=req.confirmed_by,
+                                       jm=job_manager, catalog=catalog)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/write/jobs/{job_id}/deep-read")
+async def write_deep_read(job_id: str, req: DeepReadRequest):
+    if not job_manager.load_meta(job_id):
+        raise HTTPException(404, f"任务不存在: {job_id}")
+    try:
+        return deep_read(job_id, req.paper_ids, jm=job_manager,
+                         library=library, catalog=catalog)
+    except RuntimeError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/write/jobs/{job_id}/mark-deep-read")
+async def write_mark_deep_read(job_id: str):
+    if not job_manager.load_meta(job_id):
+        raise HTTPException(404, f"任务不存在: {job_id}")
+    info = mark_deep_reading_filled(job_id, jm=job_manager)
+    if not info["filled"]:
+        raise HTTPException(400, "精读笔记校验未通过: " + "; ".join(info["errors"]))
+    return info
 
 
 @app.post("/write/jobs/{job_id}/build-story")
 async def write_build_story(job_id: str):
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
-    return build_story(job_id, jm=job_manager)
+    try:
+        return build_story(job_id, jm=job_manager, catalog=catalog)
+    except RuntimeError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/write/jobs/{job_id}/mark-story")
+async def write_mark_story(job_id: str):
+    if not job_manager.load_meta(job_id):
+        raise HTTPException(404, f"任务不存在: {job_id}")
+    info = mark_story_filled(job_id, jm=job_manager)
+    if not info["filled"]:
+        raise HTTPException(400, "故事线校验未通过: " + "; ".join(info["errors"]))
+    return info
 
 
 @app.post("/write/jobs/{job_id}/build-tex")
-async def write_build_tex(job_id: str):
+async def write_build_tex(job_id: str, req: BuildTexRequest):
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
-    return build_tex(job_id, jm=job_manager, catalog=catalog)
+    try:
+        return build_tex(job_id, title=req.title, force=req.force,
+                         template_only=req.template_only,
+                         jm=job_manager, catalog=catalog, library=library)
+    except RuntimeError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/write/jobs/{job_id}/mark-tex")
+async def write_mark_tex(job_id: str):
+    if not job_manager.load_meta(job_id):
+        raise HTTPException(404, f"任务不存在: {job_id}")
+    info = mark_tex_content_filled(job_id, jm=job_manager)
+    if not info["filled"]:
+        raise HTTPException(400, "TeX 正文校验未通过: " + "; ".join(info["errors"]))
+    return info
 
 
 @app.post("/write/jobs/{job_id}/copy-figures")
-async def write_copy_figures(job_id: str):
+async def write_copy_figures(job_id: str, req: CopyFiguresRequest):
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
-    return copy_figures(job_id, jm=job_manager)
+    return copy_figures(job_id, figures=req.figures, jm=job_manager, catalog=catalog)
 
 
 @app.post("/write/jobs/{job_id}/validate")
 async def write_validate(job_id: str):
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
-    # 文件齐全性 + \cite 一致性
-    from pathlib import Path as _P
-    jdir = job_manager.job_dir(job_id)
-    errors = []
-    must = {"tex/main.tex": jdir / "tex" / "main.tex",
-            "tex/sections/introduction.tex": jdir / "tex" / "sections" / "introduction.tex",
-            "tex/sections/method.tex": jdir / "tex" / "sections" / "method.tex",
-            "tex/references.bib": jdir / "tex" / "references.bib"}
-    for name, p in must.items():
-        if not p.exists():
-            errors.append(f"缺少 {name}")
-    cite = validate_job_citations(job_id, jm=job_manager)
-    errors += [f"\\cite{{{k}}} 在 references.bib 中找不到" for k in cite["missing_in_bib"]]
-    port = portability_check(job_id, jm=job_manager)
-    errors += port["errors"]
-    job_manager.set_step(job_id, "validated", len(errors) == 0)
-    return {"valid": len(errors) == 0, "errors": errors,
-            "portable": port["portable"], "portability_note": port["note"],
-            "cited_keys": cite["cited_keys"], "bib_keys": cite["bib_keys"]}
+    import importlib
+    vwj = importlib.import_module("scripts.validate_write_job")
+    return vwj.validate_job(job_id, jm=job_manager)
 
 
 # ========== 状态 ==========

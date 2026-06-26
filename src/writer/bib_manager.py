@@ -1,21 +1,159 @@
-"""任务级 BibTeX：从全局 references.bib 抽取 + 校验 \cite{} 一致性"""
+"""任务级 BibTeX：catalog citation 校验 + 全局库原子同步 + job bib 导出 + \\cite 一致性"""
 import re
+from datetime import datetime
 from pathlib import Path
 
 from src.writer.job_manager import JobManager
+from src.writer.catalog_matcher import load_selected
+from src.catalog import Catalog
 from src import bib as bibmod
+from config.settings import CATALOG_PATH
 
 
-def export_job_bib(job_id: str, bib_keys: list[str],
+def validate_catalog_citations(catalog_data: dict | None = None) -> list[str]:
+    """校验 catalog 中每篇的 citation 字段。返回错误列表（空=通过）。
+
+    检查：有 citation；bib_key 非空且唯一；bibtex 非空且以 @ 开头；
+    bibtex entry key == citation.bib_key；bibtex 含 title/author/year；
+    DOI 有则 warning（不计入 fatal）。
+    """
+    cat = catalog_data or Catalog().load()
+    errors = []
+    warnings = []
+    seen = set()
+    for p in cat.get("papers", []):
+        ctx = f"paper_id={p.get('paper_id', '?')}"
+        cit = p.get("citation", {}) or {}
+        if not cit:
+            errors.append(f"{ctx} 无 citation")
+            continue
+        bk = cit.get("bib_key")
+        if not bk:
+            errors.append(f"{ctx} citation.bib_key 为空")
+        elif bk in seen:
+            errors.append(f"{ctx} bib_key 重复: {bk}")
+        else:
+            seen.add(bk)
+        bt = (cit.get("bibtex") or "").strip()
+        if not bt:
+            errors.append(f"{ctx} citation.bibtex 为空")
+            continue
+        if not bt.startswith("@"):
+            errors.append(f"{ctx} bibtex 应以 @ 开头")
+            continue
+        # entry key == bib_key
+        m = re.match(r"@\w+\s*\{\s*([^,\s]+)", bt)
+        if m and m.group(1) != bk:
+            errors.append(f"{ctx} bibtex entry key({m.group(1)}) != bib_key({bk})")
+        for field in ["title", "author", "year"]:
+            if not re.search(rf"\b{field}\s*=", bt, re.IGNORECASE):
+                errors.append(f"{ctx} bibtex 缺少 {field} 字段")
+        doi = p.get("doi")
+        if doi and "doi" not in bt.lower():
+            warnings.append(f"{ctx} catalog 有 doi 但 bibtex 未写 doi")
+    return errors  # 仅 fatal；warnings 由调用方按需处理
+
+
+def sync_from_catalog(backup: bool = True) -> Path:
+    """同步生成 data/catalog/references.bib，带校验 + 备份 + 原子写入。
+
+    流程：validate → 备份旧文件 → 写 tmp → 校验 tmp 非空 → 原子替换。
+    """
+    cat = Catalog().load()
+    errors = validate_catalog_citations(cat)
+    if errors:
+        raise RuntimeError(f"catalog citation 校验未通过，拒绝同步 references.bib:\n"
+                           + "\n".join(errors))
+
+    blocks = []
+    for p in cat.get("papers", []):
+        bt = ((p.get("citation") or {}).get("bibtex") or "").strip()
+        if bt:
+            blocks.append(bt)
+    text = ("% 由 literature_catalog.json 自动同步生成，请勿手动编辑。\n\n"
+            + "\n\n".join(blocks) + "\n")
+
+    dest = bibmod.GLOBAL_BIB_PATH
+    dest.parent.mkdir(parents=True, exist_ok=True)
+
+    # 备份
+    if backup and dest.exists():
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        bak = dest.with_name(dest.name + f".bak_{ts}")
+        bak.write_text(dest.read_text(encoding="utf-8"), encoding="utf-8")
+
+    # 原子写入：tmp → replace
+    tmp = dest.with_name(dest.name + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    if not tmp.read_text(encoding="utf-8").strip():
+        raise RuntimeError("写入 references.bib.tmp 为空，中止")
+    # 解析 tmp 确认条目数一致
+    parsed = bibmod.parse_blocks(tmp.read_text(encoding="utf-8"))
+    if len(parsed) != len(blocks):
+        raise RuntimeError(f"tmp 解析条目数({len(parsed)}) != 预期({len(blocks)})，中止")
+    tmp.replace(dest)
+    return dest
+
+
+def export_job_bib(job_id: str, bib_keys: list[str] | None = None,
                    jm: JobManager | None = None) -> dict:
-    """从全局 references.bib 抽取指定 key 写入 job 的 tex/references.bib"""
+    """从全局 references.bib 抽取 selected_papers 对应条目写入 job 的 tex/references.bib。
+
+    bib_keys 为 None 时从 selected_papers.json（必须 confirmed）取。
+    selected 未确认时 raise RuntimeError。
+    """
     jm = jm or JobManager()
+    jdir = jm.job_dir(job_id)
+
+    if bib_keys is None:
+        sel = load_selected(job_id, jm)
+        if sel.get("selection_status") != "confirmed":
+            raise RuntimeError("selected_papers.json is not confirmed，拒绝导出 references.bib")
+        bib_map = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
+                   for p in Catalog().list_papers()}
+        bib_keys = []
+        for it in sel.get("selected_papers", []):
+            bk = it.get("bib_key") or bib_map.get(it.get("paper_id", ""), "")
+            if bk:
+                bib_keys.append(bk)
+
     text = bibmod.get_entries_for_keys(bib_keys)
-    out = jm.job_dir(job_id) / "tex" / "references.bib"
+    out = jdir / "tex" / "references.bib"
     out.parent.mkdir(parents=True, exist_ok=True)
     header = f"% write/{job_id} 引用库，由 {len(bib_keys)} 条 BibTeX 抽取生成。\n\n"
     out.write_text(header + text, encoding="utf-8")
     return {"references_bib": str(out), "count": len(bib_keys)}
+
+
+def validate_job_bib(job_id: str, jm: JobManager | None = None) -> list[str]:
+    """校验 job 的 references.bib：entry key 不重复、与 selected 对应。返回错误列表。"""
+    jm = jm or JobManager()
+    jdir = jm.job_dir(job_id)
+    bib_path = jdir / "tex" / "references.bib"
+    errors = []
+    if not bib_path.exists():
+        return ["缺少 tex/references.bib"]
+    blocks = bibmod.parse_blocks(bib_path.read_text(encoding="utf-8"))
+    # entry key 不重复（parse_blocks 已天然去重，这里再校验原始文本）
+    raw = bib_path.read_text(encoding="utf-8")
+    keys = re.findall(r"@\w+\s*\{\s*([^,\s]+)", raw)
+    if len(keys) != len(set(keys)):
+        errors.append("references.bib 中存在重复 entry key")
+    # 与 selected 对应
+    sel = load_selected(job_id, jm)
+    if sel.get("selection_status") == "confirmed":
+        sel_keys = set()
+        bib_map = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
+                   for p in Catalog().list_papers()}
+        for it in sel.get("selected_papers", []):
+            bk = it.get("bib_key") or bib_map.get(it.get("paper_id", ""), "")
+            if bk:
+                sel_keys.add(bk)
+        extra = set(blocks.keys()) - sel_keys
+        if extra:
+            errors.append(f"references.bib 含 selected_papers 之外的条目: {sorted(extra)}")
+    return errors
+
 
 
 def _extract_cite_keys(tex_text: str) -> set[str]:
