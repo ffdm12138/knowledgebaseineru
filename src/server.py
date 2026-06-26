@@ -146,13 +146,22 @@ async def upload(
     effort: str = Query(MINERU_EFFORT, description="hybrid-engine 解析强度: medium | high"),
 ):
     """上传文件 -> MinerU 转 tmp -> cleaner 提取 paper.md+images -> manifest 记录"""
+    from config.settings import MAX_UPLOAD_SIZE
     suffix = Path(file.filename).suffix.lower()
     if suffix not in SUPPORTED_FORMATS:
         raise HTTPException(400, f"不支持的格式: {suffix}，支持: {SUPPORTED_FORMATS}")
 
     paper_id = derive_paper_id(file.filename)
+    try:
+        from src.naming import validate_paper_id
+        validate_paper_id(paper_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
     save_path = RAW_DIR / file.filename
     content = await file.read()
+    if len(content) > MAX_UPLOAD_SIZE:
+        raise HTTPException(413, f"文件过大: {len(content)} bytes > 上限 {MAX_UPLOAD_SIZE} bytes")
     save_path.write_bytes(content)
 
     logger.info(f"收到文件: {file.filename} ({len(content)} bytes) -> paper_id={paper_id}")
@@ -167,10 +176,12 @@ async def upload(
             raise HTTPException(500, f"转换失败: {result.get('error')}")
 
         # cleaner 从 tmp 提取到 papers/<paper_id>/
-        clean = cleaner.extract(result["output_dir"], paper_id)
+        clean = cleaner.extract(result["output_dir"], paper_id, overwrite=True)
         if not clean["success"]:
             raise HTTPException(500, f"清理失败: {clean.get('error')}")
 
+        from src.file_fingerprint import compute_sha256, file_meta
+        meta = file_meta(save_path)
         manifest.upsert(
             paper_id=paper_id,
             raw_pdf=str(save_path),
@@ -179,6 +190,9 @@ async def upload(
             status="converted",
             images_count=clean["images_count"],
             md_chars=clean["char_count"],
+            raw_filename=file.filename,
+            sha256=meta["sha256"], file_size=meta["file_size"], mtime=meta["mtime"],
+            backend=result.get("backend", "cli"), method=method,
         )
 
         return {

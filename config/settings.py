@@ -21,9 +21,11 @@ MANIFESTS_DIR = DATA_DIR / "manifests"      # 系统维护的文件账本
 CATALOG_PATH = CATALOG_DIR / "literature_catalog.json"
 MANIFEST_PATH = MANIFESTS_DIR / "papers_manifest.json"
 
-# API 配置
-API_HOST = "0.0.0.0"
+# API 配置（默认仅 localhost，防误暴露）
+API_HOST = "127.0.0.1"
 API_PORT = 8080
+# 上传大小上限（字节），默认 500MB
+MAX_UPLOAD_SIZE = 500 * 1024 * 1024
 
 # MinerU 解析配置
 # 后端: pipeline (4GB显存, 精度86) | hybrid-engine (8GB显存, 精度95) | vlm-engine (8GB显存, 精度95)

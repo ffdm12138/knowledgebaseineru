@@ -58,8 +58,11 @@ class MinerUOutputCleaner:
                 return d
         return None
 
-    def extract(self, source_dir: str | Path, paper_id: str) -> dict:
+    def extract(self, source_dir: str | Path, paper_id: str,
+                overwrite: bool = False) -> dict:
         """从 MinerU 原始输出目录提取 paper.md + images 到 data/papers/<paper_id>/
+
+        覆盖保护：默认 overwrite=False，目标已存在则报错；overwrite=True 先备份再重建。
 
         Returns:
             {
@@ -80,9 +83,19 @@ class MinerUOutputCleaner:
             return {"success": False, "paper_id": paper_id, "error": msg}
 
         dest_dir = PAPERS_DIR / paper_id
-        # 清理旧产物后重建（保证幂等）
+        # 覆盖保护：已存在则备份或报错，不无条件 rmtree
         if dest_dir.exists():
-            shutil.rmtree(dest_dir)
+            if not overwrite:
+                msg = (f"目标目录已存在，拒绝覆盖: {dest_dir} "
+                       f"(传 overwrite=True 以备份后重建)")
+                logger.error(msg)
+                return {"success": False, "paper_id": paper_id, "error": msg}
+            # 备份旧目录为 .bak_<timestamp>
+            from datetime import datetime
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            bak = dest_dir.with_name(f"{dest_dir.name}__old_{ts}")
+            dest_dir.rename(bak)
+            logger.info(f"已备份旧目录: {dest_dir.name} -> {bak.name}")
         dest_dir.mkdir(parents=True, exist_ok=True)
         dest_images = dest_dir / "images"
         dest_md = dest_dir / "paper.md"

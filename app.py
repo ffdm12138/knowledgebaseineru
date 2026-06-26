@@ -59,7 +59,7 @@ def upload_and_convert(file, progress=gr.Progress()):
         return f"❌ 转换失败: {result.get('error')}"
 
     progress(0.7, desc="清理输出中...")
-    clean = cleaner.extract(result["output_dir"], paper_id)
+    clean = cleaner.extract(result["output_dir"], paper_id, overwrite=True)
     if not clean["success"]:
         return f"❌ 清理失败: {clean.get('error')}"
 

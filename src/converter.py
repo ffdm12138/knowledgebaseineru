@@ -44,9 +44,9 @@ class MinerUConverter:
         method: str = "auto",
         lang: str = "ch",
         effort: str = "medium",
+        api_url: str | None = None,
     ) -> dict:
-        """
-        转换单个文件
+        """统一转换入口。
 
         Args:
             input_path: 输入文件路径 (PDF/DOCX/PPTX/XLSX/图片)
@@ -55,22 +55,42 @@ class MinerUConverter:
             method: 解析方法 "auto" | "ocr" | "txt"
             lang: OCR语言 "ch" | "en" 等
             effort: hybrid-engine解析强度 "medium" | "high"
+            api_url: mineru-api 地址。None 走 CLI；非 None 走 API（暂未实现）
 
         Returns:
             dict: {
                 "success": bool,
                 "markdown": str,
+                "md_path": str,
                 "output_dir": str,
                 "source_file": str,
+                "backend": "cli" | "api",
+                "error": str (失败时),
             }
         """
+        if api_url:
+            return self.convert_via_api(input_path, output_dir, backend, method,
+                                        lang, effort, api_url)
+        return self.convert_via_cli(input_path, output_dir, backend, method,
+                                    lang, effort)
+
+    def convert_via_cli(
+        self,
+        input_path: str | Path,
+        output_dir: str | Path,
+        backend: str = "hybrid-engine",
+        method: str = "auto",
+        lang: str = "ch",
+        effort: str = "medium",
+    ) -> dict:
+        """通过 mineru CLI 子进程转换"""
         input_path = Path(input_path)
         output_dir = Path(output_dir)
 
         if not input_path.exists():
-            return {"success": False, "error": f"文件不存在: {input_path}"}
+            return {"success": False, "error": f"文件不存在: {input_path}", "backend": "cli"}
 
-        logger.info(f"转换: {input_path.name} (backend={backend}, method={method})")
+        logger.info(f"[converter] backend=cli | {input_path.name} (backend={backend}, method={method})")
 
         cmd = [
             MINERU_EXE,
@@ -97,7 +117,7 @@ class MinerUConverter:
             if result.returncode != 0:
                 error_msg = result.stderr[-500:] if result.stderr else "未知错误"
                 logger.error(f"转换失败: {error_msg}")
-                return {"success": False, "error": error_msg}
+                return {"success": False, "error": error_msg, "backend": "cli"}
 
             # 查找生成的Markdown文件
             # MinerU 3.4 输出结构: output_dir/<stem>/<method>/<stem>.md
@@ -113,19 +133,40 @@ class MinerUConverter:
                 md_content = ""
                 logger.warning(f"未找到Markdown输出: {md_path}")
 
-            logger.info(f"转换完成: {input_path.name}")
+            logger.info(f"[converter] backend=cli 转换完成: {input_path.name}")
             return {
                 "success": True,
                 "markdown": md_content,
                 "md_path": str(md_path) if md_path.exists() else "",
                 "output_dir": str(output_dir / stem),
                 "source_file": input_path.name,
+                "backend": "cli",
             }
 
         except subprocess.TimeoutExpired:
-            return {"success": False, "error": "转换超时(600s)"}
+            return {"success": False, "error": "转换超时(600s)", "backend": "cli"}
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": str(e), "backend": "cli"}
+
+    def convert_via_api(
+        self,
+        input_path: str | Path,
+        output_dir: str | Path,
+        backend: str = "hybrid-engine",
+        method: str = "auto",
+        lang: str = "ch",
+        effort: str = "medium",
+        api_url: str = "",
+    ) -> dict:
+        """通过 mineru-api 服务转换。
+
+        当前 watcher/server 路径未实现 HTTP 上传调用，明确报错，避免参数存在但无效。
+        batch_convert.py 走 CLI 子进程 + --api-url，由其自行处理。
+        """
+        raise NotImplementedError(
+            "converter.convert_via_api 尚未实现 HTTP 上传调用。"
+            "watcher/server 请走 CLI（api_url=None）；如需经 mineru-api，用 batch_convert.py "
+            "（CLI 子进程带 --api-url）。不允许 api_url 参数存在但无效。")
 
     def convert_batch(
         self,

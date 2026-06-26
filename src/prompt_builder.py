@@ -1,12 +1,32 @@
 """Prompt 组装器：基于目录 + 全文构造给大模型的 prompt
 
 核心约束：不调用任何 LLM，只返回可复制粘贴的 prompt 文本。
+每个 prompt 返回 chars / estimated_tokens / warning，便于长度控制。
 """
 from loguru import logger
 
 from config.settings import PAPER_MD_MAX_CHARS
 from src.catalog import Catalog
 from src.library import PaperLibrary
+
+# prompt 超过此估算 token 数时给 warning
+PROMPT_TOKEN_WARN_THRESHOLD = 30000
+
+
+def estimate_tokens(text: str) -> int:
+    """粗略估算 token 数（中英混合：约 2 字符/token）"""
+    return max(1, len(text) // 2)
+
+
+def prompt_meta(prompt: str) -> dict:
+    """返回 prompt 长度元信息"""
+    chars = len(prompt)
+    toks = estimate_tokens(prompt)
+    return {
+        "chars": chars,
+        "estimated_tokens": toks,
+        "warning": ("Prompt 可能过长，建议拆分或精简" if toks > PROMPT_TOKEN_WARN_THRESHOLD else ""),
+    }
 
 
 class PromptBuilder:
@@ -43,7 +63,7 @@ images 数量: {len(images)}
 {md}
 """
         return {"success": True, "paper_id": paper_id, "prompt": prompt,
-                "md_chars": len(md), "images_count": len(images)}
+                "md_chars": len(md), "images_count": len(images), **prompt_meta(prompt)}
 
     # ---- 2. 目录规划 prompt ----
     def build_catalog_planning_prompt(self, question: str) -> dict:
@@ -69,7 +89,7 @@ images 数量: {len(images)}
 - 阅读顺序与初步故事线
 """
         return {"success": True, "question": question, "prompt": prompt,
-                "catalog_papers": len(self.catalog.list_papers())}
+                "catalog_papers": len(self.catalog.list_papers()), **prompt_meta(prompt)}
 
     # ---- 3. 全文阅读写作 prompt ----
     def build_fulltext_prompt(self, question: str, paper_ids: list[str]) -> dict:
@@ -104,7 +124,8 @@ images 数量: {len(images)}
         if missing:
             logger.warning(f"以下 paper_id 全文缺失已跳过: {missing}")
         return {"success": True, "question": question, "prompt": prompt,
-                "included_papers": list(fulltexts.keys()), "missing_papers": missing}
+                "included_papers": list(fulltexts.keys()), "missing_papers": missing,
+                **prompt_meta(prompt)}
 
     # ---- 4. BibTeX 补全 prompt ----
     def build_bib_completion_prompt(self, paper_id: str) -> dict:
@@ -131,4 +152,4 @@ images 数量: {len(images)}
 # 文献开头
 {md}
 """
-        return {"success": True, "paper_id": paper_id, "prompt": prompt}
+        return {"success": True, "paper_id": paper_id, "prompt": prompt, **prompt_meta(prompt)}

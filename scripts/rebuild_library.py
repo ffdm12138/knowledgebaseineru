@@ -107,15 +107,20 @@ def process_one(f: Path, reconvert_flag: bool, backend: str, method: str,
             return False
         logger.info(f"  重新转换完成 ({time.time()-t0:.0f}s): {source_dir}")
 
-    clean = cleaner.extract(source_dir, paper_id)
+    clean = cleaner.extract(source_dir, paper_id, overwrite=True)
     if not clean["success"]:
         logger.error(f"  清理失败: {clean.get('error')}")
         return False
 
+    from src.file_fingerprint import compute_sha256, file_meta
+    meta = file_meta(f)
     manifest.upsert(paper_id=paper_id, raw_pdf=str(f),
                     markdown=clean["markdown_path"], images_dir=clean["images_dir"],
                     status="converted", images_count=clean["images_count"],
-                    md_chars=clean["char_count"])
+                    md_chars=clean["char_count"],
+                    raw_filename=f.name, raw_stem=f.stem,
+                    sha256=meta["sha256"], file_size=meta["file_size"],
+                    mtime=meta["mtime"], backend="cli", method=method)
     logger.info(f"  入库: {paper_id} ({clean['char_count']} 字符, {clean['images_count']} 图)")
     return True
 

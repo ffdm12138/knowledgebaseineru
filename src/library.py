@@ -16,6 +16,8 @@ class PaperLibrary:
         self.manifest = manifest or PaperManifest()
 
     def paper_dir(self, paper_id: str) -> Path:
+        from src.naming import validate_paper_id
+        validate_paper_id(paper_id)  # 防路径穿越
         return PAPERS_DIR / paper_id
 
     def exists(self, paper_id: str) -> bool:

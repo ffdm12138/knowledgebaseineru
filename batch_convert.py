@@ -89,7 +89,7 @@ def main():
             logger.info(f"[{i}/{len(files)}] 跳过 (已转换): {f.name} -> {paper_id}")
             continue
 
-        logger.info(f"[{i}/{len(files)}] 处理: {f.name} -> {paper_id}")
+        logger.info(f"[{i}/{len(files)}] 处理: {f.name} -> {paper_id} | backend={'api' if args.api_url else 'cli'}")
         tmp_out = MINERU_TMP_DIR / paper_id
         t0 = time.time()
         ok = run_mineru(str(f), str(tmp_out), args.backend, args.method,
@@ -97,14 +97,20 @@ def main():
         if not ok:
             continue
         # MinerU 输出在 tmp_out/<stem>/<method>/，cleaner 递归定位
-        clean = cleaner.extract(tmp_out, paper_id)
+        clean = cleaner.extract(tmp_out, paper_id, overwrite=True)
         if not clean["success"]:
             logger.error(f"  清理失败: {clean.get('error')}")
             continue
+        from src.file_fingerprint import compute_sha256, file_meta
+        meta = file_meta(f)
         manifest.upsert(paper_id=paper_id, raw_pdf=str(f),
                         markdown=clean["markdown_path"], images_dir=clean["images_dir"],
                         status="converted", images_count=clean["images_count"],
-                        md_chars=clean["char_count"])
+                        md_chars=clean["char_count"],
+                        raw_filename=f.name, raw_stem=f.stem,
+                        sha256=meta["sha256"], file_size=meta["file_size"],
+                        mtime=meta["mtime"],
+                        backend="api" if args.api_url else "cli", method=args.method)
         logger.info(f"  完成 ({time.time()-t0:.0f}s): {paper_id}")
 
     stats = manifest.stats()
