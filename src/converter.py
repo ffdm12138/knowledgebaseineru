@@ -143,24 +143,28 @@ class MinerUConverter:
                 return {"success": False, "error": error_msg, "backend": "cli"}
 
             # 查找生成的Markdown文件
-            # MinerU 3.4 输出结构: output_dir/<stem>/<method>/<stem>.md
+            # 产品固定 hybrid-engine，优先 hybrid_auto / hybrid_ocr / hybrid_txt
             stem = input_path.stem
-            md_path = output_dir / stem / method / f"{stem}.md"
-            if not md_path.exists():
-                # 尝试 auto 目录
-                md_path = output_dir / stem / "auto" / f"{stem}.md"
+            from src.cleaner import MinerUOutputCleaner
+            cl = MinerUOutputCleaner()
+            # 先试 locate_markdown（支持 hybrid_* 变体）
+            md_path = cl.locate_markdown(
+                output_dir, method=method, stem=stem, backend=backend)
+            if md_path is None:
+                md_path = cl.locate_markdown(
+                    output_dir / stem, method=method, stem=stem, backend=backend)
 
-            if md_path.exists():
+            if md_path and md_path.exists():
                 md_content = md_path.read_text(encoding="utf-8")
             else:
                 md_content = ""
-                logger.warning(f"未找到Markdown输出: {md_path}")
+                logger.warning(f"未找到Markdown输出 (method={method} backend={backend})")
 
             logger.info(f"[converter] backend=cli 转换完成: {input_path.name}")
             return {
                 "success": True,
                 "markdown": md_content,
-                "md_path": str(md_path) if md_path.exists() else "",
+                "md_path": str(md_path) if md_path and md_path.exists() else "",
                 "output_dir": str(output_dir / stem),
                 "source_file": input_path.name,
                 "backend": "cli",

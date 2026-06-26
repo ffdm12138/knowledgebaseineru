@@ -68,13 +68,18 @@ def test_auto_and_hybrid_auto_no_backend_returns_none():
 
 
 def test_method_dirs_map():
-    """_method_dirs 返回正确的目录映射"""
+    """_method_dirs 返回正确的目录映射（hybrid 优先）"""
     c = MinerUOutputCleaner()
-    assert "auto" in c._method_dirs("auto")
+    # 默认：hybrid_* 在前
+    dirs = c._method_dirs("auto")
+    assert dirs[0] == "hybrid_auto"
+    assert "auto" in dirs
     assert "hybrid_auto" in c._method_dirs("auto")
-    assert "vlm_auto" in c._method_dirs("auto")
-    assert "ocr" in c._method_dirs("ocr")
     assert "hybrid_ocr" in c._method_dirs("ocr")
-    # backend 优先级
-    dirs = c._method_dirs("auto", backend="hybrid-engine")
-    assert dirs[0] == "hybrid_auto"  # hybrid-engine 优先 hybrid_
+    assert "hybrid_txt" in c._method_dirs("txt")
+    # vlm-engine 时 vlm_* 插入首位
+    vdirs = c._method_dirs("auto", backend="vlm-engine")
+    assert vdirs[0] == "vlm_auto"
+    # pipeline 时原生目录优先
+    pdirs = c._method_dirs("auto", backend="pipeline")
+    assert pdirs[0] == "auto"

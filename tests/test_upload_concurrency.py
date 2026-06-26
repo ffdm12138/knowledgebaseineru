@@ -135,20 +135,28 @@ def test_concurrent_same_sha_no_duplicate_convert(monkeypatch, tmp_path, isolate
         f"Converter should not be called for duplicates, but was called {fake.call_count - first_count} extra times"
 
 
-def test_query_param_validation():
-    """上传接口拒绝非法 method/backend/effort"""
+def test_query_param_validation(monkeypatch):
+    """上传接口拒绝非法 method（backend/effort 已固定，不暴露参数）"""
+    from src import server as server_mod
+
+    # Mock converter 避免真实调用
+    def _fake_convert(*a, **kw):
+        return {"success": True, "markdown": "ok", "md_path": "/f/md",
+                "output_dir": "/f/out", "source_file": "t", "backend": "cli"}
+    monkeypatch.setattr(server_mod.converter, "convert", _fake_convert)
+    monkeypatch.setattr(server_mod.cleaner, "extract", lambda *a, **kw: {
+        "success": True, "paper_id": kw.get("paper_id", "t"),
+        "markdown_path": "/f/md", "images_dir": "/f/i",
+        "images_count": 0, "char_count": 10})
+
     resp = client.post("/upload?method=evil", files={
-        "file": ("test.pdf", b"%PDF-1.4", "application/pdf")
+        "file": ("test.pdf", b"%PDF-1.4 fake", "application/pdf")
     })
     assert resp.status_code == 400
     assert "method" in resp.text.lower()
 
-    resp = client.post("/upload?backend=bad", files={
-        "file": ("test.pdf", b"%PDF-1.4", "application/pdf")
+    # 合法 method 仍然接受
+    resp = client.post("/upload?method=ocr", files={
+        "file": ("test.pdf", b"%PDF-1.4 fake", "application/pdf")
     })
-    assert resp.status_code == 400
-
-    resp = client.post("/upload?effort=bad", files={
-        "file": ("test.pdf", b"%PDF-1.4", "application/pdf")
-    })
-    assert resp.status_code == 400
+    assert resp.status_code == 200

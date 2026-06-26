@@ -148,18 +148,16 @@ async def index():
 async def upload(
     file: UploadFile = File(...),
     method: str = Query(MINERU_METHOD, description="解析方法: auto | ocr | txt"),
-    backend: str = Query(MINERU_BACKEND, description="后端: pipeline | hybrid-engine | vlm-engine"),
-    effort: str = Query(MINERU_EFFORT, description="hybrid-engine 解析强度: medium | high"),
+
 ):
-    """上传文件 -> MinerU 转 tmp -> cleaner 提取 paper.md+images -> manifest 记录"""
-    from config.settings import MAX_UPLOAD_SIZE
-    # 校验 query 参数枚举
+    """上传文件 -> MinerU 转 tmp -> cleaner 提取 paper.md+images -> manifest 记录
+    固定使用 hybrid-engine + medium + auto，不暴露 backend/effort 选择。
+    """
+    from config.settings import MAX_UPLOAD_SIZE, MINERU_BACKEND, MINERU_EFFORT
+    backend, effort = MINERU_BACKEND, MINERU_EFFORT
+    # 校验 method 参数枚举
     if method not in ("auto", "ocr", "txt"):
         raise HTTPException(400, f"非法 method: {method}，允许: auto, ocr, txt")
-    if backend not in ("pipeline", "hybrid-engine", "vlm-engine"):
-        raise HTTPException(400, f"非法 backend: {backend}，允许: pipeline, hybrid-engine, vlm-engine")
-    if effort not in ("medium", "high"):
-        raise HTTPException(400, f"非法 effort: {effort}，允许: medium, high")
 
     suffix = Path(file.filename).suffix.lower()
     if suffix not in SUPPORTED_FORMATS:
@@ -222,31 +220,42 @@ async def upload(
         f"收到文件: {file.filename} ({file_size} bytes, "
         f"sha256={file_sha256[:12]}…) -> paper_id={paper_id}")
 
-    # --- 上传事务锁：防并发 TOCTOU（两个请求同时上传同名不同内容）---
+    # --- 上传事务锁：防并发 TOCTOU + converting 状态机 ---
     from filelock import FileLock
     upload_lock = FileLock(str(RAW_DIR / ".upload.lock"))
 
     with upload_lock:
-        # 去重检查：相同 sha256 不重复转换
+        # 去重检查：已有 converted 或 converting 状态
         existing = manifest.find_by_sha256(file_sha256)
         if existing:
+            status = existing.get("status", "")
             os.unlink(tmp_path)
-            return {
-                "status": "duplicate",
-                "paper_id": existing.get("paper_id"),
-                "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
-            }
+            if status == "converting":
+                return {
+                    "status": "in_progress",
+                    "paper_id": existing.get("paper_id"),
+                    "message": "相同文件正在转换中，请稍后查看",
+                }
+            if status == "converted":
+                return {
+                    "status": "duplicate",
+                    "paper_id": existing.get("paper_id"),
+                    "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
+                }
+            # status=failed: 允许重试，继续往下走
+            logger.info(f"上次转换失败 ({existing.get('paper_id')})，允许重试")
 
-        # 冲突检查：paper_id 已存在但 sha256 不同
+        # 冲突检查：paper_id 已存在但 sha256 不同（非 failed 状态）
         existing_by_pid = manifest.get(paper_id)
-        if existing_by_pid and existing_by_pid.get("sha256") != file_sha256:
+        if existing_by_pid and existing_by_pid.get("sha256") != file_sha256 \
+                and existing_by_pid.get("status") not in ("failed", None):
             os.unlink(tmp_path)
             raise HTTPException(
                 409,
                 f"paper_id={paper_id} 已存在但内容不同，"
                 f"不允许覆盖。若需替换请先手动删除旧文献。")
 
-        # final_path 冲突检查：同名文件已存在但内容不同
+        # final_path 冲突检查
         if save_path.exists():
             from src.file_fingerprint import compute_sha256
             existing_raw_sha = compute_sha256(save_path)
@@ -256,14 +265,25 @@ async def upload(
                     409,
                     f"同名文件 {safe_filename} 已存在且内容不同，"
                     f"不允许覆盖。请改名后重新上传。")
-            # 内容相同：复用已有 raw 文件，删除本次 tmp
             os.unlink(tmp_path)
             logger.info(f"同名同内容文件已存在，复用: {save_path}")
         else:
-            # 安全检查全部通过，原子移动到目标位置
             os.replace(tmp_path, str(save_path))
 
-    # --- 锁释放，后续转换不在锁内（避免长阻塞）---
+        # 写入 converting 状态，防止并发重复转换
+        from datetime import datetime
+        manifest.upsert(
+            paper_id=paper_id,
+            raw_pdf=str(save_path),
+            markdown="",
+            images_dir="",
+            status="converting",
+            raw_filename=file.filename,
+            sha256=file_sha256, file_size=file_size,
+            mtime=datetime.now().isoformat(timespec="seconds"),
+            backend=backend, method=method,
+        )
+    # --- 锁释放 ---
 
     tmp_out = MINERU_TMP_DIR / paper_id
     try:
@@ -272,18 +292,34 @@ async def upload(
             lang=MINERU_LANG, effort=effort,
         )
         if not result["success"]:
+            # 标记 failed
+            manifest.upsert(
+                paper_id=paper_id, raw_pdf=str(save_path),
+                markdown="", images_dir="",
+                status="failed",
+                raw_filename=file.filename, sha256=file_sha256,
+                file_size=file_size,
+                mtime=datetime.now().isoformat(timespec="seconds"),
+                backend=backend, method=method,
+            )
             raise HTTPException(500, f"转换失败: {result.get('error')}")
 
-        # cleaner 默认不覆盖已有 paper 目录（与 dedup 一致）
         stem = Path(file.filename).stem
         clean = cleaner.extract(result["output_dir"], paper_id,
                                 overwrite=False, method=method, stem=stem,
                                 backend=backend)
         if not clean["success"]:
+            manifest.upsert(
+                paper_id=paper_id, raw_pdf=str(save_path),
+                markdown="", images_dir="",
+                status="failed",
+                raw_filename=file.filename, sha256=file_sha256,
+                file_size=file_size,
+                mtime=datetime.now().isoformat(timespec="seconds"),
+                backend=backend, method=method,
+            )
             raise HTTPException(500, f"清理失败: {clean.get('error')}")
 
-        # 使用上传阶段已计算的 sha256 / file_size，仅补 mtime
-        from datetime import datetime
         file_mtime = datetime.fromtimestamp(
             os.path.getmtime(str(save_path))).isoformat(timespec="seconds")
         manifest.upsert(

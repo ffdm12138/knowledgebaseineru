@@ -67,14 +67,30 @@ MAX_UPLOAD_SIZE = _env_int("MINERU_MAX_UPLOAD_SIZE", 500 * 1024 * 1024, min_val=
 MINERU_TIMEOUT = _env_int("MINERU_TIMEOUT", 600, min_val=1)
 
 # MinerU 解析配置
-# 后端: pipeline (4GB显存, 精度86) | hybrid-engine (8GB显存, 精度95) | vlm-engine (8GB显存, 精度95)
-MINERU_BACKEND = _env_str("MINERU_BACKEND", "hybrid-engine")
-# 解析强度 (仅hybrid-engine生效): medium (快, 精度95.26) | high (慢, 精度95.39, 支持图片分析)
-MINERU_EFFORT = _env_str("MINERU_EFFORT", "medium")
-# 解析方法: auto | ocr | txt
-MINERU_METHOD = _env_str("MINERU_METHOD", "auto")
-# OCR语言: ch | en 等
+# 产品定位固定为 hybrid-engine，不再把 pipeline / vlm-engine 作为首选项维护。
+# 高级调试时可设环境变量 MINERU_ALLOW_BACKEND_OVERRIDE=true 恢复多后端选项。
+ALLOW_BACKEND_OVERRIDE = os.environ.get("MINERU_ALLOW_BACKEND_OVERRIDE", "").strip().lower() == "true"
+MINERU_BACKEND = "hybrid-engine"
+MINERU_EFFORT = "medium"
+MINERU_METHOD = "auto"
 MINERU_LANG = _env_str("MINERU_LANG", "ch")
+
+# 高级调试：仅 ALLOW_BACKEND_OVERRIDE=true 时允许覆盖
+if ALLOW_BACKEND_OVERRIDE:
+    MINERU_BACKEND = _env_str("MINERU_BACKEND", "hybrid-engine")
+    MINERU_EFFORT = _env_str("MINERU_EFFORT", "medium")
+    MINERU_METHOD = _env_str("MINERU_METHOD", "auto")
+
+# 合法值校验（仅当覆盖开启时才放宽）
+VALID_BACKENDS = {"hybrid-engine", "pipeline", "vlm-engine"} if ALLOW_BACKEND_OVERRIDE else {"hybrid-engine"}
+VALID_EFFORTS = {"medium", "high"} if ALLOW_BACKEND_OVERRIDE else {"medium"}
+VALID_METHODS = {"auto", "txt", "ocr"}
+if MINERU_BACKEND not in VALID_BACKENDS:
+    raise ValueError(f"非法 MINERU_BACKEND: {MINERU_BACKEND}，允许: {VALID_BACKENDS}")
+if MINERU_EFFORT not in VALID_EFFORTS:
+    raise ValueError(f"非法 MINERU_EFFORT: {MINERU_EFFORT}，允许: {VALID_EFFORTS}")
+if MINERU_METHOD not in VALID_METHODS:
+    raise ValueError(f"非法 MINERU_METHOD: {MINERU_METHOD}，允许: {VALID_METHODS}")
 
 # 全文阅读 prompt 的单篇最大字符数（防止 prompt 过长）
 PAPER_MD_MAX_CHARS = _env_int("MINERU_PAPER_MD_MAX_CHARS", 12000, min_val=1)

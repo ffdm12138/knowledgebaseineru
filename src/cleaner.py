@@ -24,21 +24,28 @@ class MinerUOutputCleaner:
 
     @staticmethod
     def _method_dirs(method: str, backend: str | None = None) -> list[str]:
-        """返回给定 method 应搜索的目录名列表，按 backend 优先级排序。
+        """返回给定 method 应搜索的目录名列表。
 
-        method="auto" → ["auto", "hybrid_auto", "vlm_auto"] 等。
-        backend 可调整优先级：hybrid-engine 优先 hybrid_*，vlm-engine 优先 vlm_*。
+        产品固定 hybrid-engine，hybrid_* 目录优先。
+        仅 ALLOW_BACKEND_OVERRIDE 时考虑 vlm/pipeline 原生目录。
         """
         _map = {
-            "auto": ["auto", "hybrid_auto", "vlm_auto"],
-            "ocr":  ["ocr", "hybrid_ocr", "vlm_ocr"],
-            "txt":  ["txt", "hybrid_txt", "vlm_txt"],
+            "auto": ["hybrid_auto", "auto"],
+            "ocr":  ["hybrid_ocr", "ocr"],
+            "txt":  ["hybrid_txt", "txt"],
         }
         dirs = _map.get(method, [method])
-        if backend == "hybrid-engine":
-            dirs.sort(key=lambda d: 0 if d.startswith("hybrid_") else 1)
-        elif backend == "vlm-engine":
-            dirs.sort(key=lambda d: 0 if d.startswith("vlm_") else 1)
+        if backend == "vlm-engine":
+            # vlm 变体仅在高级覆盖时考虑
+            vlm_map = {"auto": "vlm_auto", "ocr": "vlm_ocr", "txt": "vlm_txt"}
+            if method in vlm_map:
+                dirs.insert(0, vlm_map[method])
+        elif backend == "pipeline":
+            # pipeline 原生目录优先
+            if method in dirs:
+                dirs.remove(method)
+                dirs.insert(0, method)
+        # 默认 hybrid-engine：hybrid_* 已在首位
         return dirs
 
     def locate_markdown(self, source_dir: Path,

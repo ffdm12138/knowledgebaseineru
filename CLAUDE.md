@@ -108,7 +108,7 @@ mineru/
 | mineru-api | 8000 | `mineru-api --port 8000 --enable-vlm-preload true` | 把 MinerU 解析模型常驻 GPU（可选，加速转换） |
 | watcher | — | `python watcher.py --interval 30` | 轮询 `data/raw/`，自动转换+入库 |
 | 文献库服务 (FastAPI + Web UI) | 8080 | `python -m src.server` | API + 提供 `web/index.html`；Swagger 在 `/docs` |
-| Gradio UI（可选前端） | 7860 | `python app.py` | 同一套 pipeline 的另一前端 |
+| Gradio UI（可选前端，已废弃上传入口） | 7860 | `python app.py` | 上传请用 FastAPI `/upload` 或 Web UI |
 
 - **一键启动**：双击 `start.bat` → 启动 8000 + watcher + 8080。
 - **在本 shell 用 bash**（conda 不在 PATH）：`"/c/Users/Admin/.conda/envs/mineru/python.exe" -m src.server`（用 GPU 后端时先 export `CUDA_PATH`）。
@@ -148,13 +148,16 @@ raw PDF → MinerU(tmp) → cleaner → data/papers/<paper_id>/paper.md + images
 | `API_HOST` | `MINERU_API_HOST` | `127.0.0.1` |
 | `API_PORT` | `MINERU_API_PORT` | `8080` |
 | `MAX_UPLOAD_SIZE` | `MINERU_MAX_UPLOAD_SIZE` | `524288000` (500MB) |
-| `MINERU_BACKEND` | `MINERU_BACKEND` | `hybrid-engine` |
-| `MINERU_EFFORT` | `MINERU_EFFORT` | `medium` |
+| `MINERU_BACKEND` | `MINERU_BACKEND` | `hybrid-engine`（固定，不可改） |
+| `MINERU_EFFORT` | `MINERU_EFFORT` | `medium`（固定，不可改） |
 | `MINERU_METHOD` | `MINERU_METHOD` | `auto` |
 | `MINERU_LANG` | `MINERU_LANG` | `ch` |
 | `MINERU_TIMEOUT` | `MINERU_TIMEOUT` | `600` |
 | `PAPER_MD_MAX_CHARS` | `MINERU_PAPER_MD_MAX_CHARS` | `12000` |
-| `RESEARCH_DOMAIN` | `MINERU_RESEARCH_DOMAIN` | `""` (未设置，由用户配置) |
+| `RESEARCH_DOMAIN` | `MINERU_RESEARCH_DOMAIN` | `""`（未设置，由用户配置） |
+| `ALLOW_BACKEND_OVERRIDE` | `MINERU_ALLOW_BACKEND_OVERRIDE` | `false`（高级调试） |
+
+> **产品定位**：本项目固定使用 hybrid-engine + medium + auto。pipeline / vlm-engine 仅在 `MINERU_ALLOW_BACKEND_OVERRIDE=true` 时作为高级调试选项可用，不作为普通用户首选项。
 | `DATA_DIR` | `MINERU_DATA_DIR` | `data/` |
 
 若 `API_HOST` 非 localhost 且无认证，启动时打印 `RuntimeWarning`。
