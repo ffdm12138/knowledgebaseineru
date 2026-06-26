@@ -143,6 +143,9 @@ def main():
     parser.add_argument("--interval", type=int, default=30, help="检查间隔(秒)")
     parser.add_argument("--once", action="store_true", help="跑一轮就退出")
     args = parser.parse_args()
+    # 普通模式禁止 backend/effort 覆盖（产品固定 hybrid-engine + medium）
+    from config.settings import enforce_backend_effort_override
+    enforce_backend_effort_override(parser, args)
 
     backend_mode = "api" if args.api_url else "cli"
     logger.info(f"监控启动: {RAW_DIR}")

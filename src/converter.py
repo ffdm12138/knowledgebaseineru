@@ -110,12 +110,24 @@ class MinerUConverter:
         lang: str = "ch",
         effort: str = "medium",
     ) -> dict:
-        """通过 mineru CLI 子进程转换"""
+        """通过 mineru CLI 子进程转换。
+
+        所有返回分支都带 backend/method/effort/runner 四字段，便于调用方
+        （upload_service / watcher / batch_convert / 测试）直接取用，不依赖
+        传入参数回填。
+        """
         input_path = Path(input_path)
         output_dir = Path(output_dir)
 
+        def _fail(error: str) -> dict:
+            return {
+                "success": False, "error": error,
+                "backend": backend, "method": method,
+                "effort": effort, "runner": "cli",
+            }
+
         if not input_path.exists():
-            return {"success": False, "error": f"文件不存在: {input_path}", "runner": "cli"}
+            return _fail(f"文件不存在: {input_path}")
 
         logger.info(f"[converter] runner=cli | {input_path.name} (backend={backend}, method={method})")
 
@@ -144,7 +156,7 @@ class MinerUConverter:
             if result.returncode != 0:
                 error_msg = result.stderr[-500:] if result.stderr else "未知错误"
                 logger.error(f"转换失败: {error_msg}")
-                return {"success": False, "error": error_msg, "runner": "cli"}
+                return _fail(error_msg)
 
             # 查找生成的Markdown文件
             # 产品固定 hybrid-engine，优先 hybrid_auto / hybrid_ocr / hybrid_txt
@@ -171,13 +183,14 @@ class MinerUConverter:
                 "md_path": str(md_path) if md_path and md_path.exists() else "",
                 "output_dir": str(output_dir / stem),
                 "source_file": input_path.name,
-                "runner": "cli",
+                "backend": backend, "method": method,
+                "effort": effort, "runner": "cli",
             }
 
         except subprocess.TimeoutExpired:
-            return {"success": False, "error": f"转换超时({self.timeout}s)", "runner": "cli"}
+            return _fail(f"转换超时({self.timeout}s)")
         except Exception as e:
-            return {"success": False, "error": str(e), "runner": "cli"}
+            return _fail(str(e))
 
     def convert_via_api(
         self,

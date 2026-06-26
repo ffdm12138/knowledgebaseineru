@@ -37,8 +37,9 @@ def _find_func(tree, name):
 def test_app_uses_upload_service():
     """app.py 必须通过 upload_service 上传。"""
     src = _source()
-    assert "upload_from_bytes" in src or "upload_core" in src, \
-        "app.py 必须调用 upload_service 的 upload_from_bytes/upload_core"
+    assert ("upload_from_bytes" in src or "upload_from_path" in src
+            or "upload_core" in src), \
+        "app.py 必须调用 upload_service 的 upload_from_bytes/upload_from_path/upload_core"
 
 
 def test_upload_path_does_not_call_shutil_copy():

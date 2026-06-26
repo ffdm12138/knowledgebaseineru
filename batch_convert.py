@@ -69,6 +69,9 @@ def main():
     parser.add_argument("--effort", default=MINERU_EFFORT, choices=["medium", "high"])
     parser.add_argument("--api-url", default=None, help="mineru-api 服务地址")
     args = parser.parse_args()
+    # 普通模式禁止 backend/effort 覆盖（产品固定 hybrid-engine + medium）
+    from config.settings import enforce_backend_effort_override
+    enforce_backend_effort_override(parser, args)
 
     input_dir = Path(args.input_dir)
     if not input_dir.exists():

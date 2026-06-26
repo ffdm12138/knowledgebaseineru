@@ -92,6 +92,27 @@ if MINERU_EFFORT not in VALID_EFFORTS:
 if MINERU_METHOD not in VALID_METHODS:
     raise ValueError(f"非法 MINERU_METHOD: {MINERU_METHOD}，允许: {VALID_METHODS}")
 
+
+def enforce_backend_effort_override(parser, args) -> None:
+    """CLI 共享校验：普通模式（ALLOW_BACKEND_OVERRIDE=false）禁止覆盖 backend/effort。
+
+    产品固定 hybrid-engine + medium。仅当环境变量 MINERU_ALLOW_BACKEND_OVERRIDE=true
+    时才允许 pipeline/vlm-engine/high。违反时 parser.error 退出。
+    method 不受限（auto/ocr/txt 均可）。
+    """
+    if ALLOW_BACKEND_OVERRIDE:
+        return
+    if getattr(args, "backend", None) and args.backend != MINERU_BACKEND:
+        parser.error(
+            f"--backend={args.backend} 不被允许：产品固定 {MINERU_BACKEND}。"
+            f"如需高级调试（pipeline/vlm-engine），设置环境变量 "
+            f"MINERU_ALLOW_BACKEND_OVERRIDE=true。")
+    if getattr(args, "effort", None) and args.effort != MINERU_EFFORT:
+        parser.error(
+            f"--effort={args.effort} 不被允许：产品固定 {MINERU_EFFORT}。"
+            f"如需高级调试（high），设置环境变量 "
+            f"MINERU_ALLOW_BACKEND_OVERRIDE=true。")
+
 # 全文阅读 prompt 的单篇最大字符数（防止 prompt 过长）
 PAPER_MD_MAX_CHARS = _env_int("MINERU_PAPER_MD_MAX_CHARS", 12000, min_val=1)
 

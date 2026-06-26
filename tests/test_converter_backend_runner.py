@@ -1,0 +1,93 @@
+"""Phase 2 验收：converter 所有返回分支都带 backend/method/effort/runner。"""
+import tempfile
+from pathlib import Path
+from unittest.mock import patch, MagicMock
+from src.converter import MinerUConverter
+
+
+_EXPECTED = {"backend": "hybrid-engine", "method": "auto",
+             "effort": "medium", "runner": "cli"}
+
+
+def _make_output(out_dir: Path, stem: str, content: str = "# md"):
+    """构造 mineru CLI 成功后的输出结构: out_dir/stem/hybrid_auto/stem.md"""
+    md = out_dir / stem / "hybrid_auto" / f"{stem}.md"
+    md.parent.mkdir(parents=True, exist_ok=True)
+    md.write_text(content, encoding="utf-8")
+
+
+def test_success_returns_all_fields():
+    """成功返回含 backend/method/effort/runner。"""
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.pdf"
+        src.write_bytes(b"%PDF-1.4 fake")
+        out = Path(td) / "out"
+        _make_output(out, "in")
+
+        conv = MinerUConverter()
+        with patch("src.converter.subprocess.run") as mock_run:
+            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+            result = conv.convert_via_cli(src, out, backend="hybrid-engine",
+                                          method="auto", effort="medium")
+        assert result["success"] is True
+        for k, v in _EXPECTED.items():
+            assert result[k] == v, f"{k} expected {v}, got {result.get(k)}"
+
+
+def test_file_not_found_returns_all_fields():
+    """文件不存在时返回含全部字段。"""
+    conv = MinerUConverter()
+    result = conv.convert_via_cli("/nonexistent/x.pdf", "/tmp/out",
+                                  backend="hybrid-engine", method="auto",
+                                  effort="medium")
+    assert result["success"] is False
+    for k, v in _EXPECTED.items():
+        assert result[k] == v
+
+
+def test_subprocess_failure_returns_all_fields():
+    """subprocess 非零退出时返回含全部字段。"""
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.pdf"
+        src.write_bytes(b"%PDF-1.4 fake")
+        conv = MinerUConverter()
+        with patch("src.converter.subprocess.run") as mock_run:
+            mock_run.return_value = MagicMock(returncode=1, stdout="", stderr="boom")
+            result = conv.convert_via_cli(src, Path(td) / "out", backend="hybrid-engine",
+                                          method="auto", effort="medium")
+        assert result["success"] is False
+        assert "boom" in result["error"]
+        for k, v in _EXPECTED.items():
+            assert result[k] == v
+
+
+def test_timeout_returns_all_fields():
+    """超时返回含全部字段。"""
+    import subprocess
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.pdf"
+        src.write_bytes(b"%PDF-1.4 fake")
+        conv = MinerUConverter()
+        with patch("src.converter.subprocess.run",
+                   side_effect=subprocess.TimeoutExpired(cmd=["mineru"], timeout=1)):
+            result = conv.convert_via_cli(src, Path(td) / "out", backend="hybrid-engine",
+                                          method="auto", effort="medium")
+        assert result["success"] is False
+        for k, v in _EXPECTED.items():
+            assert result[k] == v
+
+
+def test_no_legacy_backend_key():
+    """返回值不得再用 backend 表示 cli/api（那是 runner 语义）。"""
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.pdf"
+        src.write_bytes(b"%PDF-1.4 fake")
+        conv = MinerUConverter()
+        with patch("src.converter.subprocess.run") as mock_run:
+            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+            _make_output(Path(td) / "out", "in")
+            result = conv.convert_via_cli(src, Path(td) / "out", backend="hybrid-engine",
+                                          method="auto", effort="medium")
+        # backend 必须是 MinerU 后端，不是 cli/api
+        assert result["backend"] == "hybrid-engine"
+        assert result["runner"] == "cli"

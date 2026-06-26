@@ -141,11 +141,12 @@ def test_converted_status_returns_duplicate(monkeypatch, isolated):
 # ---- failed 允许重试 ----
 
 def test_failed_status_allows_retry(monkeypatch, isolated):
-    """同 sha256 命中 failed → 进入转换流程（重试），调 converter。"""
+    """同 sha256 + 同 paper_id 命中 failed → 进入转换流程（重试），调 converter。"""
     m = isolated
     content = b"previously failed content"
     sha = _sha(content)
-    m.upsert("failed_pid", raw_pdf="r/x.pdf", markdown="", images_dir="",
+    # paper_id 必须与 derive_paper_id("x.pdf") 一致，否则触发「同 sha 不同 pid」409
+    m.upsert("x", raw_pdf="r/x.pdf", markdown="", images_dir="",
              status="failed", sha256=sha, file_size=len(content),
              mtime="2025-01-01T00:00:00", raw_filename="x.pdf",
              mineru_backend="hybrid-engine", method="auto")
@@ -167,3 +168,6 @@ def test_failed_status_allows_retry(monkeypatch, isolated):
     assert call_count["n"] == 1, "failed 状态应允许重试并调用 converter"
     # 重试后该 sha256 对应的最新记录应为 converted（优先级高于 failed）
     assert m.find_by_sha256(sha)["status"] == "converted"
+    # failed 记录的 error 字段应已写入（来自上次失败）
+    # 重试成功后 status 翻转，error 清空
+    assert m.get("x")["status"] == "converted"

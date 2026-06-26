@@ -91,14 +91,14 @@ mineru/
 - **文献目录**：`literature_catalog.json` 已补全全部 13 篇条目（`status: summarized`），含 ai_summary/tags/selection_hints/priority + `citation`（bib_key/bibtex），`validate_catalog.py` 与 `validate_bib.py` 均通过。`data/catalog/references.bib` 已由 catalog 同步生成 13 条 BibTeX。`/prompt/plan-reading` 现已可用。`papers_manifest.json` 记录全部 13 篇文件账本。
 - **综述写作 skill**：`src/writer/` + `skills/literature_review_writer/` + `scripts/write_review.py` 已实现博士论文级综述写作全流程（建任务→目录匹配→精读→故事线→TeX→图→校验），所有 LLM 步骤只生成 prompt 不内置 LLM。端到端冒烟测试通过（42 个产物文件、`\cite` 一致性校验 valid）。`write/` 按需创建。
 - **运行状态**：服务未常驻，按需通过 `start.bat` 或单条命令启动。API 已验证可用（`/papers`、`/prompt/*`、`/catalog/*`、`/write/*` 均通）。
-- **安全加固**（2026-06）：全部对外输入（paper_id / job_id / img_name）走 `validate_*` + `safe_child` 防路径穿越；上传流式写入 + 临时文件防内存尖峰；catalog 改为与 manifest 一致的 filelock + os.replace 原子写入；所有 prompt 嵌入文献正文处加入注入防护边界；配置全面支持环境变量覆盖（`.env` 兼容）。**结构收敛**（2026-06）：上传单一管道 `src/upload_service.py`（FastAPI/Gradio/CLI 共用，消灭 Gradio 直写 raw）；manifest 字段 SSOT 拆分（`mineru_backend`/`runner`/`effort`，旧 `backend` 字段废弃，`migrate()` 幂等迁移）；cleaner method 硬约束（禁止目录名反向决定语义）；`find_by_sha256` 状态优先级；manifest status 词表 + `upsert` 校验。**测试**：`tests/` 下 143 个 pytest，无需 GPU/MinerU，`pytest tests/` 全部通过。
+- **安全加固**（2026-06）：全部对外输入（paper_id / job_id / img_name）走 `validate_*` + `safe_child` 防路径穿越；上传流式写入 + 临时文件防内存尖峰；catalog 改为与 manifest 一致的 filelock + os.replace 原子写入；所有 prompt 嵌入文献正文处加入注入防护边界；配置全面支持环境变量覆盖（`.env` 兼容）。**结构收敛**（2026-06）：上传单一管道 `src/upload_service.py`（FastAPI/Gradio/CLI 共用，消灭 Gradio 直写 raw；`upload_from_path` 流式分块，不一次性 read_bytes）；manifest 字段 SSOT 拆分（`mineru_backend`/`runner`/`effort`/`error`/`updated_at`，旧 `backend` 字段废弃，`migrate()` 幂等迁移；`converted_at` 仅 converted 状态写入，converting/failed 保留旧值或空）；cleaner method 硬约束（`_method_from_dirname` 反向映射 + `_source_dir_matches_method` 校验，禁止目录名反向决定语义，method=auto/txt 不得命中 hybrid_ocr）；`find_by_sha256` 状态优先级；manifest status 词表 + `upsert` 校验；upload_service failed 重试策略（同 sha 不同 paper_id 返回 409，避免一个 sha 对应多 paper_id）；converter 所有返回分支含 `backend/method/effort/runner`；`rebuild_library.find_legacy_output` 返回 `LegacyOutput`（检测 method/backend，runner=legacy）；CLI（batch_convert/watcher/rebuild）普通模式禁止 `--backend`/`--effort` 覆盖（`enforce_backend_effort_override`，仅 `MINERU_ALLOW_BACKEND_OVERRIDE=true` 时放行 pipeline/vlm-engine/high）。**测试**：`tests/` 下 182 个 pytest，无需 GPU/MinerU，`pytest tests/` 全部通过。
 
 ## 环境（必读）
 
 - **Conda 环境**：`mineru`（Python 3.10）。所有命令假设 `conda activate mineru`，或直接用环境里的 python：`C:\Users\Admin\.conda\envs\mineru\python.exe`。
 - **CUDA 路径**：`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6` 必须在 PATH 上，`hybrid-engine`/`vlm-engine` 后端（lmdeploy）需要。`start.bat` 已设置；从非 cmd shell 手动启动时先 export。
 - **仅 Windows**：用 `mineru.exe`、`.bat` 编排、硬编码 Windows 路径。平台为 win32。
-- **测试套件**：`tests/` 下 143 个 pytest，无需 GPU/MinerU。运行：`pytest tests/`。
+- **测试套件**：`tests/` 下 182 个 pytest，无需 GPU/MinerU。运行：`pytest tests/`。
 
 ## 运行服务
 

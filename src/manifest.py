@@ -100,6 +100,7 @@ class PaperManifest:
 
         def _migrate(data):
             nonlocal migrated
+            now = datetime.now().isoformat(timespec="seconds")
             for p in data.get("papers", []):
                 old_backend = p.pop("backend", None)
                 changed = False
@@ -112,6 +113,15 @@ class PaperManifest:
                 if "runner" not in p or not p["runner"]:
                     p["runner"] = old_backend or "cli"
                     changed = True
+                if "error" not in p:
+                    p["error"] = ""
+                    changed = True
+                if "updated_at" not in p or not p["updated_at"]:
+                    p["updated_at"] = p.get("converted_at") or now
+                    changed = True
+                # converted_at 语义：非 converted 状态不应有新建的 converted_at
+                if p.get("status") != "converted" and not p.get("converted_at"):
+                    p["converted_at"] = p.get("converted_at") or ""
                 if p.get("status") not in VALID_STATUSES:
                     p["status"] = "converted"
                     changed = True
@@ -161,7 +171,8 @@ class PaperManifest:
                raw_filename: str = "", raw_stem: str = "",
                sha256: str = "", file_size: int = 0, mtime: str = "",
                mineru_backend: str = "", method: str = "",
-               effort: str = "", runner: str = "") -> dict:
+               effort: str = "", runner: str = "",
+               error: str = "") -> dict:
         """新增或更新一条记录（事务级原子写入）。
 
         SSOT 字段语义：
@@ -170,14 +181,35 @@ class PaperManifest:
           method         : 解析方法 auto/ocr/txt。
           effort         : hybrid-engine 解析强度 medium/high。
           runner         : 本次调用通道 cli/api（来自 converter 返回）。
+          error          : 失败原因（status=failed 时填）。
+          converted_at   : 仅 status=converted 时写入；converting/failed 保留旧值
+                           或空串，不新建。
+          updated_at     : 每次 upsert 都刷新（记录最近一次状态变更时间）。
         """
         if status not in VALID_STATUSES:
             raise ValueError(
                 f"非法 status: {status}，允许: {sorted(VALID_STATUSES)}")
+        now = datetime.now().isoformat(timespec="seconds")
         entry_out = {}
 
         def _upsert(data):
             papers = data.get("papers", [])
+            # 旧记录的 converted_at（若存在）
+            old_converted_at = ""
+            old_index = None
+            for i, p in enumerate(papers):
+                if p.get("paper_id") == paper_id:
+                    old_converted_at = p.get("converted_at", "") or ""
+                    old_index = i
+                    break
+
+            # converted_at 语义：仅 converted 写新时间；其它状态保留旧值或空
+            if status == "converted":
+                final_converted_at = converted_at or now
+            else:
+                # converting/failed/queued/duplicate：保留旧 converted_at，无则空
+                final_converted_at = converted_at if converted_at is not None else old_converted_at
+
             entry = {
                 "paper_id": paper_id,
                 "raw_pdf": raw_pdf,
@@ -193,16 +225,14 @@ class PaperManifest:
                 "method": method,
                 "effort": effort,
                 "runner": runner,
+                "error": error,
                 "images_count": images_count,
                 "md_chars": md_chars,
-                "converted_at": converted_at or datetime.now().isoformat(timespec="seconds"),
+                "converted_at": final_converted_at,
+                "updated_at": now,
             }
-            for i, p in enumerate(papers):
-                if p.get("paper_id") == paper_id:
-                    if converted_at is None and p.get("converted_at"):
-                        entry["converted_at"] = p["converted_at"]
-                    papers[i] = entry
-                    break
+            if old_index is not None:
+                papers[old_index] = entry
             else:
                 papers.append(entry)
             data["papers"] = papers

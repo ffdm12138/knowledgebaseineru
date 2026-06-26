@@ -28,7 +28,7 @@ from src.manifest import PaperManifest
 from src.library import PaperLibrary
 from src.catalog import Catalog
 from src.prompt_builder import PromptBuilder
-from src.upload_service import upload_from_bytes, UploadError
+from src.upload_service import upload_from_path, UploadError
 
 # ========== 初始化 ==========
 converter = MinerUConverter()
@@ -45,20 +45,19 @@ def upload_and_convert(file, progress=gr.Progress()):
     """上传文件并转换清理入库。
 
     仅作为 UI 层：不直接写 raw 目录，不直接调 converter/cleaner/manifest，
-    全部走系统单一管道 src.upload_service.upload_from_bytes，与 FastAPI /upload
+    全部走系统单一管道 src.upload_service.upload_from_path，与 FastAPI /upload
     共享同一套流式写入、sha256 去重、converting 状态机、转换流程。
     """
     if file is None:
         return "请选择文件"
     filename = Path(file.name).name
-    # Gradio 把上传文件落到系统临时目录，读 bytes 后交由单一管道处理
-    data = Path(file.name).read_bytes()
-
+    # Gradio 把上传文件落到系统临时目录，这里以路径流式交给单一管道，
+    # 分块读取，避免大 PDF 一次性装入内存。
     progress(0.1, desc="MinerU 转换中...")
     try:
-        result = upload_from_bytes(
+        result = upload_from_path(
+            src_path=Path(file.name),
             filename=filename,
-            data=data,
             converter=converter,
             cleaner=cleaner,
             manifest=manifest,

@@ -113,7 +113,8 @@ async def _stream_to_temp(source, raw_dir: Path,
 
 
 def _mark_failed(manifest, paper_id, save_path, filename,
-                 file_sha256, file_size, backend, method) -> None:
+                 file_sha256, file_size, backend, method, effort,
+                 error, runner="cli") -> None:
     """转换/清理失败时标记 failed（复用 converting 已写入的指纹信息）。"""
     manifest.upsert(
         paper_id=paper_id, raw_pdf=str(save_path),
@@ -122,7 +123,8 @@ def _mark_failed(manifest, paper_id, save_path, filename,
         raw_filename=filename, sha256=file_sha256,
         file_size=file_size,
         mtime=datetime.now().isoformat(timespec="seconds"),
-        mineru_backend=backend, method=method,
+        mineru_backend=backend, method=method, effort=effort,
+        runner=runner, error=error,
     )
 
 
@@ -206,8 +208,16 @@ async def upload_core(
                     "paper_id": existing.get("paper_id"),
                     "message": f"相同文件已存在 (paper_id={existing.get('paper_id')})，未重复转换",
                 }
-            # failed / 其它：允许重试，继续往下（保留 tmp_path 供后续 os.replace）
-            logger.info(f"上次转换失败 ({existing.get('paper_id')})，允许重试")
+            if status == "failed":
+                # failed 重试策略：同 sha 不同 paper_id 拒绝（避免一个 sha256
+                # 对应多个 paper_id）；同 paper_id 才允许重试，覆盖原失败记录
+                if existing.get("paper_id") != paper_id:
+                    os.unlink(tmp_path)
+                    raise UploadError(
+                        f"相同文件已有失败记录 (paper_id={existing.get('paper_id')})，"
+                        f"请重试原 paper_id 或先删除该失败记录，不允许创建新 paper_id。",
+                        status_code=409)
+                logger.info(f"上次转换失败 ({paper_id})，允许重试")
 
         # paper_id 已存在但 sha256 不同（非 failed）
         existing_by_pid = manifest.get(paper_id)
@@ -244,7 +254,8 @@ async def upload_core(
             raw_filename=filename,
             sha256=file_sha256, file_size=file_size,
             mtime=datetime.now().isoformat(timespec="seconds"),
-            mineru_backend=backend, method=method,
+            mineru_backend=backend, method=method, effort=effort,
+            runner="cli",
         )
     # 锁释放
 
@@ -257,7 +268,9 @@ async def upload_core(
         )
         if not result["success"]:
             _mark_failed(manifest, paper_id, save_path, filename,
-                         file_sha256, file_size, backend, method)
+                         file_sha256, file_size, backend, method, effort,
+                         error=f"转换失败: {result.get('error')}",
+                         runner=result.get("runner", "cli"))
             raise UploadError(f"转换失败: {result.get('error')}",
                               status_code=500)
 
@@ -267,7 +280,9 @@ async def upload_core(
                                 backend=backend)
         if not clean["success"]:
             _mark_failed(manifest, paper_id, save_path, filename,
-                         file_sha256, file_size, backend, method)
+                         file_sha256, file_size, backend, method, effort,
+                         error=f"清理失败: {clean.get('error')}",
+                         runner=result.get("runner", "cli"))
             raise UploadError(f"清理失败: {clean.get('error')}",
                               status_code=500)
 
@@ -283,7 +298,7 @@ async def upload_core(
             md_chars=clean["char_count"],
             raw_filename=filename,
             sha256=file_sha256, file_size=file_size, mtime=file_mtime,
-            mineru_backend=backend, method=method,
+            mineru_backend=backend, method=method, effort=effort,
             runner=result.get("runner", "cli"),
         )
 
@@ -332,4 +347,64 @@ def upload_from_bytes(
                 method=method, backend=backend, effort=effort, lang=lang,
             ))
     finally:
+        loop.close()
+
+
+class _FileSource:
+    """把磁盘文件适配成 upload_core 期望的 async read(n) 接口。
+
+    分块读取，避免 Gradio 大 PDF 一次性 read_bytes 造成内存尖峰。
+    read 是 async def（满足 upload_core 的 await 约定），内部同步读文件。
+    """
+
+    def __init__(self, path: Path):
+        self._path = Path(path)
+        self._fh = None
+
+    async def read(self, n: int = -1) -> bytes:
+        if self._fh is None:
+            self._fh = self._path.open("rb")
+        return self._fh.read(n)
+
+    def close(self) -> None:
+        if self._fh is not None:
+            self._fh.close()
+            self._fh = None
+
+
+def upload_from_path(
+    *,
+    src_path: str | Path,
+    converter,
+    cleaner,
+    manifest,
+    filename: str | None = None,
+    raw_dir: Path = RAW_DIR,
+    tmp_dir: Path = MINERU_TMP_DIR,
+    method: str = MINERU_METHOD,
+    backend: str = MINERU_BACKEND,
+    effort: str = MINERU_EFFORT,
+    lang: str = MINERU_LANG,
+) -> dict:
+    """Gradio / 同步调用方入口：文件路径 → 单一管道（流式，不一次性读入内存）。
+
+    与 upload_core 共享同一套校验、去重、converting 状态机、转换流程；
+    以 _FileSource 分块读文件，避免大 PDF 内存尖峰。
+    filename 缺省取 src_path 的 basename。
+    """
+    src_path = Path(src_path)
+    if filename is None:
+        filename = src_path.name
+    source = _FileSource(src_path)
+    loop = asyncio.new_event_loop()
+    try:
+        return loop.run_until_complete(
+            upload_core(
+                filename=filename, source=source,
+                converter=converter, cleaner=cleaner, manifest=manifest,
+                raw_dir=raw_dir, tmp_dir=tmp_dir,
+                method=method, backend=backend, effort=effort, lang=lang,
+            ))
+    finally:
+        source.close()
         loop.close()

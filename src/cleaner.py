@@ -48,6 +48,58 @@ class MinerUOutputCleaner:
         # 默认 hybrid-engine：hybrid_* 已在首位
         return dirs
 
+    # 目录名 → (method, backend) 反向映射。用于校验 source_dir 自身是否
+    # 与调用方声明的 method/backend 一致——禁止目录名反向决定语义。
+    _DIRNAME_MAP = {
+        "hybrid_auto": ("auto", "hybrid-engine"),
+        "hybrid_txt":  ("txt",  "hybrid-engine"),
+        "hybrid_ocr":  ("ocr",  "hybrid-engine"),
+        "auto": ("auto", "pipeline"),
+        "txt":  ("txt",  "pipeline"),
+        "ocr":  ("ocr",  "pipeline"),
+        "vlm_auto": ("auto", "vlm-engine"),
+        "vlm_txt":  ("txt",  "vlm-engine"),
+        "vlm_ocr":  ("ocr",  "vlm-engine"),
+    }
+
+    @classmethod
+    def _method_from_dirname(cls, dirname: str) -> tuple[str | None, str | None]:
+        """目录名 → (method, backend)；未知目录名返回 (None, None)。"""
+        return cls._DIRNAME_MAP.get(dirname, (None, None))
+
+    @staticmethod
+    def _backend_compatible(detected_backend: str, backend: str | None) -> bool:
+        """检测到的目录 backend 是否与声明的 backend 兼容。
+
+        hybrid-engine 目录可被 hybrid-engine 或 pipeline 接受（产品默认）；
+        vlm-engine 目录仅 vlm-engine 接受；pipeline 原生目录任何 backend 都接受。
+        """
+        if detected_backend == "hybrid-engine":
+            return backend in ("hybrid-engine", "pipeline", None)
+        if detected_backend == "vlm-engine":
+            return backend in ("vlm-engine", None)
+        if detected_backend == "pipeline":
+            return True
+        return False
+
+    @classmethod
+    def _source_dir_matches_method(cls, source_dir: Path,
+                                   method: str | None,
+                                   backend: str | None) -> bool:
+        """source_dir 自身为 method 目录时，必须与声明的 method/backend 一致。
+
+        若 source_dir.name 不是已知 method 目录（例如是 <stem> 目录或 tmp 根），
+        返回 True（不构成约束，由内部 exact path 校验）。
+        """
+        detected_method, detected_backend = cls._method_from_dirname(source_dir.name)
+        if detected_method is None:
+            return True
+        if method is not None and detected_method != method:
+            return False
+        if not cls._backend_compatible(detected_backend, backend):
+            return False
+        return True
+
     def locate_markdown(self, source_dir: Path,
                         method: str | None = None,
                         stem: str | None = None,
@@ -83,9 +135,11 @@ class MinerUOutputCleaner:
                 exact_b = source_dir / stem / d / f"{stem}.md"
                 if exact_b.is_file():
                     exact_matches.append(exact_b)
-            # 扁平结构兜底
+            # 扁平结构兜底：source_dir 自身就是 method 目录（如 hybrid_ocr/stem.md）
+            # 必须校验该目录与声明的 method/backend 一致，禁止目录名反向决定语义
             exact_c = source_dir / f"{stem}.md"
-            if exact_c.is_file():
+            if exact_c.is_file() and self._source_dir_matches_method(
+                    source_dir, method, backend):
                 exact_matches.append(exact_c)
 
             if len(exact_matches) == 1:
