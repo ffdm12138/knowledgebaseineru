@@ -12,6 +12,7 @@ from pathlib import Path
 from src.writer.job_manager import JobManager
 from src.library import PaperLibrary
 from src.catalog import Catalog
+from src.naming import validate_paper_id
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
 from config.settings import PAPER_MD_MAX_CHARS, PAPERS_DIR
 
@@ -93,6 +94,12 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
         paper_ids = [p["paper_id"] for p in sel.get("selected_papers", [])]
     if not paper_ids:
         raise RuntimeError("selected_papers 为空，无可精读文献。")
+    # 防御性校验每个 paper_id
+    for pid in paper_ids:
+        try:
+            validate_paper_id(pid)
+        except ValueError as e:
+            raise RuntimeError(f"Invalid paper_id: {pid!r} — {e}")
 
     # 校验每个 paper_id 的 paper.md 存在
     for pid in paper_ids:

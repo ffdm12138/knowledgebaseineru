@@ -140,10 +140,15 @@ def gen_fulltext_prompt(question, paper_ids_text):
 def delete_paper(paper_id):
     """删除文献"""
     import shutil
+    from src.naming import validate_paper_id, safe_child
     pid = paper_id.strip()
     if not pid:
         return "请输入 paper_id"
-    pdir = PAPERS_DIR / pid
+    try:
+        validate_paper_id(pid)
+        pdir = safe_child(PAPERS_DIR, pid)
+    except ValueError as e:
+        return f"❌ 无效 paper_id: {e}"
     removed = False
     if pdir.exists():
         shutil.rmtree(pdir)

@@ -34,34 +34,24 @@ class MinerUOutputCleaner:
         if not source_dir.exists():
             return None
 
-        # 递归找所有 .md。优先匹配同名规则，候选不唯一时报错（不静默选最大）
-        # MinerU 3.4 输出结构: <stem>/<method>/<stem>.md
+        # 递归找所有 .md，按确定性规则选择
         candidates = list(source_dir.rglob("*.md"))
-        # 筛掉明确是中间产物的文件名（仅含这些后缀的 _xxx.json 的对应 .md 极少出现）；
-        # 多个候选时优先取 stem 匹配的，否则取最大的（保留旧行为作为 fallback）
         if not candidates:
             return None
         if len(candidates) == 1:
             return candidates[0]
-        if len(candidates) > 1:
-            # 尝试用已知输出目录模式优先匹配
-            for cand in candidates:
-                parent = cand.parent.name
-                if parent in ("auto", "txt", "ocr", "hybrid_auto", "hybrid_txt",
-                              "hybrid_ocr", "vlm_auto", "vlm_txt", "vlm_ocr"):
-                    return cand
-            # 多个候选但不在标准 method 目录 → 报错让用户确认
-            names = ", ".join(str(c.relative_to(source_dir)) for c in candidates)
-            logger.error(f"多个候选 md 文件，无法确定正文: {names}")
-            return None
 
-        if not candidates:
-            return None
-        if len(candidates) == 1:
-            return candidates[0]
-        # 多个候选：取体积最大的（正文通常最大）
-        candidates.sort(key=lambda p: p.stat().st_size, reverse=True)
-        return candidates[0]
+        # 多个候选：优先 exact path <stem>/<method>/<stem>.md
+        known_methods = {"auto", "txt", "ocr", "hybrid_auto", "hybrid_txt",
+                         "hybrid_ocr", "vlm_auto", "vlm_txt", "vlm_ocr"}
+        for cand in candidates:
+            if cand.parent.name in known_methods:
+                return cand
+
+        # 仍不唯一：报错列出所有候选，让调用方决定（不静默选最大）
+        names = ", ".join(str(c.relative_to(source_dir)) for c in candidates)
+        logger.error(f"多个候选 md 文件，无法确定正文: {names}")
+        return None
 
     def locate_images_dir(self, source_dir: Path, md_path: Path) -> Path | None:
         """定位 md 引用的 images 目录"""
@@ -93,13 +83,21 @@ class MinerUOutputCleaner:
             }
         """
         source_dir = Path(source_dir)
+        # 防御性校验 paper_id，防路径穿越（调用方已校验，此处二次确认）
+        from src.naming import validate_paper_id, safe_child
+        try:
+            validate_paper_id(paper_id)
+        except ValueError as e:
+            return {"success": False, "paper_id": paper_id,
+                    "error": f"Invalid paper_id: {e}"}
+
         md_path = self.locate_markdown(source_dir)
         if md_path is None:
             msg = f"未在 {source_dir} 找到正文 Markdown"
             logger.error(msg)
             return {"success": False, "paper_id": paper_id, "error": msg}
 
-        dest_dir = PAPERS_DIR / paper_id
+        dest_dir = safe_child(PAPERS_DIR, paper_id)
         # 覆盖保护：已存在则备份或报错，不无条件 rmtree
         if dest_dir.exists():
             if not overwrite:

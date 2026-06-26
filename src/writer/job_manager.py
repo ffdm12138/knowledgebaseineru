@@ -93,7 +93,9 @@ class JobManager:
         self.write_dir = Path(write_dir)
 
     def job_dir(self, job_id: str) -> Path:
-        return self.write_dir / job_id
+        from src.naming import validate_job_id, safe_child
+        validate_job_id(job_id)  # 防路径穿越
+        return safe_child(self.write_dir, job_id)
 
     def list_jobs(self) -> list[dict]:
         """列出所有任务的 run_meta 摘要"""
@@ -193,6 +195,11 @@ class JobManager:
         # 读取输入文件内容
         input_text = ""
         if input_file:
+            # 安全检查：拒绝绝对路径和路径穿越
+            if os.path.isabs(input_file) or ".." in input_file:
+                raise ValueError(
+                    f"input_file 不允许绝对路径或路径穿越: {input_file!r}。"
+                    f"请使用项目目录下的相对路径，或通过 topic 参数直接提供研究内容。")
             ip = Path(input_file)
             if not ip.exists():
                 raise FileNotFoundError(f"输入文件不存在: {input_file}")

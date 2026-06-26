@@ -1,10 +1,14 @@
 """文献目录：literature_catalog.json 的加载/校验/查询
 
 catalog 是 AI 维护的"文献理解目录"，不是搜索索引。
+
+写入采用 filelock + 临时文件 + os.replace 原子替换，与 manifest 一致防止中断损坏 JSON。
 """
 import json
+import os
 from pathlib import Path
 from loguru import logger
+from filelock import FileLock
 
 from config.settings import CATALOG_PATH
 
@@ -32,6 +36,10 @@ class Catalog:
     def __init__(self, path: Path = CATALOG_PATH):
         self.path = Path(path)
 
+    @property
+    def _lock_path(self) -> Path:
+        return self.path.with_suffix(self.path.suffix + ".lock")
+
     def load(self) -> dict:
         if not self.path.exists():
             return {"version": "0.1", "description": "", "papers": []}
@@ -42,8 +50,16 @@ class Catalog:
             return {"version": "0.1", "description": "", "papers": []}
 
     def save(self, data: dict) -> None:
+        """原子写入：加锁 → 写 tmp → 校验 JSON → os.replace → 解锁"""
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        lock = FileLock(str(self._lock_path))
+        raw = json.dumps(data, ensure_ascii=False, indent=2)
+        tmp = self.path.with_suffix(self.path.suffix + ".tmp")
+        with lock:
+            tmp.write_text(raw, encoding="utf-8")
+            # 校验写入完整性：回读确认可解析
+            json.loads(tmp.read_text(encoding="utf-8"))
+            os.replace(tmp, self.path)
 
     def list_papers(self) -> list[dict]:
         return self.load().get("papers", [])

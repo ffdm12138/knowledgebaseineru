@@ -12,6 +12,7 @@ from pathlib import Path
 
 from src.writer.job_manager import JobManager
 from src.catalog import Catalog
+from src.naming import validate_paper_id, validate_image_name, safe_child
 from config.settings import PAPERS_DIR
 
 
@@ -41,7 +42,13 @@ def copy_figures(job_id: str, figures: list[dict] | None = None,
         img = item.get("image")
         if not pid or not img:
             continue
-        src = PAPERS_DIR / pid / "images" / img
+        # 防路径穿越：校验 pid + img，使用 safe_child 拼接
+        try:
+            validate_paper_id(pid)
+            validate_image_name(img)
+        except ValueError:
+            continue
+        src = safe_child(PAPERS_DIR, pid, "images", img)
         if not src.is_file():
             continue
         dest_dir = jdir / "figures" / pid

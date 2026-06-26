@@ -19,6 +19,7 @@
 - GET    /status                        系统状态
 """
 import sys
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -175,12 +176,46 @@ async def upload(
     except ValueError:
         raise HTTPException(400, f"非法文件名: {file.filename}")
 
-    content = await file.read()
-    if len(content) > MAX_UPLOAD_SIZE:
-        raise HTTPException(413, f"文件过大: {len(content)} bytes > 上限 {MAX_UPLOAD_SIZE} bytes")
-    save_path.write_bytes(content)
+    # 流式写入临时文件（防内存尖峰），边读边累计大小 + 计算 sha256
+    import hashlib
+    import tempfile
+    sha = hashlib.sha256()
+    total_size = 0
+    CHUNK_SIZE = 1024 * 1024  # 1MB
+    tmp_fd, tmp_path = tempfile.mkstemp(
+        dir=str(RAW_DIR), prefix=".upload_", suffix=".tmp")
+    try:
+        # os.fdopen + wb 避免文本模式换行转换
+        with os.fdopen(tmp_fd, 'wb') as tmpf:
+            while True:
+                chunk = await file.read(CHUNK_SIZE)
+                if not chunk:
+                    break
+                total_size += len(chunk)
+                if total_size > MAX_UPLOAD_SIZE:
+                    raise HTTPException(
+                        413,
+                        f"文件过大: > {MAX_UPLOAD_SIZE} bytes "
+                        f"(当前 {total_size} bytes)")
+                sha.update(chunk)
+                tmpf.write(chunk)
+        # 原子移动到目标位置
+        os.replace(tmp_path, str(save_path))
+        tmp_path = None  # 标记已成功处理
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"上传写入失败: {e}")
+        raise HTTPException(500, f"上传失败: {str(e)}")
+    finally:
+        if tmp_path is not None and os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
-    logger.info(f"收到文件: {file.filename} ({len(content)} bytes) -> paper_id={paper_id}")
+    file_sha256 = sha.hexdigest()
+    file_size = total_size
+    logger.info(
+        f"收到文件: {file.filename} ({file_size} bytes, "
+        f"sha256={file_sha256[:12]}…) -> paper_id={paper_id}")
 
     tmp_out = MINERU_TMP_DIR / paper_id
     try:
@@ -196,8 +231,10 @@ async def upload(
         if not clean["success"]:
             raise HTTPException(500, f"清理失败: {clean.get('error')}")
 
-        from src.file_fingerprint import compute_sha256, file_meta
-        meta = file_meta(save_path)
+        # 使用上传阶段已计算的 sha256 / file_size，仅补 mtime
+        from datetime import datetime
+        file_mtime = datetime.fromtimestamp(
+            os.path.getmtime(str(save_path))).isoformat(timespec="seconds")
         manifest.upsert(
             paper_id=paper_id,
             raw_pdf=str(save_path),
@@ -207,7 +244,7 @@ async def upload(
             images_count=clean["images_count"],
             md_chars=clean["char_count"],
             raw_filename=file.filename,
-            sha256=meta["sha256"], file_size=meta["file_size"], mtime=meta["mtime"],
+            sha256=file_sha256, file_size=file_size, mtime=file_mtime,
             backend=result.get("backend", "cli"), method=method,
         )
 
@@ -260,14 +297,11 @@ async def get_paper_images(paper_id: str):
 @app.get("/papers/{paper_id}/images/{img_name}")
 async def get_paper_image(paper_id: str, img_name: str):
     """返回单张图片文件（前端预览用）"""
-    import re
     from fastapi.responses import FileResponse
-    # img_name 白名单：仅字母数字 . _ - + 安全图片后缀
-    if not re.match(r'^[A-Za-z0-9_\.\-\+]+\.(png|jpg|jpeg|webp|gif|bmp)$', img_name):
-        raise HTTPException(400, f"非法图片名: {img_name}")
     try:
-        from src.naming import safe_child, validate_paper_id
+        from src.naming import safe_child, validate_paper_id, validate_image_name
         validate_paper_id(paper_id)
+        validate_image_name(img_name)
         img_path = safe_child(PAPERS_DIR, paper_id, "images", img_name)
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -278,8 +312,13 @@ async def get_paper_image(paper_id: str, img_name: str):
 
 @app.delete("/papers/{paper_id}")
 async def delete_paper(paper_id: str):
-    # 删除 papers 目录
-    pdir = PAPERS_DIR / paper_id
+    # 必须先校验 paper_id + safe_child 防止路径穿越
+    try:
+        from src.naming import safe_child, validate_paper_id
+        validate_paper_id(paper_id)
+        pdir = safe_child(PAPERS_DIR, paper_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     removed_files = False
     if pdir.exists():
         import shutil
@@ -357,6 +396,16 @@ async def prompt_read_fulltext(req: FulltextRequest):
 
 # ========== 综述写作任务（不调 LLM，各步生成 prompt + 结构文件）==========
 
+
+def _check_job_id(job_id: str) -> None:
+    """校验 job_id 防路径穿越，非法时抛 HTTPException(400)"""
+    from src.naming import validate_job_id
+    try:
+        validate_job_id(job_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
 @app.post("/write/jobs")
 async def create_write_job(req: CreateJobRequest):
     """创建写作任务：生成 write/<job>/ 目录 + normalized_task 骨架"""
@@ -377,6 +426,7 @@ async def list_write_jobs():
 
 @app.get("/write/jobs/{job_id}")
 async def get_write_job(job_id: str):
+    _check_job_id(job_id)
     meta = job_manager.load_meta(job_id)
     if meta is None:
         raise HTTPException(404, f"任务不存在: {job_id}")
@@ -385,6 +435,7 @@ async def get_write_job(job_id: str):
 
 @app.get("/write/jobs/{job_id}/files")
 async def write_job_files(job_id: str):
+    _check_job_id(job_id)
     if not job_manager.job_dir(job_id).exists():
         raise HTTPException(404, f"任务不存在: {job_id}")
     return {"job_id": job_id, "files": job_manager.job_files(job_id)}
@@ -392,6 +443,7 @@ async def write_job_files(job_id: str):
 
 @app.post("/write/jobs/{job_id}/match-catalog")
 async def write_match_catalog(job_id: str):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     return match_catalog(job_id, jm=job_manager, catalog=catalog)
@@ -399,6 +451,7 @@ async def write_match_catalog(job_id: str):
 
 @app.post("/write/jobs/{job_id}/confirm-papers")
 async def write_confirm_papers(job_id: str, req: ConfirmPapersRequest):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     if not req.paper_ids:
@@ -415,6 +468,7 @@ async def write_confirm_papers(job_id: str, req: ConfirmPapersRequest):
 
 @app.post("/write/jobs/{job_id}/deep-read")
 async def write_deep_read(job_id: str, req: DeepReadRequest):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     try:
@@ -426,6 +480,7 @@ async def write_deep_read(job_id: str, req: DeepReadRequest):
 
 @app.post("/write/jobs/{job_id}/mark-deep-read")
 async def write_mark_deep_read(job_id: str):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     info = mark_deep_reading_filled(job_id, jm=job_manager)
@@ -436,6 +491,7 @@ async def write_mark_deep_read(job_id: str):
 
 @app.post("/write/jobs/{job_id}/build-story")
 async def write_build_story(job_id: str):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     try:
@@ -446,6 +502,7 @@ async def write_build_story(job_id: str):
 
 @app.post("/write/jobs/{job_id}/mark-story")
 async def write_mark_story(job_id: str):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     info = mark_story_filled(job_id, jm=job_manager)
@@ -456,6 +513,7 @@ async def write_mark_story(job_id: str):
 
 @app.post("/write/jobs/{job_id}/build-tex")
 async def write_build_tex(job_id: str, req: BuildTexRequest):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     try:
@@ -468,6 +526,7 @@ async def write_build_tex(job_id: str, req: BuildTexRequest):
 
 @app.post("/write/jobs/{job_id}/mark-tex")
 async def write_mark_tex(job_id: str):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     info = mark_tex_content_filled(job_id, jm=job_manager)
@@ -478,6 +537,7 @@ async def write_mark_tex(job_id: str):
 
 @app.post("/write/jobs/{job_id}/copy-figures")
 async def write_copy_figures(job_id: str, req: CopyFiguresRequest):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     return copy_figures(job_id, figures=req.figures, jm=job_manager, catalog=catalog)
@@ -485,6 +545,7 @@ async def write_copy_figures(job_id: str, req: CopyFiguresRequest):
 
 @app.post("/write/jobs/{job_id}/validate")
 async def write_validate(job_id: str):
+    _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     import importlib

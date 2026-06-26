@@ -71,3 +71,34 @@ def validate_paper_id(paper_id: str) -> str:
     if ".." in paper_id or "/" in paper_id or "\\" in paper_id:
         raise ValueError(f"Invalid paper_id (路径穿越): {paper_id!r}")
     return paper_id
+
+
+def validate_job_id(job_id: str) -> str:
+    """校验 job_id 合法性，防路径穿越。非法抛 ValueError。
+
+    job_id 格式：NNN_slug_suffix，其中 slug 来自研究主题（可含中文），
+    suffix 为 6 位 hex。安全规则与 paper_id 一致。
+    """
+    if not isinstance(job_id, str) or not job_id:
+        raise ValueError(f"Invalid job_id: {job_id!r}")
+    if not _PAPER_ID_RE.match(job_id):
+        raise ValueError(f"Invalid job_id (含非法字符): {job_id!r}")
+    if ".." in job_id or "/" in job_id or "\\" in job_id:
+        raise ValueError(f"Invalid job_id (路径穿越): {job_id!r}")
+    return job_id
+
+
+# 安全图片文件名：仅字母数字 . _ - + 加已知图片后缀
+_SAFE_IMAGE_RE = re.compile(r'^[A-Za-z0-9_\.\-\+]+\.(png|jpg|jpeg|webp|gif|bmp)$')
+
+
+def validate_image_name(img_name: str) -> str:
+    """校验图片文件名合法性（白名单），防路径穿越与注入。非法抛 ValueError。"""
+    if not isinstance(img_name, str) or not img_name:
+        raise ValueError(f"Invalid image name: {img_name!r}")
+    if not _SAFE_IMAGE_RE.match(img_name):
+        raise ValueError(f"Invalid image name (含非法字符或不支持的格式): {img_name!r}")
+    # 二次防护
+    if ".." in img_name or "/" in img_name or "\\" in img_name:
+        raise ValueError(f"Invalid image name (路径穿越): {img_name!r}")
+    return img_name

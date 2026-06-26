@@ -41,12 +41,15 @@ def mineru_available() -> bool:
 class MinerUConverter:
     """MinerU 3.4 文档转换器"""
 
-    def __init__(self, proxy: str = None):
+    def __init__(self, proxy: str = None, timeout: int | None = None):
         """
         Args:
             proxy: 代理地址，如 "http://127.0.0.1:7890"，None则不走代理
+            timeout: CLI 转换超时（秒），默认从 config 读取
         """
         self.proxy = proxy
+        from config.settings import MINERU_TIMEOUT
+        self.timeout = timeout or MINERU_TIMEOUT
 
     def _get_env(self) -> dict:
         """构建环境变量"""
@@ -131,7 +134,7 @@ class MinerUConverter:
                 encoding="utf-8",
                 errors="replace",
                 env=self._get_env(),
-                timeout=600,
+                timeout=self.timeout,
             )
 
             if result.returncode != 0:
@@ -164,7 +167,7 @@ class MinerUConverter:
             }
 
         except subprocess.TimeoutExpired:
-            return {"success": False, "error": "转换超时(600s)", "backend": "cli"}
+            return {"success": False, "error": f"转换超时({self.timeout}s)", "backend": "cli"}
         except Exception as e:
             return {"success": False, "error": str(e), "backend": "cli"}
 

@@ -13,6 +13,7 @@ from pathlib import Path
 
 from src.writer.job_manager import JobManager
 from src.catalog import Catalog
+from src.naming import validate_paper_id
 
 
 def load_selected(job_id: str, jm: JobManager | None = None) -> dict:
@@ -164,6 +165,10 @@ def confirm_selected_papers(job_id: str, selected: list[dict],
         pid = item.get("paper_id")
         if not pid:
             raise ValueError("selected 条目缺少 paper_id")
+        try:
+            validate_paper_id(pid)
+        except ValueError as e:
+            raise ValueError(f"Invalid paper_id: {pid!r} — {e}")
         bk = item.get("bib_key") or bib_map.get(pid, "")
         enriched.append({
             "paper_id": pid,
