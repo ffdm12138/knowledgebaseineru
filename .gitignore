@@ -1,0 +1,28 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# ===== 数据语料（受版权保护，不入库）=====
+# PDF 原文与派生 md/图：体积大且含版权，不推送到远程
+data/raw/*
+data/papers/*
+data/tmp/**
+!data/raw/.gitkeep
+!data/papers/.gitkeep
+!data/tmp/.gitkeep
+
+# ===== 写作任务产物（可重新生成，不入库）=====
+write/
+
+# ===== 日志与临时 =====
+*.log
+output/
+.DS_Store
+Thumbs.db
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp

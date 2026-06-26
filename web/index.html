@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinerU 文献资产库</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; padding: 30px 0 6px; color: #1a1a1a; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 24px; }
+        .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .card h2 { font-size: 18px; margin-bottom: 16px; color: #1a1a1a; border-left: 4px solid #4f46e5; padding-left: 12px; }
+
+        .upload-zone { border: 2px dashed #d1d5db; border-radius: 8px; padding: 36px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .upload-zone:hover { border-color: #4f46e5; background: #f0f0ff; }
+        .upload-zone.dragging { border-color: #4f46e5; background: #eef2ff; }
+        .upload-zone input { display: none; }
+        .upload-btn { display: inline-block; padding: 10px 24px; background: #4f46e5; color: white; border-radius: 6px; cursor: pointer; margin-top: 12px; }
+
+        .status-bar { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; padding: 12px; background: #f0fdf4; border-radius: 8px; margin-bottom: 20px; }
+        .status-bar span { font-size: 14px; color: #166534; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+        th { color: #6b7280; font-weight: 600; }
+        .pid { font-family: monospace; color: #4f46e5; cursor: pointer; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+        .badge.ok { background: #dcfce7; color: #166534; }
+        .badge.no { background: #fee2e2; color: #991b1b; }
+        .btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; margin: 2px; }
+        .btn-primary { background: #4f46e5; color: white; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-ghost { background: #f3f4f6; color: #374151; }
+        .btn-ghost:hover { background: #e5e7eb; }
+        .btn-danger { background: #fee2e2; color: #991b1b; }
+        .btn-danger:hover { background: #fecaca; }
+        .btn-sm { padding: 4px 8px; font-size: 12px; }
+
+        .row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+        .row input[type=text] { flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; }
+        textarea { width: 100%; min-height: 320px; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.5; }
+        .hint { font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+        .tab { padding: 8px 16px; border: none; background: #f3f4f6; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .tab.active { background: #4f46e5; color: white; }
+        .hidden { display: none; }
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; background: #059669; color: white; border-radius: 8px; z-index: 1000; display: none; }
+        .toast.error { background: #dc2626; }
+        .loading { text-align: center; padding: 20px; color: #6b7280; }
+        details summary { cursor: pointer; color: #4f46e5; padding: 4px 0; }
+        pre.mdview { white-space: pre-wrap; word-break: break-word; background:#0f172a; color:#e2e8f0; padding:16px; border-radius:8px; font-size:13px; max-height:500px; overflow:auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MinerU 文献资产库</h1>
+        <p class="subtitle">文献解析 &middot; AI 摘要目录 &middot; 按需全文阅读</p>
+
+        <div class="status-bar" id="statusBar"><span>加载中...</span></div>
+
+        <!-- 上传 -->
+        <div class="card">
+            <h2>上传文献</h2>
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,.xlsx,.png,.jpg,.jpeg" multiple>
+                <p style="font-size:40px;margin-bottom:8px">📄</p>
+                <p>点击或拖拽文件到此处（PDF/DOCX/PPTX/XLSX/图片）</p>
+                <div class="upload-btn">选择文件</div>
+            </div>
+            <div id="uploadStatus" class="hidden" style="margin-top:12px;padding:12px;background:#f0fdf4;border-radius:6px;font-size:14px;"></div>
+        </div>
+
+        <!-- 文献列表 -->
+        <div class="card">
+            <h2>文献库 <button class="btn btn-ghost btn-sm" onclick="loadPapers()">🔄 刷新</button></h2>
+            <div class="hint">点击 paper_id 可查看全文；右侧按钮生成对应 prompt（不调 LLM，仅复制粘贴）。</div>
+            <table>
+                <thead><tr><th>#</th><th>paper_id</th><th>原始文件</th><th>字符</th><th>图</th><th>摘要</th><th>操作</th></tr></thead>
+                <tbody id="papersBody"><tr><td colspan="7" class="loading">加载中...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- Prompt 生成 -->
+        <div class="card">
+            <h2>Prompt 生成</h2>
+            <div class="tabs">
+                <button class="tab active" onclick="switchPromptTab('entry',event)">① 单篇目录条目</button>
+                <button class="tab" onclick="switchPromptTab('plan',event)">② 目录规划阅读</button>
+                <button class="tab" onclick="switchPromptTab('full',event)">③ 全文写作</button>
+            </div>
+
+            <div id="tab-entry">
+                <div class="row"><input type="text" id="entryPid" placeholder="paper_id（从上方列表复制）"></div>
+                <button class="btn btn-primary" onclick="genEntry()">生成「补全该文献目录条目」Prompt</button>
+            </div>
+
+            <div id="tab-plan" class="hidden">
+                <div class="row"><input type="text" id="planQ" placeholder="研究问题，如：风吹雪升华参数化的发展脉络"></div>
+                <button class="btn btn-primary" onclick="genPlan()">生成「根据目录规划阅读」Prompt</button>
+                <p class="hint">需先在 literature_catalog.json 中补全文献摘要条目。</p>
+            </div>
+
+            <div id="tab-full" class="hidden">
+                <div class="row"><input type="text" id="fullQ" placeholder="研究问题"></div>
+                <div class="row"><input type="text" id="fullIds" placeholder="paper_id 列表，逗号分隔，如 1999_dery_吹雪体相模型,2025_huang_雪粒破碎促进升华"></div>
+                <button class="btn btn-primary" onclick="genFull()">生成「基于全文写作」Prompt</button>
+            </div>
+
+            <div style="margin-top:14px;">
+                <div class="row" style="justify-content:flex-end">
+                    <button class="btn btn-ghost" onclick="copyPrompt()">📋 复制 Prompt</button>
+                </div>
+                <textarea id="promptOut" placeholder="生成的 prompt 将显示在这里..."></textarea>
+            </div>
+        </div>
+
+        <!-- 目录 -->
+        <div class="card">
+            <h2>文献目录 (literature_catalog.json) <button class="btn btn-ghost btn-sm" onclick="validateCatalog()">校验</button> <button class="btn btn-ghost btn-sm" onclick="loadUnsummarized()">未总结列表</button> <button class="btn btn-ghost btn-sm" onclick="loadCatalog()">查看目录</button></h2>
+            <div class="hint">目录由 AI 维护。先用 ① 生成条目 prompt，让大模型产出 JSON，再粘贴回 <code>data/catalog/literature_catalog.json</code>。</div>
+            <pre id="catalogView" class="mdview" style="min-height:120px;"></pre>
+        </div>
+
+        <!-- 全文+图片查看 -->
+        <div class="card" id="viewerCard">
+            <h2>全文与图片 <span id="viewerTitle" style="font-weight:normal;color:#6b7280;font-size:14px;"></span></h2>
+            <div class="tabs">
+                <button class="tab active" onclick="viewerTab('md',event)">Markdown</button>
+                <button class="tab" onclick="viewerTab('img',event)">图片</button>
+            </div>
+            <div id="viewerMd"><pre class="mdview" id="viewerMdPre" style="min-height:200px;">点击文献列表中的 paper_id 查看全文</pre></div>
+            <div id="viewerImg" class="hidden">
+                <div class="hint" id="imgHint">点击文献列表中的 paper_id 加载图片</div>
+                <div id="imgGrid" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API = '';
+        let currentPrompt = '';
+
+        async function loadStatus() {
+            try {
+                const d = await (await fetch(API + '/status')).json();
+                const lib = d.library;
+                document.getElementById('statusBar').innerHTML =
+                    `<span>● 运行中</span><span>文献: ${lib.total_papers} 篇</span><span>字符: ${lib.total_md_chars}</span><span>图片: ${lib.total_images}</span><span>目录条目: ${d.catalog_papers}</span>`;
+            } catch(e) {
+                document.getElementById('statusBar').innerHTML = '<span style="color:red">服务未连接</span>';
+            }
+        }
+
+        // 文献列表
+        async function loadPapers() {
+            const body = document.getElementById('papersBody');
+            body.innerHTML = '<tr><td colspan="7" class="loading">加载中...</td></tr>';
+            try {
+                const d = await (await fetch(API + '/papers')).json();
+                const papers = d.papers;
+                if (!papers.length) { body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:20px">暂无文献</td></tr>'; return; }
+                body.innerHTML = papers.map((p, i) => {
+                    const pid = p.paper_id;
+                    const raw = p.raw_pdf.split(/[\\/]/).pop();
+                    return `<tr>
+                        <td>${i+1}</td>
+                        <td><span class="pid" onclick="viewMd('${pid}')">${escapeHtml(pid)}</span></td>
+                        <td>${escapeHtml(raw)}</td>
+                        <td>${p.md_chars}</td>
+                        <td>${p.images_count}</td>
+                        <td><span class="badge no">未总结</span></td>
+                        <td>
+                            <button class="btn btn-ghost btn-sm" onclick="viewMd('${pid}')">全文</button>
+                            <button class="btn btn-primary btn-sm" onclick="entryFrom('${pid}')">①条目</button>
+                            <button class="btn btn-danger btn-sm" onclick="delPaper('${pid}')">删除</button>
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch(e) { body.innerHTML = `<tr><td colspan="7" style="color:red">加载失败: ${e.message}</td></tr>`; }
+        }
+
+        let currentViewerPid = '';
+        async function viewMd(pid) {
+            currentViewerPid = pid;
+            document.getElementById('viewerTitle').textContent = pid;
+            // 全文
+            const md = await (await fetch(API + '/papers/' + encodeURIComponent(pid) + '/markdown')).text();
+            document.getElementById('viewerMdPre').textContent = md.slice(0, 8000) + (md.length > 8000 ? '\n\n...(截断，共 ' + md.length + ' 字符)' : '');
+            // 图片
+            await loadImages(pid);
+            document.getElementById('viewerCard').scrollIntoView({behavior:'smooth'});
+            showToast('已加载全文与图片');
+        }
+
+        async function loadImages(pid) {
+            const grid = document.getElementById('imgGrid');
+            const hint = document.getElementById('imgHint');
+            grid.innerHTML = '';
+            try {
+                const d = await (await fetch(API + '/papers/' + encodeURIComponent(pid) + '/images')).json();
+                if (!d.images.length) { hint.textContent = '该文献无图片'; hint.style.display='block'; return; }
+                hint.style.display = 'none';
+                d.images.forEach(name => {
+                    const url = API + '/papers/' + encodeURIComponent(pid) + '/images/' + encodeURIComponent(name);
+                    const box = document.createElement('div');
+                    box.style.cssText = 'width:140px;text-align:center;font-size:11px;color:#6b7280;';
+                    box.innerHTML = `<a href="${url}" target="_blank"><img src="${url}" style="width:140px;height:180px;object-fit:cover;border:1px solid #e5e7eb;border-radius:6px;cursor:pointer;"></a><div title="${name}">${name.slice(0,16)}</div>`;
+                    grid.appendChild(box);
+                });
+            } catch(e) { hint.textContent = '图片加载失败: ' + e.message; hint.style.display='block'; }
+        }
+
+        function viewerTab(t, ev) {
+            document.querySelectorAll('#viewerCard .tab').forEach(x => x.classList.remove('active'));
+            ev.target.classList.add('active');
+            document.getElementById('viewerMd').classList.toggle('hidden', t !== 'md');
+            document.getElementById('viewerImg').classList.toggle('hidden', t !== 'img');
+        }
+
+        async function delPaper(pid) {
+            if (!confirm('删除 ' + pid + ' ？（papers 目录 + manifest + catalog 条目）')) return;
+            await fetch(API + '/papers/' + encodeURIComponent(pid), {method:'DELETE'});
+            showToast('已删除');
+            loadPapers(); loadStatus();
+        }
+
+        // prompt tabs
+        function switchPromptTab(t, ev) {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            ev.target.classList.add('active');
+            ['entry','plan','full'].forEach(x => document.getElementById('tab-'+x).classList.toggle('hidden', x !== t));
+        }
+        function entryFrom(pid) { document.getElementById('entryPid').value = pid; switchPromptTab('entry',{target:document.querySelector('.tab')}); }
+
+        async function genEntry() {
+            const pid = document.getElementById('entryPid').value.trim();
+            if (!pid) return showToast('请填 paper_id', true);
+            const r = await fetch(API + '/prompt/catalog-entry', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paper_id:pid})});
+            const d = await r.json();
+            if (!r.ok) return showToast(d.detail || '失败', true);
+            currentPrompt = d.prompt; document.getElementById('promptOut').value = d.prompt;
+            showToast('Prompt 已生成');
+        }
+        async function genPlan() {
+            const q = document.getElementById('planQ').value.trim();
+            if (!q) return showToast('请填研究问题', true);
+            const r = await fetch(API + '/prompt/plan-reading', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
+            const d = await r.json();
+            if (!r.ok) return showToast(d.detail || '失败', true);
+            currentPrompt = d.prompt; document.getElementById('promptOut').value = d.prompt;
+            showToast('Prompt 已生成');
+        }
+        async function genFull() {
+            const q = document.getElementById('fullQ').value.trim();
+            const ids = document.getElementById('fullIds').value.split(',').map(s=>s.trim()).filter(Boolean);
+            if (!q || !ids.length) return showToast('请填问题和 paper_id', true);
+            const r = await fetch(API + '/prompt/read-fulltext', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,paper_ids:ids})});
+            const d = await r.json();
+            if (!r.ok) return showToast(d.detail || '失败', true);
+            currentPrompt = d.prompt; document.getElementById('promptOut').value = d.prompt;
+            showToast('Prompt 已生成（含 ' + d.included_papers.length + ' 篇全文）');
+        }
+        function copyPrompt() {
+            const t = document.getElementById('promptOut');
+            t.select(); document.execCommand('copy');
+            showToast('已复制到剪贴板');
+        }
+
+        // catalog
+        async function loadCatalog() {
+            const d = await (await fetch(API + '/catalog')).json();
+            document.getElementById('catalogView').textContent = JSON.stringify(d, null, 2);
+        }
+        async function validateCatalog() {
+            const d = await (await fetch(API + '/catalog/validate', {method:'POST'})).json();
+            showToast(d.valid ? '✅ 校验通过' : '❌ ' + d.errors.length + ' 个错误', !d.valid);
+            if (!d.valid) document.getElementById('catalogView').textContent = d.errors.join('\n');
+        }
+        async function loadUnsummarized() {
+            const d = await (await fetch(API + '/catalog/unsummarized')).json();
+            document.getElementById('catalogView').textContent = '未总结 paper_id：\n' + (d.unsummarized.length ? d.unsummarized.join('\n') : '（全部已总结）');
+        }
+
+        // 上传
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragging'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
+        uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragging'); handleFiles(e.dataTransfer.files); });
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+        async function handleFiles(files) {
+            const status = document.getElementById('uploadStatus'); status.classList.remove('hidden');
+            for (const file of files) {
+                status.innerHTML = `正在处理: ${file.name}...`;
+                const form = new FormData(); form.append('file', file);
+                try {
+                    const r = await fetch(API + '/upload', {method:'POST', body:form});
+                    const d = await r.json();
+                    status.innerHTML = d.status === 'success' ? `✅ ${file.name} → ${d.paper_id} (${d.md_chars} 字符, ${d.images_count} 图)` : `❌ ${file.name}: ${d.detail||'失败'}`;
+                } catch(e) { status.innerHTML = `❌ ${file.name}: ${e.message}`; }
+            }
+            loadPapers(); loadStatus(); loadCatalog();
+            setTimeout(() => status.classList.add('hidden'), 6000);
+        }
+
+        function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
+        function showToast(msg, isError) {
+            const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast' + (isError ? ' error' : ''); t.style.display='block';
+            setTimeout(() => t.style.display = 'none', 2800);
+        }
+
+        loadStatus(); loadPapers(); loadCatalog();
+        setInterval(loadStatus, 30000);
+    </script>
+</body>
+</html>

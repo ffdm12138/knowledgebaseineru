@@ -1,0 +1,136 @@
+{
+  "version": "0.1",
+  "description": "System-maintained file ledger of converted papers. Not the AI catalog.",
+  "papers": [
+    {
+      "paper_id": "1982_schmidt_风吹雪垂直剖面",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\1982野外升华率实验.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\1982_schmidt_风吹雪垂直剖面\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\1982_schmidt_风吹雪垂直剖面\\images",
+      "status": "converted",
+      "images_count": 32,
+      "md_chars": 55693,
+      "converted_at": "2026-06-26T18:42:01"
+    },
+    {
+      "paper_id": "1988_dery_吹雪升华热力学",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\1988雪升华率.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\1988_dery_吹雪升华热力学\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\1988_dery_吹雪升华热力学\\images",
+      "status": "converted",
+      "images_count": 51,
+      "md_chars": 73003,
+      "converted_at": "2026-06-26T18:42:02"
+    },
+    {
+      "paper_id": "1999_shao_风沙跃移数值模拟",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\1999shaoli起动.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\1999_shao_风沙跃移数值模拟\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\1999_shao_风沙跃移数值模拟\\images",
+      "status": "converted",
+      "images_count": 71,
+      "md_chars": 63974,
+      "converted_at": "2026-06-26T18:42:02"
+    },
+    {
+      "paper_id": "1999_dery_吹雪体相模型",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\1999悬移控制方程.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\1999_dery_吹雪体相模型\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\1999_dery_吹雪体相模型\\images",
+      "status": "converted",
+      "images_count": 32,
+      "md_chars": 36483,
+      "converted_at": "2026-06-26T18:42:02"
+    },
+    {
+      "paper_id": "2017_comola_风吹雪晶体破碎",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\Comola_et_al_2017_Fragmentation_of_wind_blown_snow_crystals.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2017_comola_风吹雪晶体破碎\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2017_comola_风吹雪晶体破碎\\images",
+      "status": "converted",
+      "images_count": 17,
+      "md_chars": 42699,
+      "converted_at": "2026-06-26T18:42:03"
+    },
+    {
+      "paper_id": "2026_viaro_高山吹雪云过程",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\cryowrf-egusphere-2026-2132.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2026_viaro_高山吹雪云过程\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2026_viaro_高山吹雪云过程\\images",
+      "status": "converted",
+      "images_count": 18,
+      "md_chars": 54319,
+      "converted_at": "2026-06-26T18:42:03"
+    },
+    {
+      "paper_id": "2010_gordon_吹雪粒径分布",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\Gordon粒径分布.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2010_gordon_吹雪粒径分布\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2010_gordon_吹雪粒径分布\\images",
+      "status": "converted",
+      "images_count": 28,
+      "md_chars": 78846,
+      "converted_at": "2026-06-26T18:42:03"
+    },
+    {
+      "paper_id": "2025_huang_雪粒破碎促进升华",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\huang2025破碎.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2025_huang_雪粒破碎促进升华\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2025_huang_雪粒破碎促进升华\\images",
+      "status": "converted",
+      "images_count": 37,
+      "md_chars": 61133,
+      "converted_at": "2026-06-26T18:42:03"
+    },
+    {
+      "paper_id": "2021_zheng_跃移床面湍流调制",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\jfm.2021.329.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2021_zheng_跃移床面湍流调制\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2021_zheng_跃移床面湍流调制\\images",
+      "status": "converted",
+      "images_count": 65,
+      "md_chars": 94510,
+      "converted_at": "2026-06-26T18:42:04"
+    },
+    {
+      "paper_id": "2000_nishimura_南极吹雪观测",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\Nishimura粒径分布.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2000_nishimura_南极吹雪观测\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2000_nishimura_南极吹雪观测\\images",
+      "status": "converted",
+      "images_count": 29,
+      "md_chars": 34868,
+      "converted_at": "2026-06-26T18:42:04"
+    },
+    {
+      "paper_id": "2008_wang_风沙跃移与悬移运动",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\s11433-008-0106-6.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2008_wang_风沙跃移与悬移运动\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2008_wang_风沙跃移与悬移运动\\images",
+      "status": "converted",
+      "images_count": 42,
+      "md_chars": 33531,
+      "converted_at": "2026-06-26T18:42:04"
+    },
+    {
+      "paper_id": "2000_sugiura_吹雪击溅函数",
+      "raw_pdf": "e:\\1\\mineru\\data\\raw\\Sugiura–Maeno击溅.pdf",
+      "markdown": "e:\\1\\mineru\\data\\papers\\2000_sugiura_吹雪击溅函数\\paper.md",
+      "images_dir": "e:\\1\\mineru\\data\\papers\\2000_sugiura_吹雪击溅函数\\images",
+      "status": "converted",
+      "images_count": 65,
+      "md_chars": 38061,
+      "converted_at": "2026-06-26T18:42:05"
+    },
+    {
+      "paper_id": "2023_wang_有限粒径颗粒阻力模型",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\Wang_2023_drag_model_finite_sized_particle_JFM.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2023_wang_有限粒径颗粒阻力模型\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2023_wang_有限粒径颗粒阻力模型\\images",
+      "status": "converted",
+      "images_count": 57,
+      "md_chars": 94078,
+      "converted_at": "2026-06-26T18:42:45"
+    }
+  ]
+}
