@@ -3,19 +3,39 @@
 调用 mineru CLI 将PDF/DOCX/PPTX/XLSX/图片 转换为 Markdown
 """
 import os
+import shutil
 import subprocess
 from pathlib import Path
 from loguru import logger
 
 
-# mineru CLI 路径
-_PYTHON_DIR = Path(os.sys.executable).parent
-MINERU_EXE = str(_PYTHON_DIR / "mineru.exe")
-if not os.path.exists(MINERU_EXE):
-    MINERU_EXE = str(_PYTHON_DIR / "Scripts" / "mineru.exe")
-if not os.path.exists(MINERU_EXE):
-    # conda环境: python.exe在根目录, mineru.exe在Scripts目录
-    MINERU_EXE = str(_PYTHON_DIR.parent / "Scripts" / "mineru.exe")
+def _find_mineru_exe() -> str:
+    """跨平台查找 mineru 可执行文件"""
+    # 1. 优先 PATH 查找
+    for name in ("mineru", "mineru.exe"):
+        found = shutil.which(name)
+        if found:
+            return found
+    # 2. fallback: Python 环境目录
+    _py_dir = Path(os.sys.executable).parent
+    for cand in (_py_dir / "mineru.exe",
+                 _py_dir / "Scripts" / "mineru.exe",
+                 _py_dir.parent / "Scripts" / "mineru.exe"):
+        if cand.exists():
+            return str(cand)
+    return "mineru"  # 最后尝试直接调命令名，让 subprocess 按 PATH 解析
+
+
+MINERU_EXE = _find_mineru_exe()
+
+def mineru_available() -> bool:
+    """检查 mineru CLI 是否可用"""
+    try:
+        r = subprocess.run([MINERU_EXE, "--version"], capture_output=True,
+                           encoding="utf-8", errors="replace", timeout=10)
+        return r.returncode == 0
+    except Exception:
+        return False
 
 
 class MinerUConverter:

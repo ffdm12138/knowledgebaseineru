@@ -85,11 +85,27 @@ def main():
 
     for i, f in enumerate(files, 1):
         paper_id = derive_paper_id(f.name)
-        if manifest.has(paper_id) and Path(manifest.get(paper_id)["markdown"]).exists():
+
+        # sha256 去重（与 watcher 一致）
+        from src.file_fingerprint import compute_sha256
+        sha = compute_sha256(f)
+        existing_by_sha = manifest.find_by_sha256(sha)
+        if existing_by_sha and existing_by_sha.get("status") == "converted":
+            logger.info(f"[{i}/{len(files)}] 跳过 (sha256 已转换): {f.name} = {existing_by_sha['paper_id']}")
+            continue
+        # paper_id 冲突：同名但不同内容 → 加后缀
+        if manifest.has(paper_id):
+            existing = manifest.get(paper_id)
+            if existing.get("sha256") and existing["sha256"] != sha:
+                paper_id = f"{paper_id}_{sha[:8]}"
+                logger.warning(f"  paper_id 冲突且 sha256 不同 → {paper_id}")
+
+        if manifest.has(paper_id) and Path(manifest.get(paper_id)["markdown"]).exists() \
+                and manifest.get(paper_id).get("sha256") == sha:
             logger.info(f"[{i}/{len(files)}] 跳过 (已转换): {f.name} -> {paper_id}")
             continue
 
-        logger.info(f"[{i}/{len(files)}] 处理: {f.name} -> {paper_id} | backend={'api' if args.api_url else 'cli'}")
+        logger.info(f"[{i}/{len(files)}] 处理: {f.name} -> {paper_id} | sha256={sha[:12]} | backend={'api' if args.api_url else 'cli'}")
         tmp_out = MINERU_TMP_DIR / paper_id
         t0 = time.time()
         ok = run_mineru(str(f), str(tmp_out), args.backend, args.method,

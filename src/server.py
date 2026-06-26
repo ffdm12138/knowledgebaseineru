@@ -163,7 +163,18 @@ async def upload(
     except ValueError as e:
         raise HTTPException(400, str(e))
 
-    save_path = RAW_DIR / file.filename
+    # 净化文件名：只取 name，拒绝路径穿越
+    safe_filename = Path(file.filename).name
+    if safe_filename != file.filename:
+        raise HTTPException(400, f"非法文件名（含路径）: {file.filename}")
+    save_path = RAW_DIR / safe_filename
+    # 二次校验：resolve 后仍必须在 RAW_DIR 内
+    try:
+        from src.naming import safe_child
+        safe_child(RAW_DIR, safe_filename)
+    except ValueError:
+        raise HTTPException(400, f"非法文件名: {file.filename}")
+
     content = await file.read()
     if len(content) > MAX_UPLOAD_SIZE:
         raise HTTPException(413, f"文件过大: {len(content)} bytes > 上限 {MAX_UPLOAD_SIZE} bytes")
@@ -249,8 +260,17 @@ async def get_paper_images(paper_id: str):
 @app.get("/papers/{paper_id}/images/{img_name}")
 async def get_paper_image(paper_id: str, img_name: str):
     """返回单张图片文件（前端预览用）"""
+    import re
     from fastapi.responses import FileResponse
-    img_path = PAPERS_DIR / paper_id / "images" / img_name
+    # img_name 白名单：仅字母数字 . _ - + 安全图片后缀
+    if not re.match(r'^[A-Za-z0-9_\.\-\+]+\.(png|jpg|jpeg|webp|gif|bmp)$', img_name):
+        raise HTTPException(400, f"非法图片名: {img_name}")
+    try:
+        from src.naming import safe_child, validate_paper_id
+        validate_paper_id(paper_id)
+        img_path = safe_child(PAPERS_DIR, paper_id, "images", img_name)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     if not img_path.is_file():
         raise HTTPException(404, f"未找到图片: {paper_id}/{img_name}")
     return FileResponse(img_path)
@@ -476,13 +496,20 @@ async def write_validate(job_id: str):
 
 @app.get("/status")
 async def status():
+    import os
     from datetime import datetime
+    from src.converter import MINERU_EXE, mineru_available
     return {
         "status": "running",
         "port": API_PORT,
         "version": "3.4.0",
         "mode": "literature_library (no vector search)",
         "mineru_backend": MINERU_BACKEND,
+        "mineru_cli": MINERU_EXE,
+        "mineru_available": mineru_available(),
+        "raw_dir_writable": os.access(RAW_DIR, os.W_OK),
+        "papers_dir_writable": os.access(PAPERS_DIR, os.W_OK),
+        "manifest_writable": os.access(manifest.path.parent, os.W_OK),
         "library": manifest.stats(),
         "catalog_papers": len(catalog.list_papers()),
         "timestamp": datetime.now().isoformat(),

@@ -22,6 +22,16 @@ _ILLEGAL = re.compile(r'[\\/:*?"<>|]')
 _PAPER_ID_RE = re.compile(r"^[A-Za-z0-9_\-一-鿿]+$")
 
 
+def safe_child(base: Path, *parts: str) -> Path:
+    """安全拼接路径，防穿越。若结果不在 base 内抛 ValueError。"""
+    p = base.joinpath(*parts).resolve()
+    try:
+        p.relative_to(base.resolve())
+    except ValueError:
+        raise ValueError(f"路径穿越: {p} 不在 {base} 内")
+    return p
+
+
 def sanitize_paper_id(raw: str) -> str:
     """清洗字符串为文件系统安全的 paper_id（保留中文，非法字符→_，空白折叠）"""
     s = _ILLEGAL.sub("_", raw)

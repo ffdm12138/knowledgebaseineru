@@ -38,16 +38,19 @@ class PaperManifest:
             return {"version": "0.1", "description": "System-maintained file ledger of converted papers.",
                     "papers": []}
 
+    def _save_raw(self, data: dict) -> None:
+        """无锁原子写入：调用方已持有锁时使用"""
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.path.with_suffix(self.path.suffix + ".tmp")
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        json.loads(tmp.read_text(encoding="utf-8"))
+        os.replace(tmp, self.path)
+
     def _save(self, data: dict) -> None:
         """原子写入：加锁 → 写 tmp → os.replace → 解锁"""
-        self.path.parent.mkdir(parents=True, exist_ok=True)
         lock = FileLock(str(self._lock_path))
         with lock:
-            tmp = self.path.with_suffix(self.path.suffix + ".tmp")
-            tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-            # 校验 tmp 可解析
-            json.loads(tmp.read_text(encoding="utf-8"))
-            os.replace(tmp, self.path)
+            self._save_raw(data)
 
     def list_all(self) -> list[dict]:
         return self._load().get("papers", [])
@@ -68,55 +71,67 @@ class PaperManifest:
                 return p
         return None
 
+    def _locked_update(self, fn) -> None:
+        """事务级锁：锁住完整的读-改-写周期，避免并发覆盖"""
+        lock = FileLock(str(self._lock_path))
+        with lock:
+            data = self._load()
+            fn(data)
+            self._save_raw(data)
+
     def upsert(self, paper_id: str, raw_pdf: str, markdown: str, images_dir: str,
                status: str = "converted", images_count: int = 0, md_chars: int = 0,
                converted_at: str | None = None,
                raw_filename: str = "", raw_stem: str = "",
                sha256: str = "", file_size: int = 0, mtime: str = "",
                backend: str = "", method: str = "") -> dict:
-        """新增或更新一条记录（原子写入）"""
-        data = self._load()
-        papers = data.get("papers", [])
-        entry = {
-            "paper_id": paper_id,
-            "raw_pdf": raw_pdf,
-            "raw_filename": raw_filename or Path(raw_pdf).name,
-            "raw_stem": raw_stem or Path(raw_pdf).stem,
-            "sha256": sha256,
-            "file_size": file_size,
-            "mtime": mtime,
-            "markdown": markdown,
-            "images_dir": images_dir,
-            "status": status,
-            "backend": backend,
-            "method": method,
-            "images_count": images_count,
-            "md_chars": md_chars,
-            "converted_at": converted_at or datetime.now().isoformat(timespec="seconds"),
-        }
-        # 替换已有
-        for i, p in enumerate(papers):
-            if p.get("paper_id") == paper_id:
-                if converted_at is None and p.get("converted_at"):
-                    entry["converted_at"] = p["converted_at"]
-                papers[i] = entry
-                break
-        else:
-            papers.append(entry)
-        data["papers"] = papers
-        self._save(data)
+        """新增或更新一条记录（事务级原子写入）"""
+        entry_out = {}
+
+        def _upsert(data):
+            papers = data.get("papers", [])
+            entry = {
+                "paper_id": paper_id,
+                "raw_pdf": raw_pdf,
+                "raw_filename": raw_filename or Path(raw_pdf).name,
+                "raw_stem": raw_stem or Path(raw_pdf).stem,
+                "sha256": sha256,
+                "file_size": file_size,
+                "mtime": mtime,
+                "markdown": markdown,
+                "images_dir": images_dir,
+                "status": status,
+                "backend": backend,
+                "method": method,
+                "images_count": images_count,
+                "md_chars": md_chars,
+                "converted_at": converted_at or datetime.now().isoformat(timespec="seconds"),
+            }
+            for i, p in enumerate(papers):
+                if p.get("paper_id") == paper_id:
+                    if converted_at is None and p.get("converted_at"):
+                        entry["converted_at"] = p["converted_at"]
+                    papers[i] = entry
+                    break
+            else:
+                papers.append(entry)
+            data["papers"] = papers
+            nonlocal entry_out
+            entry_out = entry
+        self._locked_update(_upsert)
         logger.info(f"manifest 更新: {paper_id} ({status})")
-        return entry
+        return entry_out
 
     def delete(self, paper_id: str) -> bool:
-        data = self._load()
-        papers = data.get("papers", [])
-        new = [p for p in papers if p.get("paper_id") != paper_id]
-        if len(new) == len(papers):
-            return False
-        data["papers"] = new
-        self._save(data)
-        return True
+        result = [False]
+        def _del(data):
+            papers = data.get("papers", [])
+            new = [p for p in papers if p.get("paper_id") != paper_id]
+            if len(new) != len(papers):
+                data["papers"] = new
+                result[0] = True
+        self._locked_update(_del)
+        return result[0]
 
     def stats(self) -> dict:
         papers = self.list_all()

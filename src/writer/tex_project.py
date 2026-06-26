@@ -115,6 +115,18 @@ METHOD_TEX = r"""% STATUS: TEMPLATE_ONLY
 """
 
 
+def latex_escape(s: str) -> str:
+    """转义 LaTeX 特殊字符，防止编译失败"""
+    return (s.replace("\\", r"\textbackslash{}")
+             .replace("&", r"\&")
+             .replace("%", r"\%")
+             .replace("$", r"\$")
+             .replace("#", r"\#")
+             .replace("_", r"\_")
+             .replace("{", r"\{")
+             .replace("}", r"\}"))
+
+
 def write_text_safely(path: Path, text: str, force: bool = False,
                       backup: bool = True) -> dict:
     """安全写入：默认不覆盖已有文件；force=True 时先备份再覆盖。
@@ -161,7 +173,7 @@ def build_tex(job_id: str, title: str | None = None,
         jm.require_step(job_id, "story_plan_filled", "build-tex")
 
     meta = jm.load_meta(job_id) or {}
-    title = title or meta.get("topic", job_id)
+    title = latex_escape(title or meta.get("topic", job_id))
 
     writes = {
         "main.tex": write_text_safely(tex_dir / "main.tex",
@@ -173,7 +185,7 @@ def build_tex(job_id: str, title: str | None = None,
     }
 
     # references.bib：从全局库按 selected 抽取（export_job_bib 内部校验 confirmed）
-    bib_keys = _selected_bib_keys(job_id, jdir, catalog)
+    bib_keys = _selected_bib_keys(job_id, jdir, catalog, jm=jm)
     bib_info = export_job_bib(job_id, bib_keys, jm=jm)
 
     # 写作 prompt（含完整证据链）
@@ -221,7 +233,8 @@ def build_tex(job_id: str, title: str | None = None,
     prompt_path.write_text(prompt, encoding="utf-8")
 
     jm.set_step(job_id, "tex_template_generated", True)
-    jm.set_step(job_id, "bib_exported", True, extra={"used_bib_keys": bib_keys})
+    if not template_only:
+        jm.set_step(job_id, "bib_exported", True, extra={"used_bib_keys": bib_keys})
     return {
         "writes": writes,
         "main_tex": str(tex_dir / "main.tex"),
@@ -260,11 +273,12 @@ def _build_notes_summary(job_id: str, jdir: Path, catalog: Catalog) -> str:
     return out
 
 
-def _selected_bib_keys(job_id: str, jdir: Path, catalog: Catalog) -> list[str]:
+def _selected_bib_keys(job_id: str, jdir: Path, catalog: Catalog,
+                       jm: JobManager = None) -> list[str]:
     """从 selected_papers.json（已确认）取 bib_key 列表"""
     bib_map = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
                for p in catalog.list_papers()}
-    sel = load_selected(job_id)  # 用默认 jm
+    sel = load_selected(job_id, jm)  # 传 jm，不从默认目录错读
     keys = []
     for it in sel.get("selected_papers", []):
         bk = it.get("bib_key") or bib_map.get(it.get("paper_id", ""), "")

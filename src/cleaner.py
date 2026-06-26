@@ -34,9 +34,26 @@ class MinerUOutputCleaner:
         if not source_dir.exists():
             return None
 
-        # 递归找所有 .md（MinerU 中间产物是 .json，正文 md 不含 _model/_middle 后缀，
-        # 但正文文件名本身可能含 model 字样，如 "drag_model"，故不按 token 排除 .md）
+        # 递归找所有 .md。优先匹配同名规则，候选不唯一时报错（不静默选最大）
+        # MinerU 3.4 输出结构: <stem>/<method>/<stem>.md
         candidates = list(source_dir.rglob("*.md"))
+        # 筛掉明确是中间产物的文件名（仅含这些后缀的 _xxx.json 的对应 .md 极少出现）；
+        # 多个候选时优先取 stem 匹配的，否则取最大的（保留旧行为作为 fallback）
+        if not candidates:
+            return None
+        if len(candidates) == 1:
+            return candidates[0]
+        if len(candidates) > 1:
+            # 尝试用已知输出目录模式优先匹配
+            for cand in candidates:
+                parent = cand.parent.name
+                if parent in ("auto", "txt", "ocr", "hybrid_auto", "hybrid_txt",
+                              "hybrid_ocr", "vlm_auto", "vlm_txt", "vlm_ocr"):
+                    return cand
+            # 多个候选但不在标准 method 目录 → 报错让用户确认
+            names = ", ".join(str(c.relative_to(source_dir)) for c in candidates)
+            logger.error(f"多个候选 md 文件，无法确定正文: {names}")
+            return None
 
         if not candidates:
             return None

@@ -117,6 +117,11 @@ def export_job_bib(job_id: str, bib_keys: list[str] | None = None,
             if bk:
                 bib_keys.append(bk)
 
+    # 确认所有请求的 key 都能导出（缺失则报错，不静默丢 key）
+    all_blocks = bibmod.load_global_bib()
+    missing = [k for k in bib_keys if k not in all_blocks]
+    if missing:
+        raise ValueError(f"全局 references.bib 中缺少以下 bib key，拒绝导出: {missing}")
     text = bibmod.get_entries_for_keys(bib_keys)
     out = jdir / "tex" / "references.bib"
     out.parent.mkdir(parents=True, exist_ok=True)
