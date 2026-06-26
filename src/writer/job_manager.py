@@ -10,6 +10,7 @@ from datetime import datetime
 from loguru import logger
 
 from config.settings import PROJECT_ROOT
+from filelock import FileLock
 
 WRITE_DIR = PROJECT_ROOT / "write"
 
@@ -114,6 +115,20 @@ class JobManager:
             return None
         return json.loads(p.read_text(encoding="utf-8"))
 
+    def _meta_lock_path(self, job_id: str) -> Path:
+        return self.job_dir(job_id) / ".meta.lock"
+
+    def _locked_meta(self, job_id: str, fn) -> dict:
+        """事务级锁：锁住 load_meta → 修改 → save_meta 完整周期"""
+        lock = FileLock(str(self._meta_lock_path(job_id)))
+        with lock:
+            meta = self.load_meta(job_id)
+            if meta is None:
+                raise FileNotFoundError(f"任务不存在: {job_id}")
+            result = fn(meta)
+            self.save_meta(job_id, meta)
+            return result
+
     def save_meta(self, job_id: str, meta: dict) -> None:
         """原子写入 run_meta.json：tmp + os.replace，避免中断/并发损坏"""
         meta["updated_at"] = datetime.now().isoformat(timespec="seconds")
@@ -121,53 +136,39 @@ class JobManager:
         p.parent.mkdir(parents=True, exist_ok=True)
         tmp = p.with_suffix(".json.tmp")
         tmp.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-        # 校验 tmp 可解析
         json.loads(tmp.read_text(encoding="utf-8"))
         os.replace(tmp, p)
 
     def touch(self, job_id: str) -> None:
         """仅刷新 updated_at"""
-        meta = self.load_meta(job_id)
-        if meta is not None:
-            self.save_meta(job_id, meta)
+        try:
+            self._locked_meta(job_id, lambda m: None)
+        except FileNotFoundError:
+            pass
 
     def set_step(self, job_id: str, step: str, value: bool = True,
                  extra: dict | None = None) -> dict:
-        meta = self.load_meta(job_id)
-        if meta is None:
-            raise FileNotFoundError(f"任务不存在: {job_id}")
-        if step not in meta["steps"]:
-            raise KeyError(f"未知 step: {step}")
-        meta["steps"][step] = value
-        if extra:
-            meta.update(extra)
-        self.save_meta(job_id, meta)
-        return meta
+        def _fn(meta):
+            if step not in meta["steps"]:
+                raise KeyError(f"未知 step: {step}")
+            meta["steps"][step] = value
+            if extra:
+                meta.update(extra)
+            return meta
+        return self._locked_meta(job_id, _fn)
 
     def set_status(self, job_id: str, status: str) -> dict:
-        meta = self.load_meta(job_id)
-        if meta is None:
-            raise FileNotFoundError(f"任务不存在: {job_id}")
-        meta["status"] = status
-        self.save_meta(job_id, meta)
-        return meta
+        return self._locked_meta(job_id, lambda m: m.update(status=status) or m)
 
     def set_selected_papers(self, job_id: str, paper_ids: list[str]) -> dict:
-        meta = self.load_meta(job_id)
-        if meta is None:
-            raise FileNotFoundError(f"任务不存在: {job_id}")
-        meta["selected_papers"] = list(paper_ids)
-        self.save_meta(job_id, meta)
-        return meta
+        return self._locked_meta(job_id, lambda m: m.update(selected_papers=list(paper_ids)) or m)
 
     def append_note(self, job_id: str, note: str) -> dict:
-        meta = self.load_meta(job_id)
-        if meta is None:
-            raise FileNotFoundError(f"任务不存在: {job_id}")
-        meta.setdefault("notes", []).append(
-            f"[{datetime.now().isoformat(timespec='seconds')}] {note}")
-        self.save_meta(job_id, meta)
-        return meta
+        def _fn(meta):
+            meta.setdefault("notes", []).append(
+                f"[{datetime.now().isoformat(timespec='seconds')}] {note}")
+            return meta
+        return self._locked_meta(job_id, _fn)
 
     def step_is(self, job_id: str, step: str) -> bool:
         """安全查询某 step 是否为 True"""
