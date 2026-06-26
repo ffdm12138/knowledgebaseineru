@@ -201,6 +201,17 @@ def validate_deep_reading_notes(job_id: str, jm: JobManager | None = None) -> li
         valid_rows = [r for r in valid_rows if not re.match(r"^\|\s*[-:|]+\s*\|", r)]
         if not valid_rows:
             errors.append("evidence_table.md 无有效 claim（至少一条含 paper_id/bib_key 的数据行）")
+        else:
+            # 检查证据表覆盖率：选中的 paper_id 至少 70% 出现在 evidence 行中
+            referenced_pids = set()
+            for row in valid_rows:
+                for pid in pids:
+                    if pid in row:
+                        referenced_pids.add(pid)
+            if len(referenced_pids) < max(1, len(pids) * 0.7):
+                missing = set(pids) - referenced_pids
+                errors.append(f"evidence_table 覆盖不足（{len(referenced_pids)}/{len(pids)} 篇），"
+                              f"缺少: {sorted(missing)}")
     else:
         errors.append("缺少 reading/evidence_table.md")
     return errors

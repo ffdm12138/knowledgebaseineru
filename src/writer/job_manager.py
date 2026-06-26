@@ -1,8 +1,9 @@
 """写作任务管理：创建/列出/加载 write/<job>/ 目录结构
 
-任务目录命名：write/001_<topic_slug>/、write/002_<topic_slug>/ ...
+任务目录命名：write/001_<topic_slug>_<suffix>/，suffix 防并发碰撞。
 """
 import json
+import os
 import re
 from pathlib import Path
 from datetime import datetime
@@ -44,6 +45,12 @@ def _next_job_num() -> int:
         if m:
             max_n = max(max_n, int(m.group(1)))
     return max_n + 1
+
+
+def _job_id_suffix() -> str:
+    """生成微秒 hex 后缀（6 字符），防并发碰撞"""
+    from datetime import datetime
+    return format(datetime.now().microsecond, '06x')
 
 
 def _empty_run_meta(job_id: str, topic: str, input_type: str,
@@ -108,10 +115,15 @@ class JobManager:
         return json.loads(p.read_text(encoding="utf-8"))
 
     def save_meta(self, job_id: str, meta: dict) -> None:
+        """原子写入 run_meta.json：tmp + os.replace，避免中断/并发损坏"""
         meta["updated_at"] = datetime.now().isoformat(timespec="seconds")
         p = self.job_dir(job_id) / "logs" / "run_meta.json"
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+        tmp = p.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+        # 校验 tmp 可解析
+        json.loads(tmp.read_text(encoding="utf-8"))
+        os.replace(tmp, p)
 
     def touch(self, job_id: str) -> None:
         """仅刷新 updated_at"""
@@ -189,7 +201,8 @@ class JobManager:
 
         slug = _slugify(topic or "untitled")
         num = _next_job_num()
-        job_id = f"{num:03d}_{slug}"
+        suffix = _job_id_suffix()
+        job_id = f"{num:03d}_{slug}_{suffix}"
         jdir = self.job_dir(job_id)
         for sub in JOB_SUBDIRS:
             (jdir / sub).mkdir(parents=True, exist_ok=True)

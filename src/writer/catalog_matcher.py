@@ -35,9 +35,11 @@ def selected_paper_ids(job_id: str, jm: JobManager | None = None) -> list[str]:
 
 
 def match_catalog(job_id: str, jm: JobManager | None = None,
-                  catalog: Catalog | None = None) -> dict:
+                  catalog: Catalog | None = None,
+                  force: bool = False) -> dict:
     """生成目录匹配 prompt + 候选文献。selected_papers.json 初始为空。
 
+    覆盖保护：若 selected_papers.json 已确认（confirmed），默认拒绝覆盖（force=True 可强制重建）。
     返回 {"prompt", "prompt_path", "candidates_path", "selected_path", "reading_plan_path"}
     """
     jm = jm or JobManager()
@@ -72,6 +74,12 @@ def match_catalog(job_id: str, jm: JobManager | None = None,
     cand_path.write_text(json.dumps(cand_data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # selected_papers.json：初始为空，待确认
+    sel_path = jdir / "planning" / "selected_papers.json"
+    if sel_path.exists() and not force:
+        existing = load_selected(job_id, jm)
+        if existing.get("selection_status") == "confirmed":
+            raise RuntimeError(
+                "selected_papers.json 已确认（confirmed），拒绝覆盖。传 force=True 强制重建。")
     sel_data = {
         "selected_papers": [],
         "selection_status": "pending_llm_or_manual_review",
@@ -79,7 +87,6 @@ def match_catalog(job_id: str, jm: JobManager | None = None,
         "confirmed_by": None,
         "notes": "",
     }
-    sel_path = jdir / "planning" / "selected_papers.json"
     sel_path.write_text(json.dumps(sel_data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # reading_plan.md 模板
