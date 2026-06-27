@@ -56,6 +56,25 @@ CATALOG_DIR = DATA_DIR / "catalog"          # AI 维护的文献理解目录
 MANIFESTS_DIR = DATA_DIR / "manifests"      # 系统维护的文件账本
 CATALOG_PATH = CATALOG_DIR / "literature_catalog.json"
 MANIFEST_PATH = MANIFESTS_DIR / "papers_manifest.json"
+LIBRARY_INDEX_PATH = CATALOG_DIR / "library_index.json"
+DOMAIN_CATALOG_DIR = CATALOG_DIR / "domains"
+DISCOVERY_DIR = DATA_DIR / "discovery"
+
+# CUDA 路径（MinerU lmdeploy 后端需要，默认 Windows 标准路径）
+CUDA_PATH_DEFAULT = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6"
+CUDA_PATH = _env_str("CUDA_PATH", CUDA_PATH_DEFAULT)
+# 自动注入进程环境变量，确保子进程（MinerU lmdeploy）能继承
+os.environ.setdefault("CUDA_PATH", CUDA_PATH)
+
+# 代理配置（用于 Sci-Hub 等后备渠道，默认空=直连）
+FETCH_PROXY = _env_str("FETCH_PROXY", "")
+
+# Publisher TDM API 密钥（免费注册后使用，默认空=下降级通道）
+# Wiley: https://onlinelibrary.wiley.com/tdm  →  WILEY_TDM_TOKEN
+# Elsevier: https://dev.elsevier.com  →  ELSEVIER_API_KEY
+# Springer: 无需密钥，直接构造 PDF URL
+WILEY_TDM_TOKEN = _env_str("WILEY_TDM_TOKEN", "")
+ELSEVIER_API_KEY = _env_str("ELSEVIER_API_KEY", "")
 
 # API 配置（默认仅 localhost，防误暴露）
 API_HOST = _env_str("MINERU_API_HOST", "127.0.0.1")
@@ -65,6 +84,9 @@ MAX_UPLOAD_SIZE = _env_int("MINERU_MAX_UPLOAD_SIZE", 500 * 1024 * 1024, min_val=
 
 # MinerU 解析超时（秒），默认 600
 MINERU_TIMEOUT = _env_int("MINERU_TIMEOUT", 600, min_val=1)
+
+# MinerU 最大并行转换数（默认 1，防 OOM。多 GPU 时可适当调大）
+MINERU_MAX_WORKERS = _env_int("MINERU_MAX_WORKERS", 1, min_val=1)
 
 # MinerU 解析配置
 # 产品定位固定为 hybrid-engine，不再把 pipeline / vlm-engine 作为首选项维护。
@@ -129,7 +151,7 @@ CITATION_STYLE = _env_str("MINERU_CITATION_STYLE", "author-year")
 SUPPORTED_FORMATS = {".pdf", ".docx", ".pptx", ".xlsx", ".png", ".jpg", ".jpeg"}
 
 # 确保目录存在（导入即创建，有副作用）
-for d in [RAW_DIR, PAPERS_DIR, MINERU_TMP_DIR, CATALOG_DIR, MANIFESTS_DIR]:
+for d in [RAW_DIR, PAPERS_DIR, MINERU_TMP_DIR, CATALOG_DIR, MANIFESTS_DIR, DOMAIN_CATALOG_DIR, DISCOVERY_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # 启动时安全检查：若 API_HOST 非 localhost 且无认证，打印 warning

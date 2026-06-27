@@ -1,0 +1,17 @@
+{
+  "original_query": "sand transport over complex terrain dune",
+  "expanded_queries": [
+    "sand transport over complex terrain dune",
+    "aeolian transport snow transport sand transport saltation flux",
+    "sand transport over complex terrain dune aeolian transport snow transport sand transport"
+  ],
+  "created_at": "2026-06-27T13:13:46.092741+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211346_sand_transport_over_complex_terrain_dune.jsonl"
+}

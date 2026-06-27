@@ -12,13 +12,14 @@ from pathlib import Path
 
 from src.writer.job_manager import JobManager
 from src.catalog import Catalog
+from src.library import PaperLibrary
 from src.naming import validate_paper_id, validate_image_name, safe_child
-from config.settings import PAPERS_DIR
 
 
 def copy_figures(job_id: str, figures: list[dict] | None = None,
                  jm: JobManager | None = None,
-                 catalog: Catalog | None = None) -> dict:
+                 catalog: Catalog | None = None,
+                 library: PaperLibrary | None = None) -> dict:
     """复制指定图到 write/<job>/figures/<paper_id>/ 并生成 source record README。
 
     figures: [{"paper_id","image","suggested_caption"?}]，为 None 时**不复制**任何图
@@ -26,6 +27,7 @@ def copy_figures(job_id: str, figures: list[dict] | None = None,
     """
     jm = jm or JobManager()
     catalog = catalog or Catalog()
+    library = library or PaperLibrary()
     jdir = jm.job_dir(job_id)
 
     if figures is None:
@@ -48,7 +50,7 @@ def copy_figures(job_id: str, figures: list[dict] | None = None,
         try:
             validate_paper_id(pid)
             validate_image_name(img)
-            src = safe_child(PAPERS_DIR, pid, "images", img)
+            src = safe_child(library.images_dir(pid), img)
             dest_dir = safe_child(jdir, "figures", pid)
         except ValueError as e:
             skipped.append({"paper_id": pid, "image": img, "reason": str(e)})

@@ -12,7 +12,9 @@ from datetime import datetime
 from pathlib import Path
 
 from src.writer.job_manager import JobManager
-from src.catalog import Catalog
+from src.catalog import Catalog, build_compact_catalog_text
+from src.domain_catalog import compact_domains
+from src.library_index import VALID_DOMAINS
 from src.naming import validate_paper_id
 
 
@@ -37,10 +39,13 @@ def selected_paper_ids(job_id: str, jm: JobManager | None = None) -> list[str]:
 
 def match_catalog(job_id: str, jm: JobManager | None = None,
                   catalog: Catalog | None = None,
-                  force: bool = False) -> dict:
+                  force: bool = False,
+                  domain_ids: list[str] | None = None) -> dict:
     """生成目录匹配 prompt + 候选文献。selected_papers.json 初始为空。
 
     覆盖保护：若 selected_papers.json 已确认（confirmed），默认拒绝覆盖（force=True 可强制重建）。
+    domain_ids: 若提供，按领域视图选文——加载这些领域 catalog 并 compact 去重后再匹配，
+        候选保留 ``source_domains`` 标记。不传则使用全局 catalog（旧行为）。
     返回 {"prompt", "prompt_path", "candidates_path", "selected_path", "reading_plan_path"}
     """
     jm = jm or JobManager()
@@ -48,21 +53,34 @@ def match_catalog(job_id: str, jm: JobManager | None = None,
     jdir = jm.job_dir(job_id)
 
     norm = (jdir / "input" / "normalized_task.md").read_text(encoding="utf-8")
-    compact = catalog.build_compact_catalog()
-    papers = catalog.list_papers()
+
+    if domain_ids:
+        for d in domain_ids:
+            if d not in VALID_DOMAINS:
+                raise ValueError(f"invalid domain_id: {d}")
+        papers = compact_domains(domain_ids)
+        compact = build_compact_catalog_text(papers)
+    else:
+        compact = catalog.build_compact_catalog()
+        papers = catalog.list_papers()
 
     # candidates：目录级候选，need_fulltext 初始 null（不默认全部 true）
     candidates = []
     for p in papers:
         cit = p.get("citation", {}) or {}
-        candidates.append({
+        cand = {
             "paper_id": p.get("paper_id"),
             "bib_key": cit.get("bib_key", ""),
+            "primary_domain": p.get("primary_domain", ""),
+            "domains": p.get("domains", []),
             "catalog_priority": (p.get("selection_hints") or {}).get("priority", 3),
             "candidate_reason": "",  # 待 LLM/人工填
             "expected_use": "",
             "need_fulltext": None,
-        })
+        }
+        if p.get("source_domains"):
+            cand["source_domains"] = p.get("source_domains")
+        candidates.append(cand)
 
     cand_data = {
         "topic_summary": "",
@@ -71,6 +89,8 @@ def match_catalog(job_id: str, jm: JobManager | None = None,
         "excluded_papers": [],
         "status": "prompt_generated",
     }
+    if domain_ids:
+        cand_data["match_domains"] = list(domain_ids)
     cand_path = jdir / "planning" / "catalog_candidates.json"
     cand_path.write_text(json.dumps(cand_data, ensure_ascii=False, indent=2), encoding="utf-8")
 

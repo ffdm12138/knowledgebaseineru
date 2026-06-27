@@ -1,0 +1,17 @@
+{
+  "original_query": "snow land atmosphere interaction boreal forest",
+  "expanded_queries": [
+    "snow land atmosphere interaction boreal forest",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow land atmosphere interaction boreal forest blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:14:55.166306+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211455_snow_land_atmosphere_interaction_boreal_forest.jsonl"
+}

@@ -1,0 +1,17 @@
+{
+  "original_query": "nocturnal low level jet wind energy",
+  "expanded_queries": [
+    "nocturnal low level jet wind energy",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "nocturnal low level jet wind energy atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:14:55.450056+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211455_nocturnal_low_level_jet_wind_energy.jsonl"
+}

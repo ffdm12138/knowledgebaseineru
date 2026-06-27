@@ -1,0 +1,17 @@
+{
+  "original_query": "PBL height estimation machine learning",
+  "expanded_queries": [
+    "PBL height estimation machine learning",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "PBL height estimation machine learning atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:14:28.553901+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211428_PBL_height_estimation_machine_learning.jsonl"
+}

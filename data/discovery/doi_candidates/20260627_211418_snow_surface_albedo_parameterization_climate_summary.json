@@ -1,0 +1,17 @@
+{
+  "original_query": "snow surface albedo parameterization climate",
+  "expanded_queries": [
+    "snow surface albedo parameterization climate",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow surface albedo parameterization climate blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:14:18.026740+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211418_snow_surface_albedo_parameterization_climate.jsonl"
+}

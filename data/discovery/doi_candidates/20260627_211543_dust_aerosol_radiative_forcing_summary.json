@@ -1,0 +1,17 @@
+{
+  "original_query": "dust aerosol radiative forcing",
+  "expanded_queries": [
+    "dust aerosol radiative forcing",
+    "aeolian transport snow transport sand transport saltation flux",
+    "dust aerosol radiative forcing aeolian transport snow transport sand transport"
+  ],
+  "created_at": "2026-06-27T13:15:43.526736+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211543_dust_aerosol_radiative_forcing.jsonl"
+}

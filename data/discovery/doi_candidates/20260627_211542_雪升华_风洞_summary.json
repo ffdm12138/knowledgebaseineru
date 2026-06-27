@@ -1,0 +1,18 @@
+{
+  "original_query": "雪升华 风洞",
+  "expanded_queries": [
+    "雪升华 风洞",
+    "sublimation blowing snow snow particle snow sublimation",
+    "雪升华 风洞 sublimation blowing snow snow particle",
+    "blowing snow snow particle snow sublimation snow fragmentation"
+  ],
+  "created_at": "2026-06-27T13:15:42.804628+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211542_雪升华_风洞.jsonl"
+}

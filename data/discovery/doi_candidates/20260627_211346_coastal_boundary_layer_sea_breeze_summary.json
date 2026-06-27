@@ -1,0 +1,17 @@
+{
+  "original_query": "coastal boundary layer sea breeze",
+  "expanded_queries": [
+    "coastal boundary layer sea breeze",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "coastal boundary layer sea breeze atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:13:46.273310+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211346_coastal_boundary_layer_sea_breeze.jsonl"
+}

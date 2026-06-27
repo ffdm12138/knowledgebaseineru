@@ -1,0 +1,4189 @@
+{
+  "original_query": "snow transport wind tunnel field observation prairie tundra visibility",
+  "expanded_queries": [
+    "snow transport wind tunnel field observation prairie tundra visibility",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow transport wind tunnel field observation prairie tundra visibility blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T10:15:43.601431+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [
+    {
+      "title": "High‐latitude dust in the Earth system",
+      "year": 2016,
+      "authors": [
+        "Joanna E. Bullard",
+        "Matthew Baddock",
+        "Tom Bradwell",
+        "John Crusius",
+        "E. Darlington",
+        "Diego M. Gaiero",
+        "Santiago Gassó",
+        "Guðrún Gísladóttir",
+        "Richard Hodgkins",
+        "Robert McCulloch",
+        "Cheryl McKenna Neuman",
+        "Tom Mockford",
+        "Helena Stewart",
+        "Þröstur Þorsteinsson"
+      ],
+      "doi": "10.1002/2016rg000518",
+      "venue": "Reviews of Geophysics",
+      "abstract": "",
+      "source": "openalex",
+      "source_id": "https://openalex.org/W2404421203",
+      "url": "https://openalex.org/W2404421203",
+      "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/2016RG000518",
+      "open_access": true,
+      "citation_count": 357,
+      "confidence": 0.7361111111111112,
+      "query": "snow transport wind tunnel field observation prairie tundra visibility blowing snow snow particle snow sublimation",
+      "domain_id": "blowing_snow_physics",
+      "raw": {
+        "id": "https://openalex.org/W2404421203",
+        "doi": "https://doi.org/10.1002/2016rg000518",
+        "title": "High‐latitude dust in the Earth system",
+        "display_name": "High‐latitude dust in the Earth system",
+        "relevance_score": 180.02106,
+        "publication_year": 2016,
+        "publication_date": "2016-05-24",
+        "ids": {
+          "openalex": "https://openalex.org/W2404421203",
+          "doi": "https://doi.org/10.1002/2016rg000518",
+          "mag": "2404421203"
+        },
+        "language": "en",
+        "primary_location": {
+          "id": "doi:10.1002/2016rg000518",
+          "is_oa": true,
+          "landing_page_url": "https://doi.org/10.1002/2016rg000518",
+          "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/2016RG000518",
+          "source": {
+            "id": "https://openalex.org/S129102366",
+            "display_name": "Reviews of Geophysics",
+            "issn_l": "1944-9208",
+            "issn": [
+              "1944-9208",
+              "8755-1209"
+            ],
+            "is_oa": false,
+            "is_in_doaj": false,
+            "is_core": true,
+            "host_organization": "https://openalex.org/P4310320595",
+            "host_organization_name": "Wiley",
+            "host_organization_lineage": [
+              "https://openalex.org/P4310320595"
+            ],
+            "host_organization_lineage_names": [
+              "Wiley"
+            ],
+            "type": "journal"
+          },
+          "license": "public-domain",
+          "license_id": "https://openalex.org/licenses/public-domain",
+          "version": "publishedVersion",
+          "is_accepted": true,
+          "is_published": true,
+          "raw_source_name": "Reviews of Geophysics",
+          "raw_type": "journal-article"
+        },
+        "type": "article",
+        "indexed_in": [
+          "crossref"
+        ],
+        "open_access": {
+          "is_oa": true,
+          "oa_status": "hybrid",
+          "oa_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/2016RG000518",
+          "any_repository_has_fulltext": true
+        },
+        "authorships": [
+          {
+            "author_position": "first",
+            "author": {
+              "id": "https://openalex.org/A5017060301",
+              "display_name": "Joanna E. Bullard",
+              "orcid": "https://orcid.org/0000-0002-2030-0188"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I143804889",
+                "display_name": "Loughborough University",
+                "ror": "https://ror.org/04vg4w365",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": true,
+            "raw_author_name": "Joanna E. Bullard",
+            "raw_affiliation_strings": [
+              "Department of Geography Loughborough University Leicestershire UK",
+              "Department of Geography, Loughborough University, Leicestershire, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Department of Geography Loughborough University Leicestershire UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Department of Geography, Loughborough University, Leicestershire, UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5060439808",
+              "display_name": "Matthew Baddock",
+              "orcid": "https://orcid.org/0000-0003-1490-7511"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I143804889",
+                "display_name": "Loughborough University",
+                "ror": "https://ror.org/04vg4w365",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Matthew Baddock",
+            "raw_affiliation_strings": [
+              "Department of Geography Loughborough University Leicestershire UK",
+              "Department of Geography, Loughborough University, Leicestershire, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Department of Geography Loughborough University Leicestershire UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Department of Geography, Loughborough University, Leicestershire, UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5056085650",
+              "display_name": "Tom Bradwell",
+              "orcid": "https://orcid.org/0000-0003-0947-3309"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I12093191",
+                "display_name": "University of Stirling",
+                "ror": "https://ror.org/045wgfr59",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I12093191"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Tom Bradwell",
+            "raw_affiliation_strings": [
+              "Biological and Environmental Sciences, School of Natural Sciences University of Stirling Stirling UK",
+              "Biological and Environmental Sciences, School of Natural Sciences, University of Stirling, Stirling, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Biological and Environmental Sciences, School of Natural Sciences University of Stirling Stirling UK",
+                "institution_ids": [
+                  "https://openalex.org/I12093191"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Biological and Environmental Sciences, School of Natural Sciences, University of Stirling, Stirling, UK",
+                "institution_ids": [
+                  "https://openalex.org/I12093191"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5089196848",
+              "display_name": "John Crusius",
+              "orcid": "https://orcid.org/0000-0003-2554-0831"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I201448701",
+                "display_name": "University of Washington",
+                "ror": "https://ror.org/00cvxb145",
+                "country_code": "US",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I201448701"
+                ]
+              }
+            ],
+            "countries": [
+              "US"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "John Crusius",
+            "raw_affiliation_strings": [
+              "School of Oceanography USGS, University of Washington Seattle Washington USA",
+              "School of Oceanography, USGS, University of Washington, Seattle, Washington, USA"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "School of Oceanography USGS, University of Washington Seattle Washington USA",
+                "institution_ids": [
+                  "https://openalex.org/I201448701"
+                ]
+              },
+              {
+                "raw_affiliation_string": "School of Oceanography, USGS, University of Washington, Seattle, Washington, USA",
+                "institution_ids": [
+                  "https://openalex.org/I201448701"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5062801352",
+              "display_name": "E. Darlington",
+              "orcid": "https://orcid.org/0000-0002-4046-5115"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I143804889",
+                "display_name": "Loughborough University",
+                "ror": "https://ror.org/04vg4w365",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Eleanor Darlington",
+            "raw_affiliation_strings": [
+              "Department of Geography Loughborough University Leicestershire UK",
+              "Department of Geography, Loughborough University, Leicestershire, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Department of Geography Loughborough University Leicestershire UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Department of Geography, Loughborough University, Leicestershire, UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5053993012",
+              "display_name": "Diego M. Gaiero",
+              "orcid": "https://orcid.org/0000-0003-1029-2265"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I4210094919",
+                "display_name": "Research Center on Earth Sciences",
+                "ror": "https://ror.org/01h6ezd77",
+                "country_code": "AR",
+                "type": "facility",
+                "lineage": [
+                  "https://openalex.org/I151201029",
+                  "https://openalex.org/I166401450",
+                  "https://openalex.org/I4210094919",
+                  "https://openalex.org/I4210123736",
+                  "https://openalex.org/I4210130626",
+                  "https://openalex.org/I4387155568"
+                ]
+              },
+              {
+                "id": "https://openalex.org/I166401450",
+                "display_name": "Universidad Nacional de Córdoba",
+                "ror": "https://ror.org/056tb7j80",
+                "country_code": "AR",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I166401450"
+                ]
+              }
+            ],
+            "countries": [
+              "AR"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Diego Gaiero",
+            "raw_affiliation_strings": [
+              "CICTERRA/FCEFyN, Universidad Nacional de Córdoba Córdoba Argentina"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "CICTERRA/FCEFyN, Universidad Nacional de Córdoba Córdoba Argentina",
+                "institution_ids": [
+                  "https://openalex.org/I166401450",
+                  "https://openalex.org/I4210094919"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5051078300",
+              "display_name": "Santiago Gassó",
+              "orcid": "https://orcid.org/0000-0002-6872-0018"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I1306266525",
+                "display_name": "Goddard Space Flight Center",
+                "ror": "https://ror.org/0171mag52",
+                "country_code": "US",
+                "type": "facility",
+                "lineage": [
+                  "https://openalex.org/I1306266525",
+                  "https://openalex.org/I4210124779"
+                ]
+              }
+            ],
+            "countries": [
+              "US"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Santiago Gassó",
+            "raw_affiliation_strings": [
+              "GESTAR, NASA Greenbelt Maryland USA",
+              "GESTAR, NASA, Greenbelt, Maryland, USA"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "GESTAR, NASA Greenbelt Maryland USA",
+                "institution_ids": [
+                  "https://openalex.org/I1306266525"
+                ]
+              },
+              {
+                "raw_affiliation_string": "GESTAR, NASA, Greenbelt, Maryland, USA",
+                "institution_ids": [
+                  "https://openalex.org/I1306266525"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5071653293",
+              "display_name": "Guðrún Gísladóttir",
+              "orcid": "https://orcid.org/0000-0002-4309-2414"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I165368041",
+                "display_name": "University of Iceland",
+                "ror": "https://ror.org/01db6h964",
+                "country_code": "IS",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I165368041"
+                ]
+              }
+            ],
+            "countries": [
+              "IS"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Gudrun Gisladottir",
+            "raw_affiliation_strings": [
+              "Institute of Life and Earth Sciences and Institute of Earth Sciences University of Iceland Reykjavík Iceland"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Institute of Life and Earth Sciences and Institute of Earth Sciences University of Iceland Reykjavík Iceland",
+                "institution_ids": [
+                  "https://openalex.org/I165368041"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5009106738",
+              "display_name": "Richard Hodgkins",
+              "orcid": "https://orcid.org/0000-0001-6946-9788"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I143804889",
+                "display_name": "Loughborough University",
+                "ror": "https://ror.org/04vg4w365",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Richard Hodgkins",
+            "raw_affiliation_strings": [
+              "Department of Geography Loughborough University Leicestershire UK",
+              "Department of Geography, Loughborough University, Leicestershire, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Department of Geography Loughborough University Leicestershire UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Department of Geography, Loughborough University, Leicestershire, UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5074181647",
+              "display_name": "Robert McCulloch",
+              "orcid": "https://orcid.org/0000-0001-5542-3703"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I12093191",
+                "display_name": "University of Stirling",
+                "ror": "https://ror.org/045wgfr59",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I12093191"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Robert McCulloch",
+            "raw_affiliation_strings": [
+              "Biological and Environmental Sciences, School of Natural Sciences University of Stirling Stirling UK",
+              "Biological and Environmental Sciences, School of Natural Sciences, University of Stirling, Stirling, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Biological and Environmental Sciences, School of Natural Sciences University of Stirling Stirling UK",
+                "institution_ids": [
+                  "https://openalex.org/I12093191"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Biological and Environmental Sciences, School of Natural Sciences, University of Stirling, Stirling, UK",
+                "institution_ids": [
+                  "https://openalex.org/I12093191"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5004655826",
+              "display_name": "Cheryl McKenna Neuman",
+              "orcid": "https://orcid.org/0000-0003-0688-3281"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I662221",
+                "display_name": "Trent University",
+                "ror": "https://ror.org/03ygmq230",
+                "country_code": "CA",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I662221"
+                ]
+              }
+            ],
+            "countries": [
+              "CA"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Cheryl McKenna‐Neuman",
+            "raw_affiliation_strings": [
+              "Department of Geography Trent University Peterborough Ontario Canada",
+              "Department of Geography, Trent University, Peterborough, Ontario, Canada"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Department of Geography Trent University Peterborough Ontario Canada",
+                "institution_ids": [
+                  "https://openalex.org/I662221"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Department of Geography, Trent University, Peterborough, Ontario, Canada",
+                "institution_ids": [
+                  "https://openalex.org/I662221"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5002360549",
+              "display_name": "Tom Mockford",
+              "orcid": "https://orcid.org/0000-0003-0495-4699"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I143804889",
+                "display_name": "Loughborough University",
+                "ror": "https://ror.org/04vg4w365",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Tom Mockford",
+            "raw_affiliation_strings": [
+              "Department of Geography Loughborough University Leicestershire UK",
+              "Department of Geography, Loughborough University, Leicestershire, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Department of Geography Loughborough University Leicestershire UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Department of Geography, Loughborough University, Leicestershire, UK",
+                "institution_ids": [
+                  "https://openalex.org/I143804889"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "middle",
+            "author": {
+              "id": "https://openalex.org/A5082436934",
+              "display_name": "Helena Stewart",
+              "orcid": null
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I12093191",
+                "display_name": "University of Stirling",
+                "ror": "https://ror.org/045wgfr59",
+                "country_code": "GB",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I12093191"
+                ]
+              }
+            ],
+            "countries": [
+              "GB"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Helena Stewart",
+            "raw_affiliation_strings": [
+              "Biological and Environmental Sciences, School of Natural Sciences University of Stirling Stirling UK",
+              "Biological and Environmental Sciences, School of Natural Sciences, University of Stirling, Stirling, UK"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Biological and Environmental Sciences, School of Natural Sciences University of Stirling Stirling UK",
+                "institution_ids": [
+                  "https://openalex.org/I12093191"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Biological and Environmental Sciences, School of Natural Sciences, University of Stirling, Stirling, UK",
+                "institution_ids": [
+                  "https://openalex.org/I12093191"
+                ]
+              }
+            ]
+          },
+          {
+            "author_position": "last",
+            "author": {
+              "id": "https://openalex.org/A5021193760",
+              "display_name": "Þröstur Þorsteinsson",
+              "orcid": "https://orcid.org/0000-0001-5964-866X"
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I165368041",
+                "display_name": "University of Iceland",
+                "ror": "https://ror.org/01db6h964",
+                "country_code": "IS",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I165368041"
+                ]
+              }
+            ],
+            "countries": [
+              "IS"
+            ],
+            "is_corresponding": false,
+            "raw_author_name": "Throstur Thorsteinsson",
+            "raw_affiliation_strings": [
+              "Environment and Natural Resources and Institute of Earth Sciences University of Iceland Reykjavik Iceland",
+              "Environment and Natural Resources and Institute of Earth Sciences, University of Iceland, Reykjavik, Iceland"
+            ],
+            "raw_orcid": null,
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Environment and Natural Resources and Institute of Earth Sciences University of Iceland Reykjavik Iceland",
+                "institution_ids": [
+                  "https://openalex.org/I165368041"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Environment and Natural Resources and Institute of Earth Sciences, University of Iceland, Reykjavik, Iceland",
+                "institution_ids": [
+                  "https://openalex.org/I165368041"
+                ]
+              }
+            ]
+          }
+        ],
+        "institutions": [],
+        "countries_distinct_count": 5,
+        "institutions_distinct_count": 14,
+        "corresponding_author_ids": [
+          "https://openalex.org/A5017060301"
+        ],
+        "corresponding_institution_ids": [
+          "https://openalex.org/I143804889"
+        ],
+        "apc_list": {
+          "value": 3700,
+          "currency": "USD",
+          "value_usd": 3700
+        },
+        "apc_paid": {
+          "value": 3700,
+          "currency": "USD",
+          "value_usd": 3700
+        },
+        "fwci": 29.6906,
+        "has_fulltext": true,
+        "cited_by_count": 357,
+        "citation_normalized_percentile": {
+          "value": 0.99936965,
+          "is_in_top_1_percent": true,
+          "is_in_top_10_percent": true
+        },
+        "cited_by_percentile_year": {
+          "min": 97,
+          "max": 100
+        },
+        "biblio": {
+          "volume": "54",
+          "issue": "2",
+          "first_page": "447",
+          "last_page": "485"
+        },
+        "is_retracted": false,
+        "is_paratext": false,
+        "is_xpac": false,
+        "primary_topic": {
+          "id": "https://openalex.org/T12383",
+          "display_name": "Aeolian processes and effects",
+          "score": 0.9994000196456909,
+          "subfield": {
+            "id": "https://openalex.org/subfields/1904",
+            "display_name": "Earth-Surface Processes"
+          },
+          "field": {
+            "id": "https://openalex.org/fields/19",
+            "display_name": "Earth and Planetary Sciences"
+          },
+          "domain": {
+            "id": "https://openalex.org/domains/3",
+            "display_name": "Physical Sciences"
+          }
+        },
+        "topics": [
+          {
+            "id": "https://openalex.org/T12383",
+            "display_name": "Aeolian processes and effects",
+            "score": 0.9994000196456909,
+            "subfield": {
+              "id": "https://openalex.org/subfields/1904",
+              "display_name": "Earth-Surface Processes"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/19",
+              "display_name": "Earth and Planetary Sciences"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T10075",
+            "display_name": "Atmospheric chemistry and aerosols",
+            "score": 0.9993000030517578,
+            "subfield": {
+              "id": "https://openalex.org/subfields/1902",
+              "display_name": "Atmospheric Science"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/19",
+              "display_name": "Earth and Planetary Sciences"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T10347",
+            "display_name": "Atmospheric aerosols and clouds",
+            "score": 0.9987000226974487,
+            "subfield": {
+              "id": "https://openalex.org/subfields/2306",
+              "display_name": "Global and Planetary Change"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/23",
+              "display_name": "Environmental Science"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          }
+        ],
+        "keywords": [
+          {
+            "id": "https://openalex.org/keywords/aeolian-processes",
+            "display_name": "Aeolian processes",
+            "score": 0.6627058982849121
+          },
+          {
+            "id": "https://openalex.org/keywords/latitude",
+            "display_name": "Latitude",
+            "score": 0.6005347967147827
+          },
+          {
+            "id": "https://openalex.org/keywords/environmental-science",
+            "display_name": "Environmental science",
+            "score": 0.5763813257217407
+          },
+          {
+            "id": "https://openalex.org/keywords/mineral-dust",
+            "display_name": "Mineral dust",
+            "score": 0.45428183674812317
+          },
+          {
+            "id": "https://openalex.org/keywords/atmospheric-sciences",
+            "display_name": "Atmospheric sciences",
+            "score": 0.4486963748931885
+          },
+          {
+            "id": "https://openalex.org/keywords/temperate-climate",
+            "display_name": "Temperate climate",
+            "score": 0.43816670775413513
+          },
+          {
+            "id": "https://openalex.org/keywords/middle-latitudes",
+            "display_name": "Middle latitudes",
+            "score": 0.42410123348236084
+          },
+          {
+            "id": "https://openalex.org/keywords/albedo",
+            "display_name": "Albedo (alchemy)",
+            "score": 0.4204961657524109
+          },
+          {
+            "id": "https://openalex.org/keywords/climatology",
+            "display_name": "Climatology",
+            "score": 0.40314731001853943
+          },
+          {
+            "id": "https://openalex.org/keywords/geology",
+            "display_name": "Geology",
+            "score": 0.3240709900856018
+          },
+          {
+            "id": "https://openalex.org/keywords/aerosol",
+            "display_name": "Aerosol",
+            "score": 0.30226922035217285
+          },
+          {
+            "id": "https://openalex.org/keywords/geography",
+            "display_name": "Geography",
+            "score": 0.21038013696670532
+          },
+          {
+            "id": "https://openalex.org/keywords/meteorology",
+            "display_name": "Meteorology",
+            "score": 0.15765374898910522
+          }
+        ],
+        "concepts": [
+          {
+            "id": "https://openalex.org/C180093795",
+            "wikidata": "https://www.wikidata.org/wiki/Q215839",
+            "display_name": "Aeolian processes",
+            "level": 2,
+            "score": 0.6627058982849121
+          },
+          {
+            "id": "https://openalex.org/C122523270",
+            "wikidata": "https://www.wikidata.org/wiki/Q34027",
+            "display_name": "Latitude",
+            "level": 2,
+            "score": 0.6005347967147827
+          },
+          {
+            "id": "https://openalex.org/C39432304",
+            "wikidata": "https://www.wikidata.org/wiki/Q188847",
+            "display_name": "Environmental science",
+            "level": 0,
+            "score": 0.5763813257217407
+          },
+          {
+            "id": "https://openalex.org/C160529264",
+            "wikidata": "https://www.wikidata.org/wiki/Q11942233",
+            "display_name": "Mineral dust",
+            "level": 3,
+            "score": 0.45428183674812317
+          },
+          {
+            "id": "https://openalex.org/C91586092",
+            "wikidata": "https://www.wikidata.org/wiki/Q757520",
+            "display_name": "Atmospheric sciences",
+            "level": 1,
+            "score": 0.4486963748931885
+          },
+          {
+            "id": "https://openalex.org/C81461190",
+            "wikidata": "https://www.wikidata.org/wiki/Q167466",
+            "display_name": "Temperate climate",
+            "level": 2,
+            "score": 0.43816670775413513
+          },
+          {
+            "id": "https://openalex.org/C18101618",
+            "wikidata": "https://www.wikidata.org/wiki/Q9346670",
+            "display_name": "Middle latitudes",
+            "level": 2,
+            "score": 0.42410123348236084
+          },
+          {
+            "id": "https://openalex.org/C195886398",
+            "wikidata": "https://www.wikidata.org/wiki/Q2110050",
+            "display_name": "Albedo (alchemy)",
+            "level": 3,
+            "score": 0.4204961657524109
+          },
+          {
+            "id": "https://openalex.org/C49204034",
+            "wikidata": "https://www.wikidata.org/wiki/Q52139",
+            "display_name": "Climatology",
+            "level": 1,
+            "score": 0.40314731001853943
+          },
+          {
+            "id": "https://openalex.org/C127313418",
+            "wikidata": "https://www.wikidata.org/wiki/Q1069",
+            "display_name": "Geology",
+            "level": 0,
+            "score": 0.3240709900856018
+          },
+          {
+            "id": "https://openalex.org/C2779345167",
+            "wikidata": "https://www.wikidata.org/wiki/Q104541",
+            "display_name": "Aerosol",
+            "level": 2,
+            "score": 0.30226922035217285
+          },
+          {
+            "id": "https://openalex.org/C205649164",
+            "wikidata": "https://www.wikidata.org/wiki/Q1071",
+            "display_name": "Geography",
+            "level": 0,
+            "score": 0.21038013696670532
+          },
+          {
+            "id": "https://openalex.org/C153294291",
+            "wikidata": "https://www.wikidata.org/wiki/Q25261",
+            "display_name": "Meteorology",
+            "level": 1,
+            "score": 0.15765374898910522
+          },
+          {
+            "id": "https://openalex.org/C86803240",
+            "wikidata": "https://www.wikidata.org/wiki/Q420",
+            "display_name": "Biology",
+            "level": 0,
+            "score": 0.0
+          },
+          {
+            "id": "https://openalex.org/C142362112",
+            "wikidata": "https://www.wikidata.org/wiki/Q735",
+            "display_name": "Art",
+            "level": 0,
+            "score": 0.0
+          },
+          {
+            "id": "https://openalex.org/C52119013",
+            "wikidata": "https://www.wikidata.org/wiki/Q50637",
+            "display_name": "Art history",
+            "level": 1,
+            "score": 0.0
+          },
+          {
+            "id": "https://openalex.org/C13280743",
+            "wikidata": "https://www.wikidata.org/wiki/Q131089",
+            "display_name": "Geodesy",
+            "level": 1,
+            "score": 0.0
+          },
+          {
+            "id": "https://openalex.org/C114793014",
+            "wikidata": "https://www.wikidata.org/wiki/Q52109",
+            "display_name": "Geomorphology",
+            "level": 1,
+            "score": 0.0
+          },
+          {
+            "id": "https://openalex.org/C554144382",
+            "wikidata": "https://www.wikidata.org/wiki/Q213156",
+            "display_name": "Performance art",
+            "level": 2,
+            "score": 0.0
+          },
+          {
+            "id": "https://openalex.org/C59822182",
+            "wikidata": "https://www.wikidata.org/wiki/Q441",
+            "display_name": "Botany",
+            "level": 1,
+            "score": 0.0
+          }
+        ],
+        "mesh": [],
+        "locations_count": 5,
+        "locations": [
+          {
+            "id": "doi:10.1002/2016rg000518",
+            "is_oa": true,
+            "landing_page_url": "https://doi.org/10.1002/2016rg000518",
+            "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/2016RG000518",
+            "source": {
+              "id": "https://openalex.org/S129102366",
+              "display_name": "Reviews of Geophysics",
+              "issn_l": "1944-9208",
+              "issn": [
+                "1944-9208",
+                "8755-1209"
+              ],
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": true,
+              "host_organization": "https://openalex.org/P4310320595",
+              "host_organization_name": "Wiley",
+              "host_organization_lineage": [
+                "https://openalex.org/P4310320595"
+              ],
+              "host_organization_lineage_names": [
+                "Wiley"
+              ],
+              "type": "journal"
+            },
+            "license": "public-domain",
+            "license_id": "https://openalex.org/licenses/public-domain",
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Reviews of Geophysics",
+            "raw_type": "journal-article"
+          },
+          {
+            "id": "pmh:oai:dspace.lboro.ac.uk:2134/21540",
+            "is_oa": true,
+            "landing_page_url": "https://dspace.lboro.ac.uk/2134/21540",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306401023",
+              "display_name": "Loughborough University Institutional Repository (Loughborough University)",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "host_organization": "https://openalex.org/I143804889",
+              "host_organization_name": "Loughborough University",
+              "host_organization_lineage": [
+                "https://openalex.org/I143804889"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": "cc-by-nc-nd",
+            "license_id": "https://openalex.org/licenses/cc-by-nc-nd",
+            "version": "submittedVersion",
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": "",
+            "raw_type": "Article"
+          },
+          {
+            "id": "pmh:oai:dspace.stir.ac.uk:1893/23356",
+            "is_oa": true,
+            "landing_page_url": "http://hdl.handle.net/1893/23356",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306400268",
+              "display_name": "Stirling Online Research Repository (University of Stirling)",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "host_organization": "https://openalex.org/I12093191",
+              "host_organization_name": "University of Stirling",
+              "host_organization_lineage": [
+                "https://openalex.org/I12093191"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": "cc-by-nc-nd",
+            "license_id": "https://openalex.org/licenses/cc-by-nc-nd",
+            "version": "submittedVersion",
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": "",
+            "raw_type": "Journal Article"
+          },
+          {
+            "id": "pmh:oai:figshare.com:article/9483533",
+            "is_oa": true,
+            "landing_page_url": "https://figshare.com/articles/journal_contribution/High_latitude_dust_in_the_Earth_system/9483533",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4377196282",
+              "display_name": "Figshare",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "host_organization": "https://openalex.org/I4210132348",
+              "host_organization_name": "Figshare (United Kingdom)",
+              "host_organization_lineage": [
+                "https://openalex.org/I4210132348"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": "cc-by-nc-nd",
+            "license_id": "https://openalex.org/licenses/cc-by-nc-nd",
+            "version": "submittedVersion",
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": "",
+            "raw_type": "Text"
+          },
+          {
+            "id": "pmh:oai:ri.conicet.gov.ar:11336/129960",
+            "is_oa": true,
+            "landing_page_url": "http://hdl.handle.net/11336/129960",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306401400",
+              "display_name": "Conicet",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "host_organization": "https://openalex.org/I4210104196",
+              "host_organization_name": "Centro Científico Tecnológico - Nordeste",
+              "host_organization_lineage": [
+                "https://openalex.org/I4210104196"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": "cc-by-nc-sa",
+            "license_id": "https://openalex.org/licenses/cc-by-nc-sa",
+            "version": "submittedVersion",
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": "reponame:CONICET Digital (CONICET)",
+            "raw_type": "info:eu-repo/semantics/article"
+          }
+        ],
+        "best_oa_location": {
+          "id": "doi:10.1002/2016rg000518",
+          "is_oa": true,
+          "landing_page_url": "https://doi.org/10.1002/2016rg000518",
+          "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/2016RG000518",
+          "source": {
+            "id": "https://openalex.org/S129102366",
+            "display_name": "Reviews of Geophysics",
+            "issn_l": "1944-9208",
+            "issn": [
+              "1944-9208",
+              "8755-1209"
+            ],
+            "is_oa": false,
+            "is_in_doaj": false,
+            "is_core": true,
+            "host_organization": "https://openalex.org/P4310320595",
+            "host_organization_name": "Wiley",
+            "host_organization_lineage": [
+              "https://openalex.org/P4310320595"
+            ],
+            "host_organization_lineage_names": [
+              "Wiley"
+            ],
+            "type": "journal"
+          },
+          "license": "public-domain",
+          "license_id": "https://openalex.org/licenses/public-domain",
+          "version": "publishedVersion",
+          "is_accepted": true,
+          "is_published": true,
+          "raw_source_name": "Reviews of Geophysics",
+          "raw_type": "journal-article"
+        },
+        "sustainable_development_goals": [
+          {
+            "id": "https://metadata.un.org/sdg/14",
+            "display_name": "Life below water",
+            "score": 0.5799999833106995
+          }
+        ],
+        "awards": [
+          {
+            "id": "https://openalex.org/G665097219",
+            "display_name": null,
+            "funder_award_id": "IN-2013-036",
+            "funder_id": "https://openalex.org/F4320319993",
+            "funder_display_name": "Leverhulme Trust"
+          }
+        ],
+        "funders": [
+          {
+            "id": "https://openalex.org/F4320319993",
+            "display_name": "Leverhulme Trust",
+            "ror": "https://ror.org/012mzw131"
+          },
+          {
+            "id": "https://openalex.org/F4320321594",
+            "display_name": "Consejo Nacional de Investigaciones Científicas y Técnicas",
+            "ror": "https://ror.org/03cqe8w59"
+          },
+          {
+            "id": "https://openalex.org/F4320337954",
+            "display_name": "Fondo para la Investigación Científica y Tecnológica",
+            "ror": "https://ror.org/03stxzb56"
+          }
+        ],
+        "has_content": {
+          "grobid_xml": true,
+          "pdf": true
+        },
+        "content_urls": {
+          "pdf": "https://content.openalex.org/works/W2404421203.pdf",
+          "grobid_xml": "https://content.openalex.org/works/W2404421203.grobid-xml"
+        },
+        "referenced_works_count": 271,
+        "referenced_works": [
+          "https://openalex.org/W223730970",
+          "https://openalex.org/W273014579",
+          "https://openalex.org/W323162557",
+          "https://openalex.org/W613114138",
+          "https://openalex.org/W986660413",
+          "https://openalex.org/W1213371576",
+          "https://openalex.org/W1277000653",
+          "https://openalex.org/W1493603917",
+          "https://openalex.org/W1498708964",
+          "https://openalex.org/W1502418854",
+          "https://openalex.org/W1536095956",
+          "https://openalex.org/W1552501138",
+          "https://openalex.org/W1554065344",
+          "https://openalex.org/W1556220029",
+          "https://openalex.org/W1559183865",
+          "https://openalex.org/W1566081011",
+          "https://openalex.org/W1567113137",
+          "https://openalex.org/W1574953605",
+          "https://openalex.org/W1576391386",
+          "https://openalex.org/W1594351166",
+          "https://openalex.org/W1633873091",
+          "https://openalex.org/W1647342732",
+          "https://openalex.org/W1667038735",
+          "https://openalex.org/W1736382717",
+          "https://openalex.org/W1764759671",
+          "https://openalex.org/W1808960695",
+          "https://openalex.org/W1822969521",
+          "https://openalex.org/W1886075649",
+          "https://openalex.org/W1896282545",
+          "https://openalex.org/W1897631106",
+          "https://openalex.org/W1922918629",
+          "https://openalex.org/W1936125475",
+          "https://openalex.org/W1950948342",
+          "https://openalex.org/W1963895982",
+          "https://openalex.org/W1965443945",
+          "https://openalex.org/W1965841742",
+          "https://openalex.org/W1966947084",
+          "https://openalex.org/W1968187335",
+          "https://openalex.org/W1968399856",
+          "https://openalex.org/W1969388238",
+          "https://openalex.org/W1970728125",
+          "https://openalex.org/W1973577532",
+          "https://openalex.org/W1975534319",
+          "https://openalex.org/W1977617318",
+          "https://openalex.org/W1978002563",
+          "https://openalex.org/W1978277980",
+          "https://openalex.org/W1978604383",
+          "https://openalex.org/W1979491036",
+          "https://openalex.org/W1980790032",
+          "https://openalex.org/W1980898012",
+          "https://openalex.org/W1983101244",
+          "https://openalex.org/W1983398446",
+          "https://openalex.org/W1984568003",
+          "https://openalex.org/W1984981544",
+          "https://openalex.org/W1986615262",
+          "https://openalex.org/W1987873339",
+          "https://openalex.org/W1987972386",
+          "https://openalex.org/W1988110777",
+          "https://openalex.org/W1989484439",
+          "https://openalex.org/W1989494938",
+          "https://openalex.org/W1990274523",
+          "https://openalex.org/W1992025222",
+          "https://openalex.org/W1992941940",
+          "https://openalex.org/W1993013648",
+          "https://openalex.org/W1995098015",
+          "https://openalex.org/W1996021864",
+          "https://openalex.org/W1996851287",
+          "https://openalex.org/W1997453614",
+          "https://openalex.org/W1997989374",
+          "https://openalex.org/W1998822569",
+          "https://openalex.org/W2002311269",
+          "https://openalex.org/W2002349732",
+          "https://openalex.org/W2002841870",
+          "https://openalex.org/W2003186922",
+          "https://openalex.org/W2003688041",
+          "https://openalex.org/W2003896062",
+          "https://openalex.org/W2004055651",
+          "https://openalex.org/W2004271918",
+          "https://openalex.org/W2004736225",
+          "https://openalex.org/W2008163642",
+          "https://openalex.org/W2008218263",
+          "https://openalex.org/W2009114661",
+          "https://openalex.org/W2009649849",
+          "https://openalex.org/W2011002324",
+          "https://openalex.org/W2011371210",
+          "https://openalex.org/W2012966534",
+          "https://openalex.org/W2014391597",
+          "https://openalex.org/W2015999279",
+          "https://openalex.org/W2016100909",
+          "https://openalex.org/W2016658071",
+          "https://openalex.org/W2017797912",
+          "https://openalex.org/W2017812354",
+          "https://openalex.org/W2018047558",
+          "https://openalex.org/W2018849085",
+          "https://openalex.org/W2019736508",
+          "https://openalex.org/W2020071195",
+          "https://openalex.org/W2020124754",
+          "https://openalex.org/W2020812208",
+          "https://openalex.org/W2021400245",
+          "https://openalex.org/W2021841422",
+          "https://openalex.org/W2021949139",
+          "https://openalex.org/W2024932298",
+          "https://openalex.org/W2024954355",
+          "https://openalex.org/W2025454615",
+          "https://openalex.org/W2026106120",
+          "https://openalex.org/W2027118163",
+          "https://openalex.org/W2027721022",
+          "https://openalex.org/W2032175267",
+          "https://openalex.org/W2033744233",
+          "https://openalex.org/W2033857910",
+          "https://openalex.org/W2033861813",
+          "https://openalex.org/W2034383509",
+          "https://openalex.org/W2035265108",
+          "https://openalex.org/W2035494068",
+          "https://openalex.org/W2035662720",
+          "https://openalex.org/W2036810320",
+          "https://openalex.org/W2037636001",
+          "https://openalex.org/W2040253265",
+          "https://openalex.org/W2040828909",
+          "https://openalex.org/W2041794162",
+          "https://openalex.org/W2044167539",
+          "https://openalex.org/W2044961047",
+          "https://openalex.org/W2046368430",
+          "https://openalex.org/W2046771165",
+          "https://openalex.org/W2046789184",
+          "https://openalex.org/W2047710532",
+          "https://openalex.org/W2047870588",
+          "https://openalex.org/W2048647211",
+          "https://openalex.org/W2048866933",
+          "https://openalex.org/W2051458650",
+          "https://openalex.org/W2051467875",
+          "https://openalex.org/W2052686852",
+          "https://openalex.org/W2053660667",
+          "https://openalex.org/W2054029580",
+          "https://openalex.org/W2054119472",
+          "https://openalex.org/W2054714035",
+          "https://openalex.org/W2055314275",
+          "https://openalex.org/W2056871556",
+          "https://openalex.org/W2056985021",
+          "https://openalex.org/W2057858033",
+          "https://openalex.org/W2057872132",
+          "https://openalex.org/W2058198327",
+          "https://openalex.org/W2058802406",
+          "https://openalex.org/W2059320680",
+          "https://openalex.org/W2062097035",
+          "https://openalex.org/W2062430520",
+          "https://openalex.org/W2062894840",
+          "https://openalex.org/W2063515863",
+          "https://openalex.org/W2064103117",
+          "https://openalex.org/W2064240142",
+          "https://openalex.org/W2064954970",
+          "https://openalex.org/W2065125508",
+          "https://openalex.org/W2065623290",
+          "https://openalex.org/W2066633788",
+          "https://openalex.org/W2067027528",
+          "https://openalex.org/W2067081966",
+          "https://openalex.org/W2067475304",
+          "https://openalex.org/W2069376776",
+          "https://openalex.org/W2069581465",
+          "https://openalex.org/W2071743224",
+          "https://openalex.org/W2071814204",
+          "https://openalex.org/W2072597427",
+          "https://openalex.org/W2074658733",
+          "https://openalex.org/W2074752924",
+          "https://openalex.org/W2075820042",
+          "https://openalex.org/W2076252280",
+          "https://openalex.org/W2076850342",
+          "https://openalex.org/W2078517784",
+          "https://openalex.org/W2078956436",
+          "https://openalex.org/W2079399849",
+          "https://openalex.org/W2079864488",
+          "https://openalex.org/W2080042998",
+          "https://openalex.org/W2081423293",
+          "https://openalex.org/W2081647409",
+          "https://openalex.org/W2081813406",
+          "https://openalex.org/W2082708500",
+          "https://openalex.org/W2083315288",
+          "https://openalex.org/W2083847658",
+          "https://openalex.org/W2084503386",
+          "https://openalex.org/W2086060638",
+          "https://openalex.org/W2087497837",
+          "https://openalex.org/W2089544107",
+          "https://openalex.org/W2090224390",
+          "https://openalex.org/W2090680793",
+          "https://openalex.org/W2091151347",
+          "https://openalex.org/W2092058565",
+          "https://openalex.org/W2092278775",
+          "https://openalex.org/W2092889986",
+          "https://openalex.org/W2093703888",
+          "https://openalex.org/W2094408786",
+          "https://openalex.org/W2094673030",
+          "https://openalex.org/W2094888434",
+          "https://openalex.org/W2096820599",
+          "https://openalex.org/W2098921391",
+          "https://openalex.org/W2100385381",
+          "https://openalex.org/W2102526027",
+          "https://openalex.org/W2104570288",
+          "https://openalex.org/W2105528944",
+          "https://openalex.org/W2107672280",
+          "https://openalex.org/W2109629341",
+          "https://openalex.org/W2111469439",
+          "https://openalex.org/W2112508375",
+          "https://openalex.org/W2112871980",
+          "https://openalex.org/W2113594490",
+          "https://openalex.org/W2113809065",
+          "https://openalex.org/W2113865649",
+          "https://openalex.org/W2116183614",
+          "https://openalex.org/W2116215375",
+          "https://openalex.org/W2120318122",
+          "https://openalex.org/W2120802464",
+          "https://openalex.org/W2122934923",
+          "https://openalex.org/W2123857499",
+          "https://openalex.org/W2125753237",
+          "https://openalex.org/W2125822841",
+          "https://openalex.org/W2133290278",
+          "https://openalex.org/W2134298468",
+          "https://openalex.org/W2135511029",
+          "https://openalex.org/W2141160607",
+          "https://openalex.org/W2142727589",
+          "https://openalex.org/W2143414540",
+          "https://openalex.org/W2148030853",
+          "https://openalex.org/W2148750762",
+          "https://openalex.org/W2150619335",
+          "https://openalex.org/W2152269348",
+          "https://openalex.org/W2154238011",
+          "https://openalex.org/W2154889667",
+          "https://openalex.org/W2155829461",
+          "https://openalex.org/W2157143137",
+          "https://openalex.org/W2157185179",
+          "https://openalex.org/W2159511426",
+          "https://openalex.org/W2160352333",
+          "https://openalex.org/W2161480748",
+          "https://openalex.org/W2163857426",
+          "https://openalex.org/W2164147693",
+          "https://openalex.org/W2164916380",
+          "https://openalex.org/W2166681005",
+          "https://openalex.org/W2168030205",
+          "https://openalex.org/W2170312901",
+          "https://openalex.org/W2173932656",
+          "https://openalex.org/W2176998632",
+          "https://openalex.org/W2177219281",
+          "https://openalex.org/W2239335096",
+          "https://openalex.org/W2271018840",
+          "https://openalex.org/W2280151864",
+          "https://openalex.org/W2307364307",
+          "https://openalex.org/W2336908370",
+          "https://openalex.org/W2337001220",
+          "https://openalex.org/W2404519110",
+          "https://openalex.org/W2497857691",
+          "https://openalex.org/W2509383762",
+          "https://openalex.org/W2519998264",
+          "https://openalex.org/W2523503178",
+          "https://openalex.org/W2562488741",
+          "https://openalex.org/W2566101351",
+          "https://openalex.org/W2626138701",
+          "https://openalex.org/W2797467682",
+          "https://openalex.org/W2894642322",
+          "https://openalex.org/W2909434740",
+          "https://openalex.org/W2909582954",
+          "https://openalex.org/W4210964572",
+          "https://openalex.org/W4229511595",
+          "https://openalex.org/W4229762576",
+          "https://openalex.org/W4233670190",
+          "https://openalex.org/W4234102237",
+          "https://openalex.org/W4236270162",
+          "https://openalex.org/W4239039744",
+          "https://openalex.org/W4251589333",
+          "https://openalex.org/W4285719527",
+          "https://openalex.org/W4297941486",
+          "https://openalex.org/W4322391214",
+          "https://openalex.org/W6727248397"
+        ],
+        "related_works": [
+          "https://openalex.org/W2359031939",
+          "https://openalex.org/W4242274159",
+          "https://openalex.org/W2054594623",
+          "https://openalex.org/W2192964817",
+          "https://openalex.org/W2168123999",
+          "https://openalex.org/W1550267885",
+          "https://openalex.org/W2594124269",
+          "https://openalex.org/W3146489925",
+          "https://openalex.org/W3217465005",
+          "https://openalex.org/W1543484128"
+        ],
+        "abstract_inverted_index": {
+          "Natural": [
+            0
+          ],
+          "dust": [
+            1,
+            11,
+            30,
+            51,
+            94,
+            143,
+            158,
+            215,
+            224
+          ],
+          "is": [
+            2,
+            194
+          ],
+          "often": [
+            3
+          ],
+          "associated": [
+            4
+          ],
+          "with": [
+            5
+          ],
+          "hot,": [
+            6
+          ],
+          "subtropical": [
+            7
+          ],
+          "deserts,": [
+            8
+          ],
+          "but": [
+            9
+          ],
+          "significant": [
+            10
+          ],
+          "events": [
+            12
+          ],
+          "have": [
+            13,
+            129
+          ],
+          "been": [
+            14,
+            130
+          ],
+          "reported": [
+            15
+          ],
+          "from": [
+            16
+          ],
+          "cold,": [
+            17
+          ],
+          "high": [
+            18,
+            54,
+            103,
+            189
+          ],
+          "latitudes.": [
+            19
+          ],
+          "This": [
+            20
+          ],
+          "review": [
+            21
+          ],
+          "synthesizes": [
+            22
+          ],
+          "current": [
+            23
+          ],
+          "understanding": [
+            24
+          ],
+          "of": [
+            25,
+            87,
+            93,
+            98,
+            141,
+            157,
+            178,
+            183,
+            214,
+            221
+          ],
+          "high-latitude": [
+            26,
+            142,
+            200
+          ],
+          "(50N": [
+            27
+          ],
+          "and": [
+            28,
+            33,
+            35,
+            83,
+            96,
+            125,
+            150,
+            155,
+            166,
+            168,
+            173,
+            181,
+            206
+          ],
+          "40S)": [
+            29
+          ],
+          "source": [
+            31
+          ],
+          "geography": [
+            32
+          ],
+          "dynamics": [
+            34,
+            140
+          ],
+          "provides": [
+            36
+          ],
+          "a": [
+            37
+          ],
+          "prospectus": [
+            38
+          ],
+          "for": [
+            39
+          ],
+          "future": [
+            40,
+            232
+          ],
+          "research": [
+            41
+          ],
+          "on": [
+            42
+          ],
+          "the": [
+            43,
+            46,
+            58,
+            91,
+            109,
+            136,
+            152,
+            161,
+            217,
+            222
+          ],
+          "topic.": [
+            44
+          ],
+          "Although": [
+            45
+          ],
+          "fundamental": [
+            47
+          ],
+          "processes": [
+            48,
+            67,
+            85
+          ],
+          "controlling": [
+            49
+          ],
+          "aeolian": [
+            50
+          ],
+          "emissions": [
+            52,
+            159
+          ],
+          "in": [
+            53,
+            61,
+            72,
+            160
+          ],
+          "latitudes": [
+            55,
+            104,
+            190
+          ],
+          "are": [
+            56,
+            65,
+            191,
+            227
+          ],
+          "essentially": [
+            57
+          ],
+          "same": [
+            59
+          ],
+          "as": [
+            60
+          ],
+          "temperate": [
+            62
+          ],
+          "regions,": [
+            63
+          ],
+          "there": [
+            64
+          ],
+          "additional": [
+            66
+          ],
+          "specific": [
+            68
+          ],
+          "to": [
+            69,
+            108,
+            116,
+            133,
+            216,
+            229
+          ],
+          "or": [
+            70,
+            139
+          ],
+          "enhanced": [
+            71
+          ],
+          "cold": [
+            73
+          ],
+          "regions.": [
+            74
+          ],
+          "These": [
+            75
+          ],
+          "include": [
+            76
+          ],
+          "low": [
+            77
+          ],
+          "temperatures,": [
+            78
+          ],
+          "humidity,": [
+            79
+          ],
+          "strong": [
+            80
+          ],
+          "winds,": [
+            81
+          ],
+          "permafrost": [
+            82
+          ],
+          "niveo-aeolian": [
+            84
+          ],
+          "all": [
+            86
+          ],
+          "which": [
+            88
+          ],
+          "can": [
+            89,
+            105
+          ],
+          "affect": [
+            90
+          ],
+          "efficiency": [
+            92
+          ],
+          "emission": [
+            95
+          ],
+          "distribution": [
+            97
+          ],
+          "sediments.": [
+            99
+          ],
+          "Dust": [
+            100
+          ],
+          "deposition": [
+            101
+          ],
+          "at": [
+            102,
+            188,
+            208
+          ],
+          "provide": [
+            106
+          ],
+          "nutrients": [
+            107
+          ],
+          "marine": [
+            110
+          ],
+          "system,": [
+            111
+          ],
+          "specifically": [
+            112
+          ],
+          "by": [
+            113
+          ],
+          "contributing": [
+            114
+          ],
+          "iron": [
+            115
+          ],
+          "high-nutrient,": [
+            117
+          ],
+          "low-chlorophyll": [
+            118
+          ],
+          "oceans;": [
+            119
+          ],
+          "it": [
+            120
+          ],
+          "also": [
+            121
+          ],
+          "affects": [
+            122
+          ],
+          "ice": [
+            123
+          ],
+          "albedo": [
+            124
+          ],
+          "melt": [
+            126
+          ],
+          "rates.": [
+            127
+          ],
+          "There": [
+            128
+          ],
+          "no": [
+            131
+          ],
+          "attempts": [
+            132
+          ],
+          "quantify": [
+            134
+          ],
+          "systematically": [
+            135
+          ],
+          "expanse,": [
+            137
+          ],
+          "characteristics,": [
+            138
+          ],
+          "sources.": [
+            144
+          ],
+          "To": [
+            145
+          ],
+          "address": [
+            146
+          ],
+          "this,": [
+            147
+          ],
+          "we": [
+            148
+          ],
+          "identify": [
+            149
+          ],
+          "compare": [
+            151
+          ],
+          "main": [
+            153
+          ],
+          "sources": [
+            154,
+            201
+          ],
+          "drivers": [
+            156
+          ],
+          "Northern": [
+            162
+          ],
+          "(Alaska,": [
+            163
+          ],
+          "Canada,": [
+            164
+          ],
+          "Greenland,": [
+            165
+          ],
+          "Iceland)": [
+            167
+          ],
+          "Southern": [
+            169
+          ],
+          "(Antarctica,": [
+            170
+          ],
+          "New": [
+            171
+          ],
+          "Zealand,": [
+            172
+          ],
+          "Patagonia)": [
+            174
+          ],
+          "Hemispheres.": [
+            175
+          ],
+          "The": [
+            176
+          ],
+          "scarcity": [
+            177
+          ],
+          "year-round": [
+            179
+          ],
+          "observations": [
+            180
+          ],
+          "limitations": [
+            182
+          ],
+          "satellite": [
+            184
+          ],
+          "remote": [
+            185
+          ],
+          "sensing": [
+            186
+          ],
+          "data": [
+            187
+          ],
+          "discussed.": [
+            192
+          ],
+          "It": [
+            193
+          ],
+          "estimated": [
+            195
+          ],
+          "that": [
+            196
+          ],
+          "under": [
+            197,
+            231
+          ],
+          "contemporary": [
+            198
+          ],
+          "conditions": [
+            199
+          ],
+          "cover": [
+            202
+          ],
+          ">500,000": [
+            203
+          ],
+          "km": [
+            204
+          ],
+          "2": [
+            205
+          ],
+          "contribute": [
+            207
+          ],
+          "least": [
+            209
+          ],
+          "80-100": [
+            210
+          ],
+          "Tg": [
+            211
+          ],
+          "yr": [
+            212
+          ],
+          "1": [
+            213
+          ],
+          "Earth": [
+            218
+          ],
+          "system": [
+            219
+          ],
+          "(~5%": [
+            220
+          ],
+          "global": [
+            223
+          ],
+          "budget);": [
+            225
+          ],
+          "both": [
+            226
+          ],
+          "projected": [
+            228
+          ],
+          "increase": [
+            230
+          ],
+          "climate": [
+            233
+          ],
+          "change": [
+            234
+          ],
+          "scenarios.": [
+            235
+          ]
+        },
+        "counts_by_year": [
+          {
+            "year": 2026,
+            "cited_by_count": 15
+          },
+          {
+            "year": 2025,
+            "cited_by_count": 26
+          },
+          {
+            "year": 2024,
+            "cited_by_count": 34
+          },
+          {
+            "year": 2023,
+            "cited_by_count": 58
+          },
+          {
+            "year": 2022,
+            "cited_by_count": 58
+          },
+          {
+            "year": 2021,
+            "cited_by_count": 52
+          },
+          {
+            "year": 2020,
+            "cited_by_count": 45
+          },
+          {
+            "year": 2019,
+            "cited_by_count": 25
+          },
+          {
+            "year": 2018,
+            "cited_by_count": 28
+          },
+          {
+            "year": 2017,
+            "cited_by_count": 12
+          },
+          {
+            "year": 2016,
+            "cited_by_count": 4
+          }
+        ],
+        "updated_date": "2026-06-25T08:15:23.626066",
+        "created_date": "2025-10-10T00:00:00",
+        "sources": [
+          "openalex"
+        ]
+      }
+    },
+    {
+      "title": "Evaluating the impact of snow fencing on snow conditions and ground temperatures along the Dempster Highway, Yukon, Canada",
+      "year": 2020,
+      "authors": [
+        "Jennifer Humphries"
+      ],
+      "doi": "10.22215/etd/2020-14308",
+      "venue": "",
+      "abstract": "",
+      "source": "openalex",
+      "source_id": "https://openalex.org/W4232078751",
+      "url": "https://openalex.org/W4232078751",
+      "pdf_url": "https://repository.library.carleton.ca/downloads/73666555j",
+      "open_access": true,
+      "citation_count": 1,
+      "confidence": 0.6420526315789474,
+      "query": "snow transport wind tunnel field observation prairie tundra visibility blowing snow snow particle snow sublimation",
+      "domain_id": "blowing_snow_physics",
+      "raw": {
+        "id": "https://openalex.org/W4232078751",
+        "doi": "https://doi.org/10.22215/etd/2020-14308",
+        "title": "Evaluating the impact of snow fencing on snow conditions and ground temperatures along the Dempster Highway, Yukon, Canada",
+        "display_name": "Evaluating the impact of snow fencing on snow conditions and ground temperatures along the Dempster Highway, Yukon, Canada",
+        "relevance_score": 116.82106,
+        "publication_year": 2020,
+        "publication_date": "2020-01-01",
+        "ids": {
+          "openalex": "https://openalex.org/W4232078751",
+          "doi": "https://doi.org/10.22215/etd/2020-14308"
+        },
+        "language": "en",
+        "primary_location": {
+          "id": "doi:10.22215/etd/2020-14308",
+          "is_oa": true,
+          "landing_page_url": "https://doi.org/10.22215/etd/2020-14308",
+          "pdf_url": "https://repository.library.carleton.ca/downloads/73666555j",
+          "source": null,
+          "license": null,
+          "license_id": null,
+          "version": "publishedVersion",
+          "is_accepted": true,
+          "is_published": true,
+          "raw_source_name": "Carleton University",
+          "raw_type": "dissertation"
+        },
+        "type": "dissertation",
+        "indexed_in": [
+          "crossref"
+        ],
+        "open_access": {
+          "is_oa": true,
+          "oa_status": "gold",
+          "oa_url": "https://repository.library.carleton.ca/downloads/73666555j",
+          "any_repository_has_fulltext": null
+        },
+        "authorships": [
+          {
+            "author_position": "first",
+            "author": {
+              "id": "https://openalex.org/A5087738057",
+              "display_name": "Jennifer Humphries",
+              "orcid": null
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I4210158283",
+                "display_name": "Institute of Geography of the Slovak Academy of Sciences",
+                "ror": "https://ror.org/04wzc7f86",
+                "country_code": "SK",
+                "type": "facility",
+                "lineage": [
+                  "https://openalex.org/I207624831",
+                  "https://openalex.org/I4210158283"
+                ]
+              },
+              {
+                "id": "https://openalex.org/I67031392",
+                "display_name": "Carleton University",
+                "ror": "https://ror.org/02qtvee93",
+                "country_code": "CA",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I67031392"
+                ]
+              }
+            ],
+            "countries": [
+              "CA",
+              "SK"
+            ],
+            "is_corresponding": true,
+            "raw_author_name": "Jennifer Humphries",
+            "raw_affiliation_strings": [
+              "Carleton University Ottawa, Ontario",
+              "Master of Science in Geography"
+            ],
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Carleton University Ottawa, Ontario",
+                "institution_ids": [
+                  "https://openalex.org/I67031392"
+                ]
+              },
+              {
+                "raw_affiliation_string": "Master of Science in Geography",
+                "institution_ids": [
+                  "https://openalex.org/I4210158283"
+                ]
+              }
+            ]
+          }
+        ],
+        "institutions": [],
+        "countries_distinct_count": 2,
+        "institutions_distinct_count": 1,
+        "corresponding_author_ids": [
+          "https://openalex.org/A5087738057"
+        ],
+        "corresponding_institution_ids": [
+          "https://openalex.org/I4210158283",
+          "https://openalex.org/I67031392"
+        ],
+        "apc_list": null,
+        "apc_paid": null,
+        "fwci": null,
+        "has_fulltext": true,
+        "cited_by_count": 1,
+        "citation_normalized_percentile": null,
+        "cited_by_percentile_year": null,
+        "biblio": {
+          "volume": null,
+          "issue": null,
+          "first_page": null,
+          "last_page": null
+        },
+        "is_retracted": false,
+        "is_paratext": false,
+        "is_xpac": false,
+        "primary_topic": {
+          "id": "https://openalex.org/T10644",
+          "display_name": "Cryospheric studies and observations",
+          "score": 0.9998999834060669,
+          "subfield": {
+            "id": "https://openalex.org/subfields/1902",
+            "display_name": "Atmospheric Science"
+          },
+          "field": {
+            "id": "https://openalex.org/fields/19",
+            "display_name": "Earth and Planetary Sciences"
+          },
+          "domain": {
+            "id": "https://openalex.org/domains/3",
+            "display_name": "Physical Sciences"
+          }
+        },
+        "topics": [
+          {
+            "id": "https://openalex.org/T10644",
+            "display_name": "Cryospheric studies and observations",
+            "score": 0.9998999834060669,
+            "subfield": {
+              "id": "https://openalex.org/subfields/1902",
+              "display_name": "Atmospheric Science"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/19",
+              "display_name": "Earth and Planetary Sciences"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T11333",
+            "display_name": "Climate change and permafrost",
+            "score": 0.9998999834060669,
+            "subfield": {
+              "id": "https://openalex.org/subfields/1902",
+              "display_name": "Atmospheric Science"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/19",
+              "display_name": "Earth and Planetary Sciences"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T12682",
+            "display_name": "Smart Materials for Construction",
+            "score": 0.9962999820709229,
+            "subfield": {
+              "id": "https://openalex.org/subfields/2310",
+              "display_name": "Pollution"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/23",
+              "display_name": "Environmental Science"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          }
+        ],
+        "keywords": [
+          {
+            "id": "https://openalex.org/keywords/snow",
+            "display_name": "Snow",
+            "score": 0.9227105975151062
+          },
+          {
+            "id": "https://openalex.org/keywords/snowpack",
+            "display_name": "Snowpack",
+            "score": 0.7632303833961487
+          },
+          {
+            "id": "https://openalex.org/keywords/tundra",
+            "display_name": "Tundra",
+            "score": 0.7297598123550415
+          },
+          {
+            "id": "https://openalex.org/keywords/environmental-science",
+            "display_name": "Environmental science",
+            "score": 0.576227605342865
+          },
+          {
+            "id": "https://openalex.org/keywords/fencing",
+            "display_name": "Fencing",
+            "score": 0.5334449410438538
+          },
+          {
+            "id": "https://openalex.org/keywords/physical-geography",
+            "display_name": "Physical geography",
+            "score": 0.46478816866874695
+          },
+          {
+            "id": "https://openalex.org/keywords/snow-field",
+            "display_name": "Snow field",
+            "score": 0.4426640272140503
+          },
+          {
+            "id": "https://openalex.org/keywords/hydrology",
+            "display_name": "Hydrology (agriculture)",
+            "score": 0.33694058656692505
+          },
+          {
+            "id": "https://openalex.org/keywords/meteorology",
+            "display_name": "Meteorology",
+            "score": 0.2976168394088745
+          },
+          {
+            "id": "https://openalex.org/keywords/geography",
+            "display_name": "Geography",
+            "score": 0.2881307303905487
+          },
+          {
+            "id": "https://openalex.org/keywords/geology",
+            "display_name": "Geology",
+            "score": 0.27723366022109985
+          },
+          {
+            "id": "https://openalex.org/keywords/snow-cover",
+            "display_name": "Snow cover",
+            "score": 0.2084784209728241
+          },
+          {
+            "id": "https://openalex.org/keywords/arctic",
+            "display_name": "Arctic",
+            "score": 0.18344470858573914
+          },
+          {
+            "id": "https://openalex.org/keywords/geotechnical-engineering",
+            "display_name": "Geotechnical engineering",
+            "score": 0.09573739767074585
+          },
+          {
+            "id": "https://openalex.org/keywords/oceanography",
+            "display_name": "Oceanography",
+            "score": 0.06616771221160889
+          }
+        ],
+        "concepts": [
+          {
+            "id": "https://openalex.org/C197046000",
+            "wikidata": "https://www.wikidata.org/wiki/Q7561",
+            "display_name": "Snow",
+            "level": 2,
+            "score": 0.9227105975151062
+          },
+          {
+            "id": "https://openalex.org/C2778877292",
+            "wikidata": "https://www.wikidata.org/wiki/Q18575846",
+            "display_name": "Snowpack",
+            "level": 3,
+            "score": 0.7632303833961487
+          },
+          {
+            "id": "https://openalex.org/C125069764",
+            "wikidata": "https://www.wikidata.org/wiki/Q43262",
+            "display_name": "Tundra",
+            "level": 3,
+            "score": 0.7297598123550415
+          },
+          {
+            "id": "https://openalex.org/C39432304",
+            "wikidata": "https://www.wikidata.org/wiki/Q188847",
+            "display_name": "Environmental science",
+            "level": 0,
+            "score": 0.576227605342865
+          },
+          {
+            "id": "https://openalex.org/C48515440",
+            "wikidata": "https://www.wikidata.org/wiki/Q5443009",
+            "display_name": "Fencing",
+            "level": 2,
+            "score": 0.5334449410438538
+          },
+          {
+            "id": "https://openalex.org/C100970517",
+            "wikidata": "https://www.wikidata.org/wiki/Q52107",
+            "display_name": "Physical geography",
+            "level": 1,
+            "score": 0.46478816866874695
+          },
+          {
+            "id": "https://openalex.org/C82544793",
+            "wikidata": "https://www.wikidata.org/wiki/Q1365419",
+            "display_name": "Snow field",
+            "level": 4,
+            "score": 0.4426640272140503
+          },
+          {
+            "id": "https://openalex.org/C76886044",
+            "wikidata": "https://www.wikidata.org/wiki/Q2883300",
+            "display_name": "Hydrology (agriculture)",
+            "level": 2,
+            "score": 0.33694058656692505
+          },
+          {
+            "id": "https://openalex.org/C153294291",
+            "wikidata": "https://www.wikidata.org/wiki/Q25261",
+            "display_name": "Meteorology",
+            "level": 1,
+            "score": 0.2976168394088745
+          },
+          {
+            "id": "https://openalex.org/C205649164",
+            "wikidata": "https://www.wikidata.org/wiki/Q1071",
+            "display_name": "Geography",
+            "level": 0,
+            "score": 0.2881307303905487
+          },
+          {
+            "id": "https://openalex.org/C127313418",
+            "wikidata": "https://www.wikidata.org/wiki/Q1069",
+            "display_name": "Geology",
+            "level": 0,
+            "score": 0.27723366022109985
+          },
+          {
+            "id": "https://openalex.org/C2983043445",
+            "wikidata": "https://www.wikidata.org/wiki/Q7561",
+            "display_name": "Snow cover",
+            "level": 3,
+            "score": 0.2084784209728241
+          },
+          {
+            "id": "https://openalex.org/C518008717",
+            "wikidata": "https://www.wikidata.org/wiki/Q25322",
+            "display_name": "Arctic",
+            "level": 2,
+            "score": 0.18344470858573914
+          },
+          {
+            "id": "https://openalex.org/C187320778",
+            "wikidata": "https://www.wikidata.org/wiki/Q1349130",
+            "display_name": "Geotechnical engineering",
+            "level": 1,
+            "score": 0.09573739767074585
+          },
+          {
+            "id": "https://openalex.org/C111368507",
+            "wikidata": "https://www.wikidata.org/wiki/Q43518",
+            "display_name": "Oceanography",
+            "level": 1,
+            "score": 0.06616771221160889
+          },
+          {
+            "id": "https://openalex.org/C41008148",
+            "wikidata": "https://www.wikidata.org/wiki/Q21198",
+            "display_name": "Computer science",
+            "level": 0,
+            "score": 0.0
+          },
+          {
+            "id": "https://openalex.org/C173608175",
+            "wikidata": "https://www.wikidata.org/wiki/Q232661",
+            "display_name": "Parallel computing",
+            "level": 1,
+            "score": 0.0
+          }
+        ],
+        "mesh": [],
+        "locations_count": 1,
+        "locations": [
+          {
+            "id": "doi:10.22215/etd/2020-14308",
+            "is_oa": true,
+            "landing_page_url": "https://doi.org/10.22215/etd/2020-14308",
+            "pdf_url": "https://repository.library.carleton.ca/downloads/73666555j",
+            "source": null,
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Carleton University",
+            "raw_type": "dissertation"
+          }
+        ],
+        "best_oa_location": {
+          "id": "doi:10.22215/etd/2020-14308",
+          "is_oa": true,
+          "landing_page_url": "https://doi.org/10.22215/etd/2020-14308",
+          "pdf_url": "https://repository.library.carleton.ca/downloads/73666555j",
+          "source": null,
+          "license": null,
+          "license_id": null,
+          "version": "publishedVersion",
+          "is_accepted": true,
+          "is_published": true,
+          "raw_source_name": "Carleton University",
+          "raw_type": "dissertation"
+        },
+        "sustainable_development_goals": [],
+        "awards": [],
+        "funders": [
+          {
+            "id": "https://openalex.org/F4320315159",
+            "display_name": "Transport Canada",
+            "ror": "https://ror.org/0238rs311"
+          },
+          {
+            "id": "https://openalex.org/F4320334593",
+            "display_name": "Natural Sciences and Engineering Research Council of Canada",
+            "ror": "https://ror.org/01h531d29"
+          }
+        ],
+        "has_content": {
+          "grobid_xml": true,
+          "pdf": true
+        },
+        "content_urls": {
+          "pdf": "https://content.openalex.org/works/W4232078751.pdf",
+          "grobid_xml": "https://content.openalex.org/works/W4232078751.grobid-xml"
+        },
+        "referenced_works_count": 119,
+        "referenced_works": [
+          "https://openalex.org/W3207263",
+          "https://openalex.org/W60681587",
+          "https://openalex.org/W71825104",
+          "https://openalex.org/W74135275",
+          "https://openalex.org/W85370890",
+          "https://openalex.org/W125893132",
+          "https://openalex.org/W139700789",
+          "https://openalex.org/W187501538",
+          "https://openalex.org/W214901649",
+          "https://openalex.org/W585778094",
+          "https://openalex.org/W592023423",
+          "https://openalex.org/W623950296",
+          "https://openalex.org/W1484155048",
+          "https://openalex.org/W1499833836",
+          "https://openalex.org/W1540276135",
+          "https://openalex.org/W1606483993",
+          "https://openalex.org/W1621154109",
+          "https://openalex.org/W1676811242",
+          "https://openalex.org/W1749888870",
+          "https://openalex.org/W1887433342",
+          "https://openalex.org/W1968277074",
+          "https://openalex.org/W1969385150",
+          "https://openalex.org/W1970594955",
+          "https://openalex.org/W1974242042",
+          "https://openalex.org/W1974980461",
+          "https://openalex.org/W1975790239",
+          "https://openalex.org/W1981526408",
+          "https://openalex.org/W1984462705",
+          "https://openalex.org/W1985657867",
+          "https://openalex.org/W1987339341",
+          "https://openalex.org/W1992029959",
+          "https://openalex.org/W1992931107",
+          "https://openalex.org/W1993357880",
+          "https://openalex.org/W1994777847",
+          "https://openalex.org/W1996291952",
+          "https://openalex.org/W1997248860",
+          "https://openalex.org/W2005962321",
+          "https://openalex.org/W2013314711",
+          "https://openalex.org/W2023645254",
+          "https://openalex.org/W2035526386",
+          "https://openalex.org/W2036833592",
+          "https://openalex.org/W2044560747",
+          "https://openalex.org/W2046328919",
+          "https://openalex.org/W2048871760",
+          "https://openalex.org/W2051808795",
+          "https://openalex.org/W2054980175",
+          "https://openalex.org/W2060441303",
+          "https://openalex.org/W2064128079",
+          "https://openalex.org/W2075434136",
+          "https://openalex.org/W2081745869",
+          "https://openalex.org/W2082888108",
+          "https://openalex.org/W2088480773",
+          "https://openalex.org/W2091432342",
+          "https://openalex.org/W2095741863",
+          "https://openalex.org/W2095785471",
+          "https://openalex.org/W2100184881",
+          "https://openalex.org/W2101919563",
+          "https://openalex.org/W2106584305",
+          "https://openalex.org/W2107633122",
+          "https://openalex.org/W2111410355",
+          "https://openalex.org/W2112649547",
+          "https://openalex.org/W2113671666",
+          "https://openalex.org/W2115893789",
+          "https://openalex.org/W2123520229",
+          "https://openalex.org/W2133462661",
+          "https://openalex.org/W2134397513",
+          "https://openalex.org/W2139656263",
+          "https://openalex.org/W2156232076",
+          "https://openalex.org/W2157026492",
+          "https://openalex.org/W2168434255",
+          "https://openalex.org/W2174922262",
+          "https://openalex.org/W2199868747",
+          "https://openalex.org/W2248342483",
+          "https://openalex.org/W2304645016",
+          "https://openalex.org/W2325211438",
+          "https://openalex.org/W2463366183",
+          "https://openalex.org/W2471365053",
+          "https://openalex.org/W2511718092",
+          "https://openalex.org/W2522586127",
+          "https://openalex.org/W2587044786",
+          "https://openalex.org/W2606263302",
+          "https://openalex.org/W2795804255",
+          "https://openalex.org/W2796708315",
+          "https://openalex.org/W2899512070",
+          "https://openalex.org/W2908595324",
+          "https://openalex.org/W2908867641",
+          "https://openalex.org/W2909282831",
+          "https://openalex.org/W2910986877",
+          "https://openalex.org/W2953338797",
+          "https://openalex.org/W2967267066",
+          "https://openalex.org/W2967608304",
+          "https://openalex.org/W2981910259",
+          "https://openalex.org/W3104468152",
+          "https://openalex.org/W4231279868",
+          "https://openalex.org/W4238841025",
+          "https://openalex.org/W4239072159",
+          "https://openalex.org/W4244496265",
+          "https://openalex.org/W4246946941",
+          "https://openalex.org/W4248031957",
+          "https://openalex.org/W4254845617",
+          "https://openalex.org/W4255149817",
+          "https://openalex.org/W4255475015",
+          "https://openalex.org/W4300009529",
+          "https://openalex.org/W4301464084",
+          "https://openalex.org/W4392434491",
+          "https://openalex.org/W6602416400",
+          "https://openalex.org/W6603401729",
+          "https://openalex.org/W6616050662",
+          "https://openalex.org/W6617677094",
+          "https://openalex.org/W6661810944",
+          "https://openalex.org/W6662599803",
+          "https://openalex.org/W6672580626",
+          "https://openalex.org/W6725526365",
+          "https://openalex.org/W6785768714",
+          "https://openalex.org/W6806103614",
+          "https://openalex.org/W6832545090",
+          "https://openalex.org/W6836253805",
+          "https://openalex.org/W7046001999",
+          "https://openalex.org/W7052687437"
+        ],
+        "related_works": [
+          "https://openalex.org/W253341182",
+          "https://openalex.org/W2334725915",
+          "https://openalex.org/W3170438605",
+          "https://openalex.org/W141901520",
+          "https://openalex.org/W2282506930",
+          "https://openalex.org/W2794575618",
+          "https://openalex.org/W2038298935",
+          "https://openalex.org/W2187012855",
+          "https://openalex.org/W2112640626",
+          "https://openalex.org/W2110091907"
+        ],
+        "abstract_inverted_index": {
+          "Snow": [
+            0
+          ],
+          "fences": [
+            1,
+            75
+          ],
+          "were": [
+            2,
+            39,
+            47,
+            91,
+            101
+          ],
+          "installed": [
+            3,
+            40
+          ],
+          "at": [
+            4,
+            109,
+            128,
+            135
+          ],
+          "two": [
+            5
+          ],
+          "sites": [
+            6
+          ],
+          "near": [
+            7
+          ],
+          "the": [
+            8,
+            17,
+            67,
+            110,
+            156,
+            173
+          ],
+          "Dempster": [
+            9
+          ],
+          "Highway,": [
+            10
+          ],
+          "Yukon,": [
+            11
+          ],
+          "~": [
+            12
+          ],
+          "10": [
+            13,
+            129
+          ],
+          "km": [
+            14
+          ],
+          "south": [
+            15
+          ],
+          "of": [
+            16,
+            69,
+            82,
+            94,
+            172,
+            181
+          ],
+          "territorial": [
+            18
+          ],
+          "border,": [
+            19
+          ],
+          "to": [
+            20,
+            63,
+            104,
+            117,
+            155,
+            164,
+            186
+          ],
+          "examine": [
+            21
+          ],
+          "their": [
+            22,
+            32
+          ],
+          "impact": [
+            23
+          ],
+          "on": [
+            24,
+            143
+          ],
+          "snow": [
+            25,
+            35,
+            45,
+            53,
+            65,
+            74,
+            78,
+            95
+          ],
+          "accumulation": [
+            26,
+            54
+          ],
+          "and": [
+            27,
+            30,
+            44,
+            132,
+            170
+          ],
+          "ground": [
+            28,
+            113
+          ],
+          "temperatures": [
+            29
+          ],
+          "evaluate": [
+            31
+          ],
+          "potential": [
+            33
+          ],
+          "for": [
+            34
+          ],
+          "management.": [
+            36
+          ],
+          "Temperature": [
+            37
+          ],
+          "sensors": [
+            38
+          ],
+          "in": [
+            41,
+            60,
+            66,
+            79,
+            150
+          ],
+          "August": [
+            42
+          ],
+          "2018": [
+            43,
+            154
+          ],
+          "surveys": [
+            46
+          ],
+          "conducted": [
+            48,
+            146
+          ],
+          "throughout": [
+            49
+          ],
+          "winter": [
+            50
+          ],
+          "2018-19.": [
+            51
+          ],
+          "Natural": [
+            52
+          ],
+          "ranged": [
+            55
+          ],
+          "from": [
+            56
+          ],
+          "a": [
+            57,
+            70,
+            148
+          ],
+          "shallow": [
+            58
+          ],
+          "snowpack": [
+            59
+          ],
+          "wind-scoured": [
+            61
+          ],
+          "upland,": [
+            62
+          ],
+          "deep": [
+            64
+          ],
+          "lee": [
+            68
+          ],
+          "large": [
+            71,
+            80
+          ],
+          "hill.": [
+            72
+          ],
+          "The": [
+            73
+          ],
+          "accumulated": [
+            76
+          ],
+          "wind-blown": [
+            77
+          ],
+          "drifts": [
+            81,
+            122
+          ],
+          "high": [
+            83
+          ],
+          "density,": [
+            84
+          ],
+          "which": [
+            85
+          ],
+          "neared": [
+            86
+          ],
+          "capacity": [
+            87
+          ],
+          "by": [
+            88,
+            125
+          ],
+          "December.": [
+            89
+          ],
+          "There": [
+            90
+          ],
+          "no": [
+            92
+          ],
+          "zones": [
+            93
+          ],
+          "protection": [
+            96
+          ],
+          "further": [
+            97
+          ],
+          "downwind.": [
+            98
+          ],
+          "Topographic": [
+            99
+          ],
+          "factors": [
+            100
+          ],
+          "not": [
+            102,
+            160
+          ],
+          "found": [
+            103
+          ],
+          "significantly": [
+            105
+          ],
+          "alter": [
+            106
+          ],
+          "drift": [
+            107
+          ],
+          "characteristics": [
+            108
+          ],
+          "fences.": [
+            111
+          ],
+          "Annual": [
+            112
+          ],
+          "temperature": [
+            114
+          ],
+          "was": [
+            115
+          ],
+          "estimated": [
+            116
+          ],
+          "be": [
+            118
+          ],
+          "higher": [
+            119
+          ],
+          "beneath": [
+            120
+          ],
+          "fence": [
+            121
+          ],
+          "than": [
+            123
+          ],
+          "tundra": [
+            124
+          ],
+          "1.3": [
+            126
+          ],
+          "C": [
+            127,
+            134
+          ],
+          "cm": [
+            130,
+            137
+          ],
+          "depth": [
+            131
+          ],
+          "1.0": [
+            133
+          ],
+          "50": [
+            136
+          ],
+          "depth.": [
+            138
+          ],
+          "This": [
+            139
+          ],
+          "thesis": [
+            140,
+            167
+          ],
+          "is": [
+            141,
+            184
+          ],
+          "based": [
+            142
+          ],
+          "field": [
+            144
+          ],
+          "research": [
+            145
+          ],
+          "along": [
+            147
+          ],
+          "highway": [
+            149
+          ],
+          "Northern": [
+            151
+          ],
+          "Yukon": [
+            152
+          ],
+          "between": [
+            153
+          ],
+          "present.": [
+            157
+          ],
+          "It": [
+            158
+          ],
+          "would": [
+            159
+          ],
+          "have": [
+            161
+          ],
+          "been": [
+            162
+          ],
+          "possible": [
+            163,
+            185
+          ],
+          "complete": [
+            165
+          ],
+          "this": [
+            166
+          ],
+          "without": [
+            168
+          ],
+          "help": [
+            169
+          ],
+          "support": [
+            171
+          ],
+          "many": [
+            174
+          ],
+          "kind": [
+            175
+          ],
+          "people": [
+            176
+          ],
+          "around": [
+            177
+          ],
+          "me,": [
+            178
+          ],
+          "only": [
+            179
+          ],
+          "some": [
+            180
+          ],
+          "whom": [
+            182
+          ],
+          "it": [
+            183
+          ],
+          "give": [
+            187
+          ],
+          "mention": [
+            188
+          ],
+          "here.": [
+            189
+          ]
+        },
+        "counts_by_year": [
+          {
+            "year": 2023,
+            "cited_by_count": 1
+          }
+        ],
+        "updated_date": "2026-04-21T08:09:41.155169",
+        "created_date": "2025-10-10T00:00:00",
+        "sources": [
+          "openalex"
+        ]
+      }
+    },
+    {
+      "title": "Investigating Repeatable Snow Distributions and Meteorological Conditions over Four Years in Finse, Norway",
+      "year": 2020,
+      "authors": [
+        "Annie Zaccarin"
+      ],
+      "doi": "",
+      "venue": "ResearchWorks at the University of Washington (University of Washington)",
+      "abstract": "",
+      "source": "openalex",
+      "source_id": "https://openalex.org/W3201827158",
+      "url": "https://openalex.org/W3201827158",
+      "pdf_url": "http://hdl.handle.net/1773/46759",
+      "open_access": true,
+      "citation_count": 0,
+      "confidence": 0.24285714285714285,
+      "query": "snow transport wind tunnel field observation prairie tundra visibility blowing snow snow particle snow sublimation",
+      "domain_id": "blowing_snow_physics",
+      "raw": {
+        "id": "https://openalex.org/W3201827158",
+        "doi": null,
+        "title": "Investigating Repeatable Snow Distributions and Meteorological Conditions over Four Years in Finse, Norway",
+        "display_name": "Investigating Repeatable Snow Distributions and Meteorological Conditions over Four Years in Finse, Norway",
+        "relevance_score": 21.281849,
+        "publication_year": 2020,
+        "publication_date": "2020-01-01",
+        "ids": {
+          "openalex": "https://openalex.org/W3201827158",
+          "mag": "3201827158"
+        },
+        "language": "en",
+        "primary_location": {
+          "id": "pmh:oai:digital.lib.washington.edu:1773/46759",
+          "is_oa": true,
+          "landing_page_url": "http://hdl.handle.net/1773/46759",
+          "pdf_url": "http://hdl.handle.net/1773/46759",
+          "source": {
+            "id": "https://openalex.org/S4306401128",
+            "display_name": "ResearchWorks at the University of Washington (University of Washington)",
+            "issn_l": null,
+            "issn": null,
+            "is_oa": false,
+            "is_in_doaj": false,
+            "is_core": false,
+            "host_organization": "https://openalex.org/I201448701",
+            "host_organization_name": "University of Washington",
+            "host_organization_lineage": [
+              "https://openalex.org/I201448701"
+            ],
+            "host_organization_lineage_names": [],
+            "type": "repository"
+          },
+          "license": "cc-by-nd",
+          "license_id": "https://openalex.org/licenses/cc-by-nd",
+          "version": "submittedVersion",
+          "is_accepted": false,
+          "is_published": false,
+          "raw_source_name": null,
+          "raw_type": "Thesis"
+        },
+        "type": "dissertation",
+        "indexed_in": [],
+        "open_access": {
+          "is_oa": true,
+          "oa_status": "green",
+          "oa_url": "http://hdl.handle.net/1773/46759",
+          "any_repository_has_fulltext": true
+        },
+        "authorships": [
+          {
+            "author_position": "first",
+            "author": {
+              "id": "https://openalex.org/A5067178193",
+              "display_name": "Annie Zaccarin",
+              "orcid": null
+            },
+            "institutions": [],
+            "countries": [],
+            "is_corresponding": true,
+            "raw_author_name": "Annie Zaccarin",
+            "raw_affiliation_strings": [],
+            "affiliations": []
+          }
+        ],
+        "institutions": [],
+        "countries_distinct_count": 0,
+        "institutions_distinct_count": 1,
+        "corresponding_author_ids": [
+          "https://openalex.org/A5067178193"
+        ],
+        "corresponding_institution_ids": [],
+        "apc_list": null,
+        "apc_paid": null,
+        "fwci": null,
+        "has_fulltext": true,
+        "cited_by_count": 0,
+        "citation_normalized_percentile": null,
+        "cited_by_percentile_year": null,
+        "biblio": {
+          "volume": null,
+          "issue": null,
+          "first_page": null,
+          "last_page": null
+        },
+        "is_retracted": false,
+        "is_paratext": false,
+        "is_xpac": false,
+        "primary_topic": {
+          "id": "https://openalex.org/T10644",
+          "display_name": "Cryospheric studies and observations",
+          "score": 0.9994999766349792,
+          "subfield": {
+            "id": "https://openalex.org/subfields/1902",
+            "display_name": "Atmospheric Science"
+          },
+          "field": {
+            "id": "https://openalex.org/fields/19",
+            "display_name": "Earth and Planetary Sciences"
+          },
+          "domain": {
+            "id": "https://openalex.org/domains/3",
+            "display_name": "Physical Sciences"
+          }
+        },
+        "topics": [
+          {
+            "id": "https://openalex.org/T10644",
+            "display_name": "Cryospheric studies and observations",
+            "score": 0.9994999766349792,
+            "subfield": {
+              "id": "https://openalex.org/subfields/1902",
+              "display_name": "Atmospheric Science"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/19",
+              "display_name": "Earth and Planetary Sciences"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T11333",
+            "display_name": "Climate change and permafrost",
+            "score": 0.9973000288009644,
+            "subfield": {
+              "id": "https://openalex.org/subfields/1902",
+              "display_name": "Atmospheric Science"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/19",
+              "display_name": "Earth and Planetary Sciences"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T10535",
+            "display_name": "Landslides and related hazards",
+            "score": 0.9860000014305115,
+            "subfield": {
+              "id": "https://openalex.org/subfields/2308",
+              "display_name": "Management, Monitoring, Policy and Law"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/23",
+              "display_name": "Environmental Science"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/3",
+              "display_name": "Physical Sciences"
+            }
+          }
+        ],
+        "keywords": [
+          {
+            "id": "https://openalex.org/keywords/snow",
+            "display_name": "Snow",
+            "score": 0.8067578077316284
+          },
+          {
+            "id": "https://openalex.org/keywords/environmental-science",
+            "display_name": "Environmental science",
+            "score": 0.5821637511253357
+          },
+          {
+            "id": "https://openalex.org/keywords/climatology",
+            "display_name": "Climatology",
+            "score": 0.5406697392463684
+          },
+          {
+            "id": "https://openalex.org/keywords/meteorology",
+            "display_name": "Meteorology",
+            "score": 0.5114423036575317
+          },
+          {
+            "id": "https://openalex.org/keywords/atmospheric-sciences",
+            "display_name": "Atmospheric sciences",
+            "score": 0.4115406274795532
+          },
+          {
+            "id": "https://openalex.org/keywords/geography",
+            "display_name": "Geography",
+            "score": 0.35870134830474854
+          },
+          {
+            "id": "https://openalex.org/keywords/physical-geography",
+            "display_name": "Physical geography",
+            "score": 0.3505130112171173
+          },
+          {
+            "id": "https://openalex.org/keywords/geology",
+            "display_name": "Geology",
+            "score": 0.17616432905197144
+          }
+        ],
+        "concepts": [
+          {
+            "id": "https://openalex.org/C197046000",
+            "wikidata": "https://www.wikidata.org/wiki/Q7561",
+            "display_name": "Snow",
+            "level": 2,
+            "score": 0.8067578077316284
+          },
+          {
+            "id": "https://openalex.org/C39432304",
+            "wikidata": "https://www.wikidata.org/wiki/Q188847",
+            "display_name": "Environmental science",
+            "level": 0,
+            "score": 0.5821637511253357
+          },
+          {
+            "id": "https://openalex.org/C49204034",
+            "wikidata": "https://www.wikidata.org/wiki/Q52139",
+            "display_name": "Climatology",
+            "level": 1,
+            "score": 0.5406697392463684
+          },
+          {
+            "id": "https://openalex.org/C153294291",
+            "wikidata": "https://www.wikidata.org/wiki/Q25261",
+            "display_name": "Meteorology",
+            "level": 1,
+            "score": 0.5114423036575317
+          },
+          {
+            "id": "https://openalex.org/C91586092",
+            "wikidata": "https://www.wikidata.org/wiki/Q757520",
+            "display_name": "Atmospheric sciences",
+            "level": 1,
+            "score": 0.4115406274795532
+          },
+          {
+            "id": "https://openalex.org/C205649164",
+            "wikidata": "https://www.wikidata.org/wiki/Q1071",
+            "display_name": "Geography",
+            "level": 0,
+            "score": 0.35870134830474854
+          },
+          {
+            "id": "https://openalex.org/C100970517",
+            "wikidata": "https://www.wikidata.org/wiki/Q52107",
+            "display_name": "Physical geography",
+            "level": 1,
+            "score": 0.3505130112171173
+          },
+          {
+            "id": "https://openalex.org/C127313418",
+            "wikidata": "https://www.wikidata.org/wiki/Q1069",
+            "display_name": "Geology",
+            "level": 0,
+            "score": 0.17616432905197144
+          }
+        ],
+        "mesh": [],
+        "locations_count": 2,
+        "locations": [
+          {
+            "id": "pmh:oai:digital.lib.washington.edu:1773/46759",
+            "is_oa": true,
+            "landing_page_url": "http://hdl.handle.net/1773/46759",
+            "pdf_url": "http://hdl.handle.net/1773/46759",
+            "source": {
+              "id": "https://openalex.org/S4306401128",
+              "display_name": "ResearchWorks at the University of Washington (University of Washington)",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "host_organization": "https://openalex.org/I201448701",
+              "host_organization_name": "University of Washington",
+              "host_organization_lineage": [
+                "https://openalex.org/I201448701"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": "cc-by-nd",
+            "license_id": "https://openalex.org/licenses/cc-by-nd",
+            "version": "submittedVersion",
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": null,
+            "raw_type": "Thesis"
+          },
+          {
+            "id": "mag:3201827158",
+            "is_oa": false,
+            "landing_page_url": "https://digital.lib.washington.edu:443/researchworks/handle/1773/46759",
+            "pdf_url": null,
+            "source": null,
+            "license": null,
+            "license_id": null,
+            "version": null,
+            "is_accepted": false,
+            "is_published": null,
+            "raw_source_name": null,
+            "raw_type": null
+          }
+        ],
+        "best_oa_location": {
+          "id": "pmh:oai:digital.lib.washington.edu:1773/46759",
+          "is_oa": true,
+          "landing_page_url": "http://hdl.handle.net/1773/46759",
+          "pdf_url": "http://hdl.handle.net/1773/46759",
+          "source": {
+            "id": "https://openalex.org/S4306401128",
+            "display_name": "ResearchWorks at the University of Washington (University of Washington)",
+            "issn_l": null,
+            "issn": null,
+            "is_oa": false,
+            "is_in_doaj": false,
+            "is_core": false,
+            "host_organization": "https://openalex.org/I201448701",
+            "host_organization_name": "University of Washington",
+            "host_organization_lineage": [
+              "https://openalex.org/I201448701"
+            ],
+            "host_organization_lineage_names": [],
+            "type": "repository"
+          },
+          "license": "cc-by-nd",
+          "license_id": "https://openalex.org/licenses/cc-by-nd",
+          "version": "submittedVersion",
+          "is_accepted": false,
+          "is_published": false,
+          "raw_source_name": null,
+          "raw_type": "Thesis"
+        },
+        "sustainable_development_goals": [
+          {
+            "id": "https://metadata.un.org/sdg/13",
+            "display_name": "Climate action",
+            "score": 0.8299999833106995
+          }
+        ],
+        "awards": [],
+        "funders": [
+          {
+            "id": "https://openalex.org/F4320323260",
+            "display_name": "Universitetet i Oslo",
+            "ror": "https://ror.org/01xtthb56"
+          }
+        ],
+        "has_content": {
+          "grobid_xml": true,
+          "pdf": true
+        },
+        "content_urls": {
+          "pdf": "https://content.openalex.org/works/W3201827158.pdf",
+          "grobid_xml": "https://content.openalex.org/works/W3201827158.grobid-xml"
+        },
+        "referenced_works_count": 30,
+        "referenced_works": [
+          "https://openalex.org/W3207263",
+          "https://openalex.org/W1565237565",
+          "https://openalex.org/W1680539156",
+          "https://openalex.org/W1912127694",
+          "https://openalex.org/W1974980461",
+          "https://openalex.org/W2002426091",
+          "https://openalex.org/W2013319974",
+          "https://openalex.org/W2015932014",
+          "https://openalex.org/W2039229436",
+          "https://openalex.org/W2050107634",
+          "https://openalex.org/W2081341855",
+          "https://openalex.org/W2113107764",
+          "https://openalex.org/W2124684588",
+          "https://openalex.org/W2126475000",
+          "https://openalex.org/W2152373911",
+          "https://openalex.org/W2166196619",
+          "https://openalex.org/W2166283240",
+          "https://openalex.org/W2168434255",
+          "https://openalex.org/W2174732504",
+          "https://openalex.org/W2177896741",
+          "https://openalex.org/W2180124860",
+          "https://openalex.org/W2285610693",
+          "https://openalex.org/W2291349597",
+          "https://openalex.org/W2342249984",
+          "https://openalex.org/W2757194673",
+          "https://openalex.org/W2791711478",
+          "https://openalex.org/W2919455506",
+          "https://openalex.org/W2964528833",
+          "https://openalex.org/W3020036808",
+          "https://openalex.org/W3042857741"
+        ],
+        "related_works": [
+          "https://openalex.org/W2979426219",
+          "https://openalex.org/W3015016689",
+          "https://openalex.org/W3119799126",
+          "https://openalex.org/W272765530",
+          "https://openalex.org/W2191571968",
+          "https://openalex.org/W2003733954",
+          "https://openalex.org/W2032796821",
+          "https://openalex.org/W3147968814",
+          "https://openalex.org/W2789483231",
+          "https://openalex.org/W3093684752",
+          "https://openalex.org/W2591124461",
+          "https://openalex.org/W1836066038",
+          "https://openalex.org/W2334867002",
+          "https://openalex.org/W2957404482",
+          "https://openalex.org/W601772824",
+          "https://openalex.org/W2944218667",
+          "https://openalex.org/W2777404865",
+          "https://openalex.org/W3111905473",
+          "https://openalex.org/W2112706015",
+          "https://openalex.org/W37649563"
+        ],
+        "abstract_inverted_index": {
+          "Thesis": [
+            0
+          ],
+          "(Master's)--University": [
+            1
+          ],
+          "of": [
+            2
+          ],
+          "Washington,": [
+            3
+          ],
+          "2020": [
+            4
+          ]
+        },
+        "counts_by_year": [],
+        "updated_date": "2026-03-07T16:01:11.037858",
+        "created_date": "2025-10-10T00:00:00",
+        "sources": [
+          "openalex"
+        ]
+      }
+    },
+    {
+      "title": "Winter Precipitation Depths Across The North Slope Of Alaska Simulated From The Weather Research And Forcasting Model And Snowtran-3D",
+      "year": 2012,
+      "authors": [
+        "Byam, Sarah Jean"
+      ],
+      "doi": "",
+      "venue": "ScholarWorks-UA (University of Alaska Fairbanks)",
+      "abstract": "",
+      "source": "openalex",
+      "source_id": "https://openalex.org/W571058436",
+      "url": "https://openalex.org/W571058436",
+      "pdf_url": "http://hdl.handle.net/11122/8577",
+      "open_access": true,
+      "citation_count": 0,
+      "confidence": 0.22512315270935962,
+      "query": "snow transport wind tunnel field observation prairie tundra visibility blowing snow snow particle snow sublimation",
+      "domain_id": "blowing_snow_physics",
+      "raw": {
+        "id": "https://openalex.org/W571058436",
+        "doi": null,
+        "title": "Winter Precipitation Depths Across The North Slope Of Alaska Simulated From The Weather Research And Forcasting Model And Snowtran-3D",
+        "display_name": "Winter Precipitation Depths Across The North Slope Of Alaska Simulated From The Weather Research And Forcasting Model And Snowtran-3D",
+        "relevance_score": 5.2049994,
+        "publication_year": 2012,
+        "publication_date": "2012-01-01",
+        "ids": {
+          "openalex": "https://openalex.org/W571058436",
+          "mag": "571058436"
+        },
+        "language": "en",
+        "primary_location": {
+          "id": "pmh:oai:scholarworks.alaska.edu:11122/8577",
+          "is_oa": true,
+          "landing_page_url": "http://hdl.handle.net/11122/8577",
+          "pdf_url": "http://hdl.handle.net/11122/8577",
+          "source": {
+            "id": "https://openalex.org/S4377196779",
+            "display_name": "ScholarWorks-UA (University of Alaska Fairbanks)",
+            "issn_l": null,
+            "issn": null,
+            "is_oa": false,
+            "is_in_doaj": false,
+            "is_core": false,
+            "host_organization": "https://openalex.org/I141472210",
+            "host_organization_name": "University of Alaska Fairbanks",
+            "host_organization_lineage": [
+              "https://openalex.org/I141472210"
+            ],
+            "host_organization_lineage_names": [],
+            "type": "repository"
+          },
+          "license": null,
+          "license_id": null,
+          "version": "submittedVersion",
+          "is_accepted": false,
+          "is_published": false,
+          "raw_source_name": null,
+          "raw_type": "ms"
+        },
+        "type": "other",
+        "indexed_in": [],
+        "open_access": {
+          "is_oa": true,
+          "oa_status": "green",
+          "oa_url": "http://hdl.handle.net/11122/8577",
+          "any_repository_has_fulltext": true
+        },
+        "authorships": [
+          {
+            "author_position": "first",
+            "author": {
+              "id": null,
+              "display_name": "Byam, Sarah Jean",
+              "orcid": null
+            },
+            "institutions": [
+              {
+                "id": "https://openalex.org/I141472210",
+                "display_name": "University of Alaska Fairbanks",
+                "ror": "https://ror.org/01j7nq853",
+                "country_code": "US",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I141472210"
+                ]
+              },
+              {
+                "id": "https://openalex.org/I2799712144",
+                "display_name": "Fairbanks North Star Borough School District",
+                "ror": "https://ror.org/02bj0an55",
+                "country_code": "US",
+                "type": "education",
+                "lineage": [
+                  "https://openalex.org/I2799712144"
+                ]
+              },
+              {
+                "id": "https://openalex.org/I4210137739",
+                "display_name": "Fairbanks Memorial Hospital",
+                "ror": "https://ror.org/03dvtch96",
+                "country_code": "US",
+                "type": "healthcare",
+                "lineage": [
+                  "https://openalex.org/I4210137739"
+                ]
+              },
+              {
+                "id": "https://openalex.org/I4210154462",
+                "display_name": "Alaska Biological Research (United States)",
+                "ror": "https://ror.org/047bx1161",
+                "country_code": "US",
+                "type": "company",
+                "lineage": [
+                  "https://openalex.org/I4210154462"
+                ]
+              }
+            ],
+            "countries": [
+              "US"
+            ],
+            "is_corresponding": true,
+            "raw_author_name": "Byam, Sarah Jean",
+            "raw_affiliation_strings": [
+              "Fairbanks , Alaska Department o f Civil and Environmental Engineering"
+            ],
+            "affiliations": [
+              {
+                "raw_affiliation_string": "Fairbanks , Alaska Department o f Civil and Environmental Engineering",
+                "institution_ids": [
+                  "https://openalex.org/I141472210",
+                  "https://openalex.org/I4210137739",
+                  "https://openalex.org/I2799712144",
+                  "https://openalex.org/I4210154462"
+                ]
+              }
+            ]
+          }
+        ],
+        "institutions": [],
+        "countries_distinct_count": 1,
+        "institutions_distinct_count": 1,
+        "corresponding_author_ids": [],
+        "corresponding_institution_ids": [
+          "https://openalex.org/I141472210",
+          "https://openalex.org/I2799712144",
+          "https://openalex.org/I4210137739",
+          "https://openalex.org/I4210154462"
+        ],
+        "apc_list": null,
+        "apc_paid": null,
+        "fwci": null,
+        "has_fulltext": true,
+        "cited_by_count": 0,
+        "citation_normalized_percentile": null,
+        "cited_by_percentile_year": null,
+        "biblio": {
+          "volume": null,
+          "issue": null,
+          "first_page": null,
+          "last_page": null
+        },
+        "is_retracted": false,
+        "is_paratext": false,
+        "is_xpac": false,
+        "primary_topic": {
+          "id": "https://openalex.org/T13497",
+          "display_name": "Hermeneutics and Narrative Identity",
+          "score": 0.9879000186920166,
+          "subfield": {
+            "id": "https://openalex.org/subfields/1211",
+            "display_name": "Philosophy"
+          },
+          "field": {
+            "id": "https://openalex.org/fields/12",
+            "display_name": "Arts and Humanities"
+          },
+          "domain": {
+            "id": "https://openalex.org/domains/2",
+            "display_name": "Social Sciences"
+          }
+        },
+        "topics": [
+          {
+            "id": "https://openalex.org/T13497",
+            "display_name": "Hermeneutics and Narrative Identity",
+            "score": 0.9879000186920166,
+            "subfield": {
+              "id": "https://openalex.org/subfields/1211",
+              "display_name": "Philosophy"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/12",
+              "display_name": "Arts and Humanities"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/2",
+              "display_name": "Social Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T13695",
+            "display_name": "Aging, Elder Care, and Social Issues",
+            "score": 0.9749000072479248,
+            "subfield": {
+              "id": "https://openalex.org/subfields/3600",
+              "display_name": "General Health Professions"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/36",
+              "display_name": "Health Professions"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/4",
+              "display_name": "Health Sciences"
+            }
+          },
+          {
+            "id": "https://openalex.org/T13099",
+            "display_name": "Health, Medicine and Society",
+            "score": 0.95660001039505,
+            "subfield": {
+              "id": "https://openalex.org/subfields/3600",
+              "display_name": "General Health Professions"
+            },
+            "field": {
+              "id": "https://openalex.org/fields/36",
+              "display_name": "Health Professions"
+            },
+            "domain": {
+              "id": "https://openalex.org/domains/4",
+              "display_name": "Health Sciences"
+            }
+          }
+        ],
+        "keywords": [
+          {
+            "id": "https://openalex.org/keywords/precipitation",
+            "display_name": "Precipitation",
+            "score": 0.7183953523635864
+          },
+          {
+            "id": "https://openalex.org/keywords/climatology",
+            "display_name": "Climatology",
+            "score": 0.5414741635322571
+          },
+          {
+            "id": "https://openalex.org/keywords/meteorology",
+            "display_name": "Meteorology",
+            "score": 0.5003466606140137
+          },
+          {
+            "id": "https://openalex.org/keywords/environmental-science",
+            "display_name": "Environmental science",
+            "score": 0.4615604281425476
+          },
+          {
+            "id": "https://openalex.org/keywords/geology",
+            "display_name": "Geology",
+            "score": 0.4206925630569458
+          },
+          {
+            "id": "https://openalex.org/keywords/physical-geography",
+            "display_name": "Physical geography",
+            "score": 0.3285626769065857
+          },
+          {
+            "id": "https://openalex.org/keywords/geography",
+            "display_name": "Geography",
+            "score": 0.2692781090736389
+          }
+        ],
+        "concepts": [
+          {
+            "id": "https://openalex.org/C107054158",
+            "wikidata": "https://www.wikidata.org/wiki/Q25257",
+            "display_name": "Precipitation",
+            "level": 2,
+            "score": 0.7183953523635864
+          },
+          {
+            "id": "https://openalex.org/C49204034",
+            "wikidata": "https://www.wikidata.org/wiki/Q52139",
+            "display_name": "Climatology",
+            "level": 1,
+            "score": 0.5414741635322571
+          },
+          {
+            "id": "https://openalex.org/C153294291",
+            "wikidata": "https://www.wikidata.org/wiki/Q25261",
+            "display_name": "Meteorology",
+            "level": 1,
+            "score": 0.5003466606140137
+          },
+          {
+            "id": "https://openalex.org/C39432304",
+            "wikidata": "https://www.wikidata.org/wiki/Q188847",
+            "display_name": "Environmental science",
+            "level": 0,
+            "score": 0.4615604281425476
+          },
+          {
+            "id": "https://openalex.org/C127313418",
+            "wikidata": "https://www.wikidata.org/wiki/Q1069",
+            "display_name": "Geology",
+            "level": 0,
+            "score": 0.4206925630569458
+          },
+          {
+            "id": "https://openalex.org/C100970517",
+            "wikidata": "https://www.wikidata.org/wiki/Q52107",
+            "display_name": "Physical geography",
+            "level": 1,
+            "score": 0.3285626769065857
+          },
+          {
+            "id": "https://openalex.org/C205649164",
+            "wikidata": "https://www.wikidata.org/wiki/Q1071",
+            "display_name": "Geography",
+            "level": 0,
+            "score": 0.2692781090736389
+          }
+        ],
+        "mesh": [],
+        "locations_count": 1,
+        "locations": [
+          {
+            "id": "pmh:oai:scholarworks.alaska.edu:11122/8577",
+            "is_oa": true,
+            "landing_page_url": "http://hdl.handle.net/11122/8577",
+            "pdf_url": "http://hdl.handle.net/11122/8577",
+            "source": {
+              "id": "https://openalex.org/S4377196779",
+              "display_name": "ScholarWorks-UA (University of Alaska Fairbanks)",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "host_organization": "https://openalex.org/I141472210",
+              "host_organization_name": "University of Alaska Fairbanks",
+              "host_organization_lineage": [
+                "https://openalex.org/I141472210"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "submittedVersion",
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": null,
+            "raw_type": "ms"
+          }
+        ],
+        "best_oa_location": {
+          "id": "pmh:oai:scholarworks.alaska.edu:11122/8577",
+          "is_oa": true,
+          "landing_page_url": "http://hdl.handle.net/11122/8577",
+          "pdf_url": "http://hdl.handle.net/11122/8577",
+          "source": {
+            "id": "https://openalex.org/S4377196779",
+            "display_name": "ScholarWorks-UA (University of Alaska Fairbanks)",
+            "issn_l": null,
+            "issn": null,
+            "is_oa": false,
+            "is_in_doaj": false,
+            "is_core": false,
+            "host_organization": "https://openalex.org/I141472210",
+            "host_organization_name": "University of Alaska Fairbanks",
+            "host_organization_lineage": [
+              "https://openalex.org/I141472210"
+            ],
+            "host_organization_lineage_names": [],
+            "type": "repository"
+          },
+          "license": null,
+          "license_id": null,
+          "version": "submittedVersion",
+          "is_accepted": false,
+          "is_published": false,
+          "raw_source_name": null,
+          "raw_type": "ms"
+        },
+        "sustainable_development_goals": [],
+        "awards": [
+          {
+            "id": "https://openalex.org/G1725032144",
+            "display_name": null,
+            "funder_award_id": "DOE-NETL",
+            "funder_id": "https://openalex.org/F4320306084",
+            "funder_display_name": "U.S. Department of Energy"
+          }
+        ],
+        "funders": [
+          {
+            "id": "https://openalex.org/F4320306076",
+            "display_name": "National Science Foundation",
+            "ror": "https://ror.org/021nxhr62"
+          },
+          {
+            "id": "https://openalex.org/F4320306084",
+            "display_name": "U.S. Department of Energy",
+            "ror": "https://ror.org/01bj3aw27"
+          },
+          {
+            "id": "https://openalex.org/F4320307758",
+            "display_name": "Eli Lilly and Company",
+            "ror": "https://ror.org/01qat3289"
+          },
+          {
+            "id": "https://openalex.org/F4320333450",
+            "display_name": "National Energy Technology Laboratory",
+            "ror": "https://ror.org/01x26mz03"
+          },
+          {
+            "id": "https://openalex.org/F4320334896",
+            "display_name": "Japan Agency for Marine-Earth Science and Technology",
+            "ror": "https://ror.org/059qg2m13"
+          }
+        ],
+        "has_content": {
+          "grobid_xml": true,
+          "pdf": true
+        },
+        "content_urls": {
+          "pdf": "https://content.openalex.org/works/W571058436.pdf",
+          "grobid_xml": "https://content.openalex.org/works/W571058436.grobid-xml"
+        },
+        "referenced_works_count": 0,
+        "referenced_works": [],
+        "related_works": [
+          "https://openalex.org/W2276082487",
+          "https://openalex.org/W1983943884",
+          "https://openalex.org/W2625789084",
+          "https://openalex.org/W2626570122",
+          "https://openalex.org/W2595924389",
+          "https://openalex.org/W2297586484",
+          "https://openalex.org/W342680383",
+          "https://openalex.org/W294478595",
+          "https://openalex.org/W3214254958",
+          "https://openalex.org/W2166610717",
+          "https://openalex.org/W1760330458",
+          "https://openalex.org/W306868571",
+          "https://openalex.org/W90242145",
+          "https://openalex.org/W2982213283",
+          "https://openalex.org/W157363977",
+          "https://openalex.org/W1551601650",
+          "https://openalex.org/W128745775",
+          "https://openalex.org/W2804386192",
+          "https://openalex.org/W3020952555",
+          "https://openalex.org/W2594049740"
+        ],
+        "abstract_inverted_index": {
+          "Thesis": [
+            0
+          ],
+          "(M.S.)": [
+            1
+          ],
+          "University": [
+            2
+          ],
+          "of": [
+            3
+          ],
+          "Alaska": [
+            4
+          ],
+          "Fairbanks,": [
+            5
+          ],
+          "2012": [
+            6
+          ]
+        },
+        "counts_by_year": [],
+        "updated_date": "2026-04-10T15:06:20.359241",
+        "created_date": "2025-10-10T00:00:00",
+        "sources": [
+          "openalex"
+        ]
+      }
+    }
+  ],
+  "candidate_count": 4,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_181543_snow_transport_wind_tunnel_field_observation_pra.jsonl"
+}

@@ -1,0 +1,17 @@
+{
+  "original_query": "snow ecology microbial activity subnivean",
+  "expanded_queries": [
+    "snow ecology microbial activity subnivean",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow ecology microbial activity subnivean blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:14:38.123433+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211438_snow_ecology_microbial_activity_subnivean.jsonl"
+}

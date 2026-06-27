@@ -1,0 +1,17 @@
+{
+  "original_query": "snow remote sensing MODIS passive microwave",
+  "expanded_queries": [
+    "snow remote sensing MODIS passive microwave",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow remote sensing MODIS passive microwave blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:15:11.960695+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211511_snow_remote_sensing_MODIS_passive_microwave.jsonl"
+}

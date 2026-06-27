@@ -1,0 +1,17 @@
+{
+  "original_query": "taklamakan desert sand dune migration",
+  "expanded_queries": [
+    "taklamakan desert sand dune migration",
+    "aeolian transport snow transport sand transport saltation flux",
+    "taklamakan desert sand dune migration aeolian transport snow transport sand transport"
+  ],
+  "created_at": "2026-06-27T13:14:13.934593+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211413_taklamakan_desert_sand_dune_migration.jsonl"
+}

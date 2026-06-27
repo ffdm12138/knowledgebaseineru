@@ -1,0 +1,17 @@
+{
+  "original_query": "saltation bombardment splash entrainment trajectory grain impact rebound",
+  "expanded_queries": [
+    "saltation bombardment splash entrainment trajectory grain impact rebound",
+    "aeolian transport snow transport sand transport saltation flux",
+    "saltation bombardment splash entrainment trajectory grain impact rebound aeolian transport snow transport sand transport"
+  ],
+  "created_at": "2026-06-27T10:16:44.874468+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_181644_saltation_bombardment_splash_entrainment_traject.jsonl"
+}

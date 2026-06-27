@@ -1,0 +1,17 @@
+{
+  "original_query": "air pollution PM boundary layer evolution",
+  "expanded_queries": [
+    "air pollution PM boundary layer evolution",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "air pollution PM boundary layer evolution atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:14:39.850042+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211439_air_pollution_PM_boundary_layer_evolution.jsonl"
+}

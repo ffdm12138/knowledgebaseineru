@@ -1,0 +1,17 @@
+{
+  "original_query": "wind tunnel blowing snow particle tracking",
+  "expanded_queries": [
+    "wind tunnel blowing snow particle tracking",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "wind tunnel blowing snow particle tracking blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:14:31.692063+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211431_wind_tunnel_blowing_snow_particle_tracking.jsonl"
+}

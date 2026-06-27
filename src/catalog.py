@@ -11,12 +11,14 @@ from loguru import logger
 from filelock import FileLock
 
 from config.settings import CATALOG_PATH
+from src.library_index import validate_domains
 
 
 # 每条 paper 条目必须包含的字段（嵌套结构用点号）
 REQUIRED_FIELDS = {
     "paper_id", "title", "authors", "year", "venue", "doi",
     "raw_pdf", "markdown", "images_dir", "status",
+    "primary_domain", "domains",
     "ai_summary", "tags", "selection_hints", "notes", "citation",
 }
 AI_SUMMARY_FIELDS = {
@@ -28,6 +30,28 @@ TAGS_FIELDS = {"topic", "method", "material_or_region", "variables", "model_name
 HINTS_FIELDS = {"read_when_question_contains", "do_not_use_for", "priority"}
 CITATION_FIELDS = {"bib_key", "bibtex", "citation_style_name", "source", "verified"}
 VALID_STATUS = {"unsummarized", "summarized", "draft"}
+
+
+def build_compact_catalog_text(papers: list[dict]) -> str:
+    """从 paper 列表生成紧凑目录文本（供大模型选文）。
+
+    若条目带 ``source_domains``（来自多领域 compact），额外显示其出现的领域。
+    """
+    lines = ["# 文献目录（紧凑视图）", ""]
+    for p in papers:
+        pid = p.get("paper_id", "?")
+        ai = p.get("ai_summary", {}) or {}
+        one = ai.get("one_sentence", "") or "(未总结)"
+        pri = (p.get("selection_hints") or {}).get("priority", "-")
+        domain = p.get("primary_domain", "-")
+        tags = p.get("tags", {}) or {}
+        topic = ",".join(tags.get("topic", []))
+        lines.append(f"- [domain] {pid}  primary_domain:{domain}")
+        src_domains = p.get("source_domains") or []
+        if src_domains:
+            lines.append(f"  source_domains:{','.join(src_domains)}")
+        lines.append(f"- [{pri}] {pid}  {one}  [主题:{topic}]")
+    return "\n".join(lines)
 
 
 class Catalog:
@@ -149,6 +173,14 @@ class Catalog:
                 seen_ids.add(pid)
             if p.get("status") not in VALID_STATUS:
                 errors.append(f"{ctx} status 非法: {p.get('status')} (应为 {VALID_STATUS})")
+            domains = p.get("domains", [])
+            if not isinstance(domains, list):
+                errors.append(f"{ctx} domains 不是列表")
+                domains = []
+            errors.extend([
+                f"{ctx} {e}"
+                for e in validate_domains(p.get("primary_domain", ""), domains)
+            ])
             ai = p.get("ai_summary", {})
             if not isinstance(ai, dict):
                 errors.append(f"{ctx} ai_summary 不是对象")
@@ -207,15 +239,13 @@ class Catalog:
                 out.append(pid)
         return out
 
-    def build_compact_catalog(self) -> str:
-        """生成给大模型看的紧凑目录文本：每篇一行核心摘要"""
-        lines = ["# 文献目录（紧凑视图）", ""]
-        for p in self.list_papers():
-            pid = p.get("paper_id", "?")
-            ai = p.get("ai_summary", {}) or {}
-            one = ai.get("one_sentence", "") or "(未总结)"
-            pri = (p.get("selection_hints") or {}).get("priority", "-")
-            tags = p.get("tags", {}) or {}
-            topic = ",".join(tags.get("topic", []))
-            lines.append(f"- [{pri}] {pid}  {one}  [主题:{topic}]")
-        return "\n".join(lines)
+    def build_compact_catalog(self, domains: list[str] | None = None) -> str:
+        """生成给大模型看的紧凑目录文本：每篇一行核心摘要。
+
+        domains: 若提供，只收录 domains 列表与该集合有交集的文献（领域视图）。
+        """
+        papers = self.list_papers()
+        if domains:
+            domain_set = set(domains)
+            papers = [p for p in papers if domain_set & set(p.get("domains") or [])]
+        return build_compact_catalog_text(papers)

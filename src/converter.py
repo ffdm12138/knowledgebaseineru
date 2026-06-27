@@ -57,6 +57,14 @@ class MinerUConverter:
         if self.proxy:
             env["HTTP_PROXY"] = self.proxy
             env["HTTPS_PROXY"] = self.proxy
+        # 确保 CUDA_PATH 可被 MinerU lmdeploy 后端找到
+        if "CUDA_PATH" not in env:
+            try:
+                from config.settings import CUDA_PATH as _cuda
+                if _cuda:
+                    env["CUDA_PATH"] = str(_cuda)
+            except Exception:
+                pass
         return env
 
     def convert(

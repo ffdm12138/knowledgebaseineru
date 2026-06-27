@@ -1,0 +1,17 @@
+{
+  "original_query": "sand transport measurement field experiment Sahara",
+  "expanded_queries": [
+    "sand transport measurement field experiment Sahara",
+    "aeolian transport snow transport sand transport saltation flux",
+    "sand transport measurement field experiment Sahara aeolian transport snow transport sand transport"
+  ],
+  "created_at": "2026-06-27T13:16:00.640109+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211600_sand_transport_measurement_field_experiment_Saha.jsonl"
+}

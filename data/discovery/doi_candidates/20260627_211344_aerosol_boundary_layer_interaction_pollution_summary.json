@@ -1,0 +1,17 @@
+{
+  "original_query": "aerosol boundary layer interaction pollution",
+  "expanded_queries": [
+    "aerosol boundary layer interaction pollution",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "aerosol boundary layer interaction pollution atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:13:44.569194+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211344_aerosol_boundary_layer_interaction_pollution.jsonl"
+}

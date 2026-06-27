@@ -1,0 +1,17 @@
+{
+  "original_query": "snow avalanche dynamics numerical simulation",
+  "expanded_queries": [
+    "snow avalanche dynamics numerical simulation",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow avalanche dynamics numerical simulation blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:15:00.199262+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211500_snow_avalanche_dynamics_numerical_simulation.jsonl"
+}

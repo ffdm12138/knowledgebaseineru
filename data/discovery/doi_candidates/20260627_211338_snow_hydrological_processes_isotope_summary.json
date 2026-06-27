@@ -1,0 +1,17 @@
+{
+  "original_query": "snow hydrological processes isotope",
+  "expanded_queries": [
+    "snow hydrological processes isotope",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow hydrological processes isotope blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:13:38.501764+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211338_snow_hydrological_processes_isotope.jsonl"
+}

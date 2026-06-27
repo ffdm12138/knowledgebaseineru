@@ -1,0 +1,17 @@
+{
+  "original_query": "snow drift erosion deposition topography",
+  "expanded_queries": [
+    "snow drift erosion deposition topography",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow drift erosion deposition topography blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:13:44.499893+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211344_snow_drift_erosion_deposition_topography.jsonl"
+}

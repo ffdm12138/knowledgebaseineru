@@ -1,0 +1,17 @@
+{
+  "original_query": "snow climate feedback surface energy balance",
+  "expanded_queries": [
+    "snow climate feedback surface energy balance",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow climate feedback surface energy balance blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:15:46.220106+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211546_snow_climate_feedback_surface_energy_balance.jsonl"
+}

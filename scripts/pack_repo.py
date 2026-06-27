@@ -7,28 +7,83 @@
     python scripts/pack_repo.py              # 生成 mineru_snapshot.zip
     python scripts/pack_repo.py --name v2   # 生成 mineru_snapshot_v2.zip
 """
+import re
 import subprocess
-import zipfile
 import sys
+import zipfile
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
 ZIP_NAME_BASE = "mineru_snapshot"
+_SURROGATE_RE = re.compile(r"[\ud800-\udfff]")
+
+
+def _safe_for_zip(rel_path: str) -> bool:
+    """路径能否安全写入 zip（不含 surrogate 且可 UTF-8 编码）。"""
+    if _SURROGATE_RE.search(rel_path):
+        return False
+    try:
+        rel_path.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    try:
+        zipfile.ZipInfo(rel_path)
+    except Exception:
+        return False
+    return True
 
 
 def git_tracked_files() -> list[str]:
-    """返回 git ls-files 列出的所有跟踪文件（相对路径）"""
-    result = subprocess.run(
-        ["git", "ls-files"],
-        capture_output=True, text=True, encoding="utf-8",
-        cwd=str(PROJECT_ROOT),
-    )
-    if result.returncode != 0:
-        print(f"[WARN] git ls-files failed: {result.stderr}")
-        return []
-    files = [f.strip() for f in result.stdout.splitlines() if f.strip()]
-    print(f"  Found {len(files)} git-tracked files")
+    """返回 git 跟踪文件 + 未忽略的新文件（相对路径）"""
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(PROJECT_ROOT), "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            capture_output=True, text=True, encoding="utf-8",
+            check=False,
+        )
+        if result.returncode == 0:
+            files = [f.replace("\\", "/") for f in result.stdout.split("\0") if f]
+            if files:
+                safe = [f for f in files if _safe_for_zip(f)]
+                if len(safe) < len(files):
+                    for f in files:
+                        if not _safe_for_zip(f):
+                            print(f"  [SKIP] unsafe path encoding: {f!r}")
+                print(f"  Found {len(safe)} files from git ls-files")
+                return safe
+        else:
+            print(f"[WARN] git ls-files failed: {result.stderr}")
+    except Exception as e:
+        print(f"[WARN] git ls-files unavailable: {e}")
+
+    files = _scan_repo_files()
+    print(f"  Found {len(files)} files from filesystem scan")
     return files
+
+
+def _scan_repo_files() -> list[str]:
+    """Fallback for zip snapshots without .git metadata。
+
+    跳过无法安全写入 zip 的路径（含 surrogate、UTF-8 编码失败等），打印 SKIP。
+    """
+    out = []
+    excluded_dirs = {".git", "__pycache__", ".pytest_cache"}
+    for path in PROJECT_ROOT.rglob("*"):
+        if not path.is_file():
+            continue
+        rel_parts = path.relative_to(PROJECT_ROOT).parts
+        if any(part in excluded_dirs for part in rel_parts):
+            continue
+        if path.suffix in {".pyc", ".tmp", ".lock"}:
+            continue
+        if path.name.startswith("mineru_snapshot") and path.suffix == ".zip":
+            continue
+        rel = path.relative_to(PROJECT_ROOT).as_posix()
+        if not _safe_for_zip(rel):
+            print(f"  [SKIP] unsafe path encoding: {rel!r}")
+            continue
+        out.append(rel)
+    return sorted(out)
 
 
 def main():
@@ -42,20 +97,25 @@ def main():
         sys.exit(1)
 
     count = 0
+    skipped = 0
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in sorted(files):
             src = PROJECT_ROOT / f
             if not src.exists():
                 print(f"  [SKIP] missing: {f}")
+                skipped += 1
                 continue
-            # 排除自身以防万一
-            if src.resolve() == Path(__file__).resolve():
+            if not _safe_for_zip(f):
+                print(f"  [SKIP] unsafe path encoding: {f!r}")
+                skipped += 1
                 continue
             zf.write(src, f)
             count += 1
 
     size_mb = zip_path.stat().st_size / (1024 * 1024)
     print(f"[OK] Packed: {zip_name} ({count} files, {size_mb:.1f} MB)")
+    if skipped:
+        print(f"     {skipped} file(s) skipped")
     print(f"     {zip_path}")
 
 

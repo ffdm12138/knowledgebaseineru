@@ -23,7 +23,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, Query
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query, Body
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -121,6 +121,10 @@ class DeepReadRequest(BaseModel):
 class ConfirmPapersRequest(BaseModel):
     paper_ids: list[str]
     confirmed_by: str = "api"
+
+
+class MatchCatalogRequest(BaseModel):
+    domain_ids: list[str] | None = None
 
 
 class CopyFiguresRequest(BaseModel):
@@ -230,7 +234,7 @@ async def get_paper_image(paper_id: str, img_name: str):
         from src.naming import safe_child, validate_paper_id, validate_image_name
         validate_paper_id(paper_id)
         validate_image_name(img_name)
-        img_path = safe_child(PAPERS_DIR, paper_id, "images", img_name)
+        img_path = safe_child(library.images_dir(paper_id), img_name)
     except ValueError as e:
         raise HTTPException(400, str(e))
     if not img_path.is_file():
@@ -392,11 +396,11 @@ async def write_job_files(job_id: str):
 
 
 @app.post("/write/jobs/{job_id}/match-catalog")
-async def write_match_catalog(job_id: str):
+async def write_match_catalog(job_id: str, req: MatchCatalogRequest = Body(default_factory=MatchCatalogRequest)):
     _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
-    return match_catalog(job_id, jm=job_manager, catalog=catalog)
+    return match_catalog(job_id, jm=job_manager, catalog=catalog, domain_ids=req.domain_ids)
 
 
 @app.post("/write/jobs/{job_id}/confirm-papers")

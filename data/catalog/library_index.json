@@ -1,0 +1,425 @@
+{
+  "version": "0.1",
+  "description": "Global paper registry for domain-aware library layout.",
+  "domains": {
+    "abl_pbl": {
+      "label": "大气边界层与行星边界层"
+    },
+    "blowing_snow_physics": {
+      "label": "风雪动力学与风雪物理"
+    },
+    "aeolian_snow_transport": {
+      "label": "风沙/风雪颗粒输运动力学"
+    }
+  },
+  "papers": [
+    {
+      "paper_id": "1982_schmidt_风吹雪垂直剖面",
+      "title": "Vertical profiles of wind speed, snow concentration, and humidity in blowing snow",
+      "year": 1982,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/1982野外升华率实验.pdf",
+      "markdown_path": "data/papers/1982_schmidt_风吹雪垂直剖面/paper.md",
+      "images_dir": "data/papers/1982_schmidt_风吹雪垂直剖面/images",
+      "status": "summarized",
+      "bib_key": "schmidt1982_blowing_snow_profiles"
+    },
+    {
+      "paper_id": "1988_dery_吹雪升华热力学",
+      "title": "The thermodynamic effects of sublimating, blowing snow in the atmospheric boundary layer",
+      "year": 1998,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/1988雪升华率.pdf",
+      "markdown_path": "data/papers/1988_dery_吹雪升华热力学/paper.md",
+      "images_dir": "data/papers/1988_dery_吹雪升华热力学/images",
+      "status": "summarized",
+      "bib_key": "dery1998_thermodynamic_blowing_snow"
+    },
+    {
+      "paper_id": "1999_dery_吹雪体相模型",
+      "title": "A bulk blowing snow model",
+      "year": 1999,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/1999悬移控制方程.pdf",
+      "markdown_path": "data/papers/1999_dery_吹雪体相模型/paper.md",
+      "images_dir": "data/papers/1999_dery_吹雪体相模型/images",
+      "status": "summarized",
+      "bib_key": "dery1999_bulk_blowing_snow"
+    },
+    {
+      "paper_id": "1999_shao_风沙跃移数值模拟",
+      "title": "Numerical modelling of saltation in the atmospheric surface layer",
+      "year": 1999,
+      "doi": "",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "raw_pdf": "data/raw/1999shaoli起动.pdf",
+      "markdown_path": "data/papers/1999_shao_风沙跃移数值模拟/paper.md",
+      "images_dir": "data/papers/1999_shao_风沙跃移数值模拟/images",
+      "status": "summarized",
+      "bib_key": "shao1999_saltation_modelling"
+    },
+    {
+      "paper_id": "2000_sugiura_吹雪击溅函数",
+      "title": "Wind-tunnel measurements of restitution coefficients and ejection number of snow particles in drifting snow: determination of splash functions",
+      "year": 2000,
+      "doi": "",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport",
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/Sugiura–Maeno击溅.pdf",
+      "markdown_path": "data/papers/2000_sugiura_吹雪击溅函数/paper.md",
+      "images_dir": "data/papers/2000_sugiura_吹雪击溅函数/images",
+      "status": "summarized",
+      "bib_key": "sugiura2000_splash_functions"
+    },
+    {
+      "paper_id": "2000_nishimura_南极吹雪观测",
+      "title": "Blowing snow at Mizuho station, Antarctica",
+      "year": 2000,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/Nishimura粒径分布.pdf",
+      "markdown_path": "data/papers/2000_nishimura_南极吹雪观测/paper.md",
+      "images_dir": "data/papers/2000_nishimura_南极吹雪观测/images",
+      "status": "summarized",
+      "bib_key": "nishimura2000_blowing_snow_mizuho"
+    },
+    {
+      "paper_id": "2008_wang_风沙跃移与悬移运动",
+      "title": "Saltation and suspension of wind-blown particle movement",
+      "year": 2008,
+      "doi": "",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "raw_pdf": "data/raw/s11433-008-0106-6.pdf",
+      "markdown_path": "data/papers/2008_wang_风沙跃移与悬移运动/paper.md",
+      "images_dir": "data/papers/2008_wang_风沙跃移与悬移运动/images",
+      "status": "summarized",
+      "bib_key": "wang2008_saltation_suspension"
+    },
+    {
+      "paper_id": "2010_gordon_吹雪粒径分布",
+      "title": "Measurements of blowing snow, Part I: Particle shape, size distribution, velocity, and number flux at Churchill, Manitoba, Canada",
+      "year": 2010,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/Gordon粒径分布.pdf",
+      "markdown_path": "data/papers/2010_gordon_吹雪粒径分布/paper.md",
+      "images_dir": "data/papers/2010_gordon_吹雪粒径分布/images",
+      "status": "summarized",
+      "bib_key": "gordon2010_blowing_snow_measurements"
+    },
+    {
+      "paper_id": "2017_comola_风吹雪晶体破碎",
+      "title": "Fragmentation of wind-blown snow crystals",
+      "year": 2017,
+      "doi": "10.1002/2017GL073039",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/Comola_et_al_2017_Fragmentation_of_wind_blown_snow_crystals.pdf",
+      "markdown_path": "data/papers/2017_comola_风吹雪晶体破碎/paper.md",
+      "images_dir": "data/papers/2017_comola_风吹雪晶体破碎/images",
+      "status": "summarized",
+      "bib_key": "comola2017_snow_fragmentation"
+    },
+    {
+      "paper_id": "2021_zheng_跃移床面湍流调制",
+      "title": "Modulation of turbulence by saltating particles on erodible bed surface",
+      "year": 2021,
+      "doi": "10.1017/jfm.2021.329",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "raw_pdf": "data/raw/jfm.2021.329.pdf",
+      "markdown_path": "data/papers/2021_zheng_跃移床面湍流调制/paper.md",
+      "images_dir": "data/papers/2021_zheng_跃移床面湍流调制/images",
+      "status": "summarized",
+      "bib_key": "zheng2021_turbulence_saltation"
+    },
+    {
+      "paper_id": "2023_wang_有限粒径颗粒阻力模型",
+      "title": "Drag model of finite-sized particle in turbulent wall-bound flow over sediment bed",
+      "year": 2023,
+      "doi": "",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport",
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/Wang_2023_drag_model_finite_sized_particle_JFM.pdf",
+      "markdown_path": "data/papers/2023_wang_有限粒径颗粒阻力模型/paper.md",
+      "images_dir": "data/papers/2023_wang_有限粒径颗粒阻力模型/images",
+      "status": "summarized",
+      "bib_key": "wang2023_drag_finite_particle"
+    },
+    {
+      "paper_id": "2025_huang_雪粒破碎促进升华",
+      "title": "Snow particle fragmentation enhances snow sublimation",
+      "year": 2025,
+      "doi": "10.5194/acp-25-12535-2025",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/huang2025破碎.pdf",
+      "markdown_path": "data/papers/2025_huang_雪粒破碎促进升华/paper.md",
+      "images_dir": "data/papers/2025_huang_雪粒破碎促进升华/images",
+      "status": "summarized",
+      "bib_key": "huang2025_fragmentation_sublimation"
+    },
+    {
+      "paper_id": "2026_viaro_高山吹雪云过程",
+      "title": "The importance of alpine blowing snow for cloud processes",
+      "year": 2026,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics",
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/cryowrf-egusphere-2026-2132.pdf",
+      "markdown_path": "data/papers/2026_viaro_高山吹雪云过程/paper.md",
+      "images_dir": "data/papers/2026_viaro_高山吹雪云过程/images",
+      "status": "summarized",
+      "bib_key": "viaro2026_alpine_blowing_snow_cloud"
+    },
+    {
+      "paper_id": "2018_mott_风吹雪耦合季节性积雪综述",
+      "title": "The Seasonal Snow Cover Dynamics: Review on Wind-Driven Coupling Processes",
+      "year": 2018,
+      "doi": "10.3389/feart.2018.00197",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2018_mott_风吹雪耦合季节性积雪综述.pdf",
+      "markdown_path": "data/papers/2018_mott_风吹雪耦合季节性积雪综述/paper.md",
+      "images_dir": "data/papers/2018_mott_风吹雪耦合季节性积雪综述/images",
+      "status": "unsummarized",
+      "bib_key": "2018_the_seasonal_snow_cover_dynamics_review_on_wind_driven_coupling_processes"
+    },
+    {
+      "paper_id": "2015_dewekker_山地地形对流边界层高度综述",
+      "title": "Convective Boundary Layer Heights Over Mountainous Terrain: A Review of Concepts",
+      "year": 2015,
+      "doi": "10.3389/feart.2015.00077",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/2015_dewekker_山地地形对流边界层高度综述.pdf",
+      "markdown_path": "data/papers/2015_dewekker_山地地形对流边界层高度综述/paper.md",
+      "images_dir": "data/papers/2015_dewekker_山地地形对流边界层高度综述/images",
+      "status": "unsummarized",
+      "bib_key": "2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts"
+    },
+    {
+      "paper_id": "2014_wang_无线电探空大气混合层高度估算",
+      "title": "Estimation of atmospheric mixing layer height from radiosonde data",
+      "year": 2014,
+      "doi": "10.5194/amt-7-1701-2014",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/2014_wang_无线电探空大气混合层高度估算.pdf",
+      "markdown_path": "data/papers/2014_wang_无线电探空大气混合层高度估算/paper.md",
+      "images_dir": "data/papers/2014_wang_无线电探空大气混合层高度估算/images",
+      "status": "unsummarized",
+      "bib_key": "2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data"
+    },
+    {
+      "paper_id": "2014_lothon_BLLAST下午黄昏边界层湍流实验",
+      "title": "The BLLAST field experiment: Boundary-Layer Late Afternoon and Sunset Turbulence",
+      "year": 2014,
+      "doi": "10.5194/acp-14-10931-2014",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/2014_lothon_BLLAST下午黄昏边界层湍流实验.pdf",
+      "markdown_path": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/paper.md",
+      "images_dir": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/images",
+      "status": "unsummarized",
+      "bib_key": "2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence"
+    },
+    {
+      "paper_id": "2015_gao_沙丘形态定向相图",
+      "title": "Phase diagrams of dune shape and orientation depending on sand availability",
+      "year": 2015,
+      "doi": "10.1038/srep14677",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "raw_pdf": "data/raw/2015_gao_沙丘形态定向相图.pdf",
+      "markdown_path": "data/papers/2015_gao_沙丘形态定向相图/paper.md",
+      "images_dir": "data/papers/2015_gao_沙丘形态定向相图/images",
+      "status": "unsummarized",
+      "bib_key": "2015_phase_diagrams_of_dune_shape_and_orientation_depending_on_sand_availability"
+    },
+    {
+      "paper_id": "2018_jambonpuillet_冰晶奇异升华",
+      "title": "Singular sublimation of ice and snow crystals",
+      "year": 2018,
+      "doi": "10.1038/s41467-018-06689-x",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2018_jambonpuillet_冰晶奇异升华.pdf",
+      "markdown_path": "data/papers/2018_jambonpuillet_冰晶奇异升华/paper.md",
+      "images_dir": "data/papers/2018_jambonpuillet_冰晶奇异升华/images",
+      "status": "unsummarized",
+      "bib_key": "2018_singular_sublimation_of_ice_and_snow_crystals"
+    },
+    {
+      "paper_id": "2006_clifton_风吹雪盐度阈值风洞实验",
+      "title": "Snow saltation threshold measurements in a drifting-snow wind tunnel",
+      "year": 2006,
+      "doi": "10.3189/172756506781828430",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2006_clifton_风吹雪盐度阈值风洞实验.pdf",
+      "markdown_path": "data/papers/2006_clifton_风吹雪盐度阈值风洞实验/paper.md",
+      "images_dir": "data/papers/2006_clifton_风吹雪盐度阈值风洞实验/images",
+      "status": "unsummarized",
+      "bib_key": "2006_snow_saltation_threshold_measurements_in_a_driftin"
+    },
+    {
+      "paper_id": "2012_vionnet_Crocus积雪方案SURFEX",
+      "title": "The detailed snowpack scheme Crocus and its implementation in SURFEX v7.2",
+      "year": 2012,
+      "doi": "10.5194/gmd-5-773-2012",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2012_vionnet_Crocus积雪方案SURFEX.pdf",
+      "markdown_path": "data/papers/2012_vionnet_Crocus积雪方案SURFEX/paper.md",
+      "images_dir": "data/papers/2012_vionnet_Crocus积雪方案SURFEX/images",
+      "status": "unsummarized",
+      "bib_key": "2012_the_detailed_snowpack_scheme_crocus_and_its_implem"
+    },
+    {
+      "paper_id": "2014_vionnet_风吹雪输运升华积雪模拟",
+      "title": "Simulation of wind-induced snow transport and sublimation in alpine terrain using a fully coupled snowpack/atmosphere model",
+      "year": 2014,
+      "doi": "10.5194/tc-8-395-2014",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2014_vionnet_风吹雪输运升华积雪模拟.pdf",
+      "markdown_path": "data/papers/2014_vionnet_风吹雪输运升华积雪模拟/paper.md",
+      "images_dir": "data/papers/2014_vionnet_风吹雪输运升华积雪模拟/images",
+      "status": "unsummarized",
+      "bib_key": "2014_simulation_of_wind_induced_snow_transport_and_subl"
+    },
+    {
+      "paper_id": "2008_baars_激光雷达连续监测边界层顶",
+      "title": "Continuous monitoring of the boundary-layer top with lidar",
+      "year": 2008,
+      "doi": "10.5194/acp-8-7281-2008",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/2008_baars_激光雷达连续监测边界层顶.pdf",
+      "markdown_path": "data/papers/2008_baars_激光雷达连续监测边界层顶/paper.md",
+      "images_dir": "data/papers/2008_baars_激光雷达连续监测边界层顶/images",
+      "status": "unsummarized",
+      "bib_key": "2008_continuous_monitoring_of_the_boundary_layer_top_wi"
+    },
+    {
+      "paper_id": "2023_kotthaus_地基遥感边界层高度综述",
+      "title": "Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations",
+      "year": 2023,
+      "doi": "10.5194/amt-16-433-2023",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/2023_kotthaus_地基遥感边界层高度综述.pdf",
+      "markdown_path": "data/papers/2023_kotthaus_地基遥感边界层高度综述/paper.md",
+      "images_dir": "data/papers/2023_kotthaus_地基遥感边界层高度综述/images",
+      "status": "unsummarized",
+      "bib_key": "2023_atmospheric_boundary_layer_height_from_ground_base"
+    },
+    {
+      "paper_id": "2013_sathe_地基激光雷达湍流测量综述",
+      "title": "A review of turbulence measurements using ground-based wind lidars",
+      "year": 2013,
+      "doi": "10.5194/amt-6-3147-2013",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "raw_pdf": "data/raw/2013_sathe_地基激光雷达湍流测量综述.pdf",
+      "markdown_path": "data/papers/2013_sathe_地基激光雷达湍流测量综述/paper.md",
+      "images_dir": "data/papers/2013_sathe_地基激光雷达湍流测量综述/images",
+      "status": "unsummarized",
+      "bib_key": "2013_a_review_of_turbulence_measurements_using_ground_b"
+    },
+    {
+      "paper_id": "2020_pahtz_风沙河流沉积物输运起动停止",
+      "title": "The Physics of Sediment Transport Initiation, Cessation, and Entrainment Across Aeolian and Fluvial Environments",
+      "year": 2020,
+      "doi": "10.1029/2019rg000679",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "raw_pdf": "data/raw/2020_pahtz_风沙河流沉积物输运起动停止.pdf",
+      "markdown_path": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/paper.md",
+      "images_dir": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/images",
+      "status": "unsummarized",
+      "bib_key": "2020_the_physics_of_sediment_transport_initiation_cessa"
+    },
+    {
+      "paper_id": "2005_tanaka_全球沙尘气溶胶模拟MASINGAR",
+      "title": "Global Simulation of Dust Aerosol with a Chemical Transport Model, MASINGAR",
+      "year": 2005,
+      "doi": "10.2151/jmsj.83a.255",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2005_tanaka_全球沙尘气溶胶模拟MASINGAR.pdf",
+      "markdown_path": "data/papers/2005_tanaka_全球沙尘气溶胶模拟MASINGAR/paper.md",
+      "images_dir": "data/papers/2005_tanaka_全球沙尘气溶胶模拟MASINGAR/images",
+      "status": "unsummarized",
+      "bib_key": "2005_global_simulation_of_dust_aerosol_with_a_chemical"
+    }
+  ]
+}

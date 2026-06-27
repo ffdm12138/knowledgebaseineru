@@ -1,0 +1,1339 @@
+{
+  "original_query": "urban boundary layer canopy street canyon",
+  "expanded_queries": [
+    "urban boundary layer canopy street canyon",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:13:45.242377+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [
+    {
+      "title": "Investigation of the flow inside an urban canopy immersed into an atmospheric boundary layer using laser Doppler anemometry",
+      "year": 2018,
+      "authors": [
+        "S. Herpin",
+        "L. Perret",
+        "R. Mathis",
+        "C. Tanguy",
+        "J. Lasserre"
+      ],
+      "doi": "10.1007/s00348-018-2532-1",
+      "venue": "Experiments in Fluids",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "9dc2b4c3d62aadfb05dfe06095a792e0103b90e1",
+      "url": "https://www.semanticscholar.org/paper/9dc2b4c3d62aadfb05dfe06095a792e0103b90e1",
+      "pdf_url": "https://hal-agrocampus-ouest.archives-ouvertes.fr/hal-01818902/file/herpin_2018-20330%20%281%29.pdf",
+      "open_access": true,
+      "citation_count": 22,
+      "confidence": 0.6713902439024392,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "9dc2b4c3d62aadfb05dfe06095a792e0103b90e1",
+        "externalIds": {
+          "MAG": "2802858704",
+          "DOI": "10.1007/s00348-018-2532-1",
+          "CorpusId": 67783456
+        },
+        "url": "https://www.semanticscholar.org/paper/9dc2b4c3d62aadfb05dfe06095a792e0103b90e1",
+        "title": "Investigation of the flow inside an urban canopy immersed into an atmospheric boundary layer using laser Doppler anemometry",
+        "venue": "Experiments in Fluids",
+        "year": 2018,
+        "citationCount": 22,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://hal-agrocampus-ouest.archives-ouvertes.fr/hal-01818902/file/herpin_2018-20330%20%281%29.pdf",
+          "status": "GREEN",
+          "license": "other-oa",
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1007/s00348-018-2532-1?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s00348-018-2532-1, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "92015122",
+            "name": "S. Herpin"
+          },
+          {
+            "authorId": "39849745",
+            "name": "L. Perret"
+          },
+          {
+            "authorId": "49811373",
+            "name": "R. Mathis"
+          },
+          {
+            "authorId": "2155377",
+            "name": "C. Tanguy"
+          },
+          {
+            "authorId": "37661762",
+            "name": "J. Lasserre"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "urbisphere-Berlin campaign: Investigating multi-scale urban impacts on the atmospheric boundary layer",
+      "year": 2024,
+      "authors": [
+        "D. Fenner",
+        "Andreas Christen",
+        "S. Grimmond",
+        "F. Meier",
+        "William Morrison",
+        "Matthias Zeeman",
+        "Janet F. Barlow",
+        "Jörn Birkmann",
+        "L. Blunn",
+        "N. Chrysoulakis",
+        "M. Clements",
+        "Russell H. Glazer",
+        "Denise Hertwig",
+        "S. Kotthaus",
+        "K. König",
+        "Dana Looschelders",
+        "Z. Mitraka",
+        "D. Poursanidis",
+        "Dimitris Tsirantonakis",
+        "Benjamin Bechtel",
+        "Kit Benjamin",
+        "F. Beyrich",
+        "Ferdinand Briegel",
+        "Gregor Feigel",
+        "Carlotta Gertsen",
+        "Nimra Iqbal",
+        "Jonas Kittner",
+        "H. Lean",
+        "Yiqing Liu",
+        "Zhiwen Luo",
+        "Megan McGrory",
+        "Swen Metzger",
+        "Matthew Paskin",
+        "Marvin Ravan",
+        "T. Ruhtz",
+        "B. Saunders",
+        "Dieter Scherer",
+        "S. T. Smith",
+        "Megan A. Stretton",
+        "Katja Trachte",
+        "Melania Van Hove"
+      ],
+      "doi": "10.1175/bams-d-23-0030.1",
+      "venue": "Bulletin of The American Meteorological Society - (BAMS)",
+      "abstract": "\nFor next-generation weather and climate numerical models to resolve cities, both higher spatial resolution and sub-grid parameterizations of urban canopy-atmosphere processes are required. Key is to better understand intra-urban variability and urban-rural differences in atmospheric boundary layer (ABL) dynamics. This includes upwind-downwind effects due to cities’ influences on the atmosphere beyond their boundaries. To address these aspects a network of >25 ground-based remote-sensing sites was designed for the Berlin region (Germany), considering city form, function, and typical weather conditions. This allows investigation of how different urban densities and human activities impact ABL dynamics. As part of the interdisciplinary European Research Council Grant urbisphere, the network was operated from Autumn 2021 to Autumn 2022. Here we provide an overview of the scientific aims, campaign setup, and results from two days, highlighting multi-scale urban impacts on the atmosphere in combination with high-resolution numerical modeling at 100 m grid-spacing. During a spring day, the analyzes show systematic upwind-city-downwind effects in ABL heights, largely driven by urban-rural differences in surface heat fluxes. During a heatwave day, ABL height is remarkably deep, yet spatial differences in ABL heights are less pronounced due to overall dry soil conditions, resulting in similar observed surface heat fluxes. Our modeling results provide further insights into ABL characteristics not resolved by the observation network, highlighting synergies between both approaches. Our data and findings will support modeling to help deliver services to a wider community from citizens to those managing health, energy, transport, land-use and other city infrastructure and operations.",
+      "source": "semantic_scholar",
+      "source_id": "422458e7d7480db44ae27c894dfd393c1f9d38e4",
+      "url": "https://www.semanticscholar.org/paper/422458e7d7480db44ae27c894dfd393c1f9d38e4",
+      "pdf_url": "https://journals.ametsoc.org/downloadpdf/view/journals/bams/aop/BAMS-D-23-0030.1/BAMS-D-23-0030.1.pdf",
+      "open_access": true,
+      "citation_count": 18,
+      "confidence": 0.6605531914893618,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "422458e7d7480db44ae27c894dfd393c1f9d38e4",
+        "externalIds": {
+          "DOI": "10.1175/bams-d-23-0030.1",
+          "CorpusId": 271560434
+        },
+        "url": "https://www.semanticscholar.org/paper/422458e7d7480db44ae27c894dfd393c1f9d38e4",
+        "title": "urbisphere-Berlin campaign: Investigating multi-scale urban impacts on the atmospheric boundary layer",
+        "venue": "Bulletin of The American Meteorological Society - (BAMS)",
+        "year": 2024,
+        "citationCount": 18,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://journals.ametsoc.org/downloadpdf/view/journals/bams/aop/BAMS-D-23-0030.1/BAMS-D-23-0030.1.pdf",
+          "status": "HYBRID",
+          "license": "other-oa",
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1175/bams-d-23-0030.1?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1175/bams-d-23-0030.1, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "51227605",
+            "name": "D. Fenner"
+          },
+          {
+            "authorId": "2282610909",
+            "name": "Andreas Christen"
+          },
+          {
+            "authorId": "35509244",
+            "name": "S. Grimmond"
+          },
+          {
+            "authorId": "29224353",
+            "name": "F. Meier"
+          },
+          {
+            "authorId": "49900409",
+            "name": "William Morrison"
+          },
+          {
+            "authorId": "2313833407",
+            "name": "Matthias Zeeman"
+          },
+          {
+            "authorId": "2261145018",
+            "name": "Janet F. Barlow"
+          },
+          {
+            "authorId": "2146129179",
+            "name": "Jörn Birkmann"
+          },
+          {
+            "authorId": "2313833197",
+            "name": "L. Blunn"
+          },
+          {
+            "authorId": "2660652",
+            "name": "N. Chrysoulakis"
+          },
+          {
+            "authorId": "2238855826",
+            "name": "M. Clements"
+          },
+          {
+            "authorId": "2313840795",
+            "name": "Russell H. Glazer"
+          },
+          {
+            "authorId": "2313832385",
+            "name": "Denise Hertwig"
+          },
+          {
+            "authorId": "2260679946",
+            "name": "S. Kotthaus"
+          },
+          {
+            "authorId": "2250968808",
+            "name": "K. König"
+          },
+          {
+            "authorId": "2313833390",
+            "name": "Dana Looschelders"
+          },
+          {
+            "authorId": "143717263",
+            "name": "Z. Mitraka"
+          },
+          {
+            "authorId": "1909482",
+            "name": "D. Poursanidis"
+          },
+          {
+            "authorId": "2159619530",
+            "name": "Dimitris Tsirantonakis"
+          },
+          {
+            "authorId": "2244516729",
+            "name": "Benjamin Bechtel"
+          },
+          {
+            "authorId": "2126435101",
+            "name": "Kit Benjamin"
+          },
+          {
+            "authorId": "70029141",
+            "name": "F. Beyrich"
+          },
+          {
+            "authorId": "2000888242",
+            "name": "Ferdinand Briegel"
+          },
+          {
+            "authorId": "2313836509",
+            "name": "Gregor Feigel"
+          },
+          {
+            "authorId": "2313833996",
+            "name": "Carlotta Gertsen"
+          },
+          {
+            "authorId": "153217591",
+            "name": "Nimra Iqbal"
+          },
+          {
+            "authorId": "2080438503",
+            "name": "Jonas Kittner"
+          },
+          {
+            "authorId": "69867524",
+            "name": "H. Lean"
+          },
+          {
+            "authorId": "2313809812",
+            "name": "Yiqing Liu"
+          },
+          {
+            "authorId": "2281059441",
+            "name": "Zhiwen Luo"
+          },
+          {
+            "authorId": "2313832542",
+            "name": "Megan McGrory"
+          },
+          {
+            "authorId": "2313833007",
+            "name": "Swen Metzger"
+          },
+          {
+            "authorId": "95255212",
+            "name": "Matthew Paskin"
+          },
+          {
+            "authorId": "2146129287",
+            "name": "Marvin Ravan"
+          },
+          {
+            "authorId": "2769520",
+            "name": "T. Ruhtz"
+          },
+          {
+            "authorId": "2064265884",
+            "name": "B. Saunders"
+          },
+          {
+            "authorId": "2275636154",
+            "name": "Dieter Scherer"
+          },
+          {
+            "authorId": "2313873767",
+            "name": "S. T. Smith"
+          },
+          {
+            "authorId": "2114551490",
+            "name": "Megan A. Stretton"
+          },
+          {
+            "authorId": "2238094901",
+            "name": "Katja Trachte"
+          },
+          {
+            "authorId": "2313833181",
+            "name": "Melania Van Hove"
+          }
+        ],
+        "abstract": "\nFor next-generation weather and climate numerical models to resolve cities, both higher spatial resolution and sub-grid parameterizations of urban canopy-atmosphere processes are required. Key is to better understand intra-urban variability and urban-rural differences in atmospheric boundary layer (ABL) dynamics. This includes upwind-downwind effects due to cities’ influences on the atmosphere beyond their boundaries. To address these aspects a network of >25 ground-based remote-sensing sites was designed for the Berlin region (Germany), considering city form, function, and typical weather conditions. This allows investigation of how different urban densities and human activities impact ABL dynamics. As part of the interdisciplinary European Research Council Grant urbisphere, the network was operated from Autumn 2021 to Autumn 2022. Here we provide an overview of the scientific aims, campaign setup, and results from two days, highlighting multi-scale urban impacts on the atmosphere in combination with high-resolution numerical modeling at 100 m grid-spacing. During a spring day, the analyzes show systematic upwind-city-downwind effects in ABL heights, largely driven by urban-rural differences in surface heat fluxes. During a heatwave day, ABL height is remarkably deep, yet spatial differences in ABL heights are less pronounced due to overall dry soil conditions, resulting in similar observed surface heat fluxes. Our modeling results provide further insights into ABL characteristics not resolved by the observation network, highlighting synergies between both approaches. Our data and findings will support modeling to help deliver services to a wider community from citizens to those managing health, energy, transport, land-use and other city infrastructure and operations.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Observation of the vertical structure of atmospheric boundary layer in subtropical UHI by radiosonde",
+      "year": 2023,
+      "authors": [
+        "Chih-Hong Huang",
+        "H. Tsai",
+        "Chia-Hsing Chen"
+      ],
+      "doi": "10.1080/10106049.2023.2208553",
+      "venue": "Geocarto International",
+      "abstract": "Abstract Existing studies on the urban heat island (UHI) effect tend to focus on the planar scale. However, the UHI effect has obvious three-dimensional properties. This research focuses on the vertical structure of UHI. The study combined big data from sounding balloon and surface measurements in the Database for Atmospheric and Hydrologic Research, Taiwan. Data organization and classification were conducted using the Python programming language, the NumPy mathematical function library, and the Pandas data manipulation library. Results confirmed the existence of the atmospheric boundary layer and the canopy. Furthermore, the temperature inversion of the atmospheric boundary layer fell between heights of 130 m and 667 m. The height of the inversion is affected by the wind speed and cloudiness. Thereby demonstrating that the inversion fluctuates with weather scenario changes. The research results can be applied as the direction of urban planning thinking for urban heat island countermeasures.",
+      "source": "semantic_scholar",
+      "source_id": "3486790193e34f8f030c3e4bebf0034842d4bb4a",
+      "url": "https://www.semanticscholar.org/paper/3486790193e34f8f030c3e4bebf0034842d4bb4a",
+      "pdf_url": "https://www.tandfonline.com/doi/pdf/10.1080/10106049.2023.2208553?needAccess=true&role=button",
+      "open_access": true,
+      "citation_count": 3,
+      "confidence": 0.6583191489361703,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "3486790193e34f8f030c3e4bebf0034842d4bb4a",
+        "externalIds": {
+          "DOI": "10.1080/10106049.2023.2208553",
+          "CorpusId": 258550221
+        },
+        "url": "https://www.semanticscholar.org/paper/3486790193e34f8f030c3e4bebf0034842d4bb4a",
+        "title": "Observation of the vertical structure of atmospheric boundary layer in subtropical UHI by radiosonde",
+        "venue": "Geocarto International",
+        "year": 2023,
+        "citationCount": 3,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://www.tandfonline.com/doi/pdf/10.1080/10106049.2023.2208553?needAccess=true&role=button",
+          "status": "GOLD",
+          "license": "CCBYNC",
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1080/10106049.2023.2208553?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1080/10106049.2023.2208553, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2722131",
+            "name": "Chih-Hong Huang"
+          },
+          {
+            "authorId": "1822432836",
+            "name": "H. Tsai"
+          },
+          {
+            "authorId": "2044343134",
+            "name": "Chia-Hsing Chen"
+          }
+        ],
+        "abstract": "Abstract Existing studies on the urban heat island (UHI) effect tend to focus on the planar scale. However, the UHI effect has obvious three-dimensional properties. This research focuses on the vertical structure of UHI. The study combined big data from sounding balloon and surface measurements in the Database for Atmospheric and Hydrologic Research, Taiwan. Data organization and classification were conducted using the Python programming language, the NumPy mathematical function library, and the Pandas data manipulation library. Results confirmed the existence of the atmospheric boundary layer and the canopy. Furthermore, the temperature inversion of the atmospheric boundary layer fell between heights of 130 m and 667 m. The height of the inversion is affected by the wind speed and cloudiness. Thereby demonstrating that the inversion fluctuates with weather scenario changes. The research results can be applied as the direction of urban planning thinking for urban heat island countermeasures.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Reduced volatility of aerosols from surface emissions to the top of the planetary boundary layer",
+      "year": 2021,
+      "authors": [
+        "Quan Liu",
+        "Dantong Liu",
+        "Yangzhou Wu",
+        "K. Bi",
+        "Wenkang Gao",
+        "P. Tian",
+        "Delong Zhao",
+        "Siyuan Li",
+        "Chenjie Yu",
+        "G. Tang",
+        "Yunfei Wu",
+        "Kang Hu",
+        "S. Ding",
+        "Q. Gao",
+        "Fei Wang",
+        "Shaofei Kong",
+        "Hui He",
+        "Mengyu Huang",
+        "D. Ding"
+      ],
+      "doi": "10.5194/acp-21-14749-2021",
+      "venue": "Atmospheric Chemistry and Physics",
+      "abstract": "Abstract. Aerosols from surface emission can be transported upwards through convective mixing in the planetary boundary layer (PBL), which subsequently interact with clouds, serving as important sources to nucleate droplets or ice particles. However, the evolution of aerosol composition during this vertical transport has yet to be explicitly understood. In this study, simultaneous measurements of detailed aerosol compositions were conducted at two sites, namely urban Beijing (50 m above sea level – a.s.l.) and Haituo mountain (1344 m a.s.l.) during wintertime, representing the anthropogenically polluted surface environment and the top of the PBL, respectively. The pollutants from surface emissions were observed to reach the mountain site on daily basis through daytime PBL convective mixing. From the surface to the top of PBL, we found efficient transport or formation of lower-volatility species (black carbon, sulfate, and low-volatile organic aerosol, OA); however, a notable reduction in semivolatile substances, such as the fractions of nitrate and semivolatile OA reduced by 74 % and 76 %, respectively,\nduring the upward transport. This implies that the mass loss of these\nsemivolatile species was driven by the evaporation process, which\nrepartitioned the condensed semivolatile substances to the gas phase when\naerosols were transported and exposed to a cleaner environment. In\ncombination with the oxidation processes, these led to an enhanced oxidation state of OA at the top of the PBL compared to surface environment, with an increase of oxygen to carbon atomic ratio by 0.2. Such a reduction in aerosol volatility during vertical transport may be important in modifying its viscosity, nucleation activity, and atmospheric lifetime.\n",
+      "source": "semantic_scholar",
+      "source_id": "2aa0e81b25f30493f60938cc6decaa26092f07da",
+      "url": "https://www.semanticscholar.org/paper/2aa0e81b25f30493f60938cc6decaa26092f07da",
+      "pdf_url": "https://acp.copernicus.org/articles/21/14749/2021/acp-21-14749-2021.pdf",
+      "open_access": true,
+      "citation_count": 12,
+      "confidence": 0.6536058394160585,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "2aa0e81b25f30493f60938cc6decaa26092f07da",
+        "externalIds": {
+          "MAG": "3169815846",
+          "DOI": "10.5194/ACP-21-14749-2021",
+          "CorpusId": 244266241
+        },
+        "url": "https://www.semanticscholar.org/paper/2aa0e81b25f30493f60938cc6decaa26092f07da",
+        "title": "Reduced volatility of aerosols from surface emissions to the top of the planetary boundary layer",
+        "venue": "Atmospheric Chemistry and Physics",
+        "year": 2021,
+        "citationCount": 12,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://acp.copernicus.org/articles/21/14749/2021/acp-21-14749-2021.pdf",
+          "status": "GOLD",
+          "license": "CCBY",
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.5194/ACP-21-14749-2021?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5194/ACP-21-14749-2021, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2115900439",
+            "name": "Quan Liu"
+          },
+          {
+            "authorId": "50439264",
+            "name": "Dantong Liu"
+          },
+          {
+            "authorId": "13841009",
+            "name": "Yangzhou Wu"
+          },
+          {
+            "authorId": "94365918",
+            "name": "K. Bi"
+          },
+          {
+            "authorId": "2153706230",
+            "name": "Wenkang Gao"
+          },
+          {
+            "authorId": "50315272",
+            "name": "P. Tian"
+          },
+          {
+            "authorId": "49295002",
+            "name": "Delong Zhao"
+          },
+          {
+            "authorId": "2118153871",
+            "name": "Siyuan Li"
+          },
+          {
+            "authorId": "150068112",
+            "name": "Chenjie Yu"
+          },
+          {
+            "authorId": "3705824",
+            "name": "G. Tang"
+          },
+          {
+            "authorId": "3309612",
+            "name": "Yunfei Wu"
+          },
+          {
+            "authorId": "143662099",
+            "name": "Kang Hu"
+          },
+          {
+            "authorId": "51135798",
+            "name": "S. Ding"
+          },
+          {
+            "authorId": "2117206501",
+            "name": "Q. Gao"
+          },
+          {
+            "authorId": "2148955314",
+            "name": "Fei Wang"
+          },
+          {
+            "authorId": "13925345",
+            "name": "Shaofei Kong"
+          },
+          {
+            "authorId": "2116456588",
+            "name": "Hui He"
+          },
+          {
+            "authorId": "2216041576",
+            "name": "Mengyu Huang"
+          },
+          {
+            "authorId": "46261018",
+            "name": "D. Ding"
+          }
+        ],
+        "abstract": "Abstract. Aerosols from surface emission can be transported upwards through convective mixing in the planetary boundary layer (PBL), which subsequently interact with clouds, serving as important sources to nucleate droplets or ice particles. However, the evolution of aerosol composition during this vertical transport has yet to be explicitly understood. In this study, simultaneous measurements of detailed aerosol compositions were conducted at two sites, namely urban Beijing (50 m above sea level – a.s.l.) and Haituo mountain (1344 m a.s.l.) during wintertime, representing the anthropogenically polluted surface environment and the top of the PBL, respectively. The pollutants from surface emissions were observed to reach the mountain site on daily basis through daytime PBL convective mixing. From the surface to the top of PBL, we found efficient transport or formation of lower-volatility species (black carbon, sulfate, and low-volatile organic aerosol, OA); however, a notable reduction in semivolatile substances, such as the fractions of nitrate and semivolatile OA reduced by 74 % and 76 %, respectively,\nduring the upward transport. This implies that the mass loss of these\nsemivolatile species was driven by the evaporation process, which\nrepartitioned the condensed semivolatile substances to the gas phase when\naerosols were transported and exposed to a cleaner environment. In\ncombination with the oxidation processes, these led to an enhanced oxidation state of OA at the top of the PBL compared to surface environment, with an increase of oxygen to carbon atomic ratio by 0.2. Such a reduction in aerosol volatility during vertical transport may be important in modifying its viscosity, nucleation activity, and atmospheric lifetime.\n",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Impact of boundary layer stability on urban park cooling effect intensity",
+      "year": 2024,
+      "authors": [
+        "M. Haeffelin",
+        "J. Ribaud",
+        "Jonnathan Céspedes",
+        "J. Dupont",
+        "A. Lemonsu",
+        "Valéry Masson",
+        "Tim Nagel",
+        "S. Kotthaus"
+      ],
+      "doi": "10.5194/acp-24-14101-2024",
+      "venue": "Atmospheric Chemistry and Physics",
+      "abstract": "Abstract. The added heat in cities amplifies the health risks of heat waves. At night under calm winds and cloud-free skies, the air in the urban canopy layer can be several degrees warmer than in rural areas. This lower nocturnal cooling in the built-up settings poses severe health risks to the urban inhabitants, as indoor spaces cannot be ventilated effectively. With heat waves becoming more frequent and more intense in future climates, many cities are expanding their green spaces with the aim to introduce cooling through shading, evaporation and lower heat storage capacities. In this study, we assessed how the evening and nighttime cooling effect of urban parks (relative to nearby built-up settings) varies with the park size and the mesoscale atmospheric conditions during warm summer periods. Using a combination of meteorological surface station data and compact radiosondes, the cooling effect is quantified for several urban parks (about 15 ha) and urban woods (about 900 ha). A profiling Doppler wind lidar deployed in the city centre is used to measure turbulent vertical mixing conditions in the urban boundary layer. We find that the maximum nocturnal cooling effects in urban parks range around 1–5 °C during a 1-week heat wave event in mid-July 2022 but also in general during summer 2022 (June–August). Three atmospheric stability and mixing regimes are identified that explain the night-to-night variability in the park cooling effect. We find that very low turbulent vertical mixing in the urban boundary layer (<0.05 m2 s−2) results in the strongest evening cooling in both rural settings and urban parks and the weakest cooling in the built-up environment. This regime specifically occurs during heat waves in connection with large-scale advection of hot air over the region and corresponding subsidence. When nocturnal turbulent vertical mixing above the city is stronger, the evening cooling in urban green spaces is less efficient, so the atmospheric stratification above both urban parks and woods is less stable, and temperature contrasts compared to the built-up environment are less pronounced. These results highlight the fact that urban green spaces have a significant cooling potential during heat waves, with maximum effects at night as advection and mixing transport processes are minimal. This suggests adapting the opening hours of public parks to enable residents to benefit from these cooling islands.\n",
+      "source": "semantic_scholar",
+      "source_id": "b8779cd0f96cec087a0470a7809bcb929ee9af07",
+      "url": "https://www.semanticscholar.org/paper/b8779cd0f96cec087a0470a7809bcb929ee9af07",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 16,
+      "confidence": 0.4870526315789474,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "b8779cd0f96cec087a0470a7809bcb929ee9af07",
+        "externalIds": {
+          "DOI": "10.5194/acp-24-14101-2024",
+          "CorpusId": 274875575
+        },
+        "url": "https://www.semanticscholar.org/paper/b8779cd0f96cec087a0470a7809bcb929ee9af07",
+        "title": "Impact of boundary layer stability on urban park cooling effect intensity",
+        "venue": "Atmospheric Chemistry and Physics",
+        "year": 2024,
+        "citationCount": 16,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.5194/acp-24-14101-2024?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5194/acp-24-14101-2024, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "11548994",
+            "name": "M. Haeffelin"
+          },
+          {
+            "authorId": "120941615",
+            "name": "J. Ribaud"
+          },
+          {
+            "authorId": "2294901045",
+            "name": "Jonnathan Céspedes"
+          },
+          {
+            "authorId": "103065013",
+            "name": "J. Dupont"
+          },
+          {
+            "authorId": "6730422",
+            "name": "A. Lemonsu"
+          },
+          {
+            "authorId": "2322117549",
+            "name": "Valéry Masson"
+          },
+          {
+            "authorId": "2322117401",
+            "name": "Tim Nagel"
+          },
+          {
+            "authorId": "2294899762",
+            "name": "S. Kotthaus"
+          }
+        ],
+        "abstract": "Abstract. The added heat in cities amplifies the health risks of heat waves. At night under calm winds and cloud-free skies, the air in the urban canopy layer can be several degrees warmer than in rural areas. This lower nocturnal cooling in the built-up settings poses severe health risks to the urban inhabitants, as indoor spaces cannot be ventilated effectively. With heat waves becoming more frequent and more intense in future climates, many cities are expanding their green spaces with the aim to introduce cooling through shading, evaporation and lower heat storage capacities. In this study, we assessed how the evening and nighttime cooling effect of urban parks (relative to nearby built-up settings) varies with the park size and the mesoscale atmospheric conditions during warm summer periods. Using a combination of meteorological surface station data and compact radiosondes, the cooling effect is quantified for several urban parks (about 15 ha) and urban woods (about 900 ha). A profiling Doppler wind lidar deployed in the city centre is used to measure turbulent vertical mixing conditions in the urban boundary layer. We find that the maximum nocturnal cooling effects in urban parks range around 1–5 °C during a 1-week heat wave event in mid-July 2022 but also in general during summer 2022 (June–August). Three atmospheric stability and mixing regimes are identified that explain the night-to-night variability in the park cooling effect. We find that very low turbulent vertical mixing in the urban boundary layer (<0.05 m2 s−2) results in the strongest evening cooling in both rural settings and urban parks and the weakest cooling in the built-up environment. This regime specifically occurs during heat waves in connection with large-scale advection of hot air over the region and corresponding subsidence. When nocturnal turbulent vertical mixing above the city is stronger, the evening cooling in urban green spaces is less efficient, so the atmospheric stratification above both urban parks and woods is less stable, and temperature contrasts compared to the built-up environment are less pronounced. These results highlight the fact that urban green spaces have a significant cooling potential during heat waves, with maximum effects at night as advection and mixing transport processes are minimal. This suggests adapting the opening hours of public parks to enable residents to benefit from these cooling islands.\n",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Urban–rural differences in near‐surface air temperature as resolved by the Central Europe Refined analysis (CER): sensitivity to planetary boundary layer schemes and urban canopy models",
+      "year": 2017,
+      "authors": [
+        "Britta Jänicke",
+        "F. Meier",
+        "D. Fenner",
+        "Ute Fehrenbach",
+        "Achim Holtmann",
+        "D. Scherer"
+      ],
+      "doi": "10.1002/joc.4835",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "eefcf219d1cd9367439c57d670fa4bc8d914f4e6",
+      "url": "https://www.semanticscholar.org/paper/eefcf219d1cd9367439c57d670fa4bc8d914f4e6",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 45,
+      "confidence": 0.4840134529147982,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "eefcf219d1cd9367439c57d670fa4bc8d914f4e6",
+        "externalIds": {
+          "MAG": "2647362882",
+          "DOI": "10.1002/joc.4835",
+          "CorpusId": 134550552
+        },
+        "url": "https://www.semanticscholar.org/paper/eefcf219d1cd9367439c57d670fa4bc8d914f4e6",
+        "title": "Urban–rural differences in near‐surface air temperature as resolved by the Central Europe Refined analysis (CER): sensitivity to planetary boundary layer schemes and urban canopy models",
+        "venue": "",
+        "year": 2017,
+        "citationCount": 45,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1002/joc.4835?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1002/joc.4835, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "144707987",
+            "name": "Britta Jänicke"
+          },
+          {
+            "authorId": "29224353",
+            "name": "F. Meier"
+          },
+          {
+            "authorId": "51227605",
+            "name": "D. Fenner"
+          },
+          {
+            "authorId": "9711155",
+            "name": "Ute Fehrenbach"
+          },
+          {
+            "authorId": "52066601",
+            "name": "Achim Holtmann"
+          },
+          {
+            "authorId": "49294539",
+            "name": "D. Scherer"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Modulation of Wintertime Canopy Urban Heat Island (CUHI) Intensity in Beijing by Synoptic Weather Pattern in Planetary Boundary Layer",
+      "year": 2022,
+      "authors": [
+        "Yuanjian Yang",
+        "Min Guo",
+        "G. Ren",
+        "Shuhong Liu",
+        "Lian Zong",
+        "Yanhao Zhang",
+        "Zuofang Zheng",
+        "Y. Miao",
+        "Y. Zhang"
+      ],
+      "doi": "10.1029/2021jd035988",
+      "venue": "Journal of Geophysical Research: Atmospheres",
+      "abstract": "Studying the spatiotemporal variations of the urban heat island (UHI) effect and its cause is important towards understanding urban climate change, planning and green development, and disaster mitigation. In this paper, by using surface observations and reanalysis data with objective classification of synoptic weather patterns (SWPs), we analyze the associations between canopy UHI intensity (CUHI) and SWPs in the planetary boundary layer (PBL) and their potential drivers during wintertime of the period 2012–2017. Six dominant types of SWP are identified as follows: In the case of Types 3, 4, and 6, weak high‐pressure systems exist to the south of Beijing, resulting in weak southerly winds with low PBL height, large cloud coverage and high relative humidity (RH). These conditions are generally conducive to a strengthening of the CUHII. In contrast, under Types 1, 2, and 5, high‐pressure systems are located to the northwest of Beijing, and the associated strong northwesterly flows of dry and cold air strengthen the boundary layer mixing process, resulting in large wind speed and low RH. This is conducive to a weakening of the CUHII. In general, our work reveals the impacts of SWPs on the strength of CUHII mainly via the modulation of local weather conditions at diurnal and interannual scales, while spatial pattern of CUHII is largely dominated by local climate zones. Our findings have implications for CUHII forecasts, as well as impact assessments and policymaking in the context of UHI‐related energy conservation in winter over high‐density urban areas on the synoptic scale.",
+      "source": "semantic_scholar",
+      "source_id": "1be1f856bf60c2453fcc2a695d3b80c6b5c2e10c",
+      "url": "https://www.semanticscholar.org/paper/1be1f856bf60c2453fcc2a695d3b80c6b5c2e10c",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 43,
+      "confidence": 0.47788372093023257,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "1be1f856bf60c2453fcc2a695d3b80c6b5c2e10c",
+        "externalIds": {
+          "DOI": "10.1029/2021JD035988",
+          "CorpusId": 248133596
+        },
+        "url": "https://www.semanticscholar.org/paper/1be1f856bf60c2453fcc2a695d3b80c6b5c2e10c",
+        "title": "Modulation of Wintertime Canopy Urban Heat Island (CUHI) Intensity in Beijing by Synoptic Weather Pattern in Planetary Boundary Layer",
+        "venue": "Journal of Geophysical Research: Atmospheres",
+        "year": 2022,
+        "citationCount": 43,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1029/2021JD035988?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1029/2021JD035988, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "49307529",
+            "name": "Yuanjian Yang"
+          },
+          {
+            "authorId": "2119399269",
+            "name": "Min Guo"
+          },
+          {
+            "authorId": "9505563",
+            "name": "G. Ren"
+          },
+          {
+            "authorId": "2107970349",
+            "name": "Shuhong Liu"
+          },
+          {
+            "authorId": "2049460501",
+            "name": "Lian Zong"
+          },
+          {
+            "authorId": "2135952822",
+            "name": "Yanhao Zhang"
+          },
+          {
+            "authorId": "3096379",
+            "name": "Zuofang Zheng"
+          },
+          {
+            "authorId": "2843705",
+            "name": "Y. Miao"
+          },
+          {
+            "authorId": "48379623",
+            "name": "Y. Zhang"
+          }
+        ],
+        "abstract": "Studying the spatiotemporal variations of the urban heat island (UHI) effect and its cause is important towards understanding urban climate change, planning and green development, and disaster mitigation. In this paper, by using surface observations and reanalysis data with objective classification of synoptic weather patterns (SWPs), we analyze the associations between canopy UHI intensity (CUHI) and SWPs in the planetary boundary layer (PBL) and their potential drivers during wintertime of the period 2012–2017. Six dominant types of SWP are identified as follows: In the case of Types 3, 4, and 6, weak high‐pressure systems exist to the south of Beijing, resulting in weak southerly winds with low PBL height, large cloud coverage and high relative humidity (RH). These conditions are generally conducive to a strengthening of the CUHII. In contrast, under Types 1, 2, and 5, high‐pressure systems are located to the northwest of Beijing, and the associated strong northwesterly flows of dry and cold air strengthen the boundary layer mixing process, resulting in large wind speed and low RH. This is conducive to a weakening of the CUHII. In general, our work reveals the impacts of SWPs on the strength of CUHII mainly via the modulation of local weather conditions at diurnal and interannual scales, while spatial pattern of CUHII is largely dominated by local climate zones. Our findings have implications for CUHII forecasts, as well as impact assessments and policymaking in the context of UHI‐related energy conservation in winter over high‐density urban areas on the synoptic scale.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Long-term temporal analysis of the columnar and surface aerosol relationship with planetary boundary layer height at a southern coastal site of Turkey",
+      "year": 2020,
+      "authors": [
+        "Gizem Tuna Tuygun",
+        "Tolga Elbir"
+      ],
+      "doi": "10.1016/j.apr.2020.09.008",
+      "venue": "",
+      "abstract": "Abstract Mersin is industrialized city with 1.8 million people, a dense port, and different industries. The region is under the influence of mineral dust transport originated from the arid and semi-arid regions, mainly in spring and autumn. Planetary boundary layer height (PBLH) is one of major parameters influencing surface air quality. In this study, the relationship between particulate matters having diameter of 10 μm or less (PM10) and PBLH was investigated in an urban coastal site of Turkey. Relationships between PBLH and the ratios of PM10 to Aerosol Optical Depth (AOD) from MODIS and AERONET were also analyzed to account for transported aerosol that is not concentrated in the planetary boundary layer (PBL). PBL is known as the atmospheric boundary layer (ABL) that is the lowest part of the atmosphere and its behavior is directly influenced by its contact with a planetary surface. The PM10, AOD and PBLH showed a seasonal variability with increasing multiyear seasonal mean values of AOD and PBLH from winter to summer while decreasing trend was found for PM10 over the analyzed site. Paired dataset for MODIS overpass and AERONET observational times shared the same seasonal patterns; however, the magnitude of the seasonal variations differed. The relationship of PBLH–PM10 was weak over the site. Positive correlations observed in spring and summer could be characterized by lower PM10 concentrations and transported aerosols over the region. Compared to PBLH–PM10 correlations, the PM10/AOD ratio increased correlations significantly from −0.18 to −0.43 for MODIS overpass time and −0.18 to −0.30 for AERONET observational time. Improvements were also showed seasonal differences.",
+      "source": "semantic_scholar",
+      "source_id": "8f9e6da4167baba6b100b3597a57a90ea6731367",
+      "url": "https://www.semanticscholar.org/paper/8f9e6da4167baba6b100b3597a57a90ea6731367",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 17,
+      "confidence": 0.4625497382198953,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "8f9e6da4167baba6b100b3597a57a90ea6731367",
+        "externalIds": {
+          "MAG": "3087670043",
+          "DOI": "10.1016/J.APR.2020.09.008",
+          "CorpusId": 224934128
+        },
+        "url": "https://www.semanticscholar.org/paper/8f9e6da4167baba6b100b3597a57a90ea6731367",
+        "title": "Long-term temporal analysis of the columnar and surface aerosol relationship with planetary boundary layer height at a southern coastal site of Turkey",
+        "venue": "",
+        "year": 2020,
+        "citationCount": 17,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.APR.2020.09.008?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.APR.2020.09.008, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2125875603",
+            "name": "Gizem Tuna Tuygun"
+          },
+          {
+            "authorId": "13855841",
+            "name": "Tolga Elbir"
+          }
+        ],
+        "abstract": "Abstract Mersin is industrialized city with 1.8 million people, a dense port, and different industries. The region is under the influence of mineral dust transport originated from the arid and semi-arid regions, mainly in spring and autumn. Planetary boundary layer height (PBLH) is one of major parameters influencing surface air quality. In this study, the relationship between particulate matters having diameter of 10 μm or less (PM10) and PBLH was investigated in an urban coastal site of Turkey. Relationships between PBLH and the ratios of PM10 to Aerosol Optical Depth (AOD) from MODIS and AERONET were also analyzed to account for transported aerosol that is not concentrated in the planetary boundary layer (PBL). PBL is known as the atmospheric boundary layer (ABL) that is the lowest part of the atmosphere and its behavior is directly influenced by its contact with a planetary surface. The PM10, AOD and PBLH showed a seasonal variability with increasing multiyear seasonal mean values of AOD and PBLH from winter to summer while decreasing trend was found for PM10 over the analyzed site. Paired dataset for MODIS overpass and AERONET observational times shared the same seasonal patterns; however, the magnitude of the seasonal variations differed. The relationship of PBLH–PM10 was weak over the site. Positive correlations observed in spring and summer could be characterized by lower PM10 concentrations and transported aerosols over the region. Compared to PBLH–PM10 correlations, the PM10/AOD ratio increased correlations significantly from −0.18 to −0.43 for MODIS overpass time and −0.18 to −0.30 for AERONET observational time. Improvements were also showed seasonal differences.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Coupling the TKE-ACM2 Planetary Boundary Layer Scheme with the Building Effect Parameterization Model",
+      "year": 2025,
+      "authors": [
+        "Wanliang Zhang",
+        "Chao Ren",
+        "Edward Ng",
+        "M. Wong",
+        "J. Fung"
+      ],
+      "doi": "10.5194/gmd-18-7781-2025",
+      "venue": "Geoscientific Model Development",
+      "abstract": "Abstract. Understanding and modeling the turbulent transport of surface layer fluxes are essential for numerical weather forecasting models. The presence of heterogeneous surface obstacles (buildings) that have dimensions comparable to the model vertical resolution requires further complexity and design in the planetary boundary layer (PBL) scheme. In this study, we develop a numerical method to couple a recently validated PBL scheme, TKE-ACM2, with multi-layer Building Effect Parameterization (BEP) in the Weather Research and Forecasting (WRF) model. Subsequently, the performance of TKE-ACM2+BEP is examined under idealized convective atmospheric conditions with a simplified building layout. Furthermore, its reproducibility is benchmarked with a state-of-the-art large-eddy simulation model, PALM, which explicitly resolves the building aerodynamics. The results indicate that TKE-ACM2+BEP outperforms another operational PBL scheme (Boulac) coupled with BEP by reducing bias in both the potential temperature (θ) and wind speed (u). Following this, real case simulations are conducted for a highly urbanized domain, namely the Pearl River Delta (PRD) region in China. High-resolution wind speed LiDAR observations suggest that TKE-ACM2+BEP reduces overestimation in the lower part of the boundary layer compared with the Bulk method, which lacks an urban scheme, at a LiDAR site located in a densely built environment. In addition, the surface temperature and relative humidity given by TKE-ACM2+BEP at surface stations in urbanized areas are more accurate than those given by TKE-ACM2 without BEP. However, it is revealed that BEP does not always improve the accuracy of the surface wind speed, as it can introduce excessive aerodynamic drag.",
+      "source": "semantic_scholar",
+      "source_id": "708ceaa83271b89ab9f807af00e64a91e31280de",
+      "url": "https://www.semanticscholar.org/paper/708ceaa83271b89ab9f807af00e64a91e31280de",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 0,
+      "confidence": 0.45704225352112676,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "708ceaa83271b89ab9f807af00e64a91e31280de",
+        "externalIds": {
+          "DOI": "10.5194/gmd-18-7781-2025",
+          "CorpusId": 274993224
+        },
+        "url": "https://www.semanticscholar.org/paper/708ceaa83271b89ab9f807af00e64a91e31280de",
+        "title": "Coupling the TKE-ACM2 Planetary Boundary Layer Scheme with the Building Effect Parameterization Model",
+        "venue": "Geoscientific Model Development",
+        "year": 2025,
+        "citationCount": 0,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.5194/gmd-18-7781-2025?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5194/gmd-18-7781-2025, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2249126683",
+            "name": "Wanliang Zhang"
+          },
+          {
+            "authorId": "2250691464",
+            "name": "Chao Ren"
+          },
+          {
+            "authorId": "2388125315",
+            "name": "Edward Ng"
+          },
+          {
+            "authorId": "145803002",
+            "name": "M. Wong"
+          },
+          {
+            "authorId": "2123320035",
+            "name": "J. Fung"
+          }
+        ],
+        "abstract": "Abstract. Understanding and modeling the turbulent transport of surface layer fluxes are essential for numerical weather forecasting models. The presence of heterogeneous surface obstacles (buildings) that have dimensions comparable to the model vertical resolution requires further complexity and design in the planetary boundary layer (PBL) scheme. In this study, we develop a numerical method to couple a recently validated PBL scheme, TKE-ACM2, with multi-layer Building Effect Parameterization (BEP) in the Weather Research and Forecasting (WRF) model. Subsequently, the performance of TKE-ACM2+BEP is examined under idealized convective atmospheric conditions with a simplified building layout. Furthermore, its reproducibility is benchmarked with a state-of-the-art large-eddy simulation model, PALM, which explicitly resolves the building aerodynamics. The results indicate that TKE-ACM2+BEP outperforms another operational PBL scheme (Boulac) coupled with BEP by reducing bias in both the potential temperature (θ) and wind speed (u). Following this, real case simulations are conducted for a highly urbanized domain, namely the Pearl River Delta (PRD) region in China. High-resolution wind speed LiDAR observations suggest that TKE-ACM2+BEP reduces overestimation in the lower part of the boundary layer compared with the Bulk method, which lacks an urban scheme, at a LiDAR site located in a densely built environment. In addition, the surface temperature and relative humidity given by TKE-ACM2+BEP at surface stations in urbanized areas are more accurate than those given by TKE-ACM2 without BEP. However, it is revealed that BEP does not always improve the accuracy of the surface wind speed, as it can introduce excessive aerodynamic drag.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Quantification of urban region planetary boundary layer characteristics over edge of outflow of IGP and inflow of Bay of Bengal",
+      "year": 2025,
+      "authors": [
+        "G. Basha",
+        "M. Ratnam",
+        "V. Ravi Kiran"
+      ],
+      "doi": "10.1007/s11869-025-01696-6",
+      "venue": "Air quality, atmosphere and health",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "b2c089d151c17f852b7bc9f1e8460bef3815dca2",
+      "url": "https://www.semanticscholar.org/paper/b2c089d151c17f852b7bc9f1e8460bef3815dca2",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 4,
+      "confidence": 0.4557857142857143,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "b2c089d151c17f852b7bc9f1e8460bef3815dca2",
+        "externalIds": {
+          "DOI": "10.1007/s11869-025-01696-6",
+          "CorpusId": 276068153
+        },
+        "url": "https://www.semanticscholar.org/paper/b2c089d151c17f852b7bc9f1e8460bef3815dca2",
+        "title": "Quantification of urban region planetary boundary layer characteristics over edge of outflow of IGP and inflow of Bay of Bengal",
+        "venue": "Air quality, atmosphere and health",
+        "year": 2025,
+        "citationCount": 4,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1007/s11869-025-01696-6?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s11869-025-01696-6, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "144083893",
+            "name": "G. Basha"
+          },
+          {
+            "authorId": "2260108140",
+            "name": "M. Ratnam"
+          },
+          {
+            "authorId": "113851294",
+            "name": "V. Ravi Kiran"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Evaluating the Impact of the Planetary Boundary Layer on Dynamics of Urban Thunderstorms Over the Eastern Indian Region",
+      "year": 2025,
+      "authors": [
+        "Kesireddy Lakshman",
+        "Y. S. Nekkali",
+        "R. Nadimpalli",
+        "Sahidul Islam",
+        "K. Osuri"
+      ],
+      "doi": "10.1002/met.70123",
+      "venue": "Meteorological Applications",
+      "abstract": "Vertical mixing in the planetary boundary layer greatly influences thunderstorm activity. The sensitivity of two local (MYJ and MYNN) and one non‐local (YSU) PBL schemes with a combination of Single Layer Urban Canopy Model (SLUCM) of the Weather Research and Forecasting (WRF) model is studied at 2 km horizontal resolution for the evolution of thunderstorms. Twelve thunderstorms over four cities in the eastern Indian region are identified during 2016–2021. Results highlighted that the YSU scheme performs better with a rainfall absolute percentage of error of 27%, while the MYJ and MYNN exhibited comparatively higher errors of 31% and 38%, respectively, within a 50 km area from the city center. The mean timing error of initiation and mature stage against GPM rainfall is 0–1 h in the YSU scheme and 0.5–2 h for both MYJ and MYNN. The lead–lag correlation (0.6 at 00 h) and quantitative rain rate verification also confirm the better performance of YSU. Surface (2 m) and atmospheric dynamical and thermodynamic profiles are replicated well with lower errors in YSU, except for 10 m wind speed. Diagnostic analysis indicates that higher frictional velocities and turbulent kinetic energy in YSU resemble the higher vertical mixing, leading to an unstable atmosphere with stronger updrafts. These PBL characteristics are relatively weaker in MYJ and MYNN as well as the stability indices. Overall, the better performance of the YSU scheme can be attributed to the better transport of surface characteristics, including turbulent fluxes and moisture, to the upper levels in an unstable atmosphere with strong vertical velocities. Further, results highlight that the simulation of urban thunderstorms improved with urban physics when compared with no‐urban simulations. Thus, this study emphasizes the role of PBL along with urban physics in steering the dynamics of urban thunderstorms.",
+      "source": "semantic_scholar",
+      "source_id": "3449f9fb17991d8940e2fa55c676f8398c5425ee",
+      "url": "https://www.semanticscholar.org/paper/3449f9fb17991d8940e2fa55c676f8398c5425ee",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 0,
+      "confidence": 0.45437500000000003,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "3449f9fb17991d8940e2fa55c676f8398c5425ee",
+        "externalIds": {
+          "DOI": "10.1002/met.70123",
+          "CorpusId": 282797529
+        },
+        "url": "https://www.semanticscholar.org/paper/3449f9fb17991d8940e2fa55c676f8398c5425ee",
+        "title": "Evaluating the Impact of the Planetary Boundary Layer on Dynamics of Urban Thunderstorms Over the Eastern Indian Region",
+        "venue": "Meteorological Applications",
+        "year": 2025,
+        "citationCount": 0,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1002/met.70123?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1002/met.70123, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2340618840",
+            "name": "Kesireddy Lakshman"
+          },
+          {
+            "authorId": "2178372645",
+            "name": "Y. S. Nekkali"
+          },
+          {
+            "authorId": "104103328",
+            "name": "R. Nadimpalli"
+          },
+          {
+            "authorId": "2266042849",
+            "name": "Sahidul Islam"
+          },
+          {
+            "authorId": "3377461",
+            "name": "K. Osuri"
+          }
+        ],
+        "abstract": "Vertical mixing in the planetary boundary layer greatly influences thunderstorm activity. The sensitivity of two local (MYJ and MYNN) and one non‐local (YSU) PBL schemes with a combination of Single Layer Urban Canopy Model (SLUCM) of the Weather Research and Forecasting (WRF) model is studied at 2 km horizontal resolution for the evolution of thunderstorms. Twelve thunderstorms over four cities in the eastern Indian region are identified during 2016–2021. Results highlighted that the YSU scheme performs better with a rainfall absolute percentage of error of 27%, while the MYJ and MYNN exhibited comparatively higher errors of 31% and 38%, respectively, within a 50 km area from the city center. The mean timing error of initiation and mature stage against GPM rainfall is 0–1 h in the YSU scheme and 0.5–2 h for both MYJ and MYNN. The lead–lag correlation (0.6 at 00 h) and quantitative rain rate verification also confirm the better performance of YSU. Surface (2 m) and atmospheric dynamical and thermodynamic profiles are replicated well with lower errors in YSU, except for 10 m wind speed. Diagnostic analysis indicates that higher frictional velocities and turbulent kinetic energy in YSU resemble the higher vertical mixing, leading to an unstable atmosphere with stronger updrafts. These PBL characteristics are relatively weaker in MYJ and MYNN as well as the stability indices. Overall, the better performance of the YSU scheme can be attributed to the better transport of surface characteristics, including turbulent fluxes and moisture, to the upper levels in an unstable atmosphere with strong vertical velocities. Further, results highlight that the simulation of urban thunderstorms improved with urban physics when compared with no‐urban simulations. Thus, this study emphasizes the role of PBL along with urban physics in steering the dynamics of urban thunderstorms.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "On the relation between the planetary boundary layer height and in situ surface observations of atmospheric aerosol pollutants during spring in an urban area",
+      "year": 2024,
+      "authors": [
+        "R. Foskinis",
+        "M. Gini",
+        "P. Kokkalis",
+        "E. Diapouli",
+        "S. Vratolis",
+        "K. Granakis",
+        "Olga Zografou",
+        "Mika Komppula",
+        "V. Vakkari",
+        "A. Nenes",
+        "A. Papayannis",
+        "K. Eleftheriadis"
+      ],
+      "doi": "10.1016/j.atmosres.2024.107543",
+      "venue": "Atmospheric research",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "d6007f6e99fc69c808766c86ebb636983ee2ea65",
+      "url": "https://www.semanticscholar.org/paper/d6007f6e99fc69c808766c86ebb636983ee2ea65",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 11,
+      "confidence": 0.45342424242424245,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "d6007f6e99fc69c808766c86ebb636983ee2ea65",
+        "externalIds": {
+          "DOI": "10.1016/j.atmosres.2024.107543",
+          "CorpusId": 270571810
+        },
+        "url": "https://www.semanticscholar.org/paper/d6007f6e99fc69c808766c86ebb636983ee2ea65",
+        "title": "On the relation between the planetary boundary layer height and in situ surface observations of atmospheric aerosol pollutants during spring in an urban area",
+        "venue": "Atmospheric research",
+        "year": 2024,
+        "citationCount": 11,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1016/j.atmosres.2024.107543?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/j.atmosres.2024.107543, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "84206535",
+            "name": "R. Foskinis"
+          },
+          {
+            "authorId": "40910341",
+            "name": "M. Gini"
+          },
+          {
+            "authorId": "48368749",
+            "name": "P. Kokkalis"
+          },
+          {
+            "authorId": "9806150",
+            "name": "E. Diapouli"
+          },
+          {
+            "authorId": "9815033",
+            "name": "S. Vratolis"
+          },
+          {
+            "authorId": "2295465467",
+            "name": "K. Granakis"
+          },
+          {
+            "authorId": "2148386050",
+            "name": "Olga Zografou"
+          },
+          {
+            "authorId": "2306855247",
+            "name": "Mika Komppula"
+          },
+          {
+            "authorId": "51262900",
+            "name": "V. Vakkari"
+          },
+          {
+            "authorId": "2272388855",
+            "name": "A. Nenes"
+          },
+          {
+            "authorId": "9906820",
+            "name": "A. Papayannis"
+          },
+          {
+            "authorId": "2240212054",
+            "name": "K. Eleftheriadis"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Atmospheric Boundary Layer Stability in Urban Beijing: Insights from Meteorological Tower and Doppler Wind Lidar",
+      "year": 2024,
+      "authors": [
+        "Linlin Wang",
+        "Bingcheng Wan",
+        "Yuanjian Yang",
+        "S. Fan",
+        "Yi Jing",
+        "Xueling Cheng",
+        "Zhiqiu Gao",
+        "Shiguang Miao",
+        "Han Zou"
+      ],
+      "doi": "10.3390/rs16224246",
+      "venue": "Remote Sensing",
+      "abstract": "The limited understanding of the structure of the urban surface atmospheric boundary layer can be attributed to its inherent complexity, as well as a deficiency in comprehensive measurements. We analyzed one year of meteorological data and Doppler wind lidar measurements in Beijing to explore how atmospheric stability is influenced by wind speed, radiation, turbulence, and pollution levels. Results indicate that the predominant state of the urban boundary layers in Beijing is an active condition (characterized by strong unstable and unstable stability regimes) throughout the day, attributed to the significant heat storage capacity of the urban canopy. Strong stable regimes are more frequently observed during winter and autumn, peaking during transitions from night to day. Furthermore, both strong unstable and strong stable regimes occur under very weak wind conditions (indicating weak dynamic instability), with strong instability associated with high net radiation levels while strong stability correlates with low net radiation conditions (indicative of robust thermal stability). The unstable regime manifests under strong winds (reflecting strong dynamic instability) alongside moderate net radiation environments, characterized by elevated values of turbulence kinetic energy and urban boundary height, highlighting the critical role of mechanical turbulence generation during periods of high wind activity. Additionally, six instances of pronounced stable conditions observed during daytime can be partially attributed to low radiation coupled with high pollutant concentrations near the surface, resulting from prolonged temperature inversions due to intense radiative cooling effects and weak dynamic forcing. Our findings presented herein are expected to have urban boundary layer climate and environment implications for other cities with high pollution and dense urban infrastructure all over the world.",
+      "source": "semantic_scholar",
+      "source_id": "9f278a9e143c64ccdce6ad267af7210cce84526e",
+      "url": "https://www.semanticscholar.org/paper/9f278a9e143c64ccdce6ad267af7210cce84526e",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 6,
+      "confidence": 0.4533684210526316,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "9f278a9e143c64ccdce6ad267af7210cce84526e",
+        "externalIds": {
+          "DBLP": "journals/remotesensing/WangWYFJCGMZ24",
+          "DOI": "10.3390/rs16224246",
+          "CorpusId": 274066299
+        },
+        "url": "https://www.semanticscholar.org/paper/9f278a9e143c64ccdce6ad267af7210cce84526e",
+        "title": "Atmospheric Boundary Layer Stability in Urban Beijing: Insights from Meteorological Tower and Doppler Wind Lidar",
+        "venue": "Remote Sensing",
+        "year": 2024,
+        "citationCount": 6,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.3390/rs16224246?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/rs16224246, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2108539399",
+            "name": "Linlin Wang"
+          },
+          {
+            "authorId": "2270721841",
+            "name": "Bingcheng Wan"
+          },
+          {
+            "authorId": "2279661870",
+            "name": "Yuanjian Yang"
+          },
+          {
+            "authorId": "96166008",
+            "name": "S. Fan"
+          },
+          {
+            "authorId": "2331270437",
+            "name": "Yi Jing"
+          },
+          {
+            "authorId": "2248222524",
+            "name": "Xueling Cheng"
+          },
+          {
+            "authorId": "2237080720",
+            "name": "Zhiqiu Gao"
+          },
+          {
+            "authorId": "2270015294",
+            "name": "Shiguang Miao"
+          },
+          {
+            "authorId": "2263914590",
+            "name": "Han Zou"
+          }
+        ],
+        "abstract": "The limited understanding of the structure of the urban surface atmospheric boundary layer can be attributed to its inherent complexity, as well as a deficiency in comprehensive measurements. We analyzed one year of meteorological data and Doppler wind lidar measurements in Beijing to explore how atmospheric stability is influenced by wind speed, radiation, turbulence, and pollution levels. Results indicate that the predominant state of the urban boundary layers in Beijing is an active condition (characterized by strong unstable and unstable stability regimes) throughout the day, attributed to the significant heat storage capacity of the urban canopy. Strong stable regimes are more frequently observed during winter and autumn, peaking during transitions from night to day. Furthermore, both strong unstable and strong stable regimes occur under very weak wind conditions (indicating weak dynamic instability), with strong instability associated with high net radiation levels while strong stability correlates with low net radiation conditions (indicative of robust thermal stability). The unstable regime manifests under strong winds (reflecting strong dynamic instability) alongside moderate net radiation environments, characterized by elevated values of turbulence kinetic energy and urban boundary height, highlighting the critical role of mechanical turbulence generation during periods of high wind activity. Additionally, six instances of pronounced stable conditions observed during daytime can be partially attributed to low radiation coupled with high pollutant concentrations near the surface, resulting from prolonged temperature inversions due to intense radiative cooling effects and weak dynamic forcing. Our findings presented herein are expected to have urban boundary layer climate and environment implications for other cities with high pollution and dense urban infrastructure all over the world.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Using a Canopy Model Framework to Improve Large-Eddy Simulations of the Neutral Atmospheric Boundary Layer in the Weather Research and Forecasting Model",
+      "year": 2019,
+      "authors": [
+        "R. Arthur",
+        "J. Mirocha",
+        "K. Lundquist",
+        "R. Street"
+      ],
+      "doi": "10.1175/mwr-d-18-0204.1",
+      "venue": "Monthly Weather Review",
+      "abstract": "A canopy model framework is implemented in the Weather Research and Forecasting Model to improve the accuracy of large-eddy simulations (LES) of the atmospheric boundary layer (ABL). The model includes two options that depend on the scale of surface roughness elements. A resolved canopy model, typically used to model flow through vegetation canopies, is employed when roughness elements are resolved by the vertical LES grid. In the case of unresolved roughness, a modified “pseudocanopy model” is developed to distribute drag over a shallow layer above the surface. Both canopy model options are validated against idealized test cases in neutral stability conditions and are shown to improve surface layer velocity profiles relative to simulations employing Monin–Obukhov similarity theory (MOST), which is commonly used as a surface boundary condition in ABL models. Use of the canopy model framework also leads to increased levels of resolved turbulence kinetic energy and turbulent stresses. Because LES of the ABL has a well-known difficulty recovering the expected logarithmic velocity profile (log law) in the surface layer, particular focus is placed on using the pseudocanopy model to alleviate this issue over a range of model configurations. Tests with varying surface roughness values, LES closures, and grid aspect ratios confirm that the pseudocanopy model generally improves log-law agreement relative to simulations that employ a standard MOST boundary condition. The canopy model framework thus represents a low-cost, easy-to-implement method for improving LES of the ABL.",
+      "source": "semantic_scholar",
+      "source_id": "027837180c185d009ce42b9b3a913843eeaf4bd8",
+      "url": "https://www.semanticscholar.org/paper/027837180c185d009ce42b9b3a913843eeaf4bd8",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 14,
+      "confidence": 0.45130569948186533,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "027837180c185d009ce42b9b3a913843eeaf4bd8",
+        "externalIds": {
+          "MAG": "2896812359",
+          "DOI": "10.1175/MWR-D-18-0204.1",
+          "CorpusId": 125827800
+        },
+        "url": "https://www.semanticscholar.org/paper/027837180c185d009ce42b9b3a913843eeaf4bd8",
+        "title": "Using a Canopy Model Framework to Improve Large-Eddy Simulations of the Neutral Atmospheric Boundary Layer in the Weather Research and Forecasting Model",
+        "venue": "Monthly Weather Review",
+        "year": 2019,
+        "citationCount": 14,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1175/MWR-D-18-0204.1?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1175/MWR-D-18-0204.1, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "46238318",
+            "name": "R. Arthur"
+          },
+          {
+            "authorId": "19170844",
+            "name": "J. Mirocha"
+          },
+          {
+            "authorId": "52025256",
+            "name": "K. Lundquist"
+          },
+          {
+            "authorId": "2381162",
+            "name": "R. Street"
+          }
+        ],
+        "abstract": "A canopy model framework is implemented in the Weather Research and Forecasting Model to improve the accuracy of large-eddy simulations (LES) of the atmospheric boundary layer (ABL). The model includes two options that depend on the scale of surface roughness elements. A resolved canopy model, typically used to model flow through vegetation canopies, is employed when roughness elements are resolved by the vertical LES grid. In the case of unresolved roughness, a modified “pseudocanopy model” is developed to distribute drag over a shallow layer above the surface. Both canopy model options are validated against idealized test cases in neutral stability conditions and are shown to improve surface layer velocity profiles relative to simulations employing Monin–Obukhov similarity theory (MOST), which is commonly used as a surface boundary condition in ABL models. Use of the canopy model framework also leads to increased levels of resolved turbulence kinetic energy and turbulent stresses. Because LES of the ABL has a well-known difficulty recovering the expected logarithmic velocity profile (log law) in the surface layer, particular focus is placed on using the pseudocanopy model to alleviate this issue over a range of model configurations. Tests with varying surface roughness values, LES closures, and grid aspect ratios confirm that the pseudocanopy model generally improves log-law agreement relative to simulations that employ a standard MOST boundary condition. The canopy model framework thus represents a low-cost, easy-to-implement method for improving LES of the ABL.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "The impact of thermal heating of the underlying surface of urban development on the ecology of the surface layer of the atmosphere in Krasnodar",
+      "year": 2025,
+      "authors": [
+        "O. Sokolskaya",
+        "Anna Evgen'evna Zhidkova",
+        "Hammam I.H. Avaadeh"
+      ],
+      "doi": "10.7256/2310-8673.2025.3.74434",
+      "venue": "Урбанистика",
+      "abstract": "\n This article is devoted to the problem of the impact of thermal heating of the underlying surface of the urban environment on the transformation of the pollution island in the southern city of Krasnodar, Russia, during the summer period. The study focuses on the planning areas of the city of Krasnodar with the maximum thermal heating of the underlying surface and identifies their influence on the transformation of atmospheric ecologically harmful pollutants in the atmospheric boundary layer toward the so-called \"heat spots.\" These studies are most relevant for the southern regions of the Russian Federation, located in the III and IV construction-climatic zones, as well as for all cities situated in the south. The urban ecological and microclimatic characteristics of the atmospheric boundary layer in southern cities of the Russian Federation, located in the III and IV construction-climatic zones, are directly dependent on increased temperature readings during hot weather and thermal heating of the underlying surface. To address the issue, statistical climate data for the city of Krasnodar were taken into account, and published scientific studies from the Landsat-8 satellite dated August 17, 2023, were utilized. Data from field observations from a meteorological tower at 36 Rashpilevskaya Street in Krasnodar were also applied. The scientific novelty of this study lies in the identification of the areas of highest thermal heating within the urban development of Krasnodar. It has been established that air masses in the boundary layer of the city, filled with negative anthropogenic atmospheric pollutants, will move toward the more heated zones of industrial enterprises, shopping centers, densely built-up areas, and new constructions with large amounts of asphalt and concrete. It has been proven that at the macro-ecological level of urban planning in conditions of low wind and calm, the urban \"heat island\" consists of numerous territorial planning zones with varying degrees of thermal heating and influences the movement of atmospheric pollutants in the city, creating zones of environmental distress in the atmospheric boundary layer. Major planning zones with significant thermal heating at the meso level will contribute to the movement of ecologically unfavorable atmospheric pollutants at the micro-ecological level of urban planning.\n",
+      "source": "semantic_scholar",
+      "source_id": "a1b824081da1a575f310da6e54b23983718c08d0",
+      "url": "https://www.semanticscholar.org/paper/a1b824081da1a575f310da6e54b23983718c08d0",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 0,
+      "confidence": 0.4326086956521739,
+      "query": "urban boundary layer canopy street canyon atmospheric boundary layer planetary boundary layer surface layer",
+      "domain_id": "abl_pbl",
+      "raw": {
+        "paperId": "a1b824081da1a575f310da6e54b23983718c08d0",
+        "externalIds": {
+          "DOI": "10.7256/2310-8673.2025.3.74434",
+          "CorpusId": 281864648
+        },
+        "url": "https://www.semanticscholar.org/paper/a1b824081da1a575f310da6e54b23983718c08d0",
+        "title": "The impact of thermal heating of the underlying surface of urban development on the ecology of the surface layer of the atmosphere in Krasnodar",
+        "venue": "Урбанистика",
+        "year": 2025,
+        "citationCount": 0,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.7256/2310-8673.2025.3.74434?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.7256/2310-8673.2025.3.74434, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2210352483",
+            "name": "O. Sokolskaya"
+          },
+          {
+            "authorId": "2384248455",
+            "name": "Anna Evgen'evna Zhidkova"
+          },
+          {
+            "authorId": "2384248497",
+            "name": "Hammam I.H. Avaadeh"
+          }
+        ],
+        "abstract": "\n This article is devoted to the problem of the impact of thermal heating of the underlying surface of the urban environment on the transformation of the pollution island in the southern city of Krasnodar, Russia, during the summer period. The study focuses on the planning areas of the city of Krasnodar with the maximum thermal heating of the underlying surface and identifies their influence on the transformation of atmospheric ecologically harmful pollutants in the atmospheric boundary layer toward the so-called \"heat spots.\" These studies are most relevant for the southern regions of the Russian Federation, located in the III and IV construction-climatic zones, as well as for all cities situated in the south. The urban ecological and microclimatic characteristics of the atmospheric boundary layer in southern cities of the Russian Federation, located in the III and IV construction-climatic zones, are directly dependent on increased temperature readings during hot weather and thermal heating of the underlying surface. To address the issue, statistical climate data for the city of Krasnodar were taken into account, and published scientific studies from the Landsat-8 satellite dated August 17, 2023, were utilized. Data from field observations from a meteorological tower at 36 Rashpilevskaya Street in Krasnodar were also applied. The scientific novelty of this study lies in the identification of the areas of highest thermal heating within the urban development of Krasnodar. It has been established that air masses in the boundary layer of the city, filled with negative anthropogenic atmospheric pollutants, will move toward the more heated zones of industrial enterprises, shopping centers, densely built-up areas, and new constructions with large amounts of asphalt and concrete. It has been proven that at the macro-ecological level of urban planning in conditions of low wind and calm, the urban \"heat island\" consists of numerous territorial planning zones with varying degrees of thermal heating and influences the movement of atmospheric pollutants in the city, creating zones of environmental distress in the atmospheric boundary layer. Major planning zones with significant thermal heating at the meso level will contribute to the movement of ecologically unfavorable atmospheric pollutants at the micro-ecological level of urban planning.\n",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    }
+  ],
+  "candidate_count": 15,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211345_urban_boundary_layer_canopy_street_canyon.jsonl"
+}

@@ -1,0 +1,18 @@
+{
+  "original_query": "沙尘暴 风沙",
+  "expanded_queries": [
+    "沙尘暴 风沙",
+    "aeolian sand transport sand saltation aeolian transport snow transport",
+    "沙尘暴 风沙 aeolian sand transport sand saltation aeolian transport",
+    "aeolian transport snow transport sand transport saltation flux"
+  ],
+  "created_at": "2026-06-27T13:15:43.472646+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211543_沙尘暴_风沙.jsonl"
+}

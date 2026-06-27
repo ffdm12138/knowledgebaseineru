@@ -1,0 +1,17 @@
+{
+  "original_query": "turbulence coherent structure bursting sweep",
+  "expanded_queries": [
+    "turbulence coherent structure bursting sweep",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "turbulence coherent structure bursting sweep atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:14:37.057672+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211437_turbulence_coherent_structure_bursting_sweep.jsonl"
+}

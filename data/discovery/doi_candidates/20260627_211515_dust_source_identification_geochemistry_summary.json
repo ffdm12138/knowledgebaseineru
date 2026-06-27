@@ -1,0 +1,17 @@
+{
+  "original_query": "dust source identification geochemistry",
+  "expanded_queries": [
+    "dust source identification geochemistry",
+    "aeolian transport snow transport sand transport saltation flux",
+    "dust source identification geochemistry aeolian transport snow transport sand transport"
+  ],
+  "created_at": "2026-06-27T13:15:15.541720+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211515_dust_source_identification_geochemistry.jsonl"
+}

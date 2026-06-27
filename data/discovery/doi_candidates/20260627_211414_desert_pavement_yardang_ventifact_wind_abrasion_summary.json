@@ -1,0 +1,952 @@
+{
+  "original_query": "desert pavement yardang ventifact wind abrasion",
+  "expanded_queries": [
+    "desert pavement yardang ventifact wind abrasion",
+    "aeolian transport snow transport sand transport saltation flux",
+    "desert pavement yardang ventifact wind abrasion aeolian transport snow transport sand transport"
+  ],
+  "created_at": "2026-06-27T13:14:14.382052+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [
+    {
+      "title": "Observations of an aeolian landscape: From surface to orbit in Gale Crater",
+      "year": 2016,
+      "authors": [
+        "M. Day",
+        "G. Kocurek"
+      ],
+      "doi": "10.1016/j.icarus.2015.09.042",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "ca57d7c4366985c6c3b8a36369b094ba25bea918",
+      "url": "https://www.semanticscholar.org/paper/ca57d7c4366985c6c3b8a36369b094ba25bea918",
+      "pdf_url": "https://www.sciencedirect.com/science/article/am/pii/S0019103515004650",
+      "open_access": true,
+      "citation_count": 113,
+      "confidence": 0.755,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "ca57d7c4366985c6c3b8a36369b094ba25bea918",
+        "externalIds": {
+          "MAG": "2237052679",
+          "DOI": "10.1016/J.ICARUS.2015.09.042",
+          "CorpusId": 124020019
+        },
+        "url": "https://www.semanticscholar.org/paper/ca57d7c4366985c6c3b8a36369b094ba25bea918",
+        "title": "Observations of an aeolian landscape: From surface to orbit in Gale Crater",
+        "venue": "",
+        "year": 2016,
+        "citationCount": 113,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://www.sciencedirect.com/science/article/am/pii/S0019103515004650",
+          "status": "BRONZE",
+          "license": "publisher-specific-oa",
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.ICARUS.2015.09.042?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.ICARUS.2015.09.042, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "50379671",
+            "name": "M. Day"
+          },
+          {
+            "authorId": "98112552",
+            "name": "G. Kocurek"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Landscape evolution and development of eolian-modified unconsolidated gravel surfaces and yardangs in the Hami Basin, China",
+      "year": 2020,
+      "authors": [
+        "Dehai Zhang",
+        "Guocan Wang",
+        "A. Pullen",
+        "J. Abell",
+        "Junliang Ji",
+        "T. Shen"
+      ],
+      "doi": "10.1016/j.geomorph.2020.107355",
+      "venue": "",
+      "abstract": "Abstract Unconsolidated gravel surfaces, alluvial terraces, and yardangs are widespread in the Turpan-Hami topographical depression of NW China. These landscape features provide an opportunity to investigate the wind erosion history and landscape evolution of the Hami Basin. Along with anomalously high near-surface wind speeds, these features suggest that the Hami Basin was an important source of mineral dust during the Pleistocene. We present the results of an integrated geomorphologic, stratigraphic, and chronologic study on the genesis of unconsolidated gravel surfaces and yardang fields in the Hami Basin. Mobilization of silt- to sand-sized fractions from the surfaces of the Quaternary alluvial sediments occurred under generally dry conditions, leaving unconsolidated gravels to organize into inflationary-type desert pavement surfaces (Type-1) and deflationary-type desert pavements surfaces (Type-2). We propose that the Pleistocene alluvial terraces of the Hami Basin formed principally during wetter intervals, which are assumed to correspond with interglacial periods. The coarse-grained alluvium atop terraces protected underlying strata from wind erosion. The bedrock then began to be sculpted into yardangs after the removal of the coarse-grained armoring surfaces. With mostly sub-horizontal bedding, the geometries of yardangs was controlled by lithology, wind and water erosion. Based on UAV-3D models, optically-stimulated luminescence (OSL) and electron spin resonance (ESR) ages, we find an erosion rate of ~0.23 mm/yr since ~200 ka, This, combined with widespread uneroded strata armored by unconsolidated gravel surfaces, indicates that the Hami Basin had considerable dust emission potential in the past.",
+      "source": "semantic_scholar",
+      "source_id": "47a6554d97deac175b14ebee01d884b480b851af",
+      "url": "https://www.semanticscholar.org/paper/47a6554d97deac175b14ebee01d884b480b851af",
+      "pdf_url": "https://www.sciencedirect.com/science/article/am/pii/S0169555X20303287",
+      "open_access": true,
+      "citation_count": 12,
+      "confidence": 0.6581538461538463,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "47a6554d97deac175b14ebee01d884b480b851af",
+        "externalIds": {
+          "MAG": "3045143437",
+          "DOI": "10.1016/j.geomorph.2020.107355",
+          "CorpusId": 224900424
+        },
+        "url": "https://www.semanticscholar.org/paper/47a6554d97deac175b14ebee01d884b480b851af",
+        "title": "Landscape evolution and development of eolian-modified unconsolidated gravel surfaces and yardangs in the Hami Basin, China",
+        "venue": "",
+        "year": 2020,
+        "citationCount": 12,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://www.sciencedirect.com/science/article/am/pii/S0169555X20303287",
+          "status": "BRONZE",
+          "license": "publisher-specific-oa",
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1016/j.geomorph.2020.107355?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/j.geomorph.2020.107355, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2109953733",
+            "name": "Dehai Zhang"
+          },
+          {
+            "authorId": "50248318",
+            "name": "Guocan Wang"
+          },
+          {
+            "authorId": "34682821",
+            "name": "A. Pullen"
+          },
+          {
+            "authorId": "103012203",
+            "name": "J. Abell"
+          },
+          {
+            "authorId": "6949180",
+            "name": "Junliang Ji"
+          },
+          {
+            "authorId": "66805271",
+            "name": "T. Shen"
+          }
+        ],
+        "abstract": "Abstract Unconsolidated gravel surfaces, alluvial terraces, and yardangs are widespread in the Turpan-Hami topographical depression of NW China. These landscape features provide an opportunity to investigate the wind erosion history and landscape evolution of the Hami Basin. Along with anomalously high near-surface wind speeds, these features suggest that the Hami Basin was an important source of mineral dust during the Pleistocene. We present the results of an integrated geomorphologic, stratigraphic, and chronologic study on the genesis of unconsolidated gravel surfaces and yardang fields in the Hami Basin. Mobilization of silt- to sand-sized fractions from the surfaces of the Quaternary alluvial sediments occurred under generally dry conditions, leaving unconsolidated gravels to organize into inflationary-type desert pavement surfaces (Type-1) and deflationary-type desert pavements surfaces (Type-2). We propose that the Pleistocene alluvial terraces of the Hami Basin formed principally during wetter intervals, which are assumed to correspond with interglacial periods. The coarse-grained alluvium atop terraces protected underlying strata from wind erosion. The bedrock then began to be sculpted into yardangs after the removal of the coarse-grained armoring surfaces. With mostly sub-horizontal bedding, the geometries of yardangs was controlled by lithology, wind and water erosion. Based on UAV-3D models, optically-stimulated luminescence (OSL) and electron spin resonance (ESR) ages, we find an erosion rate of ~0.23 mm/yr since ~200 ka, This, combined with widespread uneroded strata armored by unconsolidated gravel surfaces, indicates that the Hami Basin had considerable dust emission potential in the past.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Abrasion rates of ventifacts",
+      "year": 2019,
+      "authors": [
+        "Wenxiao Ning",
+        "Xiao-Qi Huang",
+        "Xuesong Wang",
+        "Qing Li",
+        "Zhen‐ting Wang"
+      ],
+      "doi": "10.1007/s42452-019-0881-x",
+      "venue": "SN Applied Sciences",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "c4c27e7386c6bd148e845f0666d318c92bec3f52",
+      "url": "https://www.semanticscholar.org/paper/c4c27e7386c6bd148e845f0666d318c92bec3f52",
+      "pdf_url": "https://link.springer.com/content/pdf/10.1007/s42452-019-0881-x.pdf",
+      "open_access": true,
+      "citation_count": 2,
+      "confidence": 0.6580000000000001,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "c4c27e7386c6bd148e845f0666d318c92bec3f52",
+        "externalIds": {
+          "MAG": "2961882406",
+          "DOI": "10.1007/s42452-019-0881-x",
+          "CorpusId": 199110119
+        },
+        "url": "https://www.semanticscholar.org/paper/c4c27e7386c6bd148e845f0666d318c92bec3f52",
+        "title": "Abrasion rates of ventifacts",
+        "venue": "SN Applied Sciences",
+        "year": 2019,
+        "citationCount": 2,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://link.springer.com/content/pdf/10.1007/s42452-019-0881-x.pdf",
+          "status": "BRONZE",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1007/s42452-019-0881-x?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s42452-019-0881-x, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "151454575",
+            "name": "Wenxiao Ning"
+          },
+          {
+            "authorId": "2155093320",
+            "name": "Xiao-Qi Huang"
+          },
+          {
+            "authorId": "2135835389",
+            "name": "Xuesong Wang"
+          },
+          {
+            "authorId": "2117896889",
+            "name": "Qing Li"
+          },
+          {
+            "authorId": "2279082532",
+            "name": "Zhen‐ting Wang"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Spatial variability in aeolian abrasion: Ibex Dune Field, Death Valley National Park",
+      "year": 2024,
+      "authors": [
+        "Taylor Dorn",
+        "Mackenzie Day"
+      ],
+      "doi": "10.1111/sed.13233",
+      "venue": "Sedimentology",
+      "abstract": "Wind‐driven sediment transport drives significant landscape evolution in arid regions. Wind‐blown sand can form large dunes, or can erode exposed surfaces via abrasion. Previous works on aeolian abrasion have focused on the geomorphological features resulting from abrasion (for example, ventifacts and yardangs) through both field and wind‐tunnel experiments. However, relatively little attention has been given to how abrasion varies spatially as sand flux converges on a sand sink, such as a dune field. This work studied an arid landscape using field measurements and collected weather data to quantitatively measure how abrasion varies in space around the Ibex Dune Field. From March 2021 to October 2022, the wind conditions at two separate locations in the region were monitored, saltating sand flux was captured using fully rotating sediment traps, ventifacts were mapped along several transects, and abrasion‐related mass loss on mounted gypsum plaster samples was measured. These results suggest that the magnitude of abrasion is approximately inversely proportional to the distance away from the dune field, increasing in magnitude as sands converge and fluxes increase at the dune field sink. Comparison between modern winds and ventifact orientations suggests that additional complexity, not aeolian processes alone, may be shaping the morphology of surface cobbles.",
+      "source": "semantic_scholar",
+      "source_id": "c4d7ad855e00d023b9c1ca836175508f302d522d",
+      "url": "https://www.semanticscholar.org/paper/c4d7ad855e00d023b9c1ca836175508f302d522d",
+      "pdf_url": "https://doi.org/10.1111/sed.13233",
+      "open_access": true,
+      "citation_count": 3,
+      "confidence": 0.6425348837209304,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "c4d7ad855e00d023b9c1ca836175508f302d522d",
+        "externalIds": {
+          "DOI": "10.1111/sed.13233",
+          "CorpusId": 272842480
+        },
+        "url": "https://www.semanticscholar.org/paper/c4d7ad855e00d023b9c1ca836175508f302d522d",
+        "title": "Spatial variability in aeolian abrasion: Ibex Dune Field, Death Valley National Park",
+        "venue": "Sedimentology",
+        "year": 2024,
+        "citationCount": 3,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://doi.org/10.1111/sed.13233",
+          "status": "HYBRID",
+          "license": "CCBYNC",
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1111/sed.13233?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1111/sed.13233, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2272021054",
+            "name": "Taylor Dorn"
+          },
+          {
+            "authorId": "2270259108",
+            "name": "Mackenzie Day"
+          }
+        ],
+        "abstract": "Wind‐driven sediment transport drives significant landscape evolution in arid regions. Wind‐blown sand can form large dunes, or can erode exposed surfaces via abrasion. Previous works on aeolian abrasion have focused on the geomorphological features resulting from abrasion (for example, ventifacts and yardangs) through both field and wind‐tunnel experiments. However, relatively little attention has been given to how abrasion varies spatially as sand flux converges on a sand sink, such as a dune field. This work studied an arid landscape using field measurements and collected weather data to quantitatively measure how abrasion varies in space around the Ibex Dune Field. From March 2021 to October 2022, the wind conditions at two separate locations in the region were monitored, saltating sand flux was captured using fully rotating sediment traps, ventifacts were mapped along several transects, and abrasion‐related mass loss on mounted gypsum plaster samples was measured. These results suggest that the magnitude of abrasion is approximately inversely proportional to the distance away from the dune field, increasing in magnitude as sands converge and fluxes increase at the dune field sink. Comparison between modern winds and ventifact orientations suggests that additional complexity, not aeolian processes alone, may be shaping the morphology of surface cobbles.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Quantifying Late Pleistocene to Holocene Erosion Rates in the Hami Basin, China: Insights Into Pleistocene Dust Dynamics of an East Asian Stony Desert",
+      "year": 2022,
+      "authors": [
+        "Dehai Zhang",
+        "Guocan Wang",
+        "J. Abell",
+        "A. Pullen",
+        "G. Winckler",
+        "J. Schaefer",
+        "T. Shen"
+      ],
+      "doi": "10.1029/2021gl097495",
+      "venue": "Geophysical Research Letters",
+      "abstract": "Wind is one of the major processes modifying the land surface in the Hami Basin, as evidenced by wind deflation gravel lags, yardangs, and gravel mantled eolian ripples. We report erosion rates for the Hami Basin using cosmogenic 10Be measurements. Bedrock erosion rates average 0.121 ± 0.0293 mm yr−1, which is similar to those of other wind‐eroded arid basins in East Asia, but is anomalously low when modern near‐surface wind speeds are considered. We posit that interglacial periods experienced lower erosion rates than glacial periods, and that the Hami Basin was likely once a larger dust producer than at present, with Pleistocene dust emissions driven by the eolian deflation of alluvial terrace deposits as well as bedrock weathering and abrasion. Wind erosion and dust production in the Hami Basin was largely regulated by the synoptically controlled spatial‐temporal distribution of precipitation and subsequent landscape evolution since at least the late Pleistocene.",
+      "source": "semantic_scholar",
+      "source_id": "0901f0bd6c7e8a719cd217a619f3eee6b3f8e670",
+      "url": "https://www.semanticscholar.org/paper/0901f0bd6c7e8a719cd217a619f3eee6b3f8e670",
+      "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2021GL097495",
+      "open_access": true,
+      "citation_count": 9,
+      "confidence": 0.6182307692307694,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "0901f0bd6c7e8a719cd217a619f3eee6b3f8e670",
+        "externalIds": {
+          "DOI": "10.1029/2021GL097495",
+          "CorpusId": 248014516
+        },
+        "url": "https://www.semanticscholar.org/paper/0901f0bd6c7e8a719cd217a619f3eee6b3f8e670",
+        "title": "Quantifying Late Pleistocene to Holocene Erosion Rates in the Hami Basin, China: Insights Into Pleistocene Dust Dynamics of an East Asian Stony Desert",
+        "venue": "Geophysical Research Letters",
+        "year": 2022,
+        "citationCount": 9,
+        "isOpenAccess": true,
+        "openAccessPdf": {
+          "url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2021GL097495",
+          "status": "BRONZE",
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1029/2021GL097495?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1029/2021GL097495, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "2109953733",
+            "name": "Dehai Zhang"
+          },
+          {
+            "authorId": "50248318",
+            "name": "Guocan Wang"
+          },
+          {
+            "authorId": "103012203",
+            "name": "J. Abell"
+          },
+          {
+            "authorId": "34682821",
+            "name": "A. Pullen"
+          },
+          {
+            "authorId": "2584837",
+            "name": "G. Winckler"
+          },
+          {
+            "authorId": "36832352",
+            "name": "J. Schaefer"
+          },
+          {
+            "authorId": "66805271",
+            "name": "T. Shen"
+          }
+        ],
+        "abstract": "Wind is one of the major processes modifying the land surface in the Hami Basin, as evidenced by wind deflation gravel lags, yardangs, and gravel mantled eolian ripples. We report erosion rates for the Hami Basin using cosmogenic 10Be measurements. Bedrock erosion rates average 0.121 ± 0.0293 mm yr−1, which is similar to those of other wind‐eroded arid basins in East Asia, but is anomalously low when modern near‐surface wind speeds are considered. We posit that interglacial periods experienced lower erosion rates than glacial periods, and that the Hami Basin was likely once a larger dust producer than at present, with Pleistocene dust emissions driven by the eolian deflation of alluvial terrace deposits as well as bedrock weathering and abrasion. Wind erosion and dust production in the Hami Basin was largely regulated by the synoptically controlled spatial‐temporal distribution of precipitation and subsequent landscape evolution since at least the late Pleistocene.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Desert Dust in the Global System",
+      "year": 2006,
+      "authors": [
+        "A. Goudie",
+        "N. Middleton"
+      ],
+      "doi": "10.5860/choice.44-2717",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "d2d2385250774569c695ff711045f4e5eca54020",
+      "url": "https://www.semanticscholar.org/paper/d2d2385250774569c695ff711045f4e5eca54020",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 674,
+      "confidence": 0.5379746835443038,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "d2d2385250774569c695ff711045f4e5eca54020",
+        "externalIds": {
+          "MAG": "613114138",
+          "DOI": "10.5860/choice.44-2717",
+          "CorpusId": 126434958
+        },
+        "url": "https://www.semanticscholar.org/paper/d2d2385250774569c695ff711045f4e5eca54020",
+        "title": "Desert Dust in the Global System",
+        "venue": "",
+        "year": 2006,
+        "citationCount": 674,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.5860/choice.44-2717?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5860/choice.44-2717, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "51313475",
+            "name": "A. Goudie"
+          },
+          {
+            "authorId": "38697266",
+            "name": "N. Middleton"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Ventifacts on Earth and Mars: Analytical, field, and laboratory studies supporting sand abrasion and windward feature development",
+      "year": 2009,
+      "authors": [
+        "J. Laity",
+        "N. Bridges"
+      ],
+      "doi": "10.1016/j.geomorph.2008.09.014",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "ef7b3cce38db37a190a2a0f6c7bb6a5e8d567c73",
+      "url": "https://www.semanticscholar.org/paper/ef7b3cce38db37a190a2a0f6c7bb6a5e8d567c73",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 89,
+      "confidence": 0.5271502890173411,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "ef7b3cce38db37a190a2a0f6c7bb6a5e8d567c73",
+        "externalIds": {
+          "MAG": "2061836067",
+          "DOI": "10.1016/J.GEOMORPH.2008.09.014",
+          "CorpusId": 129799226
+        },
+        "url": "https://www.semanticscholar.org/paper/ef7b3cce38db37a190a2a0f6c7bb6a5e8d567c73",
+        "title": "Ventifacts on Earth and Mars: Analytical, field, and laboratory studies supporting sand abrasion and windward feature development",
+        "venue": "",
+        "year": 2009,
+        "citationCount": 89,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.GEOMORPH.2008.09.014?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.GEOMORPH.2008.09.014, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "102827039",
+            "name": "J. Laity"
+          },
+          {
+            "authorId": "143778711",
+            "name": "N. Bridges"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Insights on rock abrasion and ventifact formation from laboratory and field analog studies with applications to Mars",
+      "year": 2004,
+      "authors": [
+        "N. Bridges",
+        "J. Laity",
+        "R. Greeley",
+        "J. Phoreman",
+        "E. E. Eddlemon"
+      ],
+      "doi": "10.1016/j.pss.2003.08.026",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "5a9af35873fc99468dd26823e8489ce1c0a34589",
+      "url": "https://www.semanticscholar.org/paper/5a9af35873fc99468dd26823e8489ce1c0a34589",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 61,
+      "confidence": 0.5143742331288343,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "5a9af35873fc99468dd26823e8489ce1c0a34589",
+        "externalIds": {
+          "MAG": "1983813317",
+          "DOI": "10.1016/J.PSS.2003.08.026",
+          "CorpusId": 119824775
+        },
+        "url": "https://www.semanticscholar.org/paper/5a9af35873fc99468dd26823e8489ce1c0a34589",
+        "title": "Insights on rock abrasion and ventifact formation from laboratory and field analog studies with applications to Mars",
+        "venue": "",
+        "year": 2004,
+        "citationCount": 61,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.PSS.2003.08.026?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.PSS.2003.08.026, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "143778711",
+            "name": "N. Bridges"
+          },
+          {
+            "authorId": "102827039",
+            "name": "J. Laity"
+          },
+          {
+            "authorId": "145125352",
+            "name": "R. Greeley"
+          },
+          {
+            "authorId": "102687501",
+            "name": "J. Phoreman"
+          },
+          {
+            "authorId": "102734579",
+            "name": "E. E. Eddlemon"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "The action of wind and water in a mid‐Cretaceous subtropical erg‐margin system close to the Variscan Iberian Massif, Spain",
+      "year": 2010,
+      "authors": [
+        "J. P. Rodríguez‐López",
+        "N. Meléndez",
+        "P. L. De Boer",
+        "A. R. Soria"
+      ],
+      "doi": "10.1111/j.1365-3091.2010.01147.x",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "2c889dac1ddc1aacd7386ed2c62c80565fa85833",
+      "url": "https://www.semanticscholar.org/paper/2c889dac1ddc1aacd7386ed2c62c80565fa85833",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 67,
+      "confidence": 0.49914285714285717,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "2c889dac1ddc1aacd7386ed2c62c80565fa85833",
+        "externalIds": {
+          "MAG": "2154837711",
+          "DOI": "10.1111/j.1365-3091.2010.01147.x",
+          "CorpusId": 130646931
+        },
+        "url": "https://www.semanticscholar.org/paper/2c889dac1ddc1aacd7386ed2c62c80565fa85833",
+        "title": "The action of wind and water in a mid‐Cretaceous subtropical erg‐margin system close to the Variscan Iberian Massif, Spain",
+        "venue": "",
+        "year": 2010,
+        "citationCount": 67,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1111/j.1365-3091.2010.01147.x?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1111/j.1365-3091.2010.01147.x, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "1456556912",
+            "name": "J. P. Rodríguez‐López"
+          },
+          {
+            "authorId": "104408369",
+            "name": "N. Meléndez"
+          },
+          {
+            "authorId": "147784339",
+            "name": "P. L. De Boer"
+          },
+          {
+            "authorId": "47927563",
+            "name": "A. R. Soria"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Pitted and fluted rocks in the Western Desert of Egypt - Viking comparisons",
+      "year": 1979,
+      "authors": [
+        "J. McCauley",
+        "C. Breed",
+        "F. El-Baz",
+        "M. I. Whitney",
+        "M. Grolier",
+        "A. W. Ward"
+      ],
+      "doi": "10.1029/jb084ib14p08222",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "815cb53ec3cdf2a3c1d5ab5e2b1b5e59d7b572f9",
+      "url": "https://www.semanticscholar.org/paper/815cb53ec3cdf2a3c1d5ab5e2b1b5e59d7b572f9",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 51,
+      "confidence": 0.4935,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "815cb53ec3cdf2a3c1d5ab5e2b1b5e59d7b572f9",
+        "externalIds": {
+          "MAG": "2038024610",
+          "DOI": "10.1029/JB084IB14P08222",
+          "CorpusId": 140713950
+        },
+        "url": "https://www.semanticscholar.org/paper/815cb53ec3cdf2a3c1d5ab5e2b1b5e59d7b572f9",
+        "title": "Pitted and fluted rocks in the Western Desert of Egypt - Viking comparisons",
+        "venue": "",
+        "year": 1979,
+        "citationCount": 51,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1029/JB084IB14P08222?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1029/JB084IB14P08222, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "31099991",
+            "name": "J. McCauley"
+          },
+          {
+            "authorId": "31493967",
+            "name": "C. Breed"
+          },
+          {
+            "authorId": "1404683808",
+            "name": "F. El-Baz"
+          },
+          {
+            "authorId": "89796133",
+            "name": "M. I. Whitney"
+          },
+          {
+            "authorId": "4603880",
+            "name": "M. Grolier"
+          },
+          {
+            "authorId": "47025156",
+            "name": "A. W. Ward"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "TOPOGRAPHIC EFFECTS ON VENTIFACT DEVELOPMENT, MOJAVE DESERT, CALIFORNIA",
+      "year": 1987,
+      "authors": [
+        "J. Laity"
+      ],
+      "doi": "10.1080/02723646.1987.10642315",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "1e49c39fb86019ce91555a230aef6316ed0a6475",
+      "url": "https://www.semanticscholar.org/paper/1e49c39fb86019ce91555a230aef6316ed0a6475",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 41,
+      "confidence": 0.487551724137931,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "1e49c39fb86019ce91555a230aef6316ed0a6475",
+        "externalIds": {
+          "MAG": "1571058574",
+          "DOI": "10.1080/02723646.1987.10642315",
+          "CorpusId": 140680944
+        },
+        "url": "https://www.semanticscholar.org/paper/1e49c39fb86019ce91555a230aef6316ed0a6475",
+        "title": "TOPOGRAPHIC EFFECTS ON VENTIFACT DEVELOPMENT, MOJAVE DESERT, CALIFORNIA",
+        "venue": "",
+        "year": 1987,
+        "citationCount": 41,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1080/02723646.1987.10642315?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1080/02723646.1987.10642315, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "102827039",
+            "name": "J. Laity"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Formation of desert pavements and the interpretation of lithic-strewn landscapes of the central Sahara",
+      "year": 2018,
+      "authors": [
+        "J. Knight",
+        "A. Zerboni"
+      ],
+      "doi": "10.1016/j.jaridenv.2018.01.007",
+      "venue": "Journal of Arid Environments",
+      "abstract": "Abstract This study focuses on two different but interlinked lines of evidence that critically examine land surface processes contributing to the formation of desert pavements in the central Sahara. (1) Soil pedostratigraphies from the Messak plateau (SW Libya) illustrate phases of land surface stability and instability that reflect humid and arid phases of Quaternary climate, respectively. (2) The density and morphologies of surface lithic scatters in the same region were re-examined, based on data previously published by Foley and Lahr (2015, PLoS ONE). This re-examination shows that many surface clasts previously interpreted as lithics are better interpreted as formed by in situ weathering and wind abrasion. Furthermore, weathering, abrasion and deflation are the major processes by which desert clasts are formed and concentrated on the land surface, not human agency. Erosional Quaternary periods allowed for the formation of condensed pedostratigraphies by which surface clasts and lithics were mixed and concentrated on the land surface. These two independent lines of evidence show that desert land surfaces do not reflect a single time period of formation, and that Quaternary desert pavements (including any lithics located thereon) evolved in response to subaerial weathering and erosion processes.",
+      "source": "semantic_scholar",
+      "source_id": "0f818dc11c0d7aeea406abf33ccd5db484b82d2e",
+      "url": "https://www.semanticscholar.org/paper/0f818dc11c0d7aeea406abf33ccd5db484b82d2e",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 26,
+      "confidence": 0.4763355704697987,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "0f818dc11c0d7aeea406abf33ccd5db484b82d2e",
+        "externalIds": {
+          "MAG": "2790496950",
+          "DOI": "10.1016/J.JARIDENV.2018.01.007",
+          "CorpusId": 90850699
+        },
+        "url": "https://www.semanticscholar.org/paper/0f818dc11c0d7aeea406abf33ccd5db484b82d2e",
+        "title": "Formation of desert pavements and the interpretation of lithic-strewn landscapes of the central Sahara",
+        "venue": "Journal of Arid Environments",
+        "year": 2018,
+        "citationCount": 26,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.JARIDENV.2018.01.007?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.JARIDENV.2018.01.007, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "39670303",
+            "name": "J. Knight"
+          },
+          {
+            "authorId": "3934857",
+            "name": "A. Zerboni"
+          }
+        ],
+        "abstract": "Abstract This study focuses on two different but interlinked lines of evidence that critically examine land surface processes contributing to the formation of desert pavements in the central Sahara. (1) Soil pedostratigraphies from the Messak plateau (SW Libya) illustrate phases of land surface stability and instability that reflect humid and arid phases of Quaternary climate, respectively. (2) The density and morphologies of surface lithic scatters in the same region were re-examined, based on data previously published by Foley and Lahr (2015, PLoS ONE). This re-examination shows that many surface clasts previously interpreted as lithics are better interpreted as formed by in situ weathering and wind abrasion. Furthermore, weathering, abrasion and deflation are the major processes by which desert clasts are formed and concentrated on the land surface, not human agency. Erosional Quaternary periods allowed for the formation of condensed pedostratigraphies by which surface clasts and lithics were mixed and concentrated on the land surface. These two independent lines of evidence show that desert land surfaces do not reflect a single time period of formation, and that Quaternary desert pavements (including any lithics located thereon) evolved in response to subaerial weathering and erosion processes.",
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Aeolian responses to climate variability during the past century on Mesquite Lake Playa, Mojave Desert",
+      "year": 2015,
+      "authors": [
+        "J. Whitney",
+        "G. Breit",
+        "S. Buckingham",
+        "R. Reynolds",
+        "R. Bogle",
+        "L. Luo",
+        "H. Goldstein",
+        "John M. Vogel"
+      ],
+      "doi": "10.1016/j.geomorph.2014.10.024",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "117826e3e55770773fdb5c55fbd9c10ace2569fd",
+      "url": "https://www.semanticscholar.org/paper/117826e3e55770773fdb5c55fbd9c10ace2569fd",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 13,
+      "confidence": 0.4251621621621622,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "117826e3e55770773fdb5c55fbd9c10ace2569fd",
+        "externalIds": {
+          "MAG": "2089316730",
+          "DOI": "10.1016/J.GEOMORPH.2014.10.024",
+          "CorpusId": 128994589
+        },
+        "url": "https://www.semanticscholar.org/paper/117826e3e55770773fdb5c55fbd9c10ace2569fd",
+        "title": "Aeolian responses to climate variability during the past century on Mesquite Lake Playa, Mojave Desert",
+        "venue": "",
+        "year": 2015,
+        "citationCount": 13,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": "CLOSED",
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.GEOMORPH.2014.10.024?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.GEOMORPH.2014.10.024, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "21715439",
+            "name": "J. Whitney"
+          },
+          {
+            "authorId": "144839946",
+            "name": "G. Breit"
+          },
+          {
+            "authorId": "39530840",
+            "name": "S. Buckingham"
+          },
+          {
+            "authorId": "40050085",
+            "name": "R. Reynolds"
+          },
+          {
+            "authorId": "49198038",
+            "name": "R. Bogle"
+          },
+          {
+            "authorId": "2731070",
+            "name": "L. Luo"
+          },
+          {
+            "authorId": "31677602",
+            "name": "H. Goldstein"
+          },
+          {
+            "authorId": "30290956",
+            "name": "John M. Vogel"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "THE ROLE OF WATER AND WIND IN YARDANG FORMATION IN IRAN AND ON MARS",
+      "year": 2017,
+      "authors": [
+        "L. Kerber",
+        "J. Radebaugh"
+      ],
+      "doi": "",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "584946a4a8bbf6116087bce989f58d919534440e",
+      "url": "https://www.semanticscholar.org/paper/584946a4a8bbf6116087bce989f58d919534440e",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 2,
+      "confidence": 0.0651578947368421,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "584946a4a8bbf6116087bce989f58d919534440e",
+        "externalIds": {
+          "CorpusId": 214664516
+        },
+        "url": "https://www.semanticscholar.org/paper/584946a4a8bbf6116087bce989f58d919534440e",
+        "title": "THE ROLE OF WATER AND WIND IN YARDANG FORMATION IN IRAN AND ON MARS",
+        "venue": "",
+        "year": 2017,
+        "citationCount": 2,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null,
+          "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://www.hou.usra.edu/meetings/lpsc2017/pdf/2571.pdf, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        },
+        "authors": [
+          {
+            "authorId": "104742831",
+            "name": "L. Kerber"
+          },
+          {
+            "authorId": "3755544",
+            "name": "J. Radebaugh"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    },
+    {
+      "title": "Rock Abrasion and Ventifact Formation on Mars from Field Analog, Theoretical, and Experimental Studies",
+      "year": 2001,
+      "authors": [
+        "N. Bridges",
+        "J. Laity"
+      ],
+      "doi": "",
+      "venue": "",
+      "abstract": "",
+      "source": "semantic_scholar",
+      "source_id": "1cb3f17208beafd18efdd8a3b2398302e9b9a443",
+      "url": "https://www.semanticscholar.org/paper/1cb3f17208beafd18efdd8a3b2398302e9b9a443",
+      "pdf_url": "",
+      "open_access": false,
+      "citation_count": 0,
+      "confidence": 0.044897959183673466,
+      "query": "desert pavement yardang ventifact wind abrasion",
+      "domain_id": "aeolian_snow_transport",
+      "raw": {
+        "paperId": "1cb3f17208beafd18efdd8a3b2398302e9b9a443",
+        "externalIds": {
+          "MAG": "1663419945",
+          "CorpusId": 129357859
+        },
+        "url": "https://www.semanticscholar.org/paper/1cb3f17208beafd18efdd8a3b2398302e9b9a443",
+        "title": "Rock Abrasion and Ventifact Formation on Mars from Field Analog, Theoretical, and Experimental Studies",
+        "venue": "",
+        "year": 2001,
+        "citationCount": 0,
+        "isOpenAccess": false,
+        "openAccessPdf": {
+          "url": "",
+          "status": null,
+          "license": null
+        },
+        "authors": [
+          {
+            "authorId": "143778711",
+            "name": "N. Bridges"
+          },
+          {
+            "authorId": "102827039",
+            "name": "J. Laity"
+          }
+        ],
+        "abstract": null,
+        "sources": [
+          "semantic_scholar"
+        ]
+      }
+    }
+  ],
+  "candidate_count": 15,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211414_desert_pavement_yardang_ventifact_wind_abrasion.jsonl"
+}

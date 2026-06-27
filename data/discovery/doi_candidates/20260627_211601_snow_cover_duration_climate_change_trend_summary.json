@@ -1,0 +1,17 @@
+{
+  "original_query": "snow cover duration climate change trend",
+  "expanded_queries": [
+    "snow cover duration climate change trend",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "snow cover duration climate change trend blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:16:01.621628+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211601_snow_cover_duration_climate_change_trend.jsonl"
+}

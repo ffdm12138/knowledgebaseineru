@@ -1,0 +1,17 @@
+{
+  "original_query": "antarctica snow accumulation ice sheet",
+  "expanded_queries": [
+    "antarctica snow accumulation ice sheet",
+    "blowing snow snow particle snow sublimation snow fragmentation",
+    "antarctica snow accumulation ice sheet blowing snow snow particle snow sublimation"
+  ],
+  "created_at": "2026-06-27T13:15:11.045335+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211511_antarctica_snow_accumulation_ice_sheet.jsonl"
+}

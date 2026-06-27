@@ -1,0 +1,17 @@
+{
+  "original_query": "atmospheric gravity wave mountain wave breaking",
+  "expanded_queries": [
+    "atmospheric gravity wave mountain wave breaking",
+    "atmospheric boundary layer planetary boundary layer surface layer turbulence",
+    "atmospheric gravity wave mountain wave breaking atmospheric boundary layer planetary boundary layer surface layer"
+  ],
+  "created_at": "2026-06-27T13:14:13.107985+00:00",
+  "sources": [
+    "openalex",
+    "semantic_scholar",
+    "crossref"
+  ],
+  "candidates": [],
+  "candidate_count": 0,
+  "jsonl_path": "E:/1/mineru/data/discovery/doi_candidates/20260627_211413_atmospheric_gravity_wave_mountain_wave_breaking.jsonl"
+}

@@ -72,7 +72,11 @@
         "citation_style_name": "R. (1982)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "1988_dery_吹雪升华热力学",
@@ -149,7 +153,11 @@
         "citation_style_name": "Stephen and others (1998)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "1999_dery_吹雪体相模型",
@@ -224,7 +232,11 @@
         "citation_style_name": "Stephen and others (1999)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "1999_shao_风沙跃移数值模拟",
@@ -299,7 +311,11 @@
         "citation_style_name": "Yaping and others (1999)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ]
     },
     {
       "paper_id": "2000_sugiura_吹雪击溅函数",
@@ -375,7 +391,12 @@
         "citation_style_name": "K. and others (2000)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport",
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "2000_nishimura_南极吹雪观测",
@@ -450,7 +471,11 @@
         "citation_style_name": "Kouichi and others (2000)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "2008_wang_风沙跃移与悬移运动",
@@ -525,7 +550,11 @@
         "citation_style_name": "Wang and others (2008)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ]
     },
     {
       "paper_id": "2010_gordon_吹雪粒径分布",
@@ -602,7 +631,11 @@
         "citation_style_name": "Mark and others (2010)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "2017_comola_风吹雪晶体破碎",
@@ -680,7 +713,11 @@
         "citation_style_name": "Francesco and others (2017)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "2021_zheng_跃移床面湍流调制",
@@ -755,7 +792,11 @@
         "citation_style_name": "Xiaojing and others (2021)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ]
     },
     {
       "paper_id": "2023_wang_有限粒径颗粒阻力模型",
@@ -833,7 +874,12 @@
         "citation_style_name": "Ping and others (2023)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport",
+        "abl_pbl"
+      ]
     },
     {
       "paper_id": "2025_huang_雪粒破碎促进升华",
@@ -846,7 +892,7 @@
       ],
       "year": 2025,
       "venue": "The Cryosphere",
-      "doi": "",
+      "doi": "10.5194/acp-25-12535-2025",
       "raw_pdf": "data/raw/huang2025破碎.pdf",
       "markdown": "data/papers/2025_huang_雪粒破碎促进升华/paper.md",
       "images_dir": "data/papers/2025_huang_雪粒破碎促进升华/images",
@@ -909,7 +955,11 @@
         "citation_style_name": "Ning and others (2025)",
         "source": "manual",
         "verified": false
-      }
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
     },
     {
       "paper_id": "2026_viaro_高山吹雪云过程",
@@ -991,6 +1041,725 @@
         "citation_style_name": "Samuele and others (2026)",
         "source": "manual",
         "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics",
+        "abl_pbl"
+      ]
+    },
+    {
+      "paper_id": "2018_mott_风吹雪耦合季节性积雪综述",
+      "title": "The Seasonal Snow Cover Dynamics: Review on Wind-Driven Coupling Processes",
+      "authors": [
+        "Rebecca Mott"
+      ],
+      "year": 2018,
+      "venue": "",
+      "doi": "10.3389/feart.2018.00197",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2018_mott_风吹雪耦合季节性积雪综述.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2018_mott_风吹雪耦合季节性积雪综述\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2018_mott_风吹雪耦合季节性积雪综述\\images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2018_the_seasonal_snow_cover_dynamics_review_on_wind_driven_coupling_processes",
+        "bibtex": "@misc{2018_the_seasonal_snow_cover_dynamics_review_on_wind_driven_coupling_processes,\n  author = {Mott, Rebecca},\n  title = {The Seasonal Snow Cover Dynamics: Review on Wind-Driven Coupling Processes},\n  year = {2018},\n  doi = {10.3389/feart.2018.00197},\n}\n",
+        "citation_style_name": "(2018)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2015_dewekker_山地地形对流边界层高度综述",
+      "title": "Convective Boundary Layer Heights Over Mountainous Terrain: A Review of Concepts",
+      "authors": [
+        "Stephan F. J. De Wekker"
+      ],
+      "year": 2015,
+      "venue": "",
+      "doi": "10.3389/feart.2015.00077",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2015_dewekker_山地地形对流边界层高度综述.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2015_dewekker_山地地形对流边界层高度综述\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2015_dewekker_山地地形对流边界层高度综述\\images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts",
+        "bibtex": "@misc{2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts,\n  author = {De Wekker, Stephan F. J.},\n  title = {Convective Boundary Layer Heights Over Mountainous Terrain: A Review of Concepts},\n  year = {2015},\n  doi = {10.3389/feart.2015.00077},\n}\n",
+        "citation_style_name": "(2015)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2014_wang_无线电探空大气混合层高度估算",
+      "title": "Estimation of atmospheric mixing layer height from radiosonde data",
+      "authors": [
+        "X. Y. Wang"
+      ],
+      "year": 2014,
+      "venue": "",
+      "doi": "10.5194/amt-7-1701-2014",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2014_wang_无线电探空大气混合层高度估算.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2014_wang_无线电探空大气混合层高度估算\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2014_wang_无线电探空大气混合层高度估算\\images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data",
+        "bibtex": "@misc{2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data,\n  author = {Wang, X. Y.},\n  title = {Estimation of atmospheric mixing layer height from radiosonde data},\n  year = {2014},\n  doi = {10.5194/amt-7-1701-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2014_lothon_BLLAST下午黄昏边界层湍流实验",
+      "title": "The BLLAST field experiment: Boundary-Layer Late Afternoon and Sunset Turbulence",
+      "authors": [
+        "M. Lothon"
+      ],
+      "year": 2014,
+      "venue": "",
+      "doi": "10.5194/acp-14-10931-2014",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2014_lothon_BLLAST下午黄昏边界层湍流实验.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2014_lothon_BLLAST下午黄昏边界层湍流实验\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2014_lothon_BLLAST下午黄昏边界层湍流实验\\images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence",
+        "bibtex": "@misc{2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence,\n  author = {Lothon, M.},\n  title = {The BLLAST field experiment: Boundary-Layer Late Afternoon and Sunset Turbulence},\n  year = {2014},\n  doi = {10.5194/acp-14-10931-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2015_gao_沙丘形态定向相图",
+      "title": "Phase diagrams of dune shape and orientation depending on sand availability",
+      "authors": [
+        "Xin Gao"
+      ],
+      "year": 2015,
+      "venue": "",
+      "doi": "10.1038/srep14677",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2015_gao_沙丘形态定向相图.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2015_gao_沙丘形态定向相图\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2015_gao_沙丘形态定向相图\\images",
+      "status": "unsummarized",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2015_phase_diagrams_of_dune_shape_and_orientation_depending_on_sand_availability",
+        "bibtex": "@misc{2015_phase_diagrams_of_dune_shape_and_orientation_depending_on_sand_availability,\n  author = {Gao, Xin},\n  title = {Phase diagrams of dune shape and orientation depending on sand availability},\n  year = {2015},\n  doi = {10.1038/srep14677},\n}\n",
+        "citation_style_name": "(2015)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2018_jambonpuillet_冰晶奇异升华",
+      "title": "Singular sublimation of ice and snow crystals",
+      "authors": [
+        "Etienne Jambon-Puillet"
+      ],
+      "year": 2018,
+      "venue": "",
+      "doi": "10.1038/s41467-018-06689-x",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2018_jambonpuillet_冰晶奇异升华.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2018_jambonpuillet_冰晶奇异升华\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2018_jambonpuillet_冰晶奇异升华\\images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2018_singular_sublimation_of_ice_and_snow_crystals",
+        "bibtex": "@misc{2018_singular_sublimation_of_ice_and_snow_crystals,\n  author = {Jambon-Puillet, Etienne},\n  title = {Singular sublimation of ice and snow crystals},\n  year = {2018},\n  doi = {10.1038/s41467-018-06689-x},\n}\n",
+        "citation_style_name": "(2018)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2006_clifton_风吹雪盐度阈值风洞实验",
+      "title": "Snow saltation threshold measurements in a drifting-snow wind tunnel",
+      "authors": [
+        "Andrew Clifton"
+      ],
+      "year": 2006,
+      "venue": "",
+      "doi": "10.3189/172756506781828430",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2006_clifton_风吹雪盐度阈值风洞实验.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2006_clifton_风吹雪盐度阈值风洞实验\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2006_clifton_风吹雪盐度阈值风洞实验\\images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2006_snow_saltation_threshold_measurements_in_a_driftin",
+        "bibtex": "@misc{2006_snow_saltation_threshold_measurements_in_a_driftin,\n  author = {Clifton, Andrew},\n  title = {Snow saltation threshold measurements in a drifting-snow wind tunnel},\n  year = {2006},\n  doi = {10.3189/172756506781828430},\n}\n",
+        "citation_style_name": "(2006)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2012_vionnet_Crocus积雪方案SURFEX",
+      "title": "The detailed snowpack scheme Crocus and its implementation in SURFEX v7.2",
+      "authors": [
+        "V. Vionnet"
+      ],
+      "year": 2012,
+      "venue": "",
+      "doi": "10.5194/gmd-5-773-2012",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2012_vionnet_Crocus积雪方案SURFEX.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2012_vionnet_Crocus积雪方案SURFEX\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2012_vionnet_Crocus积雪方案SURFEX\\images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2012_the_detailed_snowpack_scheme_crocus_and_its_implem",
+        "bibtex": "@misc{2012_the_detailed_snowpack_scheme_crocus_and_its_implem,\n  author = {Vionnet, V.},\n  title = {The detailed snowpack scheme Crocus and its implementation in SURFEX v7.2},\n  year = {2012},\n  doi = {10.5194/gmd-5-773-2012},\n}\n",
+        "citation_style_name": "(2012)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2014_vionnet_风吹雪输运升华积雪模拟",
+      "title": "Simulation of wind-induced snow transport and sublimation in alpine terrain using a fully coupled snowpack/atmosphere model",
+      "authors": [
+        "V. Vionnet"
+      ],
+      "year": 2014,
+      "venue": "",
+      "doi": "10.5194/tc-8-395-2014",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2014_vionnet_风吹雪输运升华积雪模拟.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2014_vionnet_风吹雪输运升华积雪模拟\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2014_vionnet_风吹雪输运升华积雪模拟\\images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_simulation_of_wind_induced_snow_transport_and_subl",
+        "bibtex": "@misc{2014_simulation_of_wind_induced_snow_transport_and_subl,\n  author = {Vionnet, V.},\n  title = {Simulation of wind-induced snow transport and sublimation in alpine terrain using a fully coupled snowpack/atmosphere model},\n  year = {2014},\n  doi = {10.5194/tc-8-395-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2008_baars_激光雷达连续监测边界层顶",
+      "title": "Continuous monitoring of the boundary-layer top with lidar",
+      "authors": [
+        "Holger Baars"
+      ],
+      "year": 2008,
+      "venue": "",
+      "doi": "10.5194/acp-8-7281-2008",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2008_baars_激光雷达连续监测边界层顶.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2008_baars_激光雷达连续监测边界层顶\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2008_baars_激光雷达连续监测边界层顶\\images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2008_continuous_monitoring_of_the_boundary_layer_top_wi",
+        "bibtex": "@misc{2008_continuous_monitoring_of_the_boundary_layer_top_wi,\n  author = {Baars, Holger},\n  title = {Continuous monitoring of the boundary-layer top with lidar},\n  year = {2008},\n  doi = {10.5194/acp-8-7281-2008},\n}\n",
+        "citation_style_name": "(2008)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2023_kotthaus_地基遥感边界层高度综述",
+      "title": "Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations",
+      "authors": [
+        "Simone Kotthaus"
+      ],
+      "year": 2023,
+      "venue": "",
+      "doi": "10.5194/amt-16-433-2023",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2023_kotthaus_地基遥感边界层高度综述.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2023_kotthaus_地基遥感边界层高度综述\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2023_kotthaus_地基遥感边界层高度综述\\images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2023_atmospheric_boundary_layer_height_from_ground_base",
+        "bibtex": "@misc{2023_atmospheric_boundary_layer_height_from_ground_base,\n  author = {Kotthaus, Simone},\n  title = {Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations},\n  year = {2023},\n  doi = {10.5194/amt-16-433-2023},\n}\n",
+        "citation_style_name": "(2023)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2013_sathe_地基激光雷达湍流测量综述",
+      "title": "A review of turbulence measurements using ground-based wind lidars",
+      "authors": [
+        "Ameya Sathe"
+      ],
+      "year": 2013,
+      "venue": "",
+      "doi": "10.5194/amt-6-3147-2013",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2013_sathe_地基激光雷达湍流测量综述.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2013_sathe_地基激光雷达湍流测量综述\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2013_sathe_地基激光雷达湍流测量综述\\images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2013_a_review_of_turbulence_measurements_using_ground_b",
+        "bibtex": "@misc{2013_a_review_of_turbulence_measurements_using_ground_b,\n  author = {Sathe, Ameya},\n  title = {A review of turbulence measurements using ground-based wind lidars},\n  year = {2013},\n  doi = {10.5194/amt-6-3147-2013},\n}\n",
+        "citation_style_name": "(2013)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2020_pahtz_风沙河流沉积物输运起动停止",
+      "title": "The Physics of Sediment Transport Initiation, Cessation, and Entrainment Across Aeolian and Fluvial Environments",
+      "authors": [
+        "Thomas Pähtz"
+      ],
+      "year": 2020,
+      "venue": "",
+      "doi": "10.1029/2019rg000679",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2020_pahtz_风沙河流沉积物输运起动停止.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2020_pahtz_风沙河流沉积物输运起动停止\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2020_pahtz_风沙河流沉积物输运起动停止\\images",
+      "status": "unsummarized",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2020_the_physics_of_sediment_transport_initiation_cessa",
+        "bibtex": "@misc{2020_the_physics_of_sediment_transport_initiation_cessa,\n  author = {Pähtz, Thomas},\n  title = {The Physics of Sediment Transport Initiation, Cessation, and Entrainment Across Aeolian and Fluvial Environments},\n  year = {2020},\n  doi = {10.1029/2019rg000679},\n}\n",
+        "citation_style_name": "(2020)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2005_tanaka_全球沙尘气溶胶模拟MASINGAR",
+      "title": "Global Simulation of Dust Aerosol with a Chemical Transport Model, MASINGAR",
+      "authors": [
+        "Taichu Y. Tanaka"
+      ],
+      "year": 2005,
+      "venue": "",
+      "doi": "10.2151/jmsj.83a.255",
+      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2005_tanaka_全球沙尘气溶胶模拟MASINGAR.pdf",
+      "markdown": "E:\\1\\mineru\\data\\papers\\2005_tanaka_全球沙尘气溶胶模拟MASINGAR\\paper.md",
+      "images_dir": "E:\\1\\mineru\\data\\papers\\2005_tanaka_全球沙尘气溶胶模拟MASINGAR\\images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2005_global_simulation_of_dust_aerosol_with_a_chemical",
+        "bibtex": "@misc{2005_global_simulation_of_dust_aerosol_with_a_chemical,\n  author = {Tanaka, Taichu Y.},\n  title = {Global Simulation of Dust Aerosol with a Chemical Transport Model, MASINGAR},\n  year = {2005},\n  doi = {10.2151/jmsj.83a.255},\n}\n",
+        "citation_style_name": "(2005)",
+        "source": "pending_import",
+        "verified": true
       }
     }
   ]
