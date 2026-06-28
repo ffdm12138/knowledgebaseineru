@@ -637,6 +637,426 @@
       "images_dir": "data/papers/2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化/images",
       "status": "unsummarized",
       "bib_key": "2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化"
+    },
+    {
+      "paper_id": "snowpack_2",
+      "title": "Snowpack_2",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/snowpack_2.pdf",
+      "markdown_path": "data/papers/snowpack_2/paper.md",
+      "images_dir": "data/papers/snowpack_2/images",
+      "status": "unsummarized",
+      "bib_key": "snowpack_2"
+    },
+    {
+      "paper_id": "3_note_on_aerodynamic_roughness_parameter_estimati",
+      "title": "[3]Note on aerodynamic roughness-parameter estimation on the basis of roughness __element description",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/3_note_on_aerodynamic_roughness_parameter_estimati.pdf",
+      "markdown_path": "data/papers/3_note_on_aerodynamic_roughness_parameter_estimati/paper.md",
+      "images_dir": "data/papers/3_note_on_aerodynamic_roughness_parameter_estimati/images",
+      "status": "unsummarized",
+      "bib_key": "3_note_on_aerodynamic_roughness_parameter_estimati"
+    },
+    {
+      "paper_id": "1_fifty_years_of_boundary_layer_theory_and_experim",
+      "title": "[1]Fifty Years of Boundary-Layer Theory and Experiment.",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/1_fifty_years_of_boundary_layer_theory_and_experim.pdf",
+      "markdown_path": "data/papers/1_fifty_years_of_boundary_layer_theory_and_experim/paper.md",
+      "images_dir": "",
+      "status": "unsummarized",
+      "bib_key": "1_fifty_years_of_boundary_layer_theory_and_experim"
+    },
+    {
+      "paper_id": "29_cfd_simulation_of_the_atmospheric_boundary_laye",
+      "title": "[29]CFD simulation of the atmospheric boundary layer_ wall function problems",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/29_cfd_simulation_of_the_atmospheric_boundary_laye.pdf",
+      "markdown_path": "data/papers/29_cfd_simulation_of_the_atmospheric_boundary_laye/paper.md",
+      "images_dir": "data/papers/29_cfd_simulation_of_the_atmospheric_boundary_laye/images",
+      "status": "unsummarized",
+      "bib_key": "29_cfd_simulation_of_the_atmospheric_boundary_laye"
+    },
+    {
+      "paper_id": "1997_1997_分布式吹雪模型在北极地区的应用",
+      "title": "1997：分布式吹雪模型在北极地区的应用",
+      "year": 1997,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/1997_1997_分布式吹雪模型在北极地区的应用.pdf",
+      "markdown_path": "data/papers/1997_1997_分布式吹雪模型在北极地区的应用/paper.md",
+      "images_dir": "data/papers/1997_1997_分布式吹雪模型在北极地区的应用/images",
+      "status": "unsummarized",
+      "bib_key": "1997_1997_分布式吹雪模型在北极地区的应用"
+    },
+    {
+      "paper_id": "2017_comola_et_al_2017_fragmentation_of_wind_blown_snow",
+      "title": "Comola_et_al_2017_Fragmentation_of_wind_blown_snow_crystals",
+      "year": 2017,
+      "doi": "10.1002/2017gl073039",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2017_comola_et_al_2017_fragmentation_of_wind_blown_snow.pdf",
+      "markdown_path": "data/papers/2017_comola_et_al_2017_fragmentation_of_wind_blown_snow/paper.md",
+      "images_dir": "data/papers/2017_comola_et_al_2017_fragmentation_of_wind_blown_snow/images",
+      "status": "unsummarized",
+      "bib_key": "2017_comola_et_al_2017_fragmentation_of_wind_blown_snow"
+    },
+    {
+      "paper_id": "2017_2017_风吹雪中雪晶的破碎现象",
+      "title": "Fragmentation of wind‐blown snow crystals",
+      "year": 2017,
+      "doi": "10.1002/2017gl073039",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2017_2017_风吹雪中雪晶的破碎现象.pdf",
+      "markdown_path": "data/papers/2017_2017_风吹雪中雪晶的破碎现象/paper.md",
+      "images_dir": "data/papers/2017_2017_风吹雪中雪晶的破碎现象/images",
+      "status": "unsummarized",
+      "bib_key": "2017_2017_风吹雪中雪晶的破碎现象"
+    },
+    {
+      "paper_id": "53_large_eddy_simulations_of_flow_over_forested_ri",
+      "title": "[53]Large-eddy simulations of flow over forested ridges",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/53_large_eddy_simulations_of_flow_over_forested_ri.pdf",
+      "markdown_path": "data/papers/53_large_eddy_simulations_of_flow_over_forested_ri/paper.md",
+      "images_dir": "data/papers/53_large_eddy_simulations_of_flow_over_forested_ri/images",
+      "status": "unsummarized",
+      "bib_key": "53_large_eddy_simulations_of_flow_over_forested_ri"
+    },
+    {
+      "paper_id": "2014_2014_跃移层中风吹雪升华的数值模拟",
+      "title": "2014：跃移层中风吹雪升华的数值模拟",
+      "year": 2014,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2014_2014_跃移层中风吹雪升华的数值模拟.pdf",
+      "markdown_path": "data/papers/2014_2014_跃移层中风吹雪升华的数值模拟/paper.md",
+      "images_dir": "data/papers/2014_2014_跃移层中风吹雪升华的数值模拟/images",
+      "status": "unsummarized",
+      "bib_key": "2014_2014_跃移层中风吹雪升华的数值模拟"
+    },
+    {
+      "paper_id": "2023_2023重要_cryowrf的风吹雪方案",
+      "title": "2023重要：cryowrf的风吹雪方案",
+      "year": 2023,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2023_2023重要_cryowrf的风吹雪方案.pdf",
+      "markdown_path": "data/papers/2023_2023重要_cryowrf的风吹雪方案/paper.md",
+      "images_dir": "data/papers/2023_2023重要_cryowrf的风吹雪方案/images",
+      "status": "unsummarized",
+      "bib_key": "2023_2023重要_cryowrf的风吹雪方案"
+    },
+    {
+      "paper_id": "2002_2002_利用基于地形的参数模拟风场与积雪再分配_半干旱山区流域积雪累积与消融模型",
+      "title": "2002：利用基于地形的参数模拟风场与积雪再分配：半干旱山区流域积雪累积与消融模型",
+      "year": 2002,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2002_2002_利用基于地形的参数模拟风场与积雪再分配_半干旱山区流域积雪累积与消融模型.pdf",
+      "markdown_path": "data/papers/2002_2002_利用基于地形的参数模拟风场与积雪再分配_半干旱山区流域积雪累积与消融模型/paper.md",
+      "images_dir": "data/papers/2002_2002_利用基于地形的参数模拟风场与积雪再分配_半干旱山区流域积雪累积与消融模型/images",
+      "status": "unsummarized",
+      "bib_key": "2002_2002_利用基于地形的参数模拟风场与积雪再分配_半干旱山区流域积雪累积与消融模型"
+    },
+    {
+      "paper_id": "32_an_analytical_wall_function_for_turbulent_flows",
+      "title": "[32]An analytical wall-function__for turbulent flows and heat transfer over rough walls",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/32_an_analytical_wall_function_for_turbulent_flows.pdf",
+      "markdown_path": "data/papers/32_an_analytical_wall_function_for_turbulent_flows/paper.md",
+      "images_dir": "data/papers/32_an_analytical_wall_function_for_turbulent_flows/images",
+      "status": "unsummarized",
+      "bib_key": "32_an_analytical_wall_function_for_turbulent_flows"
+    },
+    {
+      "paper_id": "7_测风塔风速的长程持续性特征研究_李庆雷",
+      "title": "[7]测风塔风速的长程持续性特征研究_李庆雷",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/7_测风塔风速的长程持续性特征研究_李庆雷.pdf",
+      "markdown_path": "data/papers/7_测风塔风速的长程持续性特征研究_李庆雷/paper.md",
+      "images_dir": "data/papers/7_测风塔风速的长程持续性特征研究_李庆雷/images",
+      "status": "unsummarized",
+      "bib_key": "7_测风塔风速的长程持续性特征研究_李庆雷"
+    },
+    {
+      "paper_id": "2017_2017_风洞实验_跃移是风力压实必不可少的条件",
+      "title": "2017：风洞实验：跃移是风力压实必不可少的条件",
+      "year": 2017,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2017_2017_风洞实验_跃移是风力压实必不可少的条件.pdf",
+      "markdown_path": "data/papers/2017_2017_风洞实验_跃移是风力压实必不可少的条件/paper.md",
+      "images_dir": "data/papers/2017_2017_风洞实验_跃移是风力压实必不可少的条件/images",
+      "status": "unsummarized",
+      "bib_key": "2017_2017_风洞实验_跃移是风力压实必不可少的条件"
+    },
+    {
+      "paper_id": "2004_2004_湍流边界层中雪粒跃移和悬移的数值模拟",
+      "title": "Numerical simulation of snow saltation and suspension in a turbulent boundary layer",
+      "year": 2004,
+      "doi": "10.1029/2004jd004657",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2004_2004_湍流边界层中雪粒跃移和悬移的数值模拟.pdf",
+      "markdown_path": "data/papers/2004_2004_湍流边界层中雪粒跃移和悬移的数值模拟/paper.md",
+      "images_dir": "data/papers/2004_2004_湍流边界层中雪粒跃移和悬移的数值模拟/images",
+      "status": "unsummarized",
+      "bib_key": "2004_2004_湍流边界层中雪粒跃移和悬移的数值模拟"
+    },
+    {
+      "paper_id": "33_a_model_of_atmospheric_boundary_layer_flow_abov",
+      "title": "[33] A model of atmospheric boundary-layer flow above an isolated __two-dimensional 'hill'; an example of flow above 'gentle topography'",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/33_a_model_of_atmospheric_boundary_layer_flow_abov.pdf",
+      "markdown_path": "data/papers/33_a_model_of_atmospheric_boundary_layer_flow_abov/paper.md",
+      "images_dir": "data/papers/33_a_model_of_atmospheric_boundary_layer_flow_abov/images",
+      "status": "unsummarized",
+      "bib_key": "33_a_model_of_atmospheric_boundary_layer_flow_abov"
+    },
+    {
+      "paper_id": "37_flow_over_an_isolated_hill_of_moderate_slope",
+      "title": "[37]Flow over an isolated hill of moderate slope",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/37_flow_over_an_isolated_hill_of_moderate_slope.pdf",
+      "markdown_path": "data/papers/37_flow_over_an_isolated_hill_of_moderate_slope/paper.md",
+      "images_dir": "data/papers/37_flow_over_an_isolated_hill_of_moderate_slope/images",
+      "status": "unsummarized",
+      "bib_key": "37_flow_over_an_isolated_hill_of_moderate_slope"
+    },
+    {
+      "paper_id": "s11433_008_0106_6",
+      "title": "s11433-008-0106-6",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/s11433_008_0106_6.pdf",
+      "markdown_path": "data/papers/s11433_008_0106_6/paper.md",
+      "images_dir": "data/papers/s11433_008_0106_6/images",
+      "status": "unsummarized",
+      "bib_key": "s11433_008_0106_6"
+    },
+    {
+      "paper_id": "1981_1981_飘雪空气动力学特性的风洞研究",
+      "title": "1981：飘雪空气动力学特性的风洞研究",
+      "year": 1981,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/1981_1981_飘雪空气动力学特性的风洞研究.pdf",
+      "markdown_path": "data/papers/1981_1981_飘雪空气动力学特性的风洞研究/paper.md",
+      "images_dir": "data/papers/1981_1981_飘雪空气动力学特性的风洞研究/images",
+      "status": "unsummarized",
+      "bib_key": "1981_1981_飘雪空气动力学特性的风洞研究"
+    },
+    {
+      "paper_id": "中国积雪的分布_李培基",
+      "title": "中国积雪的分布_李培基",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/中国积雪的分布_李培基.pdf",
+      "markdown_path": "data/papers/中国积雪的分布_李培基/paper.md",
+      "images_dir": "data/papers/中国积雪的分布_李培基/images",
+      "status": "unsummarized",
+      "bib_key": "中国积雪的分布_李培基"
+    },
+    {
+      "paper_id": "17_the_drag_on_an_undulating_surface_induced_by_th",
+      "title": "[17]The drag on an undulating surface induced by the __flow of a turbulent boundary layer",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/17_the_drag_on_an_undulating_surface_induced_by_th.pdf",
+      "markdown_path": "data/papers/17_the_drag_on_an_undulating_surface_induced_by_th/paper.md",
+      "images_dir": "data/papers/17_the_drag_on_an_undulating_surface_induced_by_th/images",
+      "status": "unsummarized",
+      "bib_key": "17_the_drag_on_an_undulating_surface_induced_by_th"
+    },
+    {
+      "paper_id": "52_les_analysis_of_turbulent_boundary_layer_over_3",
+      "title": "[52]LES analysis of turbulent boundary layer over 3D steep hill covered with vegetation",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/52_les_analysis_of_turbulent_boundary_layer_over_3.pdf",
+      "markdown_path": "data/papers/52_les_analysis_of_turbulent_boundary_layer_over_3/paper.md",
+      "images_dir": "data/papers/52_les_analysis_of_turbulent_boundary_layer_over_3/images",
+      "status": "unsummarized",
+      "bib_key": "52_les_analysis_of_turbulent_boundary_layer_over_3"
+    },
+    {
+      "paper_id": "1980_1980_暴风雪作用下山区积雪的再分配",
+      "title": "1980：暴风雪作用下山区积雪的再分配",
+      "year": 1980,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/1980_1980_暴风雪作用下山区积雪的再分配.pdf",
+      "markdown_path": "data/papers/1980_1980_暴风雪作用下山区积雪的再分配/paper.md",
+      "images_dir": "data/papers/1980_1980_暴风雪作用下山区积雪的再分配/images",
+      "status": "unsummarized",
+      "bib_key": "1980_1980_暴风雪作用下山区积雪的再分配"
+    },
+    {
+      "paper_id": "2014_2014_使用不同颗粒材料对阶梯状平屋顶雪荷载的风洞测试",
+      "title": "2014：使用不同颗粒材料对阶梯状平屋顶雪荷载的风洞测试",
+      "year": 2014,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2014_2014_使用不同颗粒材料对阶梯状平屋顶雪荷载的风洞测试.pdf",
+      "markdown_path": "data/papers/2014_2014_使用不同颗粒材料对阶梯状平屋顶雪荷载的风洞测试/paper.md",
+      "images_dir": "data/papers/2014_2014_使用不同颗粒材料对阶梯状平屋顶雪荷载的风洞测试/images",
+      "status": "unsummarized",
+      "bib_key": "2014_2014_使用不同颗粒材料对阶梯状平屋顶雪荷载的风洞测试"
+    },
+    {
+      "paper_id": "2014_2014_针对山区生态系统积雪预测的半分布式降雨径流水文模型_prevah_与空间分布式积雪演化模型",
+      "title": "2014：针对山区生态系统积雪预测的半分布式降雨径流水文模型(PREVAH)与空间分布式积雪演化模型(SnowModel)的验证与比较",
+      "year": 2014,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2014_2014_针对山区生态系统积雪预测的半分布式降雨径流水文模型_prevah_与空间分布式积雪演化模型.pdf",
+      "markdown_path": "data/papers/2014_2014_针对山区生态系统积雪预测的半分布式降雨径流水文模型_prevah_与空间分布式积雪演化模型/paper.md",
+      "images_dir": "data/papers/2014_2014_针对山区生态系统积雪预测的半分布式降雨径流水文模型_prevah_与空间分布式积雪演化模型/images",
+      "status": "unsummarized",
+      "bib_key": "2014_2014_针对山区生态系统积雪预测的半分布式降雨径流水文模型_prevah_与空间分布式积雪演化模型"
+    },
+    {
+      "paper_id": "40_on_the_parameterization_of_drag_over_small_scal",
+      "title": "[40]On the parameterization of drag over small-scale topography in neutrally-stratified boundary-layer flow",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/40_on_the_parameterization_of_drag_over_small_scal.pdf",
+      "markdown_path": "data/papers/40_on_the_parameterization_of_drag_over_small_scal/paper.md",
+      "images_dir": "data/papers/40_on_the_parameterization_of_drag_over_small_scal/images",
+      "status": "unsummarized",
+      "bib_key": "40_on_the_parameterization_of_drag_over_small_scal"
+    },
+    {
+      "paper_id": "2017_2017_湍流边界层中的风吹雪及其升华过程",
+      "title": "2017：湍流边界层中的风吹雪及其升华过程",
+      "year": 2017,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/2017_2017_湍流边界层中的风吹雪及其升华过程.pdf",
+      "markdown_path": "data/papers/2017_2017_湍流边界层中的风吹雪及其升华过程/paper.md",
+      "images_dir": "data/papers/2017_2017_湍流边界层中的风吹雪及其升华过程/images",
+      "status": "unsummarized",
+      "bib_key": "2017_2017_湍流边界层中的风吹雪及其升华过程"
+    },
+    {
+      "paper_id": "snowpack_1",
+      "title": "Snowpack_1",
+      "year": null,
+      "doi": "",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "raw_pdf": "data/raw/snowpack_1.pdf",
+      "markdown_path": "data/papers/snowpack_1/paper.md",
+      "images_dir": "data/papers/snowpack_1/images",
+      "status": "unsummarized",
+      "bib_key": "snowpack_1"
     }
   ]
 }

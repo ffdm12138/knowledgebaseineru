@@ -33,7 +33,7 @@ from src.library_index import VALID_DOMAINS, LibraryIndex
 from src.manifest import PaperManifest
 from src.naming import safe_child, validate_paper_id
 from src.services.paper_registry import PaperRegistryService
-from src.services.paper_id import generate_paper_id
+from src.services.paper_id import generate_paper_id, resolve_paper_id
 from src.services.conversion_ingest_pipeline import ConversionIngestPipeline
 from src.utils.atomic_io import atomic_write_json
 from src.utils.safe_delete import SafeDeleteError, safe_delete_duplicate_artifact
@@ -187,20 +187,63 @@ def import_pending_pdf(
             result["status"] = "needs_confirmation"
             return result
 
-    pid = paper_id or generate_paper_id(
-        year=year,
-        title=title,
-        authors=sidecar.get("authors") or sidecar.get("author") or None,
+    # ── Metadata enrichment preflight ──────────────────────────
+    enrichment_warnings: list[str] = []
+    enriched_title = title
+    enriched_year = year
+    enriched_authors = sidecar.get("authors") or sidecar.get("author") or None
+
+    # Try DOI-based enrichment if we have a DOI but lack good metadata
+    if doi and (not title or year is None or not enriched_authors):
+        try:
+            from src.services.metadata_enrichment_service import enrich_from_doi
+            enriched = enrich_from_doi(doi, chinese_title=sidecar.get("chinese_title") or "")
+            if enriched.title and not title:
+                enriched_title = enriched.title
+            if enriched.year is not None and year is None:
+                enriched_year = enriched.year
+            if enriched.authors and not enriched_authors:
+                enriched_authors = enriched.authors
+            enrichment_warnings = enriched.warnings
+        except Exception:
+            pass  # enrichment is best-effort, never blocks import
+
+    # ── Resolve paper_id with full priority chain ──────────────
+    pid, pid_warnings = resolve_paper_id(
+        cli_paper_id=paper_id or "",
+        canonical_paper_id=sidecar.get("canonical_paper_id") or "",
+        proposed_paper_id=sidecar.get("proposed_paper_id") or "",
+        doi=doi,
+        title=enriched_title,
+        year=enriched_year,
+        authors=enriched_authors,
         chinese_title=sidecar.get("chinese_title") or "",
+        filename_stem=pdf_path.stem,
     )
     validate_paper_id(pid)
     raw_target = safe_child(raw_dir, f"{pid}.pdf")
+    all_warnings = pid_warnings + enrichment_warnings
 
     if not apply:
         logger.info(f"[dry-run] new paper_id={pid}, would convert + register domains={all_domains}")
+        logger.info(f"  doi: {doi or '(none)'}")
+        logger.info(f"  title: {enriched_title or '(none)'}")
+        logger.info(f"  year: {enriched_year or '(none)'}")
+        logger.info(f"  authors: {enriched_authors or '(none)'}")
+        logger.info(f"  chinese_title: {sidecar.get('chinese_title') or '(none)'}")
+        logger.info(f"  metadata_source: {sidecar.get('metadata_source') or 'sidecar'}")
+        logger.info(f"  confidence: {sidecar.get('metadata_confidence') or 'N/A'}")
+        logger.info(f"  proposed_paper_id: {sidecar.get('proposed_paper_id') or pid}")
+        logger.info(f"  final_paper_id: {pid}")
+        logger.info(f"  duplicate_status: clean (new paper)")
+        logger.info(f"  will_convert: True")
+        logger.info(f"  will_register: True")
+        for w in all_warnings:
+            logger.warning(f"  [WARN] {w}")
         result["paper_id"] = pid
         result["canonical_pdf_filename"] = raw_target.name
         result["canonical_paper_id"] = pid
+        result["warnings"] = all_warnings
         return result
 
     raw_target.parent.mkdir(parents=True, exist_ok=True)

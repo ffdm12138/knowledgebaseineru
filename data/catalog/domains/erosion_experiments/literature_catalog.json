@@ -3,5 +3,39 @@
   "description": "Domain catalog: Erosion Experiments",
   "domain_id": "erosion_experiments",
   "domain_name": "Erosion Experiments",
-  "papers": []
+  "papers": [
+    {
+      "paper_id": "2024_zhang_test_paper",
+      "title": "Test Paper",
+      "year": 2024,
+      "authors": [
+        "Zhang"
+      ],
+      "doi": "10.1234/test",
+      "primary_domain": "erosion_experiments",
+      "domains": [
+        "erosion_experiments"
+      ],
+      "ai_summary": {},
+      "tags": {},
+      "selection_hints": {
+        "priority": 3
+      },
+      "citation": {
+        "bib_key": "2024_test",
+        "bibtex": "@misc{...}"
+      },
+      "status": "unsummarized",
+      "venue": "",
+      "raw_pdf": "",
+      "markdown": "data/papers/2024_zhang_test_paper/paper.md",
+      "images_dir": "data/papers/2024_zhang_test_paper/images",
+      "notes": "",
+      "domain_view": {
+        "domain_id": "erosion_experiments",
+        "is_primary_domain": true,
+        "canonical_paper_id": "2024_zhang_test_paper"
+      }
+    }
+  ]
 }

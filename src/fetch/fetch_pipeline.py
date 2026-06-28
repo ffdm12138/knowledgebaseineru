@@ -30,6 +30,7 @@ from src.fetch.models import FetchResult
 from src.fetch.resolver_registry import build_resolvers
 from src.fetch.resolvers.base import ResolveContext
 from src.services.pdf_acquisition_service import PdfAcquisitionService, _atomic_write_json
+from src.services.metadata_enrichment_service import normalize_bibliographic_metadata
 from src.utils.file_allocation import allocate_unique_path
 
 
@@ -162,13 +163,45 @@ def _write_sidecar(result: FetchResult, sidecar_path: Path) -> None:
     policy_mode = result.access_mode or AccessMode.OA_ONLY.value
     resolver_access_mode = (result.metadata or {}).get("resolver_access_mode") or policy_mode
     source_kind = _source_kind_for_result(result, policy_mode, resolver_access_mode)
+
+    # ── Normalize bibliographic metadata from resolver result ──────────
+    raw_meta = dict(result.metadata or {})
+    # Determine source for normalization
+    source_hint = ""
+    resolver_name = (result.resolver or "").lower()
+    source_name = (result.source or "").lower()
+    if "openalex" in resolver_name or "openalex" in source_name:
+        source_hint = "openalex"
+    elif "semantic_scholar" in resolver_name or "semantic" in source_name:
+        source_hint = "semantic_scholar"
+    elif "unpaywall" in resolver_name or "unpaywall" in source_name:
+        source_hint = "unpaywall"
+    elif "crossref" in resolver_name:
+        source_hint = "crossref"
+
+    normalized = normalize_bibliographic_metadata(raw_meta, source=source_hint)
+    normalized_title = normalized.get("title") or (result.metadata or {}).get("title", "")
+    normalized_year = normalized.get("year") or (result.metadata or {}).get("year")
+    normalized_authors = normalized.get("authors") or []
+    normalized_first_author = normalized.get("first_author") or ""
+
+    # Generate proposed_paper_id
+    proposed_paper_id = ""
+    if normalized_title or normalized_year:
+        from src.services.paper_id import generate_paper_id
+        proposed_paper_id = generate_paper_id(
+            year=normalized_year,
+            title=normalized_title,
+            authors=normalized_authors if normalized_authors else None,
+        )
+
     unified = service.build_sidecar(
         source_kind=source_kind,
         access_mode=policy_mode,
         resolver=result.resolver,
         doi=result.doi,
-        title=(result.metadata or {}).get("title", ""),
-        year=(result.metadata or {}).get("year"),
+        title=normalized_title,
+        year=normalized_year,
         original_filename=pdf_path.name,
         pending_pdf=pdf_path,
         sha256=result.sha256,
@@ -184,6 +217,11 @@ def _write_sidecar(result: FetchResult, sidecar_path: Path) -> None:
             "resolver_name": result.resolver,
             "resolver_access_mode": resolver_access_mode,
             "source_kind": source_kind,
+            "authors": normalized_authors,
+            "first_author": normalized_first_author,
+            "venue": normalized.get("venue", ""),
+            "metadata_source": normalized.get("source", source_kind),
+            "proposed_paper_id": proposed_paper_id,
         },
     )
     _atomic_write_json(sidecar_path, unified)

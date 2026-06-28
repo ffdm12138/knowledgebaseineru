@@ -27,6 +27,11 @@
 13. 所有 JSON 写入必须原子化：filelock + tmp + os.replace。
 14. 所有外部输入的 paper_id / job_id / image_name / file path 必须经 validate + safe_child 防路径穿越。
 15. paper_id 命名规范：格式为 `{year}_{author}_{中文描述}`，如 `2023_wang_有限粒径颗粒阻力模型`。入库时通过 `--paper-id` 传入中文名称，auto-fallback 的英文名仅为临时兜底。目录 `data/papers/<paper_id>/` 的文件夹名必须与 paper_id 一致。
+    - **禁止用 PDF 原始文件名作为 paper_id**（如 `download`、`article`、`fulltext`、`1-s2.0-...`、`science.abc12345`）。
+    - paper_id 优先级链：`CLI --paper-id` > `sidecar.canonical_paper_id` > `sidecar.proposed_paper_id` > DOI 元数据生成 > filename fallback。
+    - filename fallback 必须在 sidecar 中写入 warning，不得静默。
+    - 同名冲突：DOI 相同 → 同一篇（不可新建）；DOI 不同 → 报错（不可覆盖）；无 DOI → warning + 需用户确认。
+    - 已有错误 paper_id 通过 `python scripts/repair_paper_ids.py` 安全迁移（默认 dry-run，--apply 执行，执行前自动备份）。
 16. 测试不得访问真实网络；OpenAlex / Semantic Scholar / Crossref / Unpaywall 必须 mock。
 17. 每次代码改动完成后，必须运行完整验收，并运行 `python scripts/pack_repo.py` 生成 zip 快照。
 
@@ -127,6 +132,40 @@ python scripts/pack_repo.py
 
 要求：所有测试通过；不访问真实网络；不真实调用 MinerU；zip 快照包含新增代码与文档；不破坏第一/二阶段；允许 domain catalog 跨领域重复索引；禁止 paper 物理重复存储。
 
+## Paper ID Migration / 错误文件夹修复
+
+已有 `data/papers/` 中可能包含错误命名的文件夹（来自历史导入的 PDF 文件名 fallback）。修复工具：
+
+```bash
+# 全库扫描
+python scripts/repair_paper_ids.py
+
+# 导出 mapping
+python scripts/repair_paper_ids.py --export-mapping repair_mapping.json
+
+# 人工审核后执行
+python scripts/repair_paper_ids.py --mapping repair_mapping.json --apply
+
+# 单篇重命名
+python scripts/repair_paper_ids.py --rename download:2024_zhang_canonical --apply
+```
+
+安全规则：
+- 默认 dry-run（--apply 才执行）
+- 执行前自动备份索引到 `data/backups/paper_id_repair/`
+- 迁移同步更新：manifest、catalog、library_index、domain catalogs、references.bib
+- 不删除 paper.md 或 images
+- 不同 DOI 的冲突不覆盖；相同 DOI 报告 merge candidate（默认不合并）
+
+## Metadata Enrichment / 元数据补全
+
+- `src/services/metadata_enrichment_service.py` — DOI 提取 + Crossref 查询 + 多源元数据规范化
+- `scripts/enrich_pending_pdf.py` — CLI 补全 pending PDF sidecar（默认 dry-run）
+- `src/services/paper_id.py` — `resolve_paper_id()` 实现完整 paper_id 优先级链
+- `register_manual_pdf.py` 支持 `--auto-metadata`、`--chinese-title`、`--paper-id`、`--doi`、`--title`、`--year`、`--authors`
+- `import_pending_pdf.py` 导入前自动做 metadata enrichment preflight
+- `src/fetch/fetch_pipeline.py` 的 `_write_sidecar` 自动写入规范化的 authors/first_author/venue/proposed_paper_id
+
 ## 禁止事项
 
 - 不要恢复 ChromaDB / embedding / RAG。
@@ -136,3 +175,6 @@ python scripts/pack_repo.py
 - 不要把 pending PDF 自动入 catalog 为已总结状态。
 - 不要让入库流程绕过 duplicate detection。
 - 不要硬编码 `data/papers/<paper_id>/paper.md` 作为唯一读取方式。
+- 不要用 PDF 原始文件名作为 paper_id（必须走 metadata enrichment 或显式 --paper-id）。
+- 不要让 repair_paper_ids.py 在无 --apply 时修改数据。
+- 不要让迁移流程绕过备份。

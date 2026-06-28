@@ -1,0 +1,643 @@
+"""Metadata enrichment service — DOI extraction, Crossref query, metadata normalization.
+
+Provides:
+- DOI extraction from filenames, sidecar, paper.md, PDF text (pymupdf)
+- Crossref API metadata query by DOI
+- Normalized bibliographic metadata from Crossref/OpenAlex/Semantic Scholar/Unpaywall
+- Proposed canonical paper_id generation
+- Sidecar enrichment
+
+All network calls are isolated so tests can mock them.
+"""
+from __future__ import annotations
+
+import json
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
+
+from loguru import logger
+
+from src.discovery.models import normalize_doi
+from src.naming import sanitize_paper_id, validate_paper_id
+from src.services.paper_id import generate_paper_id
+
+# ── DOI regex ──────────────────────────────────────────────────────────
+# Matches: 10.xxxx/xxxxx, https://doi.org/10.xxxx/xxxxx, doi:10.xxxx/xxxxx, DOI 10.xxxx/xxxxx
+_DOI_CANDIDATE_RE = re.compile(
+    r"""(?ix)
+    (?:doi\s*[:=\s]+)?               # optional "doi:" or "DOI " prefix
+    (?:https?://(?:dx\.)?doi\.org/)? # optional https://doi.org/
+    (10\.\d{4,}/[^\s<>"')\]};,]+)    # the DOI itself
+    """,
+)
+
+# Trailing punctuation to strip from DOI matches
+_DOI_TRAILING_RE = re.compile(r"""[.,;)\]};:'"]+$""")
+
+
+def extract_doi_from_text(text: str) -> str | None:
+    """Extract and normalize a DOI from arbitrary text.
+
+    Returns the normalized DOI (lowercase, no prefix) or None.
+    """
+    if not text:
+        return None
+    match = _DOI_CANDIDATE_RE.search(text)
+    if not match:
+        return None
+    raw = match.group(1)
+    # Strip trailing punctuation that clearly isn't part of a DOI
+    raw = _DOI_TRAILING_RE.sub("", raw)
+    normalized = normalize_doi(raw)
+    if not normalized:
+        return None
+    # Basic plausibility check: must have a slash after the prefix
+    if "/" not in normalized:
+        return None
+    return normalized
+
+
+def extract_doi_from_filename(filename: str) -> str | None:
+    """Try to extract a DOI from a PDF filename stem."""
+    return extract_doi_from_text(Path(filename).stem)
+
+
+def extract_doi_from_sidecar(sidecar: dict) -> str | None:
+    """Extract DOI from a sidecar JSON dict."""
+    for key in ("doi", "DOI", "Doi"):
+        val = sidecar.get(key, "")
+        if val:
+            doi = extract_doi_from_text(str(val))
+            if doi:
+                return doi
+    return None
+
+
+def extract_doi_from_paper_md(md_text: str, max_lines: int = 60) -> str | None:
+    """Extract DOI from the first *max_lines* of a paper.md."""
+    if not md_text:
+        return None
+    lines = md_text.split("\n")[:max_lines]
+    return extract_doi_from_text("\n".join(lines))
+
+
+# ── PyMuPDF optional import ────────────────────────────────────────────
+
+def _has_pymupdf() -> bool:
+    try:
+        import fitz  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def extract_doi_from_pdf_file(pdf_path: str | Path) -> str | None:
+    """Extract DOI from a PDF file using pymupdf (first 3 pages).
+
+    Returns None if pymupdf is not installed (warning logged, not fatal).
+    """
+    if not _has_pymupdf():
+        logger.warning("PyMuPDF not installed; skipped PDF text DOI extraction")
+        return None
+    import fitz
+
+    pdf_path = Path(pdf_path)
+    if not pdf_path.exists():
+        return None
+    try:
+        doc = fitz.open(str(pdf_path))
+    except Exception as exc:
+        logger.warning(f"pymupdf failed to open {pdf_path.name}: {exc}")
+        return None
+    try:
+        for page_num in range(min(3, len(doc))):
+            page = doc[page_num]
+            text = page.get_text()
+            doi = extract_doi_from_text(text)
+            if doi:
+                return doi
+    finally:
+        doc.close()
+    return None
+
+
+# ── Metadata normalization ─────────────────────────────────────────────
+
+@dataclass
+class EnrichmentResult:
+    """Unified enrichment output."""
+    doi: str = ""
+    title: str = ""
+    year: int | None = None
+    authors: list[str] = field(default_factory=list)
+    first_author: str = ""
+    venue: str = ""
+    publisher: str = ""
+    source: str = ""           # crossref / openalex / semantic_scholar / unpaywall / manual
+    confidence: float = 0.0
+    proposed_paper_id: str = ""
+    chinese_title: str = ""
+    warnings: list[str] = field(default_factory=list)
+    raw: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict:
+        return {
+            "doi": self.doi,
+            "title": self.title,
+            "year": self.year,
+            "authors": self.authors,
+            "first_author": self.first_author,
+            "venue": self.venue,
+            "publisher": self.publisher,
+            "source": self.source,
+            "confidence": self.confidence,
+            "proposed_paper_id": self.proposed_paper_id,
+            "chinese_title": self.chinese_title,
+            "warnings": self.warnings,
+            "raw": self.raw,
+        }
+
+
+def normalize_crossref_metadata(raw: dict) -> dict:
+    """Normalize Crossref API work response into canonical metadata fields."""
+    title = ""
+    title_list = raw.get("title") or []
+    if isinstance(title_list, list) and title_list:
+        title = str(title_list[0])
+    elif isinstance(title_list, str):
+        title = title_list
+
+    year = None
+    for date_field in ("published-print", "published-online", "issued", "created"):
+        date_parts = (raw.get(date_field) or {}).get("date-parts") or []
+        if date_parts and date_parts[0]:
+            try:
+                year = int(date_parts[0][0])
+                break
+            except (TypeError, ValueError, IndexError):
+                continue
+
+    authors = []
+    for a in raw.get("author") or []:
+        family = a.get("family", "")
+        given = a.get("given", "")
+        if family:
+            authors.append(family)
+        elif given:
+            authors.append(given)
+    first_author = authors[0] if authors else ""
+
+    venue = ""
+    container = raw.get("container-title") or []
+    if isinstance(container, list) and container:
+        venue = str(container[0])
+    elif isinstance(container, str):
+        venue = container
+
+    publisher = raw.get("publisher", "")
+
+    return {
+        "title": title,
+        "year": year,
+        "authors": authors,
+        "first_author": first_author,
+        "venue": venue,
+        "publisher": publisher,
+        "source": "crossref",
+    }
+
+
+def normalize_openalex_metadata(raw: dict) -> dict:
+    """Normalize OpenAlex work object into canonical metadata fields."""
+    title = raw.get("title", "") or ""
+    year = raw.get("publication_year")
+    if year is not None:
+        try:
+            year = int(year)
+        except (TypeError, ValueError):
+            year = None
+
+    authors = []
+    for a in raw.get("authorships") or []:
+        author_info = a.get("author") or {}
+        name = author_info.get("display_name", "")
+        if name:
+            authors.append(name)
+    first_author = authors[0] if authors else ""
+
+    venue = ""
+    primary = raw.get("primary_location") or {}
+    source = primary.get("source") or {}
+    venue = source.get("display_name", "")
+
+    return {
+        "title": title,
+        "year": year,
+        "authors": authors,
+        "first_author": first_author,
+        "venue": venue,
+        "publisher": "",
+        "source": "openalex",
+    }
+
+
+def normalize_semantic_scholar_metadata(raw: dict) -> dict:
+    """Normalize Semantic Scholar paper object into canonical metadata fields."""
+    title = raw.get("title", "") or ""
+    year = raw.get("year")
+    if year is not None:
+        try:
+            year = int(year)
+        except (TypeError, ValueError):
+            year = None
+
+    authors = []
+    for a in raw.get("authors") or []:
+        name = a.get("name", "")
+        if name:
+            authors.append(name)
+    first_author = authors[0] if authors else ""
+
+    venue = raw.get("venue", "") or raw.get("journal", "") or ""
+
+    return {
+        "title": title,
+        "year": year,
+        "authors": authors,
+        "first_author": first_author,
+        "venue": venue,
+        "publisher": "",
+        "source": "semantic_scholar",
+    }
+
+
+def normalize_unpaywall_metadata(raw: dict) -> dict:
+    """Normalize Unpaywall result into canonical metadata fields."""
+    title = raw.get("title", "") or ""
+    year = raw.get("year")
+    if year is not None:
+        try:
+            year = int(year)
+        except (TypeError, ValueError):
+            year = None
+
+    authors = []
+    for a in raw.get("z_authors") or []:
+        family = a.get("family", "")
+        given = a.get("given", "")
+        name = f"{family}, {given}" if family and given else (family or given)
+        if name:
+            authors.append(name)
+    first_author = authors[0] if authors else ""
+
+    venue = raw.get("journal_name", "") or ""
+
+    return {
+        "title": title,
+        "year": year,
+        "authors": authors,
+        "first_author": first_author,
+        "venue": venue,
+        "publisher": raw.get("publisher", ""),
+        "source": "unpaywall",
+    }
+
+
+def normalize_bibliographic_metadata(raw: dict, source: str = "") -> dict:
+    """Normalize metadata from any known source into canonical fields.
+
+    source: one of "crossref", "openalex", "semantic_scholar", "unpaywall", or "" for auto-detect.
+    """
+    if not raw:
+        return {"title": "", "year": None, "authors": [], "first_author": "",
+                "venue": "", "publisher": "", "source": source or "unknown"}
+
+    # Auto-detect source
+    if not source:
+        if "author" in raw and "publisher" in raw:
+            source = "crossref"
+        elif "authorships" in raw:
+            source = "openalex"
+        elif "paperId" in raw or "externalIds" in raw:
+            source = "semantic_scholar"
+        elif "z_authors" in raw:
+            source = "unpaywall"
+
+    if source == "crossref":
+        result = normalize_crossref_metadata(raw)
+    elif source == "openalex":
+        result = normalize_openalex_metadata(raw)
+    elif source == "semantic_scholar":
+        result = normalize_semantic_scholar_metadata(raw)
+    elif source == "unpaywall":
+        result = normalize_unpaywall_metadata(raw)
+    else:
+        # Generic fallback: try common fields
+        title = raw.get("title", "") or raw.get("name", "") or ""
+        year = raw.get("year") or raw.get("publication_year")
+        if year is not None:
+            try:
+                year = int(year)
+            except (TypeError, ValueError):
+                year = None
+        authors = raw.get("authors") or raw.get("author") or []
+        if isinstance(authors, str):
+            authors = [authors]
+        first_author = authors[0] if authors else ""
+        result = {
+            "title": str(title),
+            "year": year,
+            "authors": list(authors),
+            "first_author": str(first_author),
+            "venue": str(raw.get("venue") or raw.get("journal") or ""),
+            "publisher": str(raw.get("publisher") or ""),
+            "source": source or "generic",
+        }
+
+    return result
+
+
+# ── Crossref API query ─────────────────────────────────────────────────
+
+CROSSREF_API_URL = "https://api.crossref.org/works/{doi}"
+
+
+def query_crossref_by_doi(doi: str, timeout: int = 15) -> dict | None:
+    """Query Crossref API for work metadata by DOI.
+
+    Returns the raw 'message' dict from Crossref response, or None on failure.
+    This function IS the network-callable unit — tests must mock it.
+    """
+    import requests
+
+    normalized = normalize_doi(doi)
+    if not normalized:
+        return None
+    url = CROSSREF_API_URL.format(doi=normalized)
+    try:
+        resp = requests.get(url, timeout=timeout, headers={"User-Agent": "mineru-literature-manager/1.0"})
+        resp.raise_for_status()
+        data = resp.json()
+        return data.get("message")
+    except Exception as exc:
+        logger.warning(f"Crossref query failed for DOI {doi!r}: {exc}")
+        return None
+
+
+# ── Enrichment orchestration ───────────────────────────────────────────
+
+def enrich_from_doi(
+    doi: str,
+    *,
+    chinese_title: str = "",
+    query_crossref: bool = True,
+) -> EnrichmentResult:
+    """Enrich metadata from a DOI.
+
+    If query_crossref is True (default), queries Crossref API for canonical metadata.
+    Set to False for offline-only operation.
+    """
+    normalized = normalize_doi(doi)
+    if not normalized:
+        return EnrichmentResult(warnings=["invalid or empty DOI"])
+
+    result = EnrichmentResult(doi=normalized, chinese_title=chinese_title)
+    meta: dict = {}
+
+    if query_crossref:
+        raw = query_crossref_by_doi(normalized)
+        if raw:
+            meta = normalize_crossref_metadata(raw)
+            result.confidence = 0.95
+            result.source = "crossref"
+            result.raw = raw
+        else:
+            result.warnings.append(f"Crossref query returned no data for {normalized}")
+    else:
+        result.source = "doi_only"
+        result.confidence = 0.3
+
+    if meta:
+        result.title = meta.get("title", "")
+        result.year = meta.get("year")
+        result.authors = meta.get("authors", [])
+        result.first_author = meta.get("first_author", "")
+        result.venue = meta.get("venue", "")
+        result.publisher = meta.get("publisher", "")
+        if not result.source or result.source == "doi_only":
+            result.source = meta.get("source", result.source)
+
+    # Generate proposed_paper_id
+    result.proposed_paper_id = generate_paper_id(
+        year=result.year,
+        title=result.title,
+        authors=[result.first_author] if result.first_author else None,
+        chinese_title=chinese_title,
+    )
+
+    return result
+
+
+def enrich_from_sidecar(sidecar: dict, chinese_title: str = "") -> EnrichmentResult:
+    """Enrich metadata from a sidecar JSON (may have partial metadata from fetch)."""
+    doi = extract_doi_from_sidecar(sidecar) or sidecar.get("doi", "")
+    title = sidecar.get("title", "") or ""
+    year = sidecar.get("year")
+    authors = sidecar.get("authors") or sidecar.get("author") or []
+    if isinstance(authors, str):
+        authors = [authors]
+    first_author = sidecar.get("first_author", "")
+
+    if doi:
+        result = enrich_from_doi(doi, chinese_title=chinese_title)
+        # Sidecar data may fill gaps if Crossref failed
+        if not result.title and title:
+            result.title = title
+        if result.year is None and year:
+            try:
+                result.year = int(year)
+            except (TypeError, ValueError):
+                pass
+        if not result.authors and authors:
+            result.authors = authors
+        if not result.first_author and first_author:
+            result.first_author = first_author
+        elif not result.first_author and authors:
+            result.first_author = authors[0] if isinstance(authors, list) else str(authors)
+        if result.source == "doi_only" or not result.source:
+            result.source = sidecar.get("source_kind") or sidecar.get("resolver") or "sidecar"
+        # Re-generate proposed_paper_id after filling gaps
+        result.proposed_paper_id = generate_paper_id(
+            year=result.year,
+            title=result.title,
+            authors=[result.first_author] if result.first_author else None,
+            chinese_title=chinese_title or sidecar.get("chinese_title", ""),
+        )
+        return result
+
+    # No DOI — build from sidecar data only
+    if year is not None:
+        try:
+            year = int(year)
+        except (TypeError, ValueError):
+            year = None
+
+    result = EnrichmentResult(
+        title=str(title),
+        year=year,
+        authors=list(authors) if isinstance(authors, list) else [str(authors)] if authors else [],
+        first_author=str(first_author) if first_author else (authors[0] if isinstance(authors, list) and authors else ""),
+        source="sidecar",
+        confidence=0.4,
+        chinese_title=chinese_title or sidecar.get("chinese_title", ""),
+        warnings=["no DOI in sidecar; metadata from sidecar only"],
+    )
+    result.proposed_paper_id = generate_paper_id(
+        year=result.year,
+        title=result.title,
+        authors=[result.first_author] if result.first_author else None,
+        chinese_title=result.chinese_title,
+    )
+    return result
+
+
+def enrich_from_pdf(
+    pdf_path: str | Path,
+    *,
+    sidecar: dict | None = None,
+    chinese_title: str = "",
+) -> EnrichmentResult:
+    """Full enrichment pipeline for a pending PDF.
+
+    1. Try DOI from sidecar
+    2. Try DOI from PDF filename
+    3. Try DOI from PDF text (pymupdf)
+    4. If DOI found, query Crossref
+    5. Return EnrichmentResult
+    """
+    pdf_path = Path(pdf_path)
+    sidecar = sidecar or {}
+    warnings: list[str] = []
+
+    # 1. Try sidecar DOI first
+    doi = extract_doi_from_sidecar(sidecar)
+    if doi:
+        result = enrich_from_doi(doi, chinese_title=chinese_title)
+        # Merge sidecar fields
+        if not result.title and sidecar.get("title"):
+            result.title = sidecar["title"]
+        if result.year is None and sidecar.get("year"):
+            try:
+                result.year = int(sidecar["year"])
+            except (TypeError, ValueError):
+                pass
+        if not result.authors and sidecar.get("authors"):
+            authors = sidecar["authors"]
+            if isinstance(authors, str):
+                authors = [authors]
+            result.authors = authors
+            if not result.first_author:
+                result.first_author = authors[0] if authors else ""
+        result.chinese_title = chinese_title or sidecar.get("chinese_title", "")
+        result.proposed_paper_id = generate_paper_id(
+            year=result.year,
+            title=result.title,
+            authors=[result.first_author] if result.first_author else None,
+            chinese_title=result.chinese_title,
+        )
+        return result
+
+    # 2. Try DOI from PDF filename
+    doi = extract_doi_from_filename(pdf_path.name)
+    if not doi:
+        # 3. Try DOI from PDF text
+        doi = extract_doi_from_pdf_file(pdf_path)
+        if not doi:
+            warnings.append("no DOI found in sidecar, filename, or PDF text")
+        else:
+            warnings.append("DOI extracted from PDF text (pymupdf)")
+    else:
+        warnings.append("DOI extracted from PDF filename")
+
+    if doi:
+        result = enrich_from_doi(doi, chinese_title=chinese_title)
+        result.warnings.extend(warnings)
+        return result
+
+    # No DOI at all — use sidecar or filename metadata
+    result = EnrichmentResult(
+        chinese_title=chinese_title,
+        warnings=warnings,
+        source="filename_fallback",
+        confidence=0.1,
+    )
+    if sidecar:
+        result.title = sidecar.get("title", "")
+        result.year = sidecar.get("year")
+        result.authors = sidecar.get("authors") or []
+        result.first_author = sidecar.get("first_author", "")
+        if not result.title:
+            result.title = pdf_path.stem
+            result.warnings.append("title fallback from filename stem")
+    else:
+        result.title = pdf_path.stem
+        result.warnings.append("no sidecar, title from filename stem")
+
+    result.proposed_paper_id = generate_paper_id(
+        year=result.year,
+        title=result.title,
+        authors=[result.first_author] if result.first_author else None,
+        chinese_title=chinese_title,
+    )
+    if not doi:
+        result.warnings.append(
+            "paper_id generated from filename fallback; "
+            "pass --doi/--title/--year/--paper-id or run metadata enrichment for canonical naming"
+        )
+    return result
+
+
+# ── Bad paper_id detection ─────────────────────────────────────────────
+
+_BAD_FILENAME_PATTERNS = [
+    re.compile(p, re.IGNORECASE) for p in [
+        r"^download$", r"^article$", r"^fulltext$", r"^paper$", r"^manuscript$",
+        r"^untitled$", r"^document$", r"^pdf$", r"^main$", r"^output$",
+        r"^science\.[a-z0-9]+$",
+        r"^s\d{4}[-\s]?\d{4,}$",
+        r"^j\.j[a-z]+\.\d{4,}",
+        r"^1-s2\.0-",
+        r"^10\.\d{4,}",
+        r"^[a-z]+_\d{2}_\d+$",
+    ]
+]
+
+
+def looks_like_bad_paper_id(paper_id: str) -> tuple[bool, str]:
+    """Check if a paper_id looks like it was derived from a raw PDF filename.
+
+    Returns (is_bad, reason).
+    """
+    if not paper_id or len(paper_id) < 3:
+        return True, "too_short"
+
+    for pat in _BAD_FILENAME_PATTERNS:
+        if pat.search(paper_id):
+            return True, f"matches_bad_pattern:{pat.pattern}"
+
+    # Check for year_author_title pattern
+    has_year = bool(re.match(r"^\d{4}_", paper_id))
+    if not has_year:
+        return True, "missing_year_prefix"
+
+    parts = paper_id.split("_")
+    if len(parts) < 3:
+        return True, "too_few_parts"
+
+    # Check for excessively long paper_id
+    if len(paper_id) > 120:
+        return True, "too_long"
+
+    return False, ""
