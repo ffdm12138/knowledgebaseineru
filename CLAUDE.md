@@ -13,6 +13,12 @@
 > **重要**：本项目**不做向量检索 / RAG / 语义搜索**。重构时已删除 ChromaDB、chunker、indexer、retriever、embedding 模型。所有 `/prompt/*` 接口**只生成可复制粘贴的 prompt，不调用任何 LLM**——仓库里没有任何 LLM client。`data/raw/` 中的语料是雪科学 / 风吹雪文献，但代码与领域无关。
 
 > **⚠️ 每次代码改动完成后，必须运行 `python scripts/pack_repo.py` 生成 `mineru_snapshot.zip`。**
+> 
+> **⚠️ 提交代码时必须同时推送到 Gitee 和 GitHub 两个远程仓库：**
+> ```bash
+> git push origin main      # Gitee (默认 origin)
+> git push github main      # GitHub
+> ```
 
 ## 核心不可改规则（完整版见 `docs/PROJECT_CONTRACT.md`）
 
