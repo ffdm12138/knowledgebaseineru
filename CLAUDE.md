@@ -16,8 +16,8 @@
 > 
 > **⚠️ 提交代码时必须同时推送到 Gitee 和 GitHub 两个远程仓库：**
 > ```bash
-> git push origin main      # Gitee (默认 origin)
-> git push github main      # GitHub
+> git push gitee main
+> git push github main
 > ```
 
 ## 核心不可改规则（完整版见 `docs/PROJECT_CONTRACT.md`）
