@@ -3332,55 +3332,6 @@
       }
     },
     {
-      "paper_id": "s11433_008_0106_6",
-      "title": "s11433-008-0106-6",
-      "authors": [],
-      "year": null,
-      "venue": "",
-      "doi": "",
-      "raw_pdf": "data/raw/s11433_008_0106_6.pdf",
-      "markdown": "data/papers/s11433_008_0106_6/paper.md",
-      "images_dir": "data/papers/s11433_008_0106_6/images",
-      "status": "unsummarized",
-      "primary_domain": "blowing_snow_physics",
-      "domains": [
-        "blowing_snow_physics"
-      ],
-      "ai_summary": {
-        "one_sentence": "",
-        "background_problem": "",
-        "research_question": "",
-        "method": "",
-        "data_or_experiment": "",
-        "main_findings": "",
-        "key_equations_or_models": [],
-        "important_figures": [],
-        "limitations": "",
-        "relevance_to_my_work": "",
-        "possible_use_in_paper": ""
-      },
-      "tags": {
-        "topic": [],
-        "method": [],
-        "material_or_region": [],
-        "variables": [],
-        "model_names": []
-      },
-      "selection_hints": {
-        "read_when_question_contains": [],
-        "do_not_use_for": [],
-        "priority": 3
-      },
-      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
-      "citation": {
-        "bib_key": "s11433_008_0106_6",
-        "bibtex": "@misc{s11433_008_0106_6,\n  title = {s11433-008-0106-6},\n}\n",
-        "citation_style_name": "(n.d.)",
-        "source": "local_manual",
-        "verified": false
-      }
-    },
-    {
       "paper_id": "1981_1981_飘雪空气动力学特性的风洞研究",
       "title": "1981：飘雪空气动力学特性的风洞研究",
       "authors": [],

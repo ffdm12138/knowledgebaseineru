@@ -1,0 +1,1766 @@
+{
+  "version": "0.1",
+  "description": "AI-readable literature catalog. Each item summarizes one paper and guides full-text selection.",
+  "papers": [
+    {
+      "paper_id": "1982_schmidt_风吹雪垂直剖面",
+      "title": "Vertical profiles of wind speed, snow concentration, and humidity in blowing snow",
+      "authors": [
+        "R. A. Schmidt"
+      ],
+      "year": 1982,
+      "venue": "Annals of Glaciology",
+      "doi": "",
+      "raw_pdf": "data/raw/1982野外升华率实验.pdf",
+      "markdown": "data/papers/1982_schmidt_风吹雪垂直剖面/paper.md",
+      "images_dir": "data/papers/1982_schmidt_风吹雪垂直剖面/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "在夜间暴风雪中测量了最低 1 m 内 6 个高度的冰晶碎屑粒径与浓度，并据此估计风吹雪升华率。",
+        "background_problem": "风吹雪升华被认识到是高平原等强风再分配区水文过程中的重要项，但缺少原位粒径/浓度/水汽梯度的同步测量。",
+        "research_question": "风吹雪输运过程中升华率有多大？粒径、浓度与水汽随高度如何分布？",
+        "method": "野外实验：在最低 1 m 设 6 层，进行 10 次 10 min 观测；用热电偶湿度计测水汽梯度；粒径/浓度用幂律拟合高度分布。",
+        "data_or_experiment": " nocturnal blizzard，10 次 10 min run，6 层高度，美国科罗拉多；3 km 输运距离的升华估算。",
+        "main_findings": "平均粒径与浓度随高度按幂律递减；0.2–1.0 m 水汽梯度近似线性；3 km 输运距离内升华约为输运率的 39%。",
+        "key_equations_or_models": [
+          "粒径/浓度随高度的幂律分布",
+          "升华率随温度湿度梯度的边界层关系"
+        ],
+        "important_figures": [
+          "粒径/浓度垂直剖面图",
+          "水汽梯度剖面图"
+        ],
+        "limitations": "实验条件特定（夜间暴风雪），3 km 升华 39% 为该条件下的估计，外推需谨慎。",
+        "relevance_to_my_work": "提供风吹雪升华率的原位观测基线与垂直剖面方法，是升华参数化的早期实测依据。",
+        "possible_use_in_paper": "引言（升华过程的重要性）、方法（垂直剖面测量）、验证（升华率量级对照）。"
+      },
+      "tags": {
+        "topic": [
+          "sublimation",
+          "blowing snow",
+          "vertical profile"
+        ],
+        "method": [
+          "field measurement"
+        ],
+        "material_or_region": [
+          "Colorado USA"
+        ],
+        "variables": [
+          "particle size",
+          "concentration",
+          "humidity"
+        ],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "升华率测量",
+          "垂直剖面",
+          "原位观测"
+        ],
+        "do_not_use_for": [
+          "数值模拟方法",
+          "破碎过程"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "schmidt1982_blowing_snow_profiles",
+        "bibtex": "@inproceedings{schmidt1982_blowing_snow_profiles,\n  title = {Vertical profiles of wind speed, snow concentration, and humidity in blowing snow},\n  author = {Schmidt, R. A.},\n  year = {1982},\n}",
+        "citation_style_name": "R. (1982)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "1988_dery_吹雪升华热力学",
+      "title": "The thermodynamic effects of sublimating, blowing snow in the atmospheric boundary layer",
+      "authors": [
+        "Stephen J. Déry",
+        "Peter A. Taylor",
+        "Jingbing Xiao"
+      ],
+      "year": 1998,
+      "venue": "Boundary-Layer Meteorology",
+      "doi": "",
+      "raw_pdf": "data/raw/1988雪升华率.pdf",
+      "markdown": "data/papers/1988_dery_吹雪升华热力学/paper.md",
+      "images_dir": "data/papers/1988_dery_吹雪升华热力学/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "用谱型吹雪模型 PIEKTUK 研究吹雪升华对近地表大气的热力学影响，发现升华可致近地表降温约 0.5°C 并显著增湿。",
+        "background_problem": "加拿大冬季积雪频繁发生吹雪，其升华的热力学影响（温湿度变化）需量化。",
+        "research_question": "吹雪升华对近地表大气温度、湿度和雪量移除率的影响有多大？",
+        "method": "数值模拟：PIEKTUK 谱型吹雪模型，含升华雪粒谱的预报方程及温湿度分布。",
+        "data_or_experiment": "北极苔原开阔地表条件下的时间/距离依赖模拟。",
+        "main_findings": "升华使近地表降温约 0.5°C、水汽显著增加；典型雪移除率每天数 mm 雪水当量；升华率对湿度最敏感，其次风速、温度、粒径分布；升华峰值约在下游 1 km。",
+        "key_equations_or_models": [
+          "PIEKTUK 谱型吹雪模型",
+          "升华率对湿度/风速/温度/粒径分布的敏感性"
+        ],
+        "important_figures": [
+          "温湿度随距离/时间剖面",
+          "升华率随下游距离分布"
+        ],
+        "limitations": "谱型模型计算较贵（后续 1999 bulk 模型改进）；特定地表条件。",
+        "relevance_to_my_work": "升华参数化与热力学影响的核心模型工作，是后续体相模型的基础。",
+        "possible_use_in_paper": "方法（升华参数化）、机制解释（升华的热力学反馈）、对比（谱型 vs 体相）。"
+      },
+      "tags": {
+        "topic": [
+          "sublimation",
+          "thermodynamics",
+          "blowing snow model"
+        ],
+        "method": [
+          "numerical model"
+        ],
+        "material_or_region": [
+          "Arctic tundra"
+        ],
+        "variables": [
+          "temperature",
+          "humidity",
+          "sublimation rate"
+        ],
+        "model_names": [
+          "PIEKTUK"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "升华热力学",
+          "PIEKTUK",
+          "升华参数化",
+          "降温增湿"
+        ],
+        "do_not_use_for": [
+          "粒径分布测量",
+          "击溅函数"
+        ],
+        "priority": 5
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "dery1998_thermodynamic_blowing_snow",
+        "bibtex": "@article{dery1998_thermodynamic_blowing_snow,\n  title = {The thermodynamic effects of sublimating, blowing snow in the atmospheric boundary layer},\n  author = {Déry, Stephen J. and Taylor, Peter A. and Xiao, Jingbing},\n  year = {1998},\n  journal = {Boundary-Layer Meteorology},\n}",
+        "citation_style_name": "Stephen and others (1998)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "1999_dery_吹雪体相模型",
+      "title": "A bulk blowing snow model",
+      "authors": [
+        "Stephen J. Déry",
+        "M. K. Yau"
+      ],
+      "year": 1999,
+      "venue": "Boundary-Layer Meteorology",
+      "doi": "",
+      "raw_pdf": "data/raw/1999悬移控制方程.pdf",
+      "markdown": "data/papers/1999_dery_吹雪体相模型/paper.md",
+      "images_dir": "data/papers/1999_dery_吹雪体相模型/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "提出一个简单高效的体相（bulk）吹雪模型，用单一混合比预报悬移雪的扩散、沉降与升华，计算效率比谱型版本提升约百倍。",
+        "background_problem": "谱型吹雪模型计算昂贵，难以用于大区域/长时间模拟（如马更些河流域水量平衡）。",
+        "research_question": "能否用一个体相模型以极低计算成本复现谱型模型的吹雪升华结果？",
+        "method": "数值建模：求解悬移雪混合比的扩散-沉降-升华方程，时间依赖模式；与谱型模型结果对比验证。",
+        "data_or_experiment": "与 PIEKTUK 谱型模型对比；面向马更些河流域应用。",
+        "main_findings": "体相模型结果与谱型模型高度一致，计算效率提升约 100 倍；可用于估计吹雪对边界层和区域水量平衡的影响。",
+        "key_equations_or_models": [
+          "体相悬移雪混合比预报方程（扩散+沉降+升华）"
+        ],
+        "important_figures": [
+          "体相 vs 谱型模型结果对比",
+          "混合比剖面"
+        ],
+        "limitations": "体相化牺牲了部分粒径谱细节；依赖谱型模型标定。",
+        "relevance_to_my_work": "高效吹雪升华模型，适合耦合到大尺度模拟，是升华参数化的关键简化。",
+        "possible_use_in_paper": "方法（体相升华参数化）、对比（谱型 vs 体相效率/精度）、应用（区域水量平衡）。"
+      },
+      "tags": {
+        "topic": [
+          "blowing snow model",
+          "sublimation",
+          "suspension",
+          "bulk model"
+        ],
+        "method": [
+          "numerical model"
+        ],
+        "material_or_region": [
+          "Mackenzie Basin Canada"
+        ],
+        "variables": [
+          "mixing ratio",
+          "sublimation rate"
+        ],
+        "model_names": [
+          "bulk blowing snow model"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "体相模型",
+          "bulk model",
+          "升华参数化",
+          "高效吹雪模型"
+        ],
+        "do_not_use_for": [
+          "击溅函数",
+          "破碎"
+        ],
+        "priority": 5
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "dery1999_bulk_blowing_snow",
+        "bibtex": "@article{dery1999_bulk_blowing_snow,\n  title = {A bulk blowing snow model},\n  author = {Déry, Stephen J. and Yau, M. K.},\n  year = {1999},\n  journal = {Boundary-Layer Meteorology},\n}",
+        "citation_style_name": "Stephen and others (1999)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "1999_shao_风沙跃移数值模拟",
+      "title": "Numerical modelling of saltation in the atmospheric surface layer",
+      "authors": [
+        "Yaping Shao",
+        "An Li"
+      ],
+      "year": 1999,
+      "venue": "Boundary-Layer Meteorology",
+      "doi": "",
+      "raw_pdf": "data/raw/1999shaoli起动.pdf",
+      "markdown": "data/papers/1999_shao_风沙跃移数值模拟/paper.md",
+      "images_dir": "data/papers/1999_shao_风沙跃移数值模拟/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "发展了一个含大涡模拟、拉格朗日颗粒轨迹与统计起跳/击溅描述的跃移数值模型，研究跃移自限制过程及风/动量通量剖面演化。",
+        "background_problem": "跃移的若干方面（击溅作用、风与动量通量剖面演化、有效粗糙度）实验难以澄清。",
+        "research_question": "跃移如何作为自限制过程运作？击溅、风场调制与有效粗糙度 z0s 如何演化？",
+        "method": "数值模拟：大涡模拟（LES）大气表面层流 + 拉格朗日颗粒轨迹 + 气动起跳与击溅的统计描述。",
+        "data_or_experiment": "中性大气表面层；z0s 与 Raupach 解析模型、Gillette et al. 实验数据对比。",
+        "main_findings": "击溅有效需摩擦速度超过给定粒径的临界值；数值 z0s 与解析模型/实验吻合；输沙率与风洞测量一致。",
+        "key_equations_or_models": [
+          "跃移四要素耦合（气动起跳+颗粒运动+击溅+风场调制）",
+          "有效粗糙度 z0s"
+        ],
+        "important_figures": [
+          "风/动量通量剖面演化",
+          "z0s 对比图"
+        ],
+        "limitations": "针对沙粒跃移，中性条件；不直接处理雪的升华/破碎。",
+        "relevance_to_my_work": "跃移机制与风场调制的理论基础，对雪跃移建模有直接借鉴。",
+        "possible_use_in_paper": "方法（跃移建模、LES-Lagrangian）、机制解释（自限制、z0s）、对比（沙雪跃移）。"
+      },
+      "tags": {
+        "topic": [
+          "saltation",
+          "surface layer",
+          "wind modification"
+        ],
+        "method": [
+          "LES",
+          "Lagrangian particle",
+          "numerical model"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "friction velocity",
+          "roughness length",
+          "sand drift"
+        ],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "跃移",
+          "saltation",
+          "有效粗糙度",
+          "击溅",
+          "LES"
+        ],
+        "do_not_use_for": [
+          "升华",
+          "粒径分布测量"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "shao1999_saltation_modelling",
+        "bibtex": "@article{shao1999_saltation_modelling,\n  title = {Numerical modelling of saltation in the atmospheric surface layer},\n  author = {Shao, Yaping and Li, An},\n  year = {1999},\n  journal = {Boundary-Layer Meteorology},\n}",
+        "citation_style_name": "Yaping and others (1999)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ]
+    },
+    {
+      "paper_id": "2000_sugiura_吹雪击溅函数",
+      "title": "Wind-tunnel measurements of restitution coefficients and ejection number of snow particles in drifting snow: determination of splash functions",
+      "authors": [
+        "K. Sugiura",
+        "N. Maeno"
+      ],
+      "year": 2000,
+      "venue": "Annals of Glaciology",
+      "doi": "",
+      "raw_pdf": "data/raw/Sugiura–Maeno击溅.pdf",
+      "markdown": "data/papers/2000_sugiura_吹雪击溅函数/paper.md",
+      "images_dir": "data/papers/2000_sugiura_吹雪击溅函数/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "通过风洞实验测定飘雪颗粒撞击雪面的恢复系数与溅射数，拟合出三组击溅函数供数值模拟使用。",
+        "background_problem": "跃移/飘移数值模拟需要击溅过程的概率描述，但缺少雪的实测击溅函数。",
+        "research_question": "雪粒撞击自然雪面时垂直/水平恢复系数与溅射数如何分布？",
+        "method": "风洞实验：天然雪粒撞击天然雪面，测量恢复系数与溅射数随撞击角度/速度的关系，拟合概率分布。",
+        "data_or_experiment": "低温风洞，天然雪；撞击角约 5° 时垂直恢复系数可超 10。",
+        "main_findings": "垂直恢复系数通常>1 且随撞击角锐减（小角度可达 10+）；水平恢复系数 -1~1.5 随撞击速度递减；溅射数每次撞击可达 5，随速度增加；给出三组击溅函数。",
+        "key_equations_or_models": [
+          "垂直恢复系数击溅函数",
+          "水平恢复系数击溅函数",
+          "溅射数击溅函数"
+        ],
+        "important_figures": [
+          "恢复系数 vs 撞击角/速度",
+          "溅射数分布"
+        ],
+        "limitations": "风洞条件，雪面状态特定；未含升华耦合。",
+        "relevance_to_my_work": "雪跃移击溅过程的核心实验参数化，是数值模拟 splash 项的实测依据。",
+        "possible_use_in_paper": "方法（击溅函数参数化）、验证（splash 项标定）、对比（沙雪击溅差异）。"
+      },
+      "tags": {
+        "topic": [
+          "splash function",
+          "saltation",
+          "restitution coefficient"
+        ],
+        "method": [
+          "wind tunnel"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "restitution coefficient",
+          "ejection number",
+          "impact angle"
+        ],
+        "model_names": [
+          "splash function"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "击溅",
+          "splash",
+          "恢复系数",
+          "溅射",
+          "风洞"
+        ],
+        "do_not_use_for": [
+          "升华",
+          "悬移"
+        ],
+        "priority": 5
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "sugiura2000_splash_functions",
+        "bibtex": "@inproceedings{sugiura2000_splash_functions,\n  title = {Wind-tunnel measurements of restitution coefficients and ejection number of snow particles in drifting snow: determination of splash functions},\n  author = {Sugiura, K. and Maeno, N.},\n  year = {2000},\n}",
+        "citation_style_name": "K. and others (2000)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport",
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "2000_nishimura_南极吹雪观测",
+      "title": "Blowing snow at Mizuho station, Antarctica",
+      "authors": [
+        "Kouichi Nishimura",
+        "Masaki Nemoto"
+      ],
+      "year": 2000,
+      "venue": "Polar Meteorology and Glaciology",
+      "doi": "",
+      "raw_pdf": "data/raw/Nishimura粒径分布.pdf",
+      "markdown": "data/papers/2000_nishimura_南极吹雪观测/paper.md",
+      "images_dir": "data/papers/2000_nishimura_南极吹雪观测/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "在南极瑞穗站 30 m 塔上用雪粒计数器观测吹雪通量与粒径分布，并与含主要物理过程的吹雪模型对比验证。",
+        "background_problem": "吹雪对工程与气候均重要，但南极等极端环境的原位观测与模型验证缺乏。",
+        "research_question": "南极吹雪的质量通量剖面与粒径分布如何随摩擦速度变化？模型能否复现？",
+        "method": "野外观测 + 模型对比：30 m 塔装雪粒计数器（同时测数量与粒径），测通量剖面与粒径分布；与含气动起跳、碰撞、风场调制、粒径分布、湍流脉动的吹雪模型对比。",
+        "data_or_experiment": "南极瑞穗站，2000 年 10–11 月，30 m 塔，雪粒计数器。",
+        "main_findings": "模型与实测高度吻合；精确表达了从跃移到悬移的水平质量通量垂直剖面及粒径分布（以往模型达不到）。",
+        "key_equations_or_models": [
+          "含多物理过程的吹雪模型（气动起跳+碰撞+风场调制+粒径分布+湍流脉动）"
+        ],
+        "important_figures": [
+          "质量通量垂直剖面",
+          "粒径分布 vs 摩擦速度"
+        ],
+        "limitations": "特定站点与时段；模型对参数敏感。",
+        "relevance_to_my_work": "吹雪通量与粒径分布的高质量原位验证数据，可用于参数化标定。",
+        "possible_use_in_paper": "验证（通量/粒径剖面）、方法（观测系统）、对比（南极环境）。"
+      },
+      "tags": {
+        "topic": [
+          "blowing snow",
+          "mass flux",
+          "particle size distribution",
+          "Antarctica"
+        ],
+        "method": [
+          "field measurement",
+          "model comparison"
+        ],
+        "material_or_region": [
+          "Mizuho Antarctica"
+        ],
+        "variables": [
+          "mass flux",
+          "particle size",
+          "friction velocity"
+        ],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "粒径分布",
+          "质量通量",
+          "南极",
+          "原位观测"
+        ],
+        "do_not_use_for": [
+          "击溅函数",
+          "升华热力学"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "nishimura2000_blowing_snow_mizuho",
+        "bibtex": "@article{nishimura2000_blowing_snow_mizuho,\n  title = {Blowing snow at Mizuho station, Antarctica},\n  author = {Nishimura, Kouichi and Nemoto, Masaki},\n  year = {2000},\n  journal = {Polar Meteorology and Glaciology},\n}",
+        "citation_style_name": "Kouichi and others (2000)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "2008_wang_风沙跃移与悬移运动",
+      "title": "Saltation and suspension of wind-blown particle movement",
+      "authors": [
+        "Wang Ping",
+        "Zheng XiaoJing",
+        "Hu WenWen"
+      ],
+      "year": 2008,
+      "venue": "Science in China Series G",
+      "doi": "",
+      "raw_pdf": "data/raw/s11433-008-0106-6.pdf",
+      "markdown": "data/papers/2008_wang_风沙跃移与悬移运动/paper.md",
+      "images_dir": "data/papers/2008_wang_风沙跃移与悬移运动/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "考虑湍流边界层内颗粒的随机运动，分析影响风沙颗粒轨迹的因素，给出跃移/悬移判据与各输运模式占比。",
+        "background_problem": "风沙通量中颗粒在湍流下的轨迹与输运模式判据尚需厘清。",
+        "research_question": "湍流下相同粒径/起跳速度/摩擦速度的颗粒为何有迥异轨迹？如何判定跃移与悬移？",
+        "method": "理论与随机模型：大气边界层湍流中颗粒随机运动分析；计算临界起跳速度与各模式占比。",
+        "data_or_experiment": "给定粒径与摩擦速度下的占比预测，与统计占比（含/不含风沙耦合）对比。",
+        "main_findings": "湍流使同条件颗粒轨迹显著分化；垂直脉动速度可反映输运模式，与粒径、起跳速度、摩擦速度相关；给出跃移/悬移判据与各模式占比。",
+        "key_equations_or_models": [
+          "跃移/悬移判据",
+          "输运模式占比随粒径/摩擦速度"
+        ],
+        "important_figures": [
+          "颗粒轨迹样本",
+          "各模式占比曲线"
+        ],
+        "limitations": "针对沙粒；理论/统计对比，无原位验证。",
+        "relevance_to_my_work": "跃移与悬移判据的理论框架，对雪的输运模式划分有参考。",
+        "possible_use_in_paper": "方法（输运模式判据）、机制解释（湍流致轨迹分化）、对比（沙雪）。"
+      },
+      "tags": {
+        "topic": [
+          "saltation",
+          "suspension",
+          "turbulence",
+          "trajectory"
+        ],
+        "method": [
+          "stochastic model",
+          "theoretical"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "liftoff velocity",
+          "friction velocity",
+          "transport mode"
+        ],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "跃移悬移判据",
+          "输运模式",
+          "轨迹",
+          "湍流"
+        ],
+        "do_not_use_for": [
+          "升华",
+          "粒径分布测量"
+        ],
+        "priority": 3
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "wang2008_saltation_suspension",
+        "bibtex": "@article{wang2008_saltation_suspension,\n  title = {Saltation and suspension of wind-blown particle movement},\n  author = {Wang, Ping and Zheng, XiaoJing and Hu, WenWen},\n  year = {2008},\n  journal = {Science in China Series G: Physics, Mechanics and Astronomy},\n}",
+        "citation_style_name": "Wang and others (2008)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ]
+    },
+    {
+      "paper_id": "2010_gordon_吹雪粒径分布",
+      "title": "Measurements of blowing snow, Part I: Particle shape, size distribution, velocity, and number flux at Churchill, Manitoba, Canada",
+      "authors": [
+        "Mark Gordon",
+        "Peter A. Taylor"
+      ],
+      "year": 2010,
+      "venue": "Cold Regions Science and Technology",
+      "doi": "",
+      "raw_pdf": "data/raw/Gordon粒径分布.pdf",
+      "markdown": "data/papers/2010_gordon_吹雪粒径分布/paper.md",
+      "images_dir": "data/papers/2010_gordon_吹雪粒径分布/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "用相机系统测量加拿大 Churchill 吹雪颗粒的形状、粒径分布、速度与数通量，发现颗粒多非球形且数通量与光学粒子计数器吻合良好。",
+        "background_problem": "吹雪频繁且重要，但北极/亚北极环境缺乏观测，尤其颗粒形状与粒径的成像测量。",
+        "research_question": "吹雪颗粒的形状、粒径分布、速度与数通量如何？相机系统能否可靠测量？",
+        "method": "野外观测：相机成像系统测形状/粒径/速度，配合气象仪器与光学粒子计数器。",
+        "data_or_experiment": "Churchill, Manitoba，2005 年 3 月与 2006 年 12 月野外试验。",
+        "main_findings": "颗粒多非球形，长短轴比均值约 1.41；相机测速度不准确；数通量与光学计数器相关性好（r²高）。",
+        "key_equations_or_models": [
+          "颗粒形状比统计",
+          "数通量与 OPC 相关"
+        ],
+        "important_figures": [
+          "粒径分布",
+          "颗粒形状比",
+          "数通量对比"
+        ],
+        "limitations": "速度测量不准确；特定站点/季节。",
+        "relevance_to_my_work": "吹雪粒径分布与形状的成像观测数据，是粒径参数化的实测依据。",
+        "possible_use_in_paper": "验证（粒径分布/形状）、方法（成像测量）、对比（与 OPC）。"
+      },
+      "tags": {
+        "topic": [
+          "particle size distribution",
+          "particle shape",
+          "number flux",
+          "blowing snow"
+        ],
+        "method": [
+          "digital imaging",
+          "field measurement"
+        ],
+        "material_or_region": [
+          "Churchill Manitoba Canada"
+        ],
+        "variables": [
+          "particle size",
+          "shape ratio",
+          "number flux"
+        ],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "粒径分布",
+          "颗粒形状",
+          "数通量",
+          "成像测量"
+        ],
+        "do_not_use_for": [
+          "升华热力学",
+          "击溅函数"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "gordon2010_blowing_snow_measurements",
+        "bibtex": "@article{gordon2010_blowing_snow_measurements,\n  title = {Measurements of blowing snow, Part I: Particle shape, size distribution, velocity, and number flux at Churchill, Manitoba, Canada},\n  author = {Gordon, Mark and Taylor, Peter A.},\n  year = {2010},\n  journal = {Cold Regions Science and Technology},\n}",
+        "citation_style_name": "Mark and others (2010)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "2017_comola_风吹雪晶体破碎",
+      "title": "Fragmentation of wind-blown snow crystals",
+      "authors": [
+        "Francesco Comola",
+        "Jasper F. Kok",
+        "Johan Gaume",
+        "Enrico Paterna",
+        "Michael Lehning"
+      ],
+      "year": 2017,
+      "venue": "Geophysical Research Letters",
+      "doi": "10.1002/2017GL073039",
+      "raw_pdf": "data/raw/Comola_et_al_2017_Fragmentation_of_wind_blown_snow_crystals.pdf",
+      "markdown": "data/papers/2017_comola_风吹雪晶体破碎/paper.md",
+      "images_dir": "data/papers/2017_comola_风吹雪晶体破碎/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "基于雪花分形结构预测枝状雪晶的破碎动力学，解释了从降雪晶粒到吹雪粒子的粒径分布转变。",
+        "background_problem": "降雪晶粒转变为吹雪粒子的过程对正确刻画吹雪粒径分布至关重要，但破碎动力学不清。",
+        "research_question": "能否由雪花的分形结构预测破碎，并由此解释吹雪粒径分布的典型特征？",
+        "method": "理论 + 建模：基于分形结构的破碎动力学；与湍流悬移耦合，导出粒径分布。",
+        "data_or_experiment": "降雪晶粒与吹雪粒径分布的对比/解释。",
+        "main_findings": "破碎动力学可由分形结构预测；破碎能解释降雪晶粒→吹雪粒子的粒径分布转变；吹雪粒径分布的典型特征源于雪花分形形状与湍流悬移。",
+        "key_equations_or_models": [
+          "分形破碎动力学",
+          "破碎致粒径分布转变"
+        ],
+        "important_figures": [
+          "破碎前后粒径分布",
+          "分形结构示意"
+        ],
+        "limitations": "侧重破碎对粒径分布的影响，未深入升华耦合。",
+        "relevance_to_my_work": "雪破碎机制的核心理论，连接粒径分布与升华（小粒增多促升华），是破碎-升华耦合的基础。",
+        "possible_use_in_paper": "方法（破碎参数化）、机制解释（粒径分布形成）、引言（破碎重要性）。"
+      },
+      "tags": {
+        "topic": [
+          "fragmentation",
+          "size distribution",
+          "fractal",
+          "blowing snow"
+        ],
+        "method": [
+          "theoretical",
+          "modeling"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "particle size distribution",
+          "fragmentation rate"
+        ],
+        "model_names": [
+          "fractal fragmentation model"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "破碎",
+          "fragmentation",
+          "粒径分布",
+          "分形"
+        ],
+        "do_not_use_for": [
+          "升华热力学",
+          "击溅函数"
+        ],
+        "priority": 5
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "comola2017_snow_fragmentation",
+        "bibtex": "@article{comola2017_snow_fragmentation,\n  title = {Fragmentation of wind-blown snow crystals},\n  author = {Comola, Francesco and Kok, Jasper F. and Gaume, Johan and Paterna, Enrico and Lehning, Michael},\n  year = {2017},\n  journal = {Geophysical Research Letters},\n  doi = {10.1002/2017GL073039},\n}",
+        "citation_style_name": "Francesco and others (2017)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "2021_zheng_跃移床面湍流调制",
+      "title": "Modulation of turbulence by saltating particles on erodible bed surface",
+      "authors": [
+        "Xiaojing Zheng",
+        "Shengjun Feng",
+        "Ping Wang"
+      ],
+      "year": 2021,
+      "venue": "Journal of Fluid Mechanics",
+      "doi": "10.1017/jfm.2021.329",
+      "raw_pdf": "data/raw/jfm.2021.329.pdf",
+      "markdown": "data/papers/2021_zheng_跃移床面湍流调制/paper.md",
+      "images_dir": "data/papers/2021_zheng_跃移床面湍流调制/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "用大涡模拟研究可蚀床面上重跃移颗粒对湍流的调制，发现颗粒降低平均流向速度、抑制近床流向脉动与雷诺应力但增强垂向/展向湍流强度。",
+        "background_problem": "重颗粒跃移对湍流调制的机理（尤其可蚀床面、高雷诺数下）认识不足。",
+        "research_question": "重跃移颗粒如何调制可蚀床面湍流？雷诺数如何影响？",
+        "method": "数值模拟：Eulerian-Lagrangian 点颗粒大涡模拟，两相耦合，颗粒-床碰撞用 splash 模型；摩擦雷诺数 3730、4200。",
+        "data_or_experiment": "湍流开槽流加颗粒；不含颗粒-颗粒碰撞。",
+        "main_findings": "加颗粒降低平均流向速度；近床流向脉动与雷诺应力被抑制，垂向/展向湍流强度增强；外层湍流强度与雷诺应力明显增加；雷诺数越大效应越显著；湍流结构相关尺度增大。",
+        "key_equations_or_models": [
+          "Eulerian-Lagrangian 点颗粒 LES",
+          "splash 床碰撞模型"
+        ],
+        "important_figures": [
+          "平均速度/脉动强度剖面",
+          "雷诺应力剖面",
+          "湍流结构相关尺度"
+        ],
+        "limitations": "不含颗粒间碰撞；沙粒跃移场景。",
+        "relevance_to_my_work": "跃移-湍流耦合的高保真模拟参考，为雪跃移的湍流调制建模提供方法。",
+        "possible_use_in_paper": "方法（LES 点颗粒两相耦合）、机制解释（湍流调制）、对比（沙雪跃移）。"
+      },
+      "tags": {
+        "topic": [
+          "turbulence modulation",
+          "saltation",
+          "two-phase flow"
+        ],
+        "method": [
+          "LES",
+          "Eulerian-Lagrangian"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "Reynolds stress",
+          "turbulence intensity"
+        ],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "湍流调制",
+          "跃移",
+          "LES",
+          "两相流",
+          "雷诺应力"
+        ],
+        "do_not_use_for": [
+          "升华",
+          "粒径分布测量"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "zheng2021_turbulence_saltation",
+        "bibtex": "@article{zheng2021_turbulence_saltation,\n  title = {Modulation of turbulence by saltating particles on erodible bed surface},\n  author = {Zheng, Xiaojing and Feng, Shengjun and Wang, Ping},\n  year = {2021},\n  journal = {Journal of Fluid Mechanics},\n  doi = {10.1017/jfm.2021.329},\n}",
+        "citation_style_name": "Xiaojing and others (2021)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ]
+    },
+    {
+      "paper_id": "2023_wang_有限粒径颗粒阻力模型",
+      "title": "Drag model of finite-sized particle in turbulent wall-bound flow over sediment bed",
+      "authors": [
+        "Ping Wang",
+        "Yinghaonan Lei",
+        "Zhengping Zhu",
+        "Xiaojing Zheng"
+      ],
+      "year": 2023,
+      "venue": "Journal of Fluid Mechanics",
+      "doi": "",
+      "raw_pdf": "data/raw/Wang_2023_drag_model_finite_sized_particle_JFM.pdf",
+      "markdown": "data/papers/2023_wang_有限粒径颗粒阻力模型/paper.md",
+      "images_dir": "data/papers/2023_wang_有限粒径颗粒阻力模型/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "用浸入边界 DNS 研究沉积床面壁湍流中跃移有限粒径颗粒的阻力，指出传统孤立颗粒阻力模型沿轨迹（尤其下降段）误差显著，给出改进模型。",
+        "background_problem": "阻力模型对湍流多相流模拟至关重要，但跃移颗粒的稳健阻力模型仍是开放问题。",
+        "research_question": "传统孤立颗粒阻力模型能否准确估计跃移颗粒沿轨迹的阻力？如何改进？",
+        "method": "数值模拟：全解析直接数值模拟（DNS）+ 浸入边界法，研究沉积床面壁湍流中跃移颗粒阻力。",
+        "data_or_experiment": "DNS 数据拟合；颗粒雷诺数、颗粒-壁距离、局部体积分数影响分析。",
+        "main_findings": "传统孤立颗粒阻力模型（仅依赖颗粒雷诺数）沿轨迹不能准确估计阻力，下降段误差尤甚；阻力还依赖颗粒-壁距离与局部体积分数；理论与 DNS 拟合给出改进模型。",
+        "key_equations_or_models": [
+          "改进阻力模型（含颗粒-壁距离与局部体积分数）",
+          "浸入边界 DNS"
+        ],
+        "important_figures": [
+          "阻力沿轨迹对比",
+          "模型 vs DNS 误差"
+        ],
+        "limitations": "沙粒/沉积床场景；DNS 计算昂贵。",
+        "relevance_to_my_work": "跃移颗粒阻力的精细化建模，对雪跃移轨迹与受力模拟有方法学借鉴。",
+        "possible_use_in_paper": "方法（阻力模型）、机制解释（有限粒径效应）、对比（沙雪）。"
+      },
+      "tags": {
+        "topic": [
+          "drag model",
+          "saltation",
+          "finite-size particle",
+          "wall turbulence"
+        ],
+        "method": [
+          "DNS",
+          "immersed boundary"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "drag force",
+          "particle Reynolds number"
+        ],
+        "model_names": [
+          "finite-size drag model"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "阻力模型",
+          "drag",
+          "有限粒径",
+          "DNS",
+          "跃移受力"
+        ],
+        "do_not_use_for": [
+          "升华",
+          "粒径分布测量"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "wang2023_drag_finite_particle",
+        "bibtex": "@article{wang2023_drag_finite_particle,\n  title = {Drag model of finite-sized particle in turbulent wall-bound flow over sediment bed},\n  author = {Wang, Ping and Lei, Yinghaonan and Zhu, Zhengping and Zheng, Xiaojing},\n  year = {2023},\n  journal = {Journal of Fluid Mechanics},\n}",
+        "citation_style_name": "Ping and others (2023)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport",
+        "abl_pbl"
+      ]
+    },
+    {
+      "paper_id": "2025_huang_雪粒破碎促进升华",
+      "title": "Snow particle fragmentation enhances snow sublimation",
+      "authors": [
+        "Ning Huang",
+        "Jiacheng Bao",
+        "Hongxiang Yu",
+        "Guang Li"
+      ],
+      "year": 2025,
+      "venue": "The Cryosphere",
+      "doi": "10.5194/acp-25-12535-2025",
+      "raw_pdf": "data/raw/huang2025破碎.pdf",
+      "markdown": "data/papers/2025_huang_雪粒破碎促进升华/paper.md",
+      "images_dir": "data/papers/2025_huang_雪粒破碎促进升华/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "将雪粒破碎模型纳入成熟吹雪模型，定量揭示破碎在跃移层产生更小颗粒、增大比表面积从而显著增强升华。",
+        "background_problem": "现有多數吹雪模型忽略雪粒破碎，给流动与升华率预测带来不确定性。",
+        "research_question": "破碎在不同风况下如何影响吹雪流动与升华率？",
+        "method": "数值模拟：在成熟吹雪模型中加入雪粒破碎模型，变化风况定量研究破碎影响。",
+        "data_or_experiment": "不同风速/条件下的模拟对比（含/不含破碎）。",
+        "main_findings": "跃移层破碎产生更小颗粒，增大质量比表面积，使升华显著增加；破碎对升华的促进随风况变化。",
+        "key_equations_or_models": [
+          "雪粒破碎模型",
+          "破碎-比表面积-升华耦合"
+        ],
+        "important_figures": [
+          "破碎前后粒径分布",
+          "升华率对比"
+        ],
+        "limitations": "模型参数依赖；特定风况区间。",
+        "relevance_to_my_work": "直接连接破碎与升华的最新工作，是破碎促升华机制的核心参考文献。",
+        "possible_use_in_paper": "机制解释（破碎促升华）、方法（破碎-升华耦合）、引言（最新进展）。"
+      },
+      "tags": {
+        "topic": [
+          "fragmentation",
+          "sublimation",
+          "blowing snow model"
+        ],
+        "method": [
+          "numerical model"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "sublimation rate",
+          "specific surface area",
+          "particle size"
+        ],
+        "model_names": [
+          "fragmentation-enhanced sublimation"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "破碎",
+          "升华",
+          "比表面积",
+          "fragmentation sublimation"
+        ],
+        "do_not_use_for": [
+          "击溅函数",
+          "粒径分布测量"
+        ],
+        "priority": 5
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "huang2025_fragmentation_sublimation",
+        "bibtex": "@article{huang2025_fragmentation_sublimation,\n  title = {Snow particle fragmentation enhances snow sublimation},\n  author = {Huang, Ning and Bao, Jiacheng and Yu, Hongxiang and Li, Guang},\n  year = {2025},\n  journal = {The Cryosphere},\n}",
+        "citation_style_name": "Ning and others (2025)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ]
+    },
+    {
+      "paper_id": "2026_viaro_高山吹雪云过程",
+      "title": "The importance of alpine blowing snow for cloud processes",
+      "authors": [
+        "Samuele Viaro",
+        "Armin Sigmund",
+        "Evan Thomas",
+        "Michael Lehning"
+      ],
+      "year": 2026,
+      "venue": "EGUsphere (preprint)",
+      "doi": "",
+      "raw_pdf": "data/raw/cryowrf-egusphere-2026-2132.pdf",
+      "markdown": "data/papers/2026_viaro_高山吹雪云过程/paper.md",
+      "images_dir": "data/papers/2026_viaro_高山吹雪云过程/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "用含新跃移方案的 CRYOWRF 模型研究高山吹雪对云过程的影响，表明吹雪是冰晶的重要次生源并对降水/侵蚀沉积有显著作用。",
+        "background_problem": "数值模型难以重现高山地区冰核粒子与冰晶数浓度之间的巨大差距，吹雪被疑为额外冰粒源。",
+        "research_question": "高山吹雪颗粒对云过程（冰晶浓度、降水、侵蚀沉积）有多大影响？",
+        "method": "数值模拟：CRYOWRF 模型，新实现跃移方案以更好提供吹雪方程边界条件；与 Jungfraujoch 实测冰晶浓度对比。",
+        "data_or_experiment": "瑞士阿尔卑斯 Jungfraujoch 实测冰晶浓度对比；侵蚀/沉积与降水分析。",
+        "main_findings": "次生冰产生、吹雪与微物理方案均重要；吹雪作为冰粒源显著影响冰晶浓度；实现对侵蚀沉积与降水有显著影响。",
+        "key_equations_or_models": [
+          "CRYOWRF",
+          "新跃移方案",
+          "吹雪-云耦合"
+        ],
+        "important_figures": [
+          "冰晶浓度 vs 实测",
+          "侵蚀沉积场",
+          "降水影响"
+        ],
+        "limitations": "预印本（2026）；高山特定；参数化敏感。",
+        "relevance_to_my_work": "吹雪跃移方案与多过程耦合的最新应用，提供跃移方案实现与吹雪大尺度影响的参考。",
+        "possible_use_in_paper": "方法（跃移方案实现）、应用（吹雪对云/水文影响）、引言（最新进展）。"
+      },
+      "tags": {
+        "topic": [
+          "blowing snow",
+          "cloud processes",
+          "saltation scheme",
+          "CryoWRF"
+        ],
+        "method": [
+          "numerical model"
+        ],
+        "material_or_region": [
+          "Swiss Alps"
+        ],
+        "variables": [
+          "ice crystal number",
+          "precipitation",
+          "erosion/deposition"
+        ],
+        "model_names": [
+          "CRYOWRF"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "CryoWRF",
+          "跃移方案",
+          "吹雪云过程",
+          "次生冰",
+          "高山吹雪"
+        ],
+        "do_not_use_for": [
+          "击溅函数",
+          "粒径分布测量"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "viaro2026_alpine_blowing_snow_cloud",
+        "bibtex": "@article{viaro2026_alpine_blowing_snow_cloud,\n  title = {The importance of alpine blowing snow for cloud processes},\n  author = {Viaro, Samuele and Sigmund, Armin and Thomas, Evan and Lehning, Michael},\n  year = {2026},\n  journal = {EGUsphere (preprint)},\n}",
+        "citation_style_name": "Samuele and others (2026)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics",
+        "abl_pbl"
+      ]
+    },
+    {
+      "paper_id": "2018_mott_风吹雪耦合季节性积雪综述",
+      "title": "The Seasonal Snow Cover Dynamics: Review on Wind-Driven Coupling Processes",
+      "authors": [
+        "Rebecca Mott"
+      ],
+      "year": 2018,
+      "venue": "",
+      "doi": "10.3389/feart.2018.00197",
+      "raw_pdf": "data/raw/2018_mott_风吹雪耦合季节性积雪综述.pdf",
+      "markdown": "data/papers/2018_mott_风吹雪耦合季节性积雪综述/paper.md",
+      "images_dir": "data/papers/2018_mott_风吹雪耦合季节性积雪综述/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2018_the_seasonal_snow_cover_dynamics_review_on_wind_driven_coupling_processes",
+        "bibtex": "@misc{2018_the_seasonal_snow_cover_dynamics_review_on_wind_driven_coupling_processes,\n  author = {Mott, Rebecca},\n  title = {The Seasonal Snow Cover Dynamics: Review on Wind-Driven Coupling Processes},\n  year = {2018},\n  doi = {10.3389/feart.2018.00197},\n}\n",
+        "citation_style_name": "(2018)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2015_dewekker_山地地形对流边界层高度综述",
+      "title": "Convective Boundary Layer Heights Over Mountainous Terrain: A Review of Concepts",
+      "authors": [
+        "Stephan F. J. De Wekker"
+      ],
+      "year": 2015,
+      "venue": "",
+      "doi": "10.3389/feart.2015.00077",
+      "raw_pdf": "data/raw/2015_dewekker_山地地形对流边界层高度综述.pdf",
+      "markdown": "data/papers/2015_dewekker_山地地形对流边界层高度综述/paper.md",
+      "images_dir": "data/papers/2015_dewekker_山地地形对流边界层高度综述/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts",
+        "bibtex": "@misc{2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts,\n  author = {De Wekker, Stephan F. J.},\n  title = {Convective Boundary Layer Heights Over Mountainous Terrain: A Review of Concepts},\n  year = {2015},\n  doi = {10.3389/feart.2015.00077},\n}\n",
+        "citation_style_name": "(2015)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2014_wang_无线电探空大气混合层高度估算",
+      "title": "Estimation of atmospheric mixing layer height from radiosonde data",
+      "authors": [
+        "X. Y. Wang"
+      ],
+      "year": 2014,
+      "venue": "",
+      "doi": "10.5194/amt-7-1701-2014",
+      "raw_pdf": "data/raw/2014_wang_无线电探空大气混合层高度估算.pdf",
+      "markdown": "data/papers/2014_wang_无线电探空大气混合层高度估算/paper.md",
+      "images_dir": "data/papers/2014_wang_无线电探空大气混合层高度估算/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data",
+        "bibtex": "@misc{2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data,\n  author = {Wang, X. Y.},\n  title = {Estimation of atmospheric mixing layer height from radiosonde data},\n  year = {2014},\n  doi = {10.5194/amt-7-1701-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2014_lothon_BLLAST下午黄昏边界层湍流实验",
+      "title": "The BLLAST field experiment: Boundary-Layer Late Afternoon and Sunset Turbulence",
+      "authors": [
+        "M. Lothon"
+      ],
+      "year": 2014,
+      "venue": "",
+      "doi": "10.5194/acp-14-10931-2014",
+      "raw_pdf": "data/raw/2014_lothon_BLLAST下午黄昏边界层湍流实验.pdf",
+      "markdown": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/paper.md",
+      "images_dir": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence",
+        "bibtex": "@misc{2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence,\n  author = {Lothon, M.},\n  title = {The BLLAST field experiment: Boundary-Layer Late Afternoon and Sunset Turbulence},\n  year = {2014},\n  doi = {10.5194/acp-14-10931-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2015_gao_沙丘形态定向相图",
+      "title": "Phase diagrams of dune shape and orientation depending on sand availability",
+      "authors": [
+        "Xin Gao"
+      ],
+      "year": 2015,
+      "venue": "",
+      "doi": "10.1038/srep14677",
+      "raw_pdf": "data/raw/2015_gao_沙丘形态定向相图.pdf",
+      "markdown": "data/papers/2015_gao_沙丘形态定向相图/paper.md",
+      "images_dir": "data/papers/2015_gao_沙丘形态定向相图/images",
+      "status": "unsummarized",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2015_phase_diagrams_of_dune_shape_and_orientation_depending_on_sand_availability",
+        "bibtex": "@misc{2015_phase_diagrams_of_dune_shape_and_orientation_depending_on_sand_availability,\n  author = {Gao, Xin},\n  title = {Phase diagrams of dune shape and orientation depending on sand availability},\n  year = {2015},\n  doi = {10.1038/srep14677},\n}\n",
+        "citation_style_name": "(2015)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2018_jambonpuillet_冰晶奇异升华",
+      "title": "Singular sublimation of ice and snow crystals",
+      "authors": [
+        "Etienne Jambon-Puillet"
+      ],
+      "year": 2018,
+      "venue": "",
+      "doi": "10.1038/s41467-018-06689-x",
+      "raw_pdf": "data/raw/2018_jambonpuillet_冰晶奇异升华.pdf",
+      "markdown": "data/papers/2018_jambonpuillet_冰晶奇异升华/paper.md",
+      "images_dir": "data/papers/2018_jambonpuillet_冰晶奇异升华/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2018_singular_sublimation_of_ice_and_snow_crystals",
+        "bibtex": "@misc{2018_singular_sublimation_of_ice_and_snow_crystals,\n  author = {Jambon-Puillet, Etienne},\n  title = {Singular sublimation of ice and snow crystals},\n  year = {2018},\n  doi = {10.1038/s41467-018-06689-x},\n}\n",
+        "citation_style_name": "(2018)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2006_clifton_风吹雪盐度阈值风洞实验",
+      "title": "Snow saltation threshold measurements in a drifting-snow wind tunnel",
+      "authors": [
+        "Andrew Clifton"
+      ],
+      "year": 2006,
+      "venue": "",
+      "doi": "10.3189/172756506781828430",
+      "raw_pdf": "data/raw/2006_clifton_风吹雪盐度阈值风洞实验.pdf",
+      "markdown": "data/papers/2006_clifton_风吹雪盐度阈值风洞实验/paper.md",
+      "images_dir": "data/papers/2006_clifton_风吹雪盐度阈值风洞实验/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2006_snow_saltation_threshold_measurements_in_a_driftin",
+        "bibtex": "@misc{2006_snow_saltation_threshold_measurements_in_a_driftin,\n  author = {Clifton, Andrew},\n  title = {Snow saltation threshold measurements in a drifting-snow wind tunnel},\n  year = {2006},\n  doi = {10.3189/172756506781828430},\n}\n",
+        "citation_style_name": "(2006)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2012_vionnet_Crocus积雪方案SURFEX",
+      "title": "The detailed snowpack scheme Crocus and its implementation in SURFEX v7.2",
+      "authors": [
+        "V. Vionnet"
+      ],
+      "year": 2012,
+      "venue": "",
+      "doi": "10.5194/gmd-5-773-2012",
+      "raw_pdf": "data/raw/2012_vionnet_Crocus积雪方案SURFEX.pdf",
+      "markdown": "data/papers/2012_vionnet_Crocus积雪方案SURFEX/paper.md",
+      "images_dir": "data/papers/2012_vionnet_Crocus积雪方案SURFEX/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2012_the_detailed_snowpack_scheme_crocus_and_its_implem",
+        "bibtex": "@misc{2012_the_detailed_snowpack_scheme_crocus_and_its_implem,\n  author = {Vionnet, V.},\n  title = {The detailed snowpack scheme Crocus and its implementation in SURFEX v7.2},\n  year = {2012},\n  doi = {10.5194/gmd-5-773-2012},\n}\n",
+        "citation_style_name": "(2012)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2014_vionnet_风吹雪输运升华积雪模拟",
+      "title": "Simulation of wind-induced snow transport and sublimation in alpine terrain using a fully coupled snowpack/atmosphere model",
+      "authors": [
+        "V. Vionnet"
+      ],
+      "year": 2014,
+      "venue": "",
+      "doi": "10.5194/tc-8-395-2014",
+      "raw_pdf": "data/raw/2014_vionnet_风吹雪输运升华积雪模拟.pdf",
+      "markdown": "data/papers/2014_vionnet_风吹雪输运升华积雪模拟/paper.md",
+      "images_dir": "data/papers/2014_vionnet_风吹雪输运升华积雪模拟/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_simulation_of_wind_induced_snow_transport_and_subl",
+        "bibtex": "@misc{2014_simulation_of_wind_induced_snow_transport_and_subl,\n  author = {Vionnet, V.},\n  title = {Simulation of wind-induced snow transport and sublimation in alpine terrain using a fully coupled snowpack/atmosphere model},\n  year = {2014},\n  doi = {10.5194/tc-8-395-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2008_baars_激光雷达连续监测边界层顶",
+      "title": "Continuous monitoring of the boundary-layer top with lidar",
+      "authors": [
+        "Holger Baars"
+      ],
+      "year": 2008,
+      "venue": "",
+      "doi": "10.5194/acp-8-7281-2008",
+      "raw_pdf": "data/raw/2008_baars_激光雷达连续监测边界层顶.pdf",
+      "markdown": "data/papers/2008_baars_激光雷达连续监测边界层顶/paper.md",
+      "images_dir": "data/papers/2008_baars_激光雷达连续监测边界层顶/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2008_continuous_monitoring_of_the_boundary_layer_top_wi",
+        "bibtex": "@misc{2008_continuous_monitoring_of_the_boundary_layer_top_wi,\n  author = {Baars, Holger},\n  title = {Continuous monitoring of the boundary-layer top with lidar},\n  year = {2008},\n  doi = {10.5194/acp-8-7281-2008},\n}\n",
+        "citation_style_name": "(2008)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2023_kotthaus_地基遥感边界层高度综述",
+      "title": "Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations",
+      "authors": [
+        "Simone Kotthaus"
+      ],
+      "year": 2023,
+      "venue": "",
+      "doi": "10.5194/amt-16-433-2023",
+      "raw_pdf": "data/raw/2023_kotthaus_地基遥感边界层高度综述.pdf",
+      "markdown": "data/papers/2023_kotthaus_地基遥感边界层高度综述/paper.md",
+      "images_dir": "data/papers/2023_kotthaus_地基遥感边界层高度综述/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2023_atmospheric_boundary_layer_height_from_ground_base",
+        "bibtex": "@misc{2023_atmospheric_boundary_layer_height_from_ground_base,\n  author = {Kotthaus, Simone},\n  title = {Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations},\n  year = {2023},\n  doi = {10.5194/amt-16-433-2023},\n}\n",
+        "citation_style_name": "(2023)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2013_sathe_地基激光雷达湍流测量综述",
+      "title": "A review of turbulence measurements using ground-based wind lidars",
+      "authors": [
+        "Ameya Sathe"
+      ],
+      "year": 2013,
+      "venue": "",
+      "doi": "10.5194/amt-6-3147-2013",
+      "raw_pdf": "data/raw/2013_sathe_地基激光雷达湍流测量综述.pdf",
+      "markdown": "data/papers/2013_sathe_地基激光雷达湍流测量综述/paper.md",
+      "images_dir": "data/papers/2013_sathe_地基激光雷达湍流测量综述/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2013_a_review_of_turbulence_measurements_using_ground_b",
+        "bibtex": "@misc{2013_a_review_of_turbulence_measurements_using_ground_b,\n  author = {Sathe, Ameya},\n  title = {A review of turbulence measurements using ground-based wind lidars},\n  year = {2013},\n  doi = {10.5194/amt-6-3147-2013},\n}\n",
+        "citation_style_name": "(2013)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2020_pahtz_风沙河流沉积物输运起动停止",
+      "title": "The Physics of Sediment Transport Initiation, Cessation, and Entrainment Across Aeolian and Fluvial Environments",
+      "authors": [
+        "Thomas Pähtz"
+      ],
+      "year": 2020,
+      "venue": "",
+      "doi": "10.1029/2019rg000679",
+      "raw_pdf": "data/raw/2020_pahtz_风沙河流沉积物输运起动停止.pdf",
+      "markdown": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/paper.md",
+      "images_dir": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/images",
+      "status": "unsummarized",
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2020_the_physics_of_sediment_transport_initiation_cessa",
+        "bibtex": "@misc{2020_the_physics_of_sediment_transport_initiation_cessa,\n  author = {Pähtz, Thomas},\n  title = {The Physics of Sediment Transport Initiation, Cessation, and Entrainment Across Aeolian and Fluvial Environments},\n  year = {2020},\n  doi = {10.1029/2019rg000679},\n}\n",
+        "citation_style_name": "(2020)",
+        "source": "pending_import",
+        "verified": true
+      }
+    },
+    {
+      "paper_id": "2005_tanaka_全球沙尘气溶胶模拟MASINGAR",
+      "title": "Global Simulation of Dust Aerosol with a Chemical Transport Model, MASINGAR",
+      "authors": [
+        "Taichu Y. Tanaka"
+      ],
+      "year": 2005,
+      "venue": "",
+      "doi": "10.2151/jmsj.83a.255",
+      "raw_pdf": "data/raw/2005_tanaka_全球沙尘气溶胶模拟MASINGAR.pdf",
+      "markdown": "data/papers/2005_tanaka_全球沙尘气溶胶模拟MASINGAR/paper.md",
+      "images_dir": "data/papers/2005_tanaka_全球沙尘气溶胶模拟MASINGAR/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2005_global_simulation_of_dust_aerosol_with_a_chemical",
+        "bibtex": "@misc{2005_global_simulation_of_dust_aerosol_with_a_chemical,\n  author = {Tanaka, Taichu Y.},\n  title = {Global Simulation of Dust Aerosol with a Chemical Transport Model, MASINGAR},\n  year = {2005},\n  doi = {10.2151/jmsj.83a.255},\n}\n",
+        "citation_style_name": "(2005)",
+        "source": "pending_import",
+        "verified": true
+      }
+    }
+  ]
+}

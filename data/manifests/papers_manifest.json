@@ -1221,27 +1221,6 @@
       "updated_at": "2026-06-28T17:43:02"
     },
     {
-      "paper_id": "s11433_008_0106_6",
-      "raw_pdf": "data/raw/s11433_008_0106_6.pdf",
-      "raw_filename": "s11433_008_0106_6.pdf",
-      "raw_stem": "s11433_008_0106_6",
-      "sha256": "36c7c88b49f216a0a9d88ab493166ae6570b97307dd0e81932add3f99d0f8449",
-      "file_size": 708117,
-      "mtime": "2026-06-19T01:37:36",
-      "markdown": "data/papers/s11433_008_0106_6/paper.md",
-      "images_dir": "data/papers/s11433_008_0106_6/images",
-      "status": "converted",
-      "mineru_backend": "hybrid-engine",
-      "method": "auto",
-      "effort": "medium",
-      "runner": "cli_api_proxy",
-      "error": "",
-      "images_count": 42,
-      "md_chars": 33531,
-      "converted_at": "2026-06-28T17:43:21",
-      "updated_at": "2026-06-28T17:43:21"
-    },
-    {
       "paper_id": "1981_1981_飘雪空气动力学特性的风洞研究",
       "raw_pdf": "data/raw/1981_1981_飘雪空气动力学特性的风洞研究.pdf",
       "raw_filename": "1981_1981_飘雪空气动力学特性的风洞研究.pdf",

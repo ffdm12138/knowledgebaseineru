@@ -894,21 +894,6 @@
       "bib_key": "37_flow_over_an_isolated_hill_of_moderate_slope"
     },
     {
-      "paper_id": "s11433_008_0106_6",
-      "title": "s11433-008-0106-6",
-      "year": null,
-      "doi": "",
-      "primary_domain": "blowing_snow_physics",
-      "domains": [
-        "blowing_snow_physics"
-      ],
-      "raw_pdf": "data/raw/s11433_008_0106_6.pdf",
-      "markdown_path": "data/papers/s11433_008_0106_6/paper.md",
-      "images_dir": "data/papers/s11433_008_0106_6/images",
-      "status": "unsummarized",
-      "bib_key": "s11433_008_0106_6"
-    },
-    {
       "paper_id": "1981_1981_飘雪空气动力学特性的风洞研究",
       "title": "1981：飘雪空气动力学特性的风洞研究",
       "year": 1981,
