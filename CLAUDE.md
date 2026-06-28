@@ -36,10 +36,15 @@
 12. catalog 管文献理解，manifest 管文件状态，library_index 管路径和领域 membership，三者职责分离。
 13. 所有 JSON 写入必须原子化：filelock + tmp + os.replace。
 14. 所有外部输入的 paper_id / job_id / image_name / file path 必须经 validate + safe_child 防路径穿越。
-15. paper_id 命名规范：`{year}_{author}_{中文描述}`（如 `2023_wang_有限粒径颗粒阻力模型`），不遵循规范报错。
+15. paper_id 命名规范：格式为 `{year}_{author}_{中文描述}`，如 `2023_wang_有限粒径颗粒阻力模型`。入库时通过 `--paper-id` 传入中文名称，auto-fallback 的英文名仅为临时兜底。目录 `data/papers/<paper_id>/` 的文件夹名必须与 paper_id 一致。
+    - **禁止用 PDF 原始文件名作为 paper_id**（如 `download`、`article`、`fulltext`、`1-s2.0-...`）。
+    - paper_id 优先级链：`CLI --paper-id` > `sidecar.canonical_paper_id` > `sidecar.proposed_paper_id` > DOI 元数据生成 > filename fallback。
+    - filename fallback 必须在 sidecar 中写入 warning，不得静默。
+    - 同名冲突：DOI 相同 → 同一篇（不可新建）；DOI 不同 → 报错（不可覆盖）；无 DOI → warning + 需用户确认。
+    - 已有错误 paper_id 通过 `python scripts/repair_paper_ids.py` 安全迁移（默认 dry-run，--apply 执行，执行前自动备份）。
 16. `hybrid-engine + medium + auto` 是默认产品路径；pipeline / vlm-engine 只作高级调试，不作为普通用户首选项。
 17. 测试不得访问真实网络；OpenAlex / Semantic Scholar / Crossref / Unpaywall 必须 mock。
-17. 每次代码改动完成后，必须运行完整验收，并运行 `python scripts/pack_repo.py` 生成 zip 快照。
+18. 每次代码改动完成后，必须运行完整验收，并运行 `python scripts/pack_repo.py` 生成 zip 快照。
 
 ## 不要改掉的设计
 
@@ -301,6 +306,64 @@ python scripts/import_pending_pdf.py \
 - **补全 catalog**：入库后用 `/prompt/catalog-entry` 补全文献理解条目（ai_summary / tags / selection_hints / citation）。
 - 入库后的文献 status 为 **unsummarized**，不自动生成 AI summary。
 
+### Canonical paper_id 命名规则
+
+- 格式：`{year}_{first_author}_{short_title_slug}`（如 `2024_zhang_high_speed_particle_erosion`）
+- 中文标题可生成：`2024_zhang_高速颗粒冲蚀6061铝合金`
+- 长度限制 80-120 字符，避免 Windows 路径过长
+- **禁止**用 PDF 文件名生成 paper_id（如 `download`、`article`、`1-s2.0-...`）
+- 同名冲突：DOI 相同 → 同一篇；DOI 不同 → 报错；无 DOI → warning
+- 优先级：`CLI --paper-id` > `sidecar.canonical_paper_id` > `sidecar.proposed_paper_id` > DOI 元数据生成 > filename fallback
+- filename fallback 必须警告用户
+
+### Metadata Enrichment / 元数据补全
+
+**核心服务**：`src/services/metadata_enrichment_service.py`
+- DOI 提取：PDF 文件名、sidecar、paper.md 正文、PDF 文本（pymupdf 可选）
+- Crossref DOI 元数据查询（`enrich_from_doi`）
+- 多源元数据规范化（Crossref / OpenAlex / Semantic Scholar / Unpaywall）
+- `proposed_paper_id` 生成
+
+**手动补全 pending sidecar**：
+```bash
+python scripts/enrich_pending_pdf.py data/raw/<domain>/pending/foo.pdf
+python scripts/enrich_pending_pdf.py data/raw/<domain>/pending/foo.pdf --apply
+python scripts/enrich_pending_pdf.py data/raw/<domain>/pending/foo.pdf --chinese-title "高速冲蚀6061铝合金" --apply
+python scripts/enrich_pending_pdf.py data/raw/<domain>/pending/foo.pdf --doi 10.xxxx/xxxxx --apply
+```
+
+**注册时自动补全**：
+```bash
+python scripts/register_manual_pdf.py paper.pdf --domain erosion_experiments --auto-metadata
+python scripts/register_manual_pdf.py paper.pdf --domain erosion_experiments --chinese-title "高速冲蚀" --doi 10.xxxx/xxxxx --title "..." --year 2024
+```
+
+### 修复已有错误 paper_id
+
+如果 `data/papers/` 中有错误命名的文件夹（如 `download`、`article`、`s11433_008_0106_6`）：
+
+```bash
+# 全库扫描 dry-run
+python scripts/repair_paper_ids.py
+
+# 导出 mapping 供人工审核
+python scripts/repair_paper_ids.py --export-mapping repair_mapping.json
+
+# 编辑 repair_mapping.json，确认 apply=true/false，然后执行
+python scripts/repair_paper_ids.py --mapping repair_mapping.json --apply
+
+# 直接重命名单篇
+python scripts/repair_paper_ids.py --rename download:2024_zhang_canonical_title --apply
+```
+
+**安全机制**：
+- 默认 dry-run（--apply 才执行）
+- 执行前自动备份索引到 `data/backups/paper_id_repair/`
+- 事务日志记录到 `data/transactions/paper_id_repair/`
+- 自动同步 manifest、catalog、library_index、domain catalogs、references.bib
+- DOI 相同 → 报告 merge candidate（默认不合并）
+- DOI 不同 → 报错，不覆盖
+
 ### PDF 获取渠道速查
 
 **API 额度**：
@@ -354,9 +417,19 @@ python scripts/fetch_oa_pdf.py 10.xxxx/yyyy --domain blowing_snow_physics
 python scripts/fetch_pdf.py 10.xxxx/yyyy --domain blowing_snow_physics --access-mode oa_only
 python scripts/fetch_pdf.py 10.xxxx/yyyy --domain blowing_snow_physics --access-mode institutional
 python scripts/fetch_pdf.py 10.xxxx/yyyy --domain blowing_snow_physics --access-mode browser_assisted
-python scripts/register_manual_pdf.py paper.pdf --doi 10.xxxx/yyyy --domain blowing_snow_physics
+
+# 元数据补全 + 注册
+python scripts/register_manual_pdf.py paper.pdf --doi 10.xxxx/yyyy --domain blowing_snow_physics --auto-metadata
+python scripts/register_manual_pdf.py paper.pdf --domain blowing_snow_physics --chinese-title "高速冲蚀6061铝合金" --paper-id 2024_zhang_custom_id
+python scripts/enrich_pending_pdf.py data/raw/blowing_snow_physics/pending/paper.pdf --apply
 python scripts/import_pending_pdf.py data/raw/blowing_snow_physics/pending/paper.pdf --domain blowing_snow_physics --apply
 python scripts/fetch_pdf_batch.py --domain blowing_snow_physics --limit 50 --dry-run
+
+# 修复错误 paper_id
+python scripts/repair_paper_ids.py
+python scripts/repair_paper_ids.py --export-mapping repair_mapping.json
+python scripts/repair_paper_ids.py --mapping repair_mapping.json --apply
+python scripts/repair_paper_ids.py --rename old_id:new_id --apply
 
 # pending PDF
 python scripts/list_pending_pdfs.py
@@ -395,3 +468,6 @@ python scripts/pack_repo.py
 - 不要把 pending PDF 自动入 catalog 为已总结状态。
 - 不要让入库流程绕过 duplicate detection。
 - 不要硬编码 `data/papers/<paper_id>/paper.md` 作为唯一读取方式。
+- 不要用 PDF 原始文件名作为 paper_id（必须走 metadata enrichment 或显式 --paper-id）。
+- 不要让 repair_paper_ids.py 在无 --apply 时修改数据。
+- 不要让迁移流程绕过备份。
