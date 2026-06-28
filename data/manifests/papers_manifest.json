@@ -1452,27 +1452,6 @@
       "updated_at": "2026-06-28T17:49:05"
     },
     {
-      "paper_id": "35_wind_over_hills_a_numerical_approach",
-      "raw_pdf": "data/raw/35_wind_over_hills_a_numerical_approach.pdf",
-      "raw_filename": "35_wind_over_hills_a_numerical_approach.pdf",
-      "raw_stem": "35_wind_over_hills_a_numerical_approach",
-      "sha256": "969bdedd2fc18f090bdc36f07802cf655f825ba3f22ff8528d716a2b530c0a29",
-      "file_size": 899027,
-      "mtime": "2026-06-27T21:11:46",
-      "markdown": "",
-      "images_dir": "",
-      "status": "converting",
-      "mineru_backend": "hybrid-engine",
-      "method": "auto",
-      "effort": "medium",
-      "runner": "cli",
-      "error": "",
-      "images_count": 0,
-      "md_chars": 0,
-      "converted_at": "",
-      "updated_at": "2026-06-28T17:49:05"
-    },
-    {
       "paper_id": "1981_1981_跃移层中雪粒的动力学行为",
       "raw_pdf": "data/raw/1981_1981_跃移层中雪粒的动力学行为.pdf",
       "raw_filename": "1981_1981_跃移层中雪粒的动力学行为.pdf",

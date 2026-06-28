@@ -3,5 +3,546 @@
   "description": "Domain catalog: Atmospheric Boundary Layer / PBL",
   "domain_id": "abl_pbl",
   "domain_name": "Atmospheric Boundary Layer / PBL",
-  "papers": []
+  "papers": [
+    {
+      "paper_id": "2023_wang_有限粒径颗粒阻力模型",
+      "title": "Drag model of finite-sized particle in turbulent wall-bound flow over sediment bed",
+      "authors": [
+        "Ping Wang",
+        "Yinghaonan Lei",
+        "Zhengping Zhu",
+        "Xiaojing Zheng"
+      ],
+      "year": 2023,
+      "venue": "Journal of Fluid Mechanics",
+      "doi": "",
+      "raw_pdf": "data/raw/Wang_2023_drag_model_finite_sized_particle_JFM.pdf",
+      "markdown": "data/papers/2023_wang_有限粒径颗粒阻力模型/paper.md",
+      "images_dir": "data/papers/2023_wang_有限粒径颗粒阻力模型/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "用浸入边界 DNS 研究沉积床面壁湍流中跃移有限粒径颗粒的阻力，指出传统孤立颗粒阻力模型沿轨迹（尤其下降段）误差显著，给出改进模型。",
+        "background_problem": "阻力模型对湍流多相流模拟至关重要，但跃移颗粒的稳健阻力模型仍是开放问题。",
+        "research_question": "传统孤立颗粒阻力模型能否准确估计跃移颗粒沿轨迹的阻力？如何改进？",
+        "method": "数值模拟：全解析直接数值模拟（DNS）+ 浸入边界法，研究沉积床面壁湍流中跃移颗粒阻力。",
+        "data_or_experiment": "DNS 数据拟合；颗粒雷诺数、颗粒-壁距离、局部体积分数影响分析。",
+        "main_findings": "传统孤立颗粒阻力模型（仅依赖颗粒雷诺数）沿轨迹不能准确估计阻力，下降段误差尤甚；阻力还依赖颗粒-壁距离与局部体积分数；理论与 DNS 拟合给出改进模型。",
+        "key_equations_or_models": [
+          "改进阻力模型（含颗粒-壁距离与局部体积分数）",
+          "浸入边界 DNS"
+        ],
+        "important_figures": [
+          "阻力沿轨迹对比",
+          "模型 vs DNS 误差"
+        ],
+        "limitations": "沙粒/沉积床场景；DNS 计算昂贵。",
+        "relevance_to_my_work": "跃移颗粒阻力的精细化建模，对雪跃移轨迹与受力模拟有方法学借鉴。",
+        "possible_use_in_paper": "方法（阻力模型）、机制解释（有限粒径效应）、对比（沙雪）。"
+      },
+      "tags": {
+        "topic": [
+          "drag model",
+          "saltation",
+          "finite-size particle",
+          "wall turbulence"
+        ],
+        "method": [
+          "DNS",
+          "immersed boundary"
+        ],
+        "material_or_region": [],
+        "variables": [
+          "drag force",
+          "particle Reynolds number"
+        ],
+        "model_names": [
+          "finite-size drag model"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "阻力模型",
+          "drag",
+          "有限粒径",
+          "DNS",
+          "跃移受力"
+        ],
+        "do_not_use_for": [
+          "升华",
+          "粒径分布测量"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "wang2023_drag_finite_particle",
+        "bibtex": "@article{wang2023_drag_finite_particle,\n  title = {Drag model of finite-sized particle in turbulent wall-bound flow over sediment bed},\n  author = {Wang, Ping and Lei, Yinghaonan and Zhu, Zhengping and Zheng, Xiaojing},\n  year = {2023},\n  journal = {Journal of Fluid Mechanics},\n}",
+        "citation_style_name": "Ping and others (2023)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "aeolian_snow_transport",
+      "domains": [
+        "aeolian_snow_transport",
+        "abl_pbl"
+      ],
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": false,
+        "canonical_paper_id": "2023_wang_有限粒径颗粒阻力模型"
+      }
+    },
+    {
+      "paper_id": "2026_viaro_高山吹雪云过程",
+      "title": "The importance of alpine blowing snow for cloud processes",
+      "authors": [
+        "Samuele Viaro",
+        "Armin Sigmund",
+        "Evan Thomas",
+        "Michael Lehning"
+      ],
+      "year": 2026,
+      "venue": "EGUsphere (preprint)",
+      "doi": "",
+      "raw_pdf": "data/raw/cryowrf-egusphere-2026-2132.pdf",
+      "markdown": "data/papers/2026_viaro_高山吹雪云过程/paper.md",
+      "images_dir": "data/papers/2026_viaro_高山吹雪云过程/images",
+      "status": "summarized",
+      "ai_summary": {
+        "one_sentence": "用含新跃移方案的 CRYOWRF 模型研究高山吹雪对云过程的影响，表明吹雪是冰晶的重要次生源并对降水/侵蚀沉积有显著作用。",
+        "background_problem": "数值模型难以重现高山地区冰核粒子与冰晶数浓度之间的巨大差距，吹雪被疑为额外冰粒源。",
+        "research_question": "高山吹雪颗粒对云过程（冰晶浓度、降水、侵蚀沉积）有多大影响？",
+        "method": "数值模拟：CRYOWRF 模型，新实现跃移方案以更好提供吹雪方程边界条件；与 Jungfraujoch 实测冰晶浓度对比。",
+        "data_or_experiment": "瑞士阿尔卑斯 Jungfraujoch 实测冰晶浓度对比；侵蚀/沉积与降水分析。",
+        "main_findings": "次生冰产生、吹雪与微物理方案均重要；吹雪作为冰粒源显著影响冰晶浓度；实现对侵蚀沉积与降水有显著影响。",
+        "key_equations_or_models": [
+          "CRYOWRF",
+          "新跃移方案",
+          "吹雪-云耦合"
+        ],
+        "important_figures": [
+          "冰晶浓度 vs 实测",
+          "侵蚀沉积场",
+          "降水影响"
+        ],
+        "limitations": "预印本（2026）；高山特定；参数化敏感。",
+        "relevance_to_my_work": "吹雪跃移方案与多过程耦合的最新应用，提供跃移方案实现与吹雪大尺度影响的参考。",
+        "possible_use_in_paper": "方法（跃移方案实现）、应用（吹雪对云/水文影响）、引言（最新进展）。"
+      },
+      "tags": {
+        "topic": [
+          "blowing snow",
+          "cloud processes",
+          "saltation scheme",
+          "CryoWRF"
+        ],
+        "method": [
+          "numerical model"
+        ],
+        "material_or_region": [
+          "Swiss Alps"
+        ],
+        "variables": [
+          "ice crystal number",
+          "precipitation",
+          "erosion/deposition"
+        ],
+        "model_names": [
+          "CRYOWRF"
+        ]
+      },
+      "selection_hints": {
+        "read_when_question_contains": [
+          "CryoWRF",
+          "跃移方案",
+          "吹雪云过程",
+          "次生冰",
+          "高山吹雪"
+        ],
+        "do_not_use_for": [
+          "击溅函数",
+          "粒径分布测量"
+        ],
+        "priority": 4
+      },
+      "notes": "",
+      "citation": {
+        "bib_key": "viaro2026_alpine_blowing_snow_cloud",
+        "bibtex": "@article{viaro2026_alpine_blowing_snow_cloud,\n  title = {The importance of alpine blowing snow for cloud processes},\n  author = {Viaro, Samuele and Sigmund, Armin and Thomas, Evan and Lehning, Michael},\n  year = {2026},\n  journal = {EGUsphere (preprint)},\n}",
+        "citation_style_name": "Samuele and others (2026)",
+        "source": "manual",
+        "verified": false
+      },
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics",
+        "abl_pbl"
+      ],
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": false,
+        "canonical_paper_id": "2026_viaro_高山吹雪云过程"
+      }
+    },
+    {
+      "paper_id": "2015_dewekker_山地地形对流边界层高度综述",
+      "title": "Convective Boundary Layer Heights Over Mountainous Terrain: A Review of Concepts",
+      "authors": [
+        "Stephan F. J. De Wekker"
+      ],
+      "year": 2015,
+      "venue": "Frontiers in Earth Science",
+      "doi": "10.3389/feart.2015.00077",
+      "raw_pdf": "data/raw/2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts.pdf",
+      "markdown": "data/papers/2015_dewekker_山地地形对流边界层高度综述/paper.md",
+      "images_dir": "data/papers/2015_dewekker_山地地形对流边界层高度综述/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts",
+        "bibtex": "@misc{2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts,\n  author = {De Wekker, Stephan F. J.},\n  title = {Convective Boundary Layer Heights Over Mountainous Terrain: A Review of Concepts},\n  year = {2015},\n  doi = {10.3389/feart.2015.00077},\n}\n",
+        "citation_style_name": "(2015)",
+        "source": "pending_import",
+        "verified": true
+      },
+      "metadata_source": "crossref",
+      "metadata_confidence": 0.95,
+      "metadata": {},
+      "proposed_paper_id": "2015_stephan_f_j_de_wekker_convective_boundary_layer_heights_over_mountainous",
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": true,
+        "canonical_paper_id": "2015_dewekker_山地地形对流边界层高度综述"
+      }
+    },
+    {
+      "paper_id": "2014_wang_无线电探空大气混合层高度估算",
+      "title": "Estimation of atmospheric mixing layer height from radiosonde data",
+      "authors": [
+        "X. Y. Wang"
+      ],
+      "year": 2014,
+      "venue": "Atmospheric Measurement Techniques",
+      "doi": "10.5194/amt-7-1701-2014",
+      "raw_pdf": "data/raw/2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data.pdf",
+      "markdown": "data/papers/2014_wang_无线电探空大气混合层高度估算/paper.md",
+      "images_dir": "data/papers/2014_wang_无线电探空大气混合层高度估算/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data",
+        "bibtex": "@misc{2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data,\n  author = {Wang, X. Y.},\n  title = {Estimation of atmospheric mixing layer height from radiosonde data},\n  year = {2014},\n  doi = {10.5194/amt-7-1701-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      },
+      "metadata_source": "crossref",
+      "metadata_confidence": 0.95,
+      "metadata": {},
+      "proposed_paper_id": "2014_x_y_wang_estimation_of_atmospheric_mixing_layer_height_from",
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": true,
+        "canonical_paper_id": "2014_wang_无线电探空大气混合层高度估算"
+      }
+    },
+    {
+      "paper_id": "2014_lothon_BLLAST下午黄昏边界层湍流实验",
+      "title": "The BLLAST field experiment: Boundary-Layer Late Afternoon and Sunset Turbulence",
+      "authors": [
+        "M. Lothon"
+      ],
+      "year": 2014,
+      "venue": "Atmospheric Chemistry and Physics",
+      "doi": "10.5194/acp-14-10931-2014",
+      "raw_pdf": "data/raw/2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence.pdf",
+      "markdown": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/paper.md",
+      "images_dir": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence",
+        "bibtex": "@misc{2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence,\n  author = {Lothon, M.},\n  title = {The BLLAST field experiment: Boundary-Layer Late Afternoon and Sunset Turbulence},\n  year = {2014},\n  doi = {10.5194/acp-14-10931-2014},\n}\n",
+        "citation_style_name": "(2014)",
+        "source": "pending_import",
+        "verified": true
+      },
+      "metadata_source": "crossref",
+      "metadata_confidence": 0.95,
+      "metadata": {},
+      "proposed_paper_id": "2014_m_lothon_the_bllast_field_experiment_boundary_layer_late_af",
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": true,
+        "canonical_paper_id": "2014_lothon_BLLAST下午黄昏边界层湍流实验"
+      }
+    },
+    {
+      "paper_id": "2008_baars_激光雷达连续监测边界层顶",
+      "title": "Continuous monitoring of the boundary-layer top with lidar",
+      "authors": [
+        "Holger Baars"
+      ],
+      "year": 2008,
+      "venue": "Atmospheric Chemistry and Physics",
+      "doi": "10.5194/acp-8-7281-2008",
+      "raw_pdf": "data/raw/2008_baars_激光雷达连续监测边界层顶.pdf",
+      "markdown": "data/papers/2008_baars_激光雷达连续监测边界层顶/paper.md",
+      "images_dir": "data/papers/2008_baars_激光雷达连续监测边界层顶/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2008_continuous_monitoring_of_the_boundary_layer_top_wi",
+        "bibtex": "@misc{2008_continuous_monitoring_of_the_boundary_layer_top_wi,\n  author = {Baars, Holger},\n  title = {Continuous monitoring of the boundary-layer top with lidar},\n  year = {2008},\n  doi = {10.5194/acp-8-7281-2008},\n}\n",
+        "citation_style_name": "(2008)",
+        "source": "pending_import",
+        "verified": true
+      },
+      "metadata_source": "crossref",
+      "metadata_confidence": 0.95,
+      "metadata": {},
+      "proposed_paper_id": "2008_holger_baars_continuous_monitoring_of_the_boundary_layer_top_wi",
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": true,
+        "canonical_paper_id": "2008_baars_激光雷达连续监测边界层顶"
+      }
+    },
+    {
+      "paper_id": "2023_kotthaus_地基遥感边界层高度综述",
+      "title": "Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations",
+      "authors": [
+        "Simone Kotthaus"
+      ],
+      "year": 2023,
+      "venue": "Atmospheric Measurement Techniques",
+      "doi": "10.5194/amt-16-433-2023",
+      "raw_pdf": "data/raw/2023_kotthaus_地基遥感边界层高度综述.pdf",
+      "markdown": "data/papers/2023_kotthaus_地基遥感边界层高度综述/paper.md",
+      "images_dir": "data/papers/2023_kotthaus_地基遥感边界层高度综述/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2023_atmospheric_boundary_layer_height_from_ground_base",
+        "bibtex": "@misc{2023_atmospheric_boundary_layer_height_from_ground_base,\n  author = {Kotthaus, Simone},\n  title = {Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations},\n  year = {2023},\n  doi = {10.5194/amt-16-433-2023},\n}\n",
+        "citation_style_name": "(2023)",
+        "source": "pending_import",
+        "verified": true
+      },
+      "metadata_source": "crossref",
+      "metadata_confidence": 0.95,
+      "metadata": {},
+      "proposed_paper_id": "2023_simone_kotthaus_atmospheric_boundary_layer_height_from_ground_base",
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": true,
+        "canonical_paper_id": "2023_kotthaus_地基遥感边界层高度综述"
+      }
+    },
+    {
+      "paper_id": "2013_sathe_地基激光雷达湍流测量综述",
+      "title": "A review of turbulence measurements using ground-based wind lidars",
+      "authors": [
+        "Ameya Sathe"
+      ],
+      "year": 2013,
+      "venue": "Atmospheric Measurement Techniques",
+      "doi": "10.5194/amt-6-3147-2013",
+      "raw_pdf": "data/raw/2013_sathe_地基激光雷达湍流测量综述.pdf",
+      "markdown": "data/papers/2013_sathe_地基激光雷达湍流测量综述/paper.md",
+      "images_dir": "data/papers/2013_sathe_地基激光雷达湍流测量综述/images",
+      "status": "unsummarized",
+      "primary_domain": "abl_pbl",
+      "domains": [
+        "abl_pbl"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "pending PDF import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2013_a_review_of_turbulence_measurements_using_ground_b",
+        "bibtex": "@misc{2013_a_review_of_turbulence_measurements_using_ground_b,\n  author = {Sathe, Ameya},\n  title = {A review of turbulence measurements using ground-based wind lidars},\n  year = {2013},\n  doi = {10.5194/amt-6-3147-2013},\n}\n",
+        "citation_style_name": "(2013)",
+        "source": "pending_import",
+        "verified": true
+      },
+      "metadata_source": "crossref",
+      "metadata_confidence": 0.95,
+      "metadata": {},
+      "proposed_paper_id": "2013_ameya_sathe_a_review_of_turbulence_measurements_using_ground_b",
+      "domain_view": {
+        "domain_id": "abl_pbl",
+        "is_primary_domain": true,
+        "canonical_paper_id": "2013_sathe_地基激光雷达湍流测量综述"
+      }
+    }
+  ]
 }
