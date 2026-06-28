@@ -1,5 +1,6 @@
 """Phase 2 验收：converter 所有返回分支都带 backend/method/effort/runner。"""
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 from src.converter import MinerUConverter
@@ -7,6 +8,32 @@ from src.converter import MinerUConverter
 
 _EXPECTED = {"backend": "hybrid-engine", "method": "auto",
              "effort": "medium", "runner": "cli"}
+
+
+@contextmanager
+def _mock_converter_deps(subprocess_result=None):
+    """统一 mock converter 的 subprocess / lock / snapshot / preflight。
+
+    subprocess_result: MagicMock 作为 subprocess.run() 的返回值。
+                       若为 callable，作为 side_effect 使用。
+    """
+    with patch("src.converter.preflight_gpu",
+               return_value=type("H", (), {"ok": True, "message": "ok", "nvidia_smi": True})()):
+        with patch("src.converter.snapshot_nvidia_smi",
+                   return_value={"available": False}):
+            with patch("src.converter.MinerULock.acquire",
+                       return_value=True):
+                with patch("src.converter.MinerULock.release"):
+                    if subprocess_result is not None:
+                        mock_run = MagicMock()
+                        if callable(subprocess_result) and not isinstance(subprocess_result, MagicMock):
+                            mock_run.side_effect = subprocess_result
+                        else:
+                            mock_run.return_value = subprocess_result
+                        with patch("src.converter.subprocess.run", mock_run):
+                            yield
+                    else:
+                        yield
 
 
 def _make_output(out_dir: Path, stem: str, content: str = "# md"):
@@ -25,8 +52,9 @@ def test_success_returns_all_fields():
         _make_output(out, "in")
 
         conv = MinerUConverter()
-        with patch("src.converter.subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+        with _mock_converter_deps(
+            subprocess_result=MagicMock(returncode=0, stdout="", stderr="")
+        ):
             result = conv.convert_via_cli(src, out, backend="hybrid-engine",
                                           method="auto", effort="medium")
         assert result["success"] is True
@@ -37,9 +65,10 @@ def test_success_returns_all_fields():
 def test_file_not_found_returns_all_fields():
     """文件不存在时返回含全部字段。"""
     conv = MinerUConverter()
-    result = conv.convert_via_cli("/nonexistent/x.pdf", "/tmp/out",
-                                  backend="hybrid-engine", method="auto",
-                                  effort="medium")
+    with _mock_converter_deps():
+        result = conv.convert_via_cli("/nonexistent/x.pdf", "/tmp/out",
+                                      backend="hybrid-engine", method="auto",
+                                      effort="medium")
     assert result["success"] is False
     for k, v in _EXPECTED.items():
         assert result[k] == v
@@ -51,8 +80,9 @@ def test_subprocess_failure_returns_all_fields():
         src = Path(td) / "in.pdf"
         src.write_bytes(b"%PDF-1.4 fake")
         conv = MinerUConverter()
-        with patch("src.converter.subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(returncode=1, stdout="", stderr="boom")
+        with _mock_converter_deps(
+            subprocess_result=MagicMock(returncode=1, stdout="", stderr="boom")
+        ):
             result = conv.convert_via_cli(src, Path(td) / "out", backend="hybrid-engine",
                                           method="auto", effort="medium")
         assert result["success"] is False
@@ -68,8 +98,9 @@ def test_timeout_returns_all_fields():
         src = Path(td) / "in.pdf"
         src.write_bytes(b"%PDF-1.4 fake")
         conv = MinerUConverter()
-        with patch("src.converter.subprocess.run",
-                   side_effect=subprocess.TimeoutExpired(cmd=["mineru"], timeout=1)):
+        with _mock_converter_deps(
+            subprocess_result=subprocess.TimeoutExpired(cmd=["mineru"], timeout=1)
+        ):
             result = conv.convert_via_cli(src, Path(td) / "out", backend="hybrid-engine",
                                           method="auto", effort="medium")
         assert result["success"] is False
@@ -83,8 +114,9 @@ def test_no_legacy_backend_key():
         src = Path(td) / "in.pdf"
         src.write_bytes(b"%PDF-1.4 fake")
         conv = MinerUConverter()
-        with patch("src.converter.subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+        with _mock_converter_deps(
+            subprocess_result=MagicMock(returncode=0, stdout="", stderr="")
+        ):
             _make_output(Path(td) / "out", "in")
             result = conv.convert_via_cli(src, Path(td) / "out", backend="hybrid-engine",
                                           method="auto", effort="medium")

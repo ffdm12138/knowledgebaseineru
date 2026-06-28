@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "description": "Domain catalog: OpenFOAM Particle Modeling",
+  "domain_id": "openfoam_particle_modeling",
+  "domain_name": "OpenFOAM Particle Modeling",
+  "papers": []
+}

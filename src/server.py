@@ -24,8 +24,9 @@ from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query, Body
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel
 import uvicorn
 from loguru import logger
@@ -36,6 +37,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from config.settings import (
     API_HOST, API_PORT, RAW_DIR, MINERU_TMP_DIR, PAPERS_DIR,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
+    SUPPORTED_FORMATS,
 )
 
 from src.converter import MinerUConverter
@@ -53,6 +55,13 @@ from src.writer.tex_project import build_tex, mark_tex_content_filled
 from src.writer.figure_manager import copy_figures
 from src.writer.bib_manager import (validate_job_citations, portability_check,
                                     validate_catalog_citations)
+from src.writer.job_validator import validate_job
+from src.services.upload_job_service import (
+    UploadJobRunner,
+    UploadJobStore,
+    new_upload_job_id,
+    stage_upload_file,
+)
 
 # ========== 初始化 ==========
 
@@ -81,6 +90,8 @@ library = PaperLibrary(manifest=manifest)
 catalog = Catalog()
 prompt_builder = PromptBuilder(catalog=catalog, library=library)
 job_manager = JobManager()
+upload_job_store = UploadJobStore()
+upload_job_runner = UploadJobRunner(upload_job_store)
 
 # 启动时迁移旧 manifest 记录到 SSOT 字段结构（幂等）
 manifest.migrate()
@@ -116,6 +127,7 @@ class CreateJobRequest(BaseModel):
 
 class DeepReadRequest(BaseModel):
     paper_ids: list[str] | None = None
+    force: bool = False
 
 
 class ConfirmPapersRequest(BaseModel):
@@ -129,6 +141,10 @@ class MatchCatalogRequest(BaseModel):
 
 class CopyFiguresRequest(BaseModel):
     figures: list[dict] | None = None
+
+
+class BuildStoryRequest(BaseModel):
+    force: bool = False
 
 
 class BuildTexRequest(BaseModel):
@@ -153,6 +169,7 @@ async def index():
 async def upload(
     file: UploadFile = File(...),
     method: str = Query(MINERU_METHOD, description="解析方法: auto | ocr | txt"),
+    wait: bool = Query(False, description="true 时等待转换完成并返回旧版响应"),
 
 ):
     """上传文件 -> MinerU 转 tmp -> cleaner 提取 paper.md+images -> manifest 记录
@@ -162,23 +179,78 @@ async def upload(
     Gradio / CLI 同样调用 upload_service，确保 raw 写入、去重、converting 状态机
     全系统单入口。
     """
-    from src.upload_service import upload_core, UploadError
+    from src.upload_service import UploadError, sanitize_filename, upload_from_path
     try:
-        return await upload_core(
-            filename=file.filename,
-            source=file,
-            converter=converter,
-            cleaner=cleaner,
-            manifest=manifest,
-            raw_dir=RAW_DIR,
-            tmp_dir=MINERU_TMP_DIR,
+        filename = file.filename or "upload.pdf"
+        if method not in ("auto", "ocr", "txt"):
+            raise UploadError(f"非法 method: {method}，允许: auto, ocr, txt", status_code=400)
+        if Path(filename).suffix.lower() not in SUPPORTED_FORMATS:
+            raise UploadError(f"不支持的格式: {Path(filename).suffix.lower()}，支持: {SUPPORTED_FORMATS}", status_code=400)
+        sanitize_filename(filename, RAW_DIR)
+        staged_path = await stage_upload_file(file, filename)
+
+        def _run_upload():
+            return upload_from_path(
+                src_path=staged_path,
+                filename=filename,
+                converter=converter,
+                cleaner=cleaner,
+                manifest=manifest,
+                raw_dir=RAW_DIR,
+                tmp_dir=MINERU_TMP_DIR,
+                method=method,
+                backend=MINERU_BACKEND,
+                effort=MINERU_EFFORT,
+                lang=MINERU_LANG,
+            )
+
+        if wait:
+            try:
+                return await run_in_threadpool(_run_upload)
+            finally:
+                try:
+                    staged_path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+
+        job_id = new_upload_job_id()
+        upload_job_store.create(
+            job_id=job_id,
+            filename=filename,
             method=method,
-            backend=MINERU_BACKEND,
-            effort=MINERU_EFFORT,
-            lang=MINERU_LANG,
+            staged_path=staged_path,
+        )
+        upload_job_runner.submit(
+            job_id=job_id,
+            staged_path=staged_path,
+            run_upload=_run_upload,
+        )
+        return JSONResponse(
+            status_code=202,
+            content={
+                "job_id": job_id,
+                "status": "queued",
+                "filename": filename,
+                "status_url": f"/upload/jobs/{job_id}",
+            },
         )
     except UploadError as e:
         raise HTTPException(e.status_code, e.message)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.get("/upload/jobs/{job_id}")
+async def get_upload_job(job_id: str):
+    try:
+        from src.naming import validate_job_id
+        validate_job_id(job_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    job = upload_job_store.get(job_id)
+    if not job:
+        raise HTTPException(404, f"upload job not found: {job_id}")
+    return job
 
 
 # ========== 文献资产 ==========
@@ -244,26 +316,20 @@ async def get_paper_image(paper_id: str, img_name: str):
 
 @app.delete("/papers/{paper_id}")
 async def delete_paper(paper_id: str):
-    # 必须先校验 paper_id + safe_child 防止路径穿越
+    # 校验 paper_id 防止路径穿越
     try:
-        from src.naming import safe_child, validate_paper_id
+        from src.naming import validate_paper_id
         validate_paper_id(paper_id)
-        pdir = safe_child(PAPERS_DIR, paper_id)
     except ValueError as e:
         raise HTTPException(400, str(e))
-    removed_files = False
-    if pdir.exists():
-        import shutil
-        shutil.rmtree(pdir)
-        removed_files = True
-    # 删除 manifest 条目
-    removed_manifest = manifest.delete(paper_id)
-    # 删除 catalog 条目
-    catalog.delete(paper_id)
-    if not (removed_files or removed_manifest):
+    from src.services.paper_registry import PaperRegistryService
+    svc = PaperRegistryService()
+    result = svc.delete_paper(paper_id, remove_raw=False, remove_assets=True)
+    if not result.get("success"):
         raise HTTPException(404, f"未找到文献: {paper_id}")
     return {"status": "success", "paper_id": paper_id,
-            "removed_files": removed_files, "removed_manifest": removed_manifest}
+            "deleted_paper_dir": result["deleted_paper_dir"],
+            "removed_manifest": result["manifest"]}
 
 
 # ========== 目录 ==========
@@ -426,7 +492,7 @@ async def write_deep_read(job_id: str, req: DeepReadRequest):
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     try:
-        return deep_read(job_id, req.paper_ids, jm=job_manager,
+        return deep_read(job_id, req.paper_ids, force=req.force, jm=job_manager,
                          library=library, catalog=catalog)
     except RuntimeError as e:
         raise HTTPException(400, str(e))
@@ -444,12 +510,12 @@ async def write_mark_deep_read(job_id: str):
 
 
 @app.post("/write/jobs/{job_id}/build-story")
-async def write_build_story(job_id: str):
+async def write_build_story(job_id: str, req: BuildStoryRequest = Body(default_factory=BuildStoryRequest)):
     _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
     try:
-        return build_story(job_id, jm=job_manager, catalog=catalog)
+        return build_story(job_id, force=req.force, jm=job_manager, catalog=catalog)
     except RuntimeError as e:
         raise HTTPException(400, str(e))
 
@@ -502,9 +568,7 @@ async def write_validate(job_id: str):
     _check_job_id(job_id)
     if not job_manager.load_meta(job_id):
         raise HTTPException(404, f"任务不存在: {job_id}")
-    import importlib
-    vwj = importlib.import_module("scripts.validate_write_job")
-    return vwj.validate_job(job_id, jm=job_manager)
+    return validate_job(job_id, jm=job_manager)
 
 
 # ========== 状态 ==========
@@ -528,6 +592,60 @@ async def status():
         "library": manifest.stats(),
         "catalog_papers": len(catalog.list_papers()),
         "timestamp": datetime.now().isoformat(),
+    }
+
+
+@app.get("/status/runtime")
+async def status_runtime():
+    from src.converter import MINERU_EXE
+    from src.mineru_runtime import (
+        describe_runtime,
+        list_gpu_processes,
+        preflight_gpu,
+        preflight_mineru_api,
+        preflight_mineru_cli,
+        runtime_config_from_env,
+        snapshot_nvidia_smi,
+    )
+    from src.mineru_lock import read_mineru_lock_status
+
+    config = runtime_config_from_env()
+    gpu = preflight_gpu()
+    cli = preflight_mineru_cli(MINERU_EXE)
+    api = preflight_mineru_api(config.api_url)
+
+    # GPU snapshot (memory/util summary)
+    gpu_snapshot = snapshot_nvidia_smi()
+    gpu_summary = {"available": gpu_snapshot.get("available", False)}
+    if gpu_snapshot.get("gpus"):
+        g = gpu_snapshot["gpus"][0]
+        gpu_summary.update({
+            "name": g.get("name", "?"),
+            "memory_used_mb": g.get("memory_used_mb", 0),
+            "memory_total_mb": g.get("memory_total_mb", 0),
+            "gpu_util_pct": g.get("gpu_util_pct", 0),
+            "memory_util_pct": g.get("memory_util_pct", 0),
+        })
+
+    # GPU compute processes (real process list from nvidia-smi)
+    gpu_procs = list_gpu_processes()
+    gpu_processes = gpu_procs.get("processes", []) if gpu_procs.get("available") else []
+
+    # MinerU lock status
+    lock_status = read_mineru_lock_status()
+
+    return {
+        "runtime": describe_runtime(config),
+        "gpu": {
+            "nvidia_smi_available": gpu.nvidia_smi,
+            "preflight_ok": gpu.ok,
+            "preflight_message": gpu.message,
+            "summary": gpu_summary,
+        },
+        "gpu_processes": gpu_processes,
+        "mineru_lock": lock_status,
+        "cli": cli.__dict__,
+        "api": api.__dict__,
     }
 
 

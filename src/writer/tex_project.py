@@ -8,13 +8,13 @@
 覆盖保护：write_text_safely() 默认不覆盖已有文件，force=True 时先备份再覆盖。
 """
 import re
-from datetime import datetime
 from pathlib import Path
 
 from src.writer.job_manager import JobManager
 from src.writer.bib_manager import export_job_bib, validate_job_citations
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
 from src.writer.story_builder import extract_note_sections
+from src.writer.safe_write import write_text_safely
 from src.catalog import Catalog
 from src.library import PaperLibrary
 
@@ -125,28 +125,6 @@ def latex_escape(s: str) -> str:
              .replace("_", r"\_")
              .replace("{", r"\{")
              .replace("}", r"\}"))
-
-
-def write_text_safely(path: Path, text: str, force: bool = False,
-                      backup: bool = True) -> dict:
-    """安全写入：默认不覆盖已有文件；force=True 时先备份再覆盖。
-
-    返回 {"written": bool, "path", "action": "created|skipped|overwritten", "backup": str|None}
-    """
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists():
-        if not force:
-            return {"written": False, "path": str(path), "action": "skipped", "backup": None}
-        bak = None
-        if backup:
-            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-            bak = str(path.with_suffix(path.suffix + f".bak_{ts}"))
-            Path(bak).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
-        path.write_text(text, encoding="utf-8")
-        return {"written": True, "path": str(path), "action": "overwritten", "backup": bak}
-    path.write_text(text, encoding="utf-8")
-    return {"written": True, "path": str(path), "action": "created", "backup": None}
 
 
 def build_tex(job_id: str, title: str | None = None,

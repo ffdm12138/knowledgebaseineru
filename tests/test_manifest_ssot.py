@@ -66,7 +66,16 @@ def test_upsert_rejects_invalid_status():
 
 def test_valid_statuses_complete():
     """状态机词表覆盖完整。"""
-    assert VALID_STATUSES == {"queued", "converting", "converted", "failed", "duplicate"}
+    assert VALID_STATUSES == {
+        "queued",
+        "converting",
+        "converted",
+        "unregistered_converted",
+        "failed",
+        "duplicate",
+        "conversion_failed_with_catalog",
+        "asset_missing",
+    }
 
 
 def test_migrate_legacy_record():

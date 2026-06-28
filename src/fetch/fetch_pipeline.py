@@ -10,12 +10,14 @@ import hashlib
 import json
 import os
 import re
+import shutil
+from datetime import datetime
 from pathlib import Path
 
 import requests
 from loguru import logger
 
-from config.settings import FETCH_PROXY, RAW_DIR
+from config.settings import FETCH_PROXY, MINERU_FETCH_MAX_BYTES, RAW_DIR
 from src.discovery.models import normalize_doi
 from src.fetch.access_policy import AccessMode, AccessPolicy
 from src.fetch.fetch_arxiv import resolve_arxiv_pdf
@@ -25,19 +27,14 @@ from src.fetch.fetch_scihub import resolve_scihub
 from src.fetch.fetch_semantic_scholar import resolve_semantic_scholar_pdf
 from src.fetch.fetch_unpaywall import resolve_unpaywall
 from src.fetch.models import FetchResult
+from src.fetch.resolver_registry import build_resolvers
 from src.fetch.resolvers.base import ResolveContext
-from src.fetch.resolvers.oa_resolvers import (
-    ArxivResolver,
-    OpenAlexResolver,
-    PublisherOAResolver,
-    SemanticScholarResolver,
-    UnpaywallResolver,
-)
-from src.fetch.resolvers.tdm_resolvers import (
-    ElsevierTdmResolver,
-    SpringerDirectResolver,
-    WileyTdmResolver,
-)
+from src.services.pdf_acquisition_service import PdfAcquisitionService, _atomic_write_json
+from src.utils.file_allocation import allocate_unique_path
+
+
+# Re-export for test monkeypatch (test_fetch_pipeline patches at module level)
+_build_resolvers = build_resolvers
 
 if FETCH_PROXY:
     os.environ.setdefault("HTTP_PROXY", FETCH_PROXY)
@@ -50,58 +47,166 @@ def safe_doi_slug(doi: str) -> str:
     return re.sub(r"[^A-Za-z0-9._-]+", "_", normalized).strip("_") or "unknown_doi"
 
 
+def _safe_write_pending(src_content: bytes, target: Path) -> tuple[Path, str]:
+    """Write bytes to a pending PDF target without silently overwriting.
+
+    Returns (final_path, sha256_hex).
+    - target does not exist → write and return target.
+    - target exists, same sha256 → reuse existing, skip write.
+    - target exists, different sha256 → auto-rename with sha8 suffix.
+    """
+    digest = hashlib.sha256(src_content)
+    src_sha256 = digest.hexdigest()
+    if len(src_content) > MINERU_FETCH_MAX_BYTES:
+        raise ValueError(f"PDF exceeds MINERU_FETCH_MAX_BYTES={MINERU_FETCH_MAX_BYTES}")
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    final, reused = allocate_unique_path(target, src_sha256)
+    if reused:
+        logger.info(f"pending PDF already exists with matching sha256, reusing: {final}")
+        return final, src_sha256
+    tmp = final.with_suffix(final.suffix + ".tmp")
+    try:
+        tmp.write_bytes(src_content)
+        os.replace(tmp, final)
+    finally:
+        if tmp.exists():
+            tmp.unlink(missing_ok=True)
+    return final, src_sha256
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _move_pending_file(src_path: Path, target: Path, sha256: str | None = None) -> tuple[Path, str]:
+    """Atomically move a prepared PDF into pending with conflict protection."""
+    src_sha256 = sha256 or _sha256_file(src_path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    final, reused = allocate_unique_path(target, src_sha256)
+    if reused:
+        logger.info(f"pending PDF already exists with matching sha256, reusing: {final}")
+        src_path.unlink(missing_ok=True)
+        return final, src_sha256
+    os.replace(src_path, final)
+    return final, src_sha256
+
+
+def _copy_pending(src_path: Path, target: Path) -> tuple[Path, str]:
+    """Stream-copy a file to pending target with sha256 conflict protection.
+
+    Returns (final_path, sha256_hex).
+    """
+    target.parent.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_suffix(target.suffix + ".copy.tmp")
+    digest = hashlib.sha256()
+    try:
+        with src_path.open("rb") as src, tmp.open("wb") as dst:
+            total = 0
+            for chunk in iter(lambda: src.read(1024 * 1024), b""):
+                total += len(chunk)
+                if total > MINERU_FETCH_MAX_BYTES:
+                    raise ValueError(f"PDF exceeds MINERU_FETCH_MAX_BYTES={MINERU_FETCH_MAX_BYTES}")
+                digest.update(chunk)
+                dst.write(chunk)
+    except Exception:
+        tmp.unlink(missing_ok=True)
+        raise
+    return _move_pending_file(tmp, target, digest.hexdigest())
+
+
 def _looks_like_pdf(response: requests.Response, url: str) -> bool:
     content_type = response.headers.get("content-type", "").lower()
     return "pdf" in content_type or url.lower().split("?")[0].endswith(".pdf")
 
 
-def _download_pdf(url: str, output_path: Path) -> str:
+def _download_pdf(url: str, tmp_path: Path) -> tuple[Path, str]:
+    """Stream-download PDF to *tmp_path*, return (tmp_path, sha256_hex).
+
+    Caller is responsible for atomically moving the temp file to the final
+    pending target.
+    """
     with requests.get(url, stream=True, timeout=60) as response:
         response.raise_for_status()
         if not _looks_like_pdf(response, response.url or url):
             raise ValueError(f"response is not a PDF: {response.headers.get('content-type', '')}")
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = output_path.with_suffix(output_path.suffix + ".tmp")
+        tmp_path.parent.mkdir(parents=True, exist_ok=True)
         digest = hashlib.sha256()
-        with tmp.open("wb") as fh:
+        total = 0
+        with tmp_path.open("wb") as fh:
             for chunk in response.iter_content(chunk_size=1024 * 64):
                 if not chunk:
                     continue
+                total += len(chunk)
+                if total > MINERU_FETCH_MAX_BYTES:
+                    tmp_path.unlink(missing_ok=True)
+                    raise ValueError(f"PDF exceeds MINERU_FETCH_MAX_BYTES={MINERU_FETCH_MAX_BYTES}")
                 digest.update(chunk)
                 fh.write(chunk)
-        tmp.replace(output_path)
-        return digest.hexdigest()
+        return tmp_path, digest.hexdigest()
 
 
 def _write_sidecar(result: FetchResult, sidecar_path: Path) -> None:
-    sidecar_path.write_text(json.dumps(result.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
+    pdf_path = Path(result.output_path) if result.output_path else sidecar_path.with_suffix(".pdf")
+    domain_id = ""
+    if sidecar_path.parent.name == "pending":
+        domain_id = sidecar_path.parent.parent.name
+        if domain_id == "unknown":
+            domain_id = ""
+    stat = pdf_path.stat() if pdf_path.exists() else None
+    service = PdfAcquisitionService(raw_dir=sidecar_path.parents[2] if len(sidecar_path.parents) > 2 else RAW_DIR)
+    policy_mode = result.access_mode or AccessMode.OA_ONLY.value
+    resolver_access_mode = (result.metadata or {}).get("resolver_access_mode") or policy_mode
+    source_kind = _source_kind_for_result(result, policy_mode, resolver_access_mode)
+    unified = service.build_sidecar(
+        source_kind=source_kind,
+        access_mode=policy_mode,
+        resolver=result.resolver,
+        doi=result.doi,
+        title=(result.metadata or {}).get("title", ""),
+        year=(result.metadata or {}).get("year"),
+        original_filename=pdf_path.name,
+        pending_pdf=pdf_path,
+        sha256=result.sha256,
+        file_size=stat.st_size if stat else 0,
+        mtime=datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds") if stat else "",
+        domain_id=domain_id,
+        domains=[domain_id] if domain_id else [],
+        status="pending" if result.success else "failed",
+        error=result.error,
+        extra={
+            **result.to_dict(),
+            "policy_mode": policy_mode,
+            "resolver_name": result.resolver,
+            "resolver_access_mode": resolver_access_mode,
+            "source_kind": source_kind,
+        },
+    )
+    _atomic_write_json(sidecar_path, unified)
 
 
-def _build_resolvers(policy: AccessPolicy) -> list:
-    """根据 access policy 构建 resolver 列表。"""
-    name_map = {
-        "unpaywall": UnpaywallResolver,
-        "openalex": OpenAlexResolver,
-        "semantic_scholar": SemanticScholarResolver,
-        "arxiv": ArxivResolver,
-        "publisher_oa": PublisherOAResolver,
-        "wiley_tdm": WileyTdmResolver,
-        "springer_direct": SpringerDirectResolver,
-        "elsevier_tdm": ElsevierTdmResolver,
-        "publisher_tdm": _TdmResolver,
-        "institutional_browser": _InstBrowserResolver,
-        "browser_assisted": _BrowserResolver,
-        "local_manual": _LocalResolver,
-        "scihub": _SciHubResolver,
-        "biorxiv": _BiorxivBridge,
-        "pmc_oa": _PmcOaBridge,
-        "ref_downloader": _RefDownloaderBridge,
-    }
-    resolvers = []
-    for name in policy.enabled_resolver_names():
-        if name in name_map:
-            resolvers.append(name_map[name]())
-    return resolvers
+def _source_kind_for_result(result: FetchResult, policy_mode: str, resolver_access_mode: str) -> str:
+    source = (result.source or result.resolver or "").lower()
+    resolver = (result.resolver or "").lower()
+    if "scihub" in {source, resolver}:
+        return "scihub"
+    if "custom" in {source, resolver} or resolver_access_mode == AccessMode.CUSTOM.value:
+        return "custom"
+    if "local" in {source, resolver} or resolver_access_mode == AccessMode.LOCAL_MANUAL.value:
+        return "local_manual"
+    if "browser" in {source, resolver} or resolver_access_mode == AccessMode.BROWSER_ASSISTED.value:
+        return "browser_assisted"
+    if resolver_access_mode == AccessMode.OA_ONLY.value or result.access_status == "open_access":
+        return "open_access"
+    if policy_mode == AccessMode.INSTITUTIONAL.value or resolver_access_mode == AccessMode.INSTITUTIONAL.value:
+        return "institutional"
+    return policy_mode or "open_access"
+
+
 
 
 def fetch_pdf(
@@ -145,6 +250,9 @@ def fetch_pdf(
         # 更新 resolver_chain（不管成功失败）
         result.resolver_chain = list(chain)
         result.resolver = resolver.name
+        resolver_access_mode = result.access_mode or policy.mode.value
+        result.metadata = dict(result.metadata or {})
+        result.metadata.setdefault("resolver_access_mode", resolver_access_mode)
         result.access_mode = policy.mode.value
 
         if not result.success:
@@ -166,10 +274,13 @@ def fetch_pdf(
                 return result
             try:
                 pending_dir = Path(output_root) / (domain_id or "unknown") / "pending"
-                pdf_path = pending_dir / f"{safe_doi_slug(normalized)}.pdf"
-                sidecar_path = pdf_path.with_suffix(".json")
-                sha256 = _download_pdf(result.pdf_url, pdf_path)
+                pending_dir.mkdir(parents=True, exist_ok=True)
+                candidate = pending_dir / f"{safe_doi_slug(normalized)}.pdf"
+                tmp = candidate.with_suffix(candidate.suffix + ".tmp")
+                tmp_path, sha256 = _download_pdf(result.pdf_url, tmp)
+                pdf_path, sha256 = _move_pending_file(tmp_path, candidate, sha256)
                 result.sha256 = sha256
+                sidecar_path = pdf_path.with_suffix(".json")
                 result.output_path = pdf_path.as_posix()
                 result.sidecar_path = sidecar_path.as_posix()
                 _write_sidecar(result, sidecar_path)
@@ -187,19 +298,16 @@ def fetch_pdf(
                     return result
                 pending_dir = Path(output_root) / (domain_id or "unknown") / "pending"
                 pending_dir.mkdir(parents=True, exist_ok=True)
-                pdf_path = pending_dir / f"{safe_doi_slug(normalized)}.pdf"
+                candidate = pending_dir / f"{safe_doi_slug(normalized)}.pdf"
+                pdf_path, sha256 = _copy_pending(src_path, candidate)
+                result.sha256 = sha256
                 sidecar_path = pdf_path.with_suffix(".json")
-                import shutil
-                shutil.copy2(src_path, pdf_path)
-                digest = hashlib.sha256()
-                digest.update(pdf_path.read_bytes())
-                result.sha256 = digest.hexdigest()
                 result.output_path = pdf_path.as_posix()
                 result.sidecar_path = sidecar_path.as_posix()
                 _write_sidecar(result, sidecar_path)
                 return result
 
-        # TDM resolver: content already in raw, save directly
+        # TDM resolver: content already in memory, save with conflict protection
         if result.raw and result.raw.get("content"):
             if dry_run:
                 result.output_path = ""
@@ -207,11 +315,11 @@ def fetch_pdf(
                 return result
             pending_dir = Path(output_root) / (domain_id or "unknown") / "pending"
             pending_dir.mkdir(parents=True, exist_ok=True)
-            pdf_path = pending_dir / f"{safe_doi_slug(normalized)}.pdf"
-            sidecar_path = pdf_path.with_suffix(".json")
+            candidate = pending_dir / f"{safe_doi_slug(normalized)}.pdf"
             content = result.raw["content"]
-            pdf_path.write_bytes(content)
-            result.sha256 = hashlib.sha256(content).hexdigest()
+            pdf_path, sha256 = _safe_write_pending(content, candidate)
+            result.sha256 = sha256
+            sidecar_path = pdf_path.with_suffix(".json")
             result.output_path = pdf_path.as_posix()
             result.sidecar_path = sidecar_path.as_posix()
             # 清除 raw/metadata 中的大字节内容，sidecar 只需元数据
@@ -244,60 +352,3 @@ def fetch_oa_pdf(
         access_policy=AccessPolicy(mode=AccessMode.OA_ONLY),
     )
 
-
-# ── 行内辅助 resolver（待 resolver 重构完整后移到独立模块）──
-
-class _TdmResolver:
-    name = "publisher_tdm"
-    def resolve(self, ctx):
-        from .resolvers.institutional_resolvers import PublisherTDMResolver
-        return PublisherTDMResolver().resolve(ctx)
-
-
-class _InstBrowserResolver:
-    name = "institutional_browser"
-    def resolve(self, ctx):
-        from .resolvers.institutional_resolvers import InstitutionalBrowserResolver
-        return InstitutionalBrowserResolver().resolve(ctx)
-
-
-class _BrowserResolver:
-    name = "browser_assisted"
-    def resolve(self, ctx):
-        from .resolvers.browser_resolvers import BrowserAssistedResolver
-        return BrowserAssistedResolver().resolve(ctx)
-
-
-class _LocalResolver:
-    name = "local_manual"
-    def resolve(self, ctx):
-        from .resolvers.local_resolvers import LocalManualResolver
-        return LocalManualResolver().resolve(ctx)
-
-
-class _SciHubResolver:
-    name = "scihub"
-    def resolve(self, ctx):
-        from .fetch_scihub import resolve_scihub
-        return resolve_scihub(ctx.doi)
-
-
-class _RefDownloaderBridge:
-    name = "ref_downloader"
-    def resolve(self, ctx):
-        from .resolvers.ref_downloader_bridge import RefDownloaderResolver
-        return RefDownloaderResolver().resolve(ctx)
-
-
-class _BiorxivBridge:
-    name = "biorxiv"
-    def resolve(self, ctx):
-        from .resolvers.preprint_resolvers import BiorxivResolver
-        return BiorxivResolver().resolve(ctx)
-
-
-class _PmcOaBridge:
-    name = "pmc_oa"
-    def resolve(self, ctx):
-        from .resolvers.preprint_resolvers import PmcOaResolver
-        return PmcOaResolver().resolve(ctx)

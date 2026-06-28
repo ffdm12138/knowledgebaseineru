@@ -1,6 +1,7 @@
 """测试 JobManager 多实例隔离（WRITE_DIR 清理）"""
 import tempfile
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 from src.writer.job_manager import JobManager
 
 
@@ -56,3 +57,16 @@ def test_create_input_file_default_rejects():
         jm = JobManager(write_dir=Path(td))
         with __import__("pytest").raises(ValueError, match="默认不接受|allow_input_file"):
             jm.create(topic="test", input_file="input.md")
+
+
+def test_concurrent_create_unique_jobs():
+    with tempfile.TemporaryDirectory() as td:
+        jm = JobManager(write_dir=Path(td))
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            infos = list(pool.map(lambda i: jm.create(topic=f"任务{i}"), range(20)))
+        ids = [info["job_id"] for info in infos]
+        assert len(ids) == len(set(ids))
+        for info in infos:
+            jdir = Path(info["job_dir"])
+            assert jdir.exists()
+            assert (jdir / "logs" / "run_meta.json").exists()

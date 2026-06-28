@@ -9,9 +9,25 @@ __pycache__/
 data/raw/*
 data/papers/*
 data/tmp/**
+data/logs/**
+data/jobs/**
+data/transactions/**
+data/jobs/upload_staging/**
+data/discovery/doi_candidates/**
+data/discovery/pdf_fetch_logs/**
+data/discovery/fetch_logs/**
+data/locks/*.lock
+import/
+_test_batch/
 !data/raw/.gitkeep
 !data/papers/.gitkeep
 !data/tmp/.gitkeep
+!data/logs/.gitkeep
+!data/jobs/.gitkeep
+!data/transactions/.gitkeep
+!data/discovery/.gitkeep
+!data/discovery/doi_candidates/.gitkeep
+!data/discovery/pdf_fetch_logs/.gitkeep
 
 # ===== 写作任务产物（可重新生成，不入库）=====
 write/

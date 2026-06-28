@@ -20,6 +20,7 @@ from config.settings import (
 )
 from src import bib as bibmod
 from src.library_index import DOMAIN_REGISTRY, LibraryIndex
+from src.path_utils import resolve_stored_path
 
 
 def _load_json(path: Path) -> dict:
@@ -186,13 +187,13 @@ def validate_domain_library(
     # --- warnings：快照友好的软提示 ---
     for pid, idx in index_by_id.items():
         md = (idx.get("markdown_path") or "").strip()
-        if md and not Path(md).exists():
+        if md and not resolve_stored_path(md).exists():
             warnings.append(f"{pid} markdown_path not found: {md}")
         imgs = (idx.get("images_dir") or "").strip()
-        if imgs and not Path(imgs).exists():
+        if imgs and not resolve_stored_path(imgs).exists():
             warnings.append(f"{pid} images_dir not found: {imgs}")
         raw = (idx.get("raw_pdf") or "").strip()
-        if raw and not Path(raw).exists():
+        if raw and not resolve_stored_path(raw).exists():
             warnings.append(f"{pid} raw_pdf not found: {raw}")
     for domain_id in DOMAIN_REGISTRY:
         if not expected_ids_by_domain.get(domain_id):

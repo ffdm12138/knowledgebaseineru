@@ -1,25 +1,21 @@
 """批量转换文档目录 (MinerU 3.4)
 
-重构后流程：raw -> MinerU tmp -> cleaner -> papers/<paper_id>/ -> manifest
-不再做 chunk / embedding / 入库。可走 mineru-api(8000) 加速。
+重构后流程：raw -> MinerU tmp -> cleaner -> papers/<paper_id>/ -> registry
+不再做 chunk / embedding / 入库。默认 CLI runner。
 
 用法:
   conda activate mineru
 
-  # 终端1：启动API服务 (端口8000，避开代理7890)
-  mineru-api --port 8000
-
-  # 终端2：批量转换
-  python batch_convert.py data/raw --api-url http://127.0.0.1:8000
+  # 批量转换（CLI runner，日常推荐）
+  python batch_convert.py data/raw
 
   # 可选参数
   --backend pipeline|hybrid-engine    默认从config读取
   --method auto|ocr|txt               默认auto
   --effort medium|high                仅hybrid-engine生效
+  --api-url URL                       实验性接口（HTTP upload adapter 未实现，不推荐日常使用）
 """
-import os
 import sys
-import subprocess
 import argparse
 import time
 from pathlib import Path
@@ -28,37 +24,16 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from loguru import logger
 from config.settings import (
-    MINERU_TMP_DIR, SUPPORTED_FORMATS, MINERU_TIMEOUT,
+    MINERU_TMP_DIR, SUPPORTED_FORMATS,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
 )
 from src.cleaner import MinerUOutputCleaner
 from src.manifest import PaperManifest
 from src.naming import derive_paper_id
 
-_PYTHON_DIR = Path(os.sys.executable).parent
-MINERU_EXE = str(_PYTHON_DIR / "Scripts" / "mineru.exe")
-if not os.path.exists(MINERU_EXE):
-    MINERU_EXE = str(_PYTHON_DIR / "mineru.exe")
-
 cleaner = MinerUOutputCleaner()
 manifest = PaperManifest()
 manifest.migrate()
-
-
-def run_mineru(input_path: str, output_dir: str, backend: str, method: str,
-               effort: str, lang: str, api_url: str) -> bool:
-    cmd = [MINERU_EXE, "-p", input_path, "-o", output_dir,
-           "-b", backend, "-m", method, "-l", lang]
-    if backend == "hybrid-engine":
-        cmd.extend(["--effort", effort])
-    if api_url:
-        cmd.extend(["--api-url", api_url])
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                            errors="replace", env={**os.environ}, timeout=MINERU_TIMEOUT)
-    if result.returncode != 0:
-        logger.error(f"  转换失败: {result.stderr[-300:] if result.stderr else '未知'}")
-        return False
-    return True
 
 
 def main():
@@ -85,7 +60,14 @@ def main():
 
     logger.info(f"找到 {len(files)} 个文件")
     if args.api_url:
-        logger.info(f"使用API服务: {args.api_url} (模型已预加载，速度快)")
+        logger.warning(
+            f"使用 API runner: {args.api_url}; HTTP upload adapter 未实现时会结构化失败，不会静默回退 CLI"
+        )
+
+    import time as _time
+    elapsed_records = []  # (filename, paper_id, elapsed_sec, success)
+    skipped_count = 0
+    failed_count = 0
 
     for i, f in enumerate(files, 1):
         paper_id = derive_paper_id(f.name)
@@ -94,8 +76,9 @@ def main():
         from src.file_fingerprint import compute_sha256
         sha = compute_sha256(f)
         existing_by_sha = manifest.find_by_sha256(sha)
-        if existing_by_sha and existing_by_sha.get("status") == "converted":
+        if existing_by_sha and existing_by_sha.get("status") in {"converted", "unregistered_converted"}:
             logger.info(f"[{i}/{len(files)}] 跳过 (sha256 已转换): {f.name} = {existing_by_sha['paper_id']}")
+            skipped_count += 1
             continue
         # paper_id 冲突：同名但不同内容 → 加后缀
         if manifest.has(paper_id):
@@ -107,34 +90,57 @@ def main():
         if manifest.has(paper_id) and Path(manifest.get(paper_id)["markdown"]).exists() \
                 and manifest.get(paper_id).get("sha256") == sha:
             logger.info(f"[{i}/{len(files)}] 跳过 (已转换): {f.name} -> {paper_id}")
+            skipped_count += 1
             continue
 
         logger.info(f"[{i}/{len(files)}] 处理: {f.name} -> {paper_id} | sha256={sha[:12]} | runner={'api' if args.api_url else 'cli'}")
-        tmp_out = MINERU_TMP_DIR / paper_id
-        t0 = time.time()
-        ok = run_mineru(str(f), str(tmp_out), args.backend, args.method,
-                        args.effort, MINERU_LANG, args.api_url)
-        if not ok:
+        t0 = _time.time()
+        from src.services.ingest_service import IngestService
+        ing = IngestService(manifest=manifest)
+        conv = ing.convert_file(
+            pdf_path=f, paper_id=paper_id, backend=args.backend,
+            method=args.method, lang=MINERU_LANG,
+            effort=args.effort, api_url=args.api_url, overwrite=True,
+        )
+        elapsed = _time.time() - t0
+        if not conv["success"]:
+            logger.error(f"  转换失败 ({elapsed:.0f}s): {conv.get('error')}")
+            elapsed_records.append((f.name, paper_id, elapsed, False))
+            failed_count += 1
             continue
-        # MinerU 输出在 tmp_out/<stem>/<method>/，cleaner 递归定位
-        clean = cleaner.extract(tmp_out, paper_id, overwrite=True,
-                                method=args.method, stem=f.stem,
-                                backend=args.backend)
-        if not clean["success"]:
-            logger.error(f"  清理失败: {clean.get('error')}")
-            continue
-        from src.file_fingerprint import compute_sha256, file_meta
-        meta = file_meta(f)
-        manifest.upsert(paper_id=paper_id, raw_pdf=str(f),
-                        markdown=clean["markdown_path"], images_dir=clean["images_dir"],
-                        status="converted", images_count=clean["images_count"],
-                        md_chars=clean["char_count"],
-                        raw_filename=f.name, raw_stem=f.stem,
-                        sha256=meta["sha256"], file_size=meta["file_size"],
-                        mtime=meta["mtime"],
-                        mineru_backend=args.backend, effort=args.effort, method=args.method,
-                        runner="api" if args.api_url else "cli")
-        logger.info(f"  完成 ({time.time()-t0:.0f}s): {paper_id}")
+        logger.info(f"  完成 ({elapsed:.0f}s): {paper_id}")
+        elapsed_records.append((f.name, paper_id, elapsed, True))
+
+    # ── 批量转换汇总 ──
+    success_times = [e[2] for e in elapsed_records if e[3]]
+    if success_times:
+        sorted_times = sorted(success_times)
+        n = len(sorted_times)
+        total_elapsed = sum(sorted_times)
+        avg_elapsed = total_elapsed / n
+        median_elapsed = sorted_times[n // 2]
+        max_elapsed = sorted_times[-1]
+        success_records = [e for e in elapsed_records if e[3]]
+        slowest_file = max(success_records, key=lambda e: e[2])[0]
+        logger.info(
+            f"\n[批量转换汇总] total_files={len(files)} converted={n} "
+            f"skipped={skipped_count} failed={failed_count}"
+        )
+        logger.info(
+            f"[批量转换汇总] total_elapsed={total_elapsed:.1f}s "
+            f"avg={avg_elapsed:.1f}s median={median_elapsed:.1f}s "
+            f"max={max_elapsed:.1f}s slowest={slowest_file}"
+        )
+        if failed_count > 0:
+            failed_names = [e[0] for e in elapsed_records if not e[3]]
+            logger.info(f"[批量转换汇总] failed_files: {', '.join(failed_names)}")
+    elif elapsed_records:
+        failed_names = [e[0] for e in elapsed_records if not e[3]]
+        logger.info(
+            f"\n[批量转换汇总] total_files={len(files)} all_failed "
+            f"skipped={skipped_count} failed={failed_count} "
+            f"failed_files: {', '.join(failed_names)}"
+        )
 
     stats = manifest.stats()
     logger.info(f"\n批量转换完成！文献库: {stats['total_papers']} 篇, "

@@ -1,13 +1,18 @@
-"""从 data/raw/ 重建 data/papers/
+"""从 data/raw/ 重建 data/papers/（legacy repair tool，不作为日常入库入口）
 
 两种来源：
   1. 若 data/parsed/<stem>/ 已有旧版 MinerU 输出（hybrid_engine 默认），直接用 cleaner 提取，免重新转换。
-  2. 否则调用 MinerU 重新转换到 tmp 再提取。
+  2. 否则调用 MinerUConverter.convert() 重新转换到 tmp 再提取。
 
 paper_id 映射：
   - 现有 13 篇用 config/paper_ids.py 的 RAW_STEM_TO_PAPER_ID 固定映射（年份_首位作者_中文标题）。
   - 重复上传的两篇（DUPLICATE_RAW_STEMS）跳过。
   - 新文件用 derive_paper_id() 自动推导。
+
+注意：
+  - 这是 legacy repair tool，日常入库请走 register_manual_pdf -> import_pending_pdf。
+  - --api-url 仅在 API adapter 已实现时可用；未实现时 converter 会返回结构化失败。
+  - 所有转换统一走 MinerUConverter.convert()（含 build_mineru_env + preflight_gpu）。
 
 用法:
   conda activate mineru
@@ -17,7 +22,6 @@ paper_id 映射：
 """
 import os
 import sys
-import subprocess
 import argparse
 import time
 from dataclasses import dataclass
@@ -29,13 +33,13 @@ from loguru import logger
 from config.settings import (
     RAW_DIR, LEGACY_PARSED_DIR, MINERU_TMP_DIR, SUPPORTED_FORMATS,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
-    MINERU_TIMEOUT,
 )
 from config.paper_ids import RAW_STEM_TO_PAPER_ID, DUPLICATE_RAW_STEMS
 from src.cleaner import MinerUOutputCleaner
 from src.manifest import PaperManifest
 from src.naming import derive_paper_id
 from src.converter import MinerUConverter
+from src.services.paper_registry import PaperRegistryService
 
 cleaner = MinerUOutputCleaner()
 manifest = PaperManifest()
@@ -91,20 +95,24 @@ def find_legacy_output(stem: str) -> LegacyOutput | None:
 
 
 def reconvert(f: Path, paper_id: str, backend: str, method: str, effort: str,
-              lang: str, api_url: str | None) -> Path | None:
-    """调用 MinerU 重新转换，返回输出目录"""
+              lang: str, api_url: str | None, conv: MinerUConverter) -> Path | None:
+    """调用 MinerUConverter.convert() 重新转换，返回输出目录。
+
+    统一走 converter（含 build_mineru_env + preflight_gpu），不再手写 subprocess。
+    api_url 传入时 converter 内部会按 runner 路由（API 未实现时结构化失败）。
+    """
     tmp_out = MINERU_TMP_DIR / paper_id
-    # 直接用 subprocess（converter.convert 不支持 api_url）
-    from src.converter import MINERU_EXE
-    cmd = [MINERU_EXE, "-p", str(f), "-o", str(tmp_out), "-b", backend, "-m", method, "-l", lang]
-    if backend == "hybrid-engine":
-        cmd.extend(["--effort", effort])
-    if api_url:
-        cmd.extend(["--api-url", api_url])
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                            errors="replace", env={**os.environ}, timeout=MINERU_TIMEOUT)
-    if result.returncode != 0:
-        logger.error(f"  转换失败: {result.stderr[-300:]}")
+    result = conv.convert(
+        str(f),
+        str(tmp_out),
+        backend=backend,
+        method=method,
+        lang=lang,
+        effort=effort,
+        api_url=api_url,
+    )
+    if not result.get("success"):
+        logger.error(f"  转换失败: {result.get('error', 'unknown')[-300:]}")
         return None
     return tmp_out
 
@@ -142,7 +150,7 @@ def process_one(f: Path, reconvert_flag: bool, backend: str, method: str,
         eff_runner = "legacy"
     else:
         t0 = time.time()
-        source_dir = reconvert(f, paper_id, backend, method, effort, lang, api_url)
+        source_dir = reconvert(f, paper_id, backend, method, effort, lang, api_url, converter)
         if source_dir is None:
             return False
         logger.info(f"  重新转换完成 ({time.time()-t0:.0f}s): {source_dir}")
@@ -156,14 +164,26 @@ def process_one(f: Path, reconvert_flag: bool, backend: str, method: str,
 
     from src.file_fingerprint import compute_sha256, file_meta
     meta = file_meta(f)
-    manifest.upsert(paper_id=paper_id, raw_pdf=str(f),
-                    markdown=clean["markdown_path"], images_dir=clean["images_dir"],
-                    status="converted", images_count=clean["images_count"],
-                    md_chars=clean["char_count"],
-                    raw_filename=f.name, raw_stem=f.stem,
-                    sha256=meta["sha256"], file_size=meta["file_size"],
-                    mtime=meta["mtime"], mineru_backend=eff_backend, effort=eff_effort,
-                    method=eff_method, runner=eff_runner)
+    registry = PaperRegistryService(manifest_path=manifest.path)
+    registry.register_converted_paper(
+        paper_id=paper_id,
+        raw_pdf=f,
+        markdown=clean["markdown_path"],
+        images_dir=clean["images_dir"],
+        images_count=clean["images_count"],
+        md_chars=clean["char_count"],
+        raw_filename=f.name,
+        raw_stem=f.stem,
+        sha256=meta["sha256"],
+        file_size=meta["file_size"],
+        mtime=meta["mtime"],
+        mineru_backend=eff_backend,
+        effort=eff_effort,
+        method=eff_method,
+        runner=eff_runner,
+        source_kind="rebuild",
+        replace=True,
+    )
     logger.info(f"  入库: {paper_id} ({clean['char_count']} 字符, {clean['images_count']} 图)")
     return True
 

@@ -150,30 +150,28 @@ def gen_fulltext_prompt(question, paper_ids_text):
 
 def delete_paper(paper_id):
     """删除文献"""
-    import shutil
-    from src.naming import validate_paper_id, safe_child
+    from src.naming import validate_paper_id
     pid = paper_id.strip()
     if not pid:
         return "请输入 paper_id"
     try:
         validate_paper_id(pid)
-        pdir = safe_child(PAPERS_DIR, pid)
     except ValueError as e:
-        return f"❌ 无效 paper_id: {e}"
-    removed = False
-    if pdir.exists():
-        shutil.rmtree(pdir)
-        removed = True
-    manifest.delete(pid)
-    catalog.delete(pid)
-    if not removed and not manifest.has(pid):
+        return f"无效 paper_id: {e}"
+    from src.services.paper_registry import PaperRegistryService
+    svc = PaperRegistryService()
+    result = svc.delete_paper(pid, remove_raw=False, remove_assets=True)
+    if not result.get("success"):
         return f"未找到: {pid}"
-    return f"已删除: {pid}"
+    return f"已删除: {pid} (manifest={result['manifest']}, catalog={result['catalog']}, index={result['index']})"
 
 
 def get_status():
     from datetime import datetime
+    from src.mineru_runtime import describe_runtime, preflight_gpu, runtime_config_from_env
     stats = manifest.stats()
+    runtime = describe_runtime(runtime_config_from_env())
+    gpu = preflight_gpu()
     return f"""## 系统状态
 
 | 项目 | 状态 |
@@ -184,6 +182,12 @@ def get_status():
 | 总图片 | {stats['total_images']} |
 | 目录条目 | {len(catalog.list_papers())} |
 | MinerU 后端 | {MINERU_BACKEND} |
+| Runner | {runtime['runner']} |
+| Effort | {runtime['effort']} |
+| API URL | {runtime['api_url']} |
+| GPU required | {runtime['require_gpu']} |
+| CUDA_PATH | {runtime['cuda_path']} |
+| nvidia-smi | {gpu.nvidia_smi} ({gpu.message}) |
 | 更新时间 | {datetime.now().strftime('%H:%M:%S')} |"""
 
 

@@ -16,6 +16,7 @@ from src.catalog import Catalog, build_compact_catalog_text
 from src.domain_catalog import compact_domains
 from src.library_index import VALID_DOMAINS
 from src.naming import validate_paper_id
+from src.utils.atomic_io import atomic_write_json
 
 
 def load_selected(job_id: str, jm: JobManager | None = None) -> dict:
@@ -92,7 +93,7 @@ def match_catalog(job_id: str, jm: JobManager | None = None,
     if domain_ids:
         cand_data["match_domains"] = list(domain_ids)
     cand_path = jdir / "planning" / "catalog_candidates.json"
-    cand_path.write_text(json.dumps(cand_data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(cand_path, cand_data, indent=2)
 
     # selected_papers.json：初始为空，待确认
     sel_path = jdir / "planning" / "selected_papers.json"
@@ -108,7 +109,7 @@ def match_catalog(job_id: str, jm: JobManager | None = None,
         "confirmed_by": None,
         "notes": "",
     }
-    sel_path.write_text(json.dumps(sel_data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(sel_path, sel_data, indent=2)
 
     # reading_plan.md 模板
     plan = jdir / "planning" / "reading_plan.md"
@@ -207,7 +208,7 @@ def confirm_selected_papers(job_id: str, selected: list[dict],
         "notes": "",
     }
     sel_path = jdir / "planning" / "selected_papers.json"
-    sel_path.write_text(json.dumps(sel_data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(sel_path, sel_data, indent=2)
 
     jm.set_step(job_id, "catalog_selection_confirmed", True,
                 extra={"selected_papers": paper_ids})

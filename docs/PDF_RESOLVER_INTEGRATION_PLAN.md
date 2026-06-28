@@ -37,7 +37,14 @@
 
 ## 二、改动 Plan（按执行顺序）
 
-### Phase 0：Sci-Hub 加入 OA resolver chain（已完成 ✅）
+### Phase 0：Sci-Hub 加入 OA resolver chain（⚠️ **已废弃，不得执行**）
+
+> **此方案与 `PROJECT_CONTRACT.md` 冲突，已废弃。**  
+> - `oa_only` 模式 **不得** 包含 Sci-Hub。  
+> - Sci-Hub 只能通过 `AccessMode.CUSTOM` + `allow_scihub=True` 显式启用。  
+> - 默认批量 fetch 不使用 Sci-Hub。
+
+**历史记录（仅供参考，不代表当前架构）**：
 
 | 改动 | 文件 | 说明 |
 |------|------|------|
@@ -46,9 +53,14 @@
 | 添加到 name_map | `src/fetch/fetch_pipeline.py` | `"scihub": _SciHubResolver` |
 | 更新测试 | `tests/test_access_policy.py` | 添加 `"scihub"` 到期望列表 |
 
-**当前 resolver chain**：
+**历史 resolver chain（已废弃）**：
 ```
 Unpaywall → OpenAlex → S2 → arXiv → Publisher OA → Sci-Hub
+```
+
+**当前 resolver chain（oa_only）**：
+```
+Unpaywall → OpenAlex → S2 → arXiv → Publisher OA (不含 Sci-Hub)
 ```
 
 ### Phase 1：ref-downloader 桥接器
@@ -151,8 +163,8 @@ Sci-Hub        → ⚠️ 403/SSL（当前镜像被封）
 
 ### 🔧 立即能做（无需新依赖）
 1. 等 OpenAlex/S2 限速恢复后继续搜 DOI + 批量下载
-2. 用 `FETCH_PROXY=http://127.0.0.1:7890` + `fetch_pdf_batch.py` 批量跑
-3. Sci-Hub 镜像恢复后可自动 fallback
+2. 用 `FETCH_PROXY=http://127.0.0.1:7890` + `fetch_pdf_batch.py` 批量跑（oa_only 模式）
+3. ~~Sci-Hub 镜像恢复后可自动 fallback~~（已废弃：Sci-Hub 不在 oa_only 链中）
 
 ### 📦 需编码（Phase 1-2）
 4. `ref_downloader_bridge.py` — 机构权限下载（~80 行，有测试）

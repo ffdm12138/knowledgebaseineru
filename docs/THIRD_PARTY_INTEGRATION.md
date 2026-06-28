@@ -278,12 +278,13 @@ pip install ref-downloader
 # 配置 Edge 登录态后
 python scripts/fetch_pdf.py 10.xxxx/yyyy --access-mode institutional
 
-# 检查 Sci-Hub 镜像可用性
+# Sci-Hub 仅作 CUSTOM + allow_scihub=True 的隔离调试，不属于 OA/institutional 默认链
 python -c "from src.fetch.fetch_scihub import resolve_scihub; r = resolve_scihub('10.xxxx/yyyy'); print(r.success, r.pdf_url)"
 
-# 批量下载（使用所有可用 OA 源 + Sci-Hub fallback）
+# 批量下载（OA only，不使用 Sci-Hub）
 export FETCH_PROXY=http://127.0.0.1:7890
 python scripts/fetch_pdf_batch.py --domain blowing_snow_physics --limit 100
+# Sci-Hub 不在 oa_only 链中，需 CUSTOM + allow_scihub=True 显式启用
 
 # 手动注册已有 PDF
 python scripts/register_manual_pdf.py local.pdf --doi 10.xxxx/yyyy --domain blowing_snow_physics

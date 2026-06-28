@@ -20,6 +20,8 @@
 8. 同一篇文献不能重复存储 PDF / paper.md / images / manifest / library_index canonical record（paper 物理存储不能重复）。
 9. 多领域选文进入写作前必须 compact / dedupe。
 10. PDF 获取系统采用可配置 access policy（默认 `oa_only`，只使用开放获取来源）。项目核心流程不得硬编码任何单一下载站点；非 OA 来源必须通过 access policy 显式启用，并通过插件/浏览器辅助/本地导入等隔离接口进入 pending PDF 队列。无论来源如何，正式入库前必须经过 duplicate detection 和人工确认。
+    - `oa_only` 模式下**不得包含 Sci-Hub** 或其他非开放获取渠道。
+    - Sci-Hub 仅能通过 `AccessPolicy(mode=CUSTOM, allow_scihub=True)` 显式启用。
 11. 新论文从 pending PDF 入库时，必须先做 duplicate detection 查重；重复 DOI 或重复 sha256 只能更新 domains membership，不能新建 paper。
 12. catalog 管文献理解，manifest 管文件状态，library_index 管路径和领域 membership，三者职责分离。
 13. 所有 JSON 写入必须原子化：filelock + tmp + os.replace。
@@ -52,6 +54,8 @@
 `data/catalog/domains/<domain_id>/literature_catalog.json` + `references.bib`：是"视图"，不是唯一事实源。**同一篇文献允许出现在多个领域 catalog 中**（跨领域重复索引合法）；同一领域 catalog 内部不应重复同一 paper_id。每个领域条目带 `domain_view`（`domain_id` / `is_primary_domain` / `canonical_paper_id`）指明它只是视图而非新实体。同一篇 paper 出现在多个 domain `references.bib` 中也合法。
 
 `primary_domain` 决定主领域，`domains` 决定所有领域视图 membership。领域 catalog 收录所有 `domains` 中声明该领域的文献，而不只是 primary domain。
+
+领域注册表由 `config/domains.json` 驱动；代码中的 `VALID_DOMAINS`、`DOMAIN_LABELS`、`DOMAIN_REGISTRY` 必须从该配置派生。旧三个领域必须保持兼容，新增领域不得硬编码到业务代码中。
 
 ## 多领域 compact 选文
 

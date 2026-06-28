@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from src.catalog import Catalog
 from src.library_index import LibraryIndex
 from src.manifest import PaperManifest
@@ -12,7 +14,7 @@ class FakeConverter:
     def __init__(self):
         self.calls = 0
 
-    def convert(self, input_path, output_dir, backend="", method="", lang="", effort="", api_url=None):
+    def convert(self, input_path, output_dir, backend="", method="", lang="", effort="", api_url=None, paper_id=""):
         self.calls += 1
         return {
             "success": True, "output_dir": str(output_dir), "markdown": "x",
@@ -158,6 +160,8 @@ def test_duplicate_doi_updates_domains_only(tmp_path):
     assert "aeolian_snow_transport" in paper["domains"]
     sidecar = json.loads(pdf.with_suffix(".json").read_text(encoding="utf-8"))
     assert sidecar["status"] == "duplicate"
+    assert not pdf.exists()
+    assert sidecar["deleted_paths"]
 
 
 def test_paper_stored_once_across_domains(tmp_path):
@@ -181,3 +185,48 @@ def test_paper_stored_once_across_domains(tmp_path):
     for d in ["blowing_snow_physics", "abl_pbl"]:
         dcat = json.loads((dd / d / "literature_catalog.json").read_text(encoding="utf-8"))
         assert any(p["paper_id"] == pid for p in dcat["papers"])
+
+
+def test_raw_target_same_sha256_reuses_existing(tmp_path):
+    """raw_target 已存在且 sha256 相同：复用，不覆盖，不报错。"""
+    cp, ip, mp, dd, rd, td = _setup_env(tmp_path)
+    pdf = _make_pending(rd, "blowing_snow_physics", "10_1_reuse", "10.1/reuse", "Reuse Paper", 2024)
+    pid = "2024_reuse_paper"
+
+    # 预置同内容 raw_target（相同 PDF 字节）
+    raw_target = rd / f"{pid}.pdf"
+    raw_target.write_bytes(pdf.read_bytes())
+
+    conv, cln = FakeConverter(), FakeCleaner()
+    result = import_pending_pdf(
+        pdf, domain="blowing_snow_physics", title="Reuse Paper", doi="10.1/reuse",
+        year=2024, paper_id=pid, apply=True,
+        converter=conv, cleaner=cln, manifest=PaperManifest(mp),
+        catalog_path=cp, index_path=ip, manifest_path=mp, domain_dir=dd, raw_dir=rd, tmp_dir=td)
+
+    assert result["status"] == "imported"
+    assert result["applied"] is True
+    # 验证未抛异常，conv 正常调用
+    assert conv.calls == 1
+
+
+def test_raw_target_different_sha256_raises(tmp_path):
+    """raw_target 已存在但 sha256 不同：抛出 FileExistsError。"""
+    cp, ip, mp, dd, rd, td = _setup_env(tmp_path)
+    pdf = _make_pending(rd, "blowing_snow_physics", "10_1_conflict", "10.1/conflict", "Conflict Paper", 2024)
+    pid = "2024_conflict_paper"
+
+    # 预置不同内容的 raw_target
+    raw_target = rd / f"{pid}.pdf"
+    raw_target.write_bytes(b"different content")
+
+    conv, cln = FakeConverter(), FakeCleaner()
+    with pytest.raises(FileExistsError, match="different content"):
+        import_pending_pdf(
+            pdf, domain="blowing_snow_physics", title="Conflict Paper", doi="10.1/conflict",
+            year=2024, paper_id=pid, apply=True,
+            converter=conv, cleaner=cln, manifest=PaperManifest(mp),
+            catalog_path=cp, index_path=ip, manifest_path=mp, domain_dir=dd, raw_dir=rd, tmp_dir=td)
+
+    # conv 未被调用
+    assert conv.calls == 0

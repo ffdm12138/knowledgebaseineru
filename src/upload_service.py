@@ -33,6 +33,8 @@ from config.settings import (
     SUPPORTED_FORMATS,
 )
 from src.naming import derive_paper_id, validate_paper_id, safe_child
+from src.services.conversion_ingest_pipeline import ConversionIngestPipeline
+from src.services.paper_registry import PaperRegistryService
 
 
 class UploadError(Exception):
@@ -112,19 +114,17 @@ async def _stream_to_temp(source, raw_dir: Path,
     return tmp_path, total_size, sha.hexdigest()
 
 
-def _mark_failed(manifest, paper_id, save_path, filename,
+def _mark_failed(registry, paper_id, save_path, filename,
                  file_sha256, file_size, backend, method, effort,
                  error, runner="cli") -> None:
     """转换/清理失败时标记 failed（复用 converting 已写入的指纹信息）。"""
-    manifest.upsert(
-        paper_id=paper_id, raw_pdf=str(save_path),
-        markdown="", images_dir="",
-        status="failed",
-        raw_filename=filename, sha256=file_sha256,
-        file_size=file_size,
-        mtime=datetime.now().isoformat(timespec="seconds"),
+    registry.mark_conversion_failed(
+        paper_id=paper_id,
+        raw_pdf=save_path,
+        error=error,
+        sha256=file_sha256,
         mineru_backend=backend, method=method, effort=effort,
-        runner=runner, error=error,
+        runner=runner,
     )
 
 
@@ -135,6 +135,7 @@ async def upload_core(
     converter,
     cleaner,
     manifest,
+    registry=None,
     raw_dir: Path = RAW_DIR,
     tmp_dir: Path = MINERU_TMP_DIR,
     method: str = MINERU_METHOD,
@@ -158,6 +159,8 @@ async def upload_core(
     Raises:
         UploadError: 任何校验/IO/转换失败，携带 status_code。
     """
+    registry = registry or PaperRegistryService(manifest_path=manifest.path)
+
     # 0. method 枚举校验
     if method not in ("auto", "ocr", "txt"):
         raise UploadError(f"非法 method: {method}，允许: auto, ocr, txt",
@@ -201,7 +204,7 @@ async def upload_core(
                     "paper_id": existing.get("paper_id"),
                     "message": "相同文件正在转换中，请稍后查看",
                 }
-            if status == "converted":
+            if status in {"converted", "unregistered_converted"}:
                 os.unlink(tmp_path)
                 return {
                     "status": "duplicate",
@@ -245,12 +248,9 @@ async def upload_core(
             os.replace(tmp_path, str(save_path))
 
         # 写入 converting 状态，防止并发重复转换
-        manifest.upsert(
+        registry.mark_converting(
             paper_id=paper_id,
-            raw_pdf=str(save_path),
-            markdown="",
-            images_dir="",
-            status="converting",
+            raw_pdf=save_path,
             raw_filename=filename,
             sha256=file_sha256, file_size=file_size,
             mtime=datetime.now().isoformat(timespec="seconds"),
@@ -260,56 +260,39 @@ async def upload_core(
     # 锁释放
 
     # 6. 转换 → 清理 → manifest(converted)
-    tmp_out = tmp_dir / paper_id
     try:
-        result = converter.convert(
-            save_path, tmp_out, backend=backend, method=method,
-            lang=lang, effort=effort,
-        )
-        if not result["success"]:
-            _mark_failed(manifest, paper_id, save_path, filename,
-                         file_sha256, file_size, backend, method, effort,
-                         error=f"转换失败: {result.get('error')}",
-                         runner=result.get("runner", "cli"))
-            raise UploadError(f"转换失败: {result.get('error')}",
-                              status_code=500)
-
-        stem = Path(filename).stem
-        clean = cleaner.extract(result["output_dir"], paper_id,
-                                overwrite=False, method=method, stem=stem,
-                                backend=backend)
-        if not clean["success"]:
-            _mark_failed(manifest, paper_id, save_path, filename,
-                         file_sha256, file_size, backend, method, effort,
-                         error=f"清理失败: {clean.get('error')}",
-                         runner=result.get("runner", "cli"))
-            raise UploadError(f"清理失败: {clean.get('error')}",
-                              status_code=500)
-
         file_mtime = datetime.fromtimestamp(
             os.path.getmtime(str(save_path))).isoformat(timespec="seconds")
-        manifest.upsert(
+        pipeline = ConversionIngestPipeline(
+            manifest=manifest,
+            converter=converter,
+            cleaner=cleaner,
+            registry=registry,
+            tmp_dir=tmp_dir,
+        )
+        converted = pipeline.convert_and_register(
             paper_id=paper_id,
-            raw_pdf=str(save_path),
-            markdown=clean["markdown_path"],
-            images_dir=clean["images_dir"],
-            status="converted",
-            images_count=clean["images_count"],
-            md_chars=clean["char_count"],
+            pdf_path=save_path,
             raw_filename=filename,
             sha256=file_sha256, file_size=file_size, mtime=file_mtime,
-            mineru_backend=backend, method=method, effort=effort,
-            runner=result.get("runner", "cli"),
+            backend=backend, method=method, effort=effort, lang=lang,
+            source_kind="upload",
+            already_marked_converting=True,
+            replace=True,
         )
+        if not converted.get("success"):
+            prefix = "转换失败" if converted.get("stage") == "convert" else "清理失败"
+            raise UploadError(f"{prefix}: {converted.get('error')}",
+                              status_code=500)
 
         return {
             "status": "success",
             "paper_id": paper_id,
             "filename": filename,
-            "markdown_path": clean["markdown_path"],
-            "images_count": clean["images_count"],
-            "md_chars": clean["char_count"],
-            "message": f"转换完成: {paper_id} ({clean['char_count']} 字符, {clean['images_count']} 图)",
+            "markdown_path": converted["markdown_path"],
+            "images_count": converted["images_count"],
+            "md_chars": converted["char_count"],
+            "message": f"转换完成: {paper_id} ({converted['char_count']} 字符, {converted['images_count']} 图)",
         }
     except UploadError:
         raise
@@ -325,6 +308,7 @@ def upload_from_bytes(
     converter,
     cleaner,
     manifest,
+    registry=None,
     raw_dir: Path = RAW_DIR,
     tmp_dir: Path = MINERU_TMP_DIR,
     method: str = MINERU_METHOD,
@@ -343,6 +327,7 @@ def upload_from_bytes(
             upload_core(
                 filename=filename, source=_BytesSource(data),
                 converter=converter, cleaner=cleaner, manifest=manifest,
+                registry=registry,
                 raw_dir=raw_dir, tmp_dir=tmp_dir,
                 method=method, backend=backend, effort=effort, lang=lang,
             ))
@@ -378,6 +363,7 @@ def upload_from_path(
     converter,
     cleaner,
     manifest,
+    registry=None,
     filename: str | None = None,
     raw_dir: Path = RAW_DIR,
     tmp_dir: Path = MINERU_TMP_DIR,
@@ -402,6 +388,7 @@ def upload_from_path(
             upload_core(
                 filename=filename, source=source,
                 converter=converter, cleaner=cleaner, manifest=manifest,
+                registry=registry,
                 raw_dir=raw_dir, tmp_dir=tmp_dir,
                 method=method, backend=backend, effort=effort, lang=lang,
             ))

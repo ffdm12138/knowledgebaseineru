@@ -14,6 +14,7 @@ from src.library import PaperLibrary
 from src.catalog import Catalog
 from src.naming import validate_paper_id
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
+from src.writer.safe_write import write_text_safely
 from config.settings import PAPER_MD_MAX_CHARS, PAPERS_DIR
 
 
@@ -71,6 +72,7 @@ def _figure_candidates_block(pid: str, library: PaperLibrary) -> str:
 
 
 def deep_read(job_id: str, paper_ids: list[str] | None = None,
+              force: bool = False,
               jm: JobManager | None = None,
               library: PaperLibrary | None = None,
               catalog: Catalog | None = None) -> dict:
@@ -83,6 +85,9 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
     library = library or PaperLibrary()
     catalog = catalog or Catalog()
     jdir = jm.job_dir(job_id)
+    meta = jm.load_meta(job_id) or {}
+    if meta.get("steps", {}).get("deep_read_notes_filled") and not force:
+        raise RuntimeError("deep-read notes are already marked filled; pass force=True to overwrite with backups.")
 
     # 前置校验：必须已确认 selected
     sel = load_selected(job_id, jm)
@@ -114,24 +119,44 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
     full_texts = library.read_multiple(paper_ids, max_chars_each=PAPER_MD_MAX_CHARS)
 
     created_notes = []
+    write_results = []
     fig_lines = []
     for pid in paper_ids:
         bib = bib_key_of.get(pid, "")
         note_path = notes_dir / f"{pid}.md"
-        note_path.write_text(NOTE_TEMPLATE.format(pid=pid, bib_key=bib), encoding="utf-8")
+        wr = write_text_safely(
+            note_path,
+            NOTE_TEMPLATE.format(pid=pid, bib_key=bib),
+            force=force,
+        )
+        if not wr["written"]:
+            raise RuntimeError(f"refuse to overwrite user-filled note: {note_path}")
+        write_results.append(wr)
         created_notes.append(str(note_path))
         fig_lines.append(_figure_candidates_block(pid, library))
 
     ev = jdir / "reading" / "evidence_table.md"
-    ev.write_text(
+    ev_wr = write_text_safely(ev,
         "# 证据表\n\n"
         "| Claim | Supporting paper | Bib key | Evidence location | Use in thesis |\n"
         "|---|---|---|---|---|\n"
-        "| （待填） | | | | |\n", encoding="utf-8")
+        "| （待填） | | | | |\n",
+        force=force,
+    )
+    if not ev_wr["written"]:
+        raise RuntimeError(f"refuse to overwrite user-filled evidence table: {ev}")
+    write_results.append(ev_wr)
 
     fc = jdir / "reading" / "figure_candidates.md"
-    fc.write_text("# 候选引用图片清单\n\n> 由 deep_reader 自动列出图片，图意待填。\n\n"
-                  + "".join(fig_lines), encoding="utf-8")
+    fc_wr = write_text_safely(
+        fc,
+        "# 候选引用图片清单\n\n> 由 deep_reader 自动列出图片，图意待填。\n\n"
+        + "".join(fig_lines),
+        force=force,
+    )
+    if not fc_wr["written"]:
+        raise RuntimeError(f"refuse to overwrite user-filled figure candidates: {fc}")
+    write_results.append(fc_wr)
 
     fulltext_block = ""
     for pid in paper_ids:
@@ -162,6 +187,7 @@ Evidence extracted from full text（标注可定位位置）/ Figure candidates�
         "notes": created_notes,
         "evidence_table": str(ev),
         "figure_candidates": str(fc),
+        "writes": write_results,
         "notes_filled": False,
     }
 

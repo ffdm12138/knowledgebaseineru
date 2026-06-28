@@ -113,7 +113,9 @@ def validate(catalog_data: dict, bib_text: str | None = None) -> list[str]:
         if not bt:
             errors.append(f"{ctx} 无 bibtex")
         else:
-            for field in ["title", "author", "year"]:
+            placeholder = p.get("status") == "unsummarized" and not cit.get("verified", False)
+            required_fields = ["title"] if placeholder else ["title", "author", "year"]
+            for field in required_fields:
                 if not re.search(rf"\b{field}\s*=", bt, re.IGNORECASE):
                     errors.append(f"{ctx} bibtex 缺少 {field} 字段")
             doi = p.get("doi")

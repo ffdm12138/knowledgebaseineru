@@ -40,7 +40,7 @@ def test_upload_from_path_success(tmp_path):
     assert result["paper_id"]
     # manifest 落地
     sha = hashlib.sha256(content).hexdigest()
-    assert m.find_by_sha256(sha)["status"] == "converted"
+    assert m.find_by_sha256(sha)["status"] == "unregistered_converted"
 
 
 def test_upload_from_path_oversize_rejected(tmp_path, monkeypatch):

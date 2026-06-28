@@ -26,14 +26,12 @@
 - [数据布局](#数据布局)
 - [MinerU 开源协议与归属](#mineru-开源协议与归属)
 - [License](#license)
-- [MinerU 开源协议与归属](#mineru-开源协议与归属)
-- [License](#license)
 
 ---
 
 ## 它能做什么
 
-1. **文献资产库**：上传 PDF/DOCX/PPTX/XLSX/图片 → MinerU 转 Markdown → 清理为 `data/papers/<paper_id>/paper.md + images/`，丢弃所有 json/layout 中间文件。
+1. **文献资产库**：PDF/DOCX/PPTX/XLSX/图片 → MinerU 转 Markdown → 清理为 `data/papers/<paper_id>/paper.md + images/`，丢弃所有 json/layout 中间文件。正式新增文献推荐 `register_manual_pdf.py` → `import_pending_pdf.py --apply`。
 2. **AI 摘要目录**：`literature_catalog.json` 是"文献级索引"（非段落级），每篇含 `ai_summary`（问题/方法/发现/局限/与本工作关系）、`tags`、`selection_hints`、`citation`（bib_key/bibtex）。大模型据此判断该读哪些全文。
 3. **按需全文阅读**：三个核心 prompt——单篇目录条目补全、目录规划阅读、基于全文写作。只生成 prompt，不调 LLM。
 4. **博士论文级综述写作**：严格多阶段工作区，输出独立可编译、可整体挪走的 LaTeX 项目。
@@ -78,9 +76,10 @@
 ```
 mineru/
 ├── app.py                  # Gradio 前端 (端口 7860)
-├── batch_convert.py        # 批量转换 raw → papers（可走 8000 加速）
-├── watcher.py              # 轮询 data/raw/ 自动转换+入库
-├── start.bat               # 一键启动 mineru-api(8000) + watcher + 服务(8080)
+├── batch_convert.py        # 批量转换 raw → papers（CLI runner）
+├── watcher.py              # 轮询 data/raw/ 自动转换（产物为 unregistered_converted，不直接入库）
+├── start.bat               # 一键启动 Web 服务(8080)，默认不启动 watcher
+├── start_fast_api_mode.bat # 加速模式：mineru-api 常驻 + cli_api_proxy runner
 ├── requirements.txt
 ├── config/
 │   ├── settings.py         # 全部配置（导入即建数据目录）
@@ -132,6 +131,19 @@ mineru/
 
 > 仓库不含 `data/raw/` 与 `data/papers/` 的内容（版权语料，见 `.gitignore`），仅保留目录占位。克隆后需自行投放 PDF 并运行转换。
 
+### 命令语义速查
+
+| 命令 | 用途 | 产物 | 推荐场景 |
+|------|------|------|---------|
+| `register_manual_pdf.py` | 单个外部 PDF → pending | pending PDF + sidecar | 日常单篇手动导入 |
+| `bulk_register_manual_pdfs.py` | 外部文件夹批量 → pending | 多个 pending PDF + sidecar | 批量导入几十个 PDF |
+| `import_pending_pdf.py --apply` | 单个 pending → 正式入库 | converted（manifest/catalog/index/domain/bib） | 所有正式入库必经 |
+| `fetch_pdf.py` | DOI → 下载到 pending | pending PDF + sidecar | OA DOI 获取 |
+| `fetch_pdf_batch.py` | 批量 DOI → pending | 多个 pending PDF + sidecar | 批量 DOI 获取 |
+| `batch_convert.py` | 批量转换 raw 目录 | **unregistered_converted** | legacy/临时批量转换，非正式入库 |
+| `watcher.py` | 轮询 data/raw 自动转换 | **unregistered_converted** | 先批量转了再说，不推荐用于文献整理 |
+| `rebuild_library.py` | legacy repair | converted | 修复/重建，非日常入库 |
+
 ## 环境要求
 
 - **OS**：Windows（用 `mineru.exe`、`.bat` 编排、硬编码路径）。理论可移植，但未在 Linux/macOS 测试。
@@ -153,14 +165,19 @@ pip install -r requirements.txt
 set CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6
 set PATH=%CUDA_PATH%\bin;%PATH%
 
-# 3. 一键启动（mineru-api 8000 + watcher + 文献库服务 8080）
+# 3. 一键启动 Web 服务（默认不启动 watcher）
 start.bat
-# 或单独启动文献库服务：
-python -m src.server
-# 浏览器访问 http://localhost:8080
+# start.bat 默认 START_WATCHER=0，只启动 Web 服务(8080)。
+# 需要 watcher 时：set START_WATCHER=1 && start.bat
+# watcher 自动转换产物为 unregistered_converted，不会直接进入正式 catalog。
+# 日常新增 PDF 建议走 register_manual_pdf → import_pending_pdf --apply 正式入库。
 
-# 4. 投放文献：把 PDF 放进 data/raw/，watcher 会自动转换+入库
-#    或通过 Web UI / curl 上传：
+# 3a. 加速模式（需 mineru-api 常驻服务）
+start_fast_api_mode.bat
+# 启动 mineru-api + Web 服务，使用 cli_api_proxy runner 避免每篇冷启动
+
+# 4. Web 上传是临时转换入口；缺少 metadata 时产物为 unregistered_converted
+# 日常正式新增本地 PDF 推荐 register_manual_pdf → import_pending_pdf
 curl -F "file=@paper.pdf" http://localhost:8080/upload
 ```
 
@@ -168,9 +185,44 @@ curl -F "file=@paper.pdf" http://localhost:8080/upload
 
 | 服务 | 端口 | 用途 |
 |------|------|------|
-| mineru-api | 8000 | MinerU 解析模型常驻 GPU（可选，加速） |
 | 文献库服务 (FastAPI + Web UI) | 8080 | API + Web UI；Swagger 在 `/docs` |
 | Gradio UI | 7860 | 可选前端 |
+
+运行时状态看 `http://localhost:8080/status/runtime`。
+
+**Runner 选择：**
+
+| Runner | 说明 | 速度 |
+|--------|------|------|
+| `cli` | 纯 MinerU CLI，每篇冷启动 | 基准（82KB PDF ~63s） |
+| `cli_api_proxy` | CLI + `--api-url`，复用常驻 mineru-api | **~3.2x 加速** (~20s) |
+| `api` | HTTP upload adapter | 未实现，明确报错 |
+
+加速使用：
+```bash
+# 终端1：启动 mineru-api
+mineru-api --port 8000 --enable-vlm-preload true
+# 终端2：转换
+set MINERU_RUNNER=cli_api_proxy
+set MINERU_API_URL=http://127.0.0.1:8000
+python batch_convert.py data/raw
+# 或一键：start_fast_api_mode.bat
+```
+
+### 转换性能诊断
+
+```bash
+# 单 PDF 基准测试（不修改文献库，含 GPU 检查）
+python scripts/benchmark_mineru.py "E:\papers_to_import\test.pdf" --repeat 2
+
+# 进程和锁状态
+python scripts/check_mineru_processes.py
+
+# 实时观察 GPU
+nvidia-smi -l 1
+```
+
+详见 [`docs/MINERU_PERFORMANCE_PLAN.md`](docs/MINERU_PERFORMANCE_PLAN.md)。
 
 ## 综述写作工作流
 
@@ -211,7 +263,7 @@ FastAPI 服务（端口 8080），Swagger 文档在 `http://localhost:8080/docs`
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| POST | `/upload` | 上传 → MinerU 转 → 清理 → 入库 |
+| POST | `/upload` | 上传 → MinerU 转 → 清理；缺 metadata 时为 unregistered_converted，非推荐正式入库入口 |
 | GET | `/papers` | 列出已转换文献 |
 | GET | `/papers/{paper_id}/markdown` | 读取全文 Markdown |
 | GET | `/papers/{paper_id}/images/{img}` | 返回单张图片 |
@@ -239,6 +291,8 @@ FastAPI 服务（端口 8080），Swagger 文档在 `http://localhost:8080/docs`
 - `data/catalog/domains/<domain_id>/` 是领域视图层，同一篇文献可跨领域重复索引。
 - `data/discovery/doi_candidates/` 保存关键词检索得到的 DOI 候选 JSONL 与 summary。
 - `data/raw/<domain_id>/pending/` 保存人工待确认的开放获取 PDF 下载结果与 sidecar JSON。
+
+领域注册表来自 [`config/domains.json`](config/domains.json)。新增领域时先在该文件加入 `title` 和 `description`；代码中的 `VALID_DOMAINS`、`DOMAIN_LABELS`、`DOMAIN_REGISTRY` 会从配置派生，旧三个领域保持兼容。
 
 第一阶段只做逻辑拆分，不移动 `data/papers/<paper_id>/`。以后如需物理迁移 papers，必须先更新 `library_index.json`，并通过 `PaperLibrary`/`LibraryIndex` 解析路径；不要再硬编码 `data/papers/<paper_id>/paper.md`。
 
@@ -277,11 +331,9 @@ curl -X POST http://localhost:8080/write/jobs/001_xxx/match-catalog \
 python scripts/discover_papers.py "风吹雪 升华 破碎" \
     --domain blowing_snow_physics --max-candidates 30
 
-python scripts/fetch_oa_pdf.py 10.xxxx/yyyy \
-    --domain blowing_snow_physics --dry-run
-
-python scripts/fetch_oa_pdf.py 10.xxxx/yyyy \
-    --domain blowing_snow_physics
+python scripts/fetch_pdf.py 10.xxxx/yyyy --domain blowing_snow_physics
+python scripts/import_pending_pdf.py data/raw/blowing_snow_physics/pending/10_xxxx_yyyy.pdf \
+    --domain blowing_snow_physics --title "..." --doi "10.xxxx/yyyy" --year 2025 --apply
 ```
 
 可选环境变量：`OPENALEX_EMAIL`、`OPENALEX_API_KEY`、`SEMANTIC_SCHOLAR_API_KEY`、`UNPAYWALL_EMAIL`。网络/API 错误会记录 warning 并返回空候选或失败结果，不应中断本地文献库校验。
@@ -296,6 +348,12 @@ python scripts/fetch_oa_pdf.py 10.xxxx/yyyy \
 # 列出待入库 PDF
 python scripts/list_pending_pdfs.py
 
+# 本地 PDF：先登记为 pending，再人工确认入库
+python scripts/register_manual_pdf.py paper.pdf --domain blowing_snow_physics \
+    --title "..." --doi "10.xxxx/yyyy" --year 2024
+python scripts/import_pending_pdf.py data/raw/blowing_snow_physics/pending/paper.pdf \
+    --domain blowing_snow_physics --apply
+
 # dry-run（默认，不写入）
 python scripts/import_pending_pdf.py \
     data/raw/blowing_snow_physics/pending/10_xxxx_yyyy.pdf \
@@ -308,6 +366,10 @@ python scripts/import_pending_pdf.py ... --apply
 ```
 
 sidecar JSON 状态机：`pending` → `imported`（新入库）/ `duplicate`（已存在，仅更新 domains）/ `failed`。
+
+不要直接把新 PDF 扔进 `data/raw/` 根目录当正式入库；新文件应进入 `data/raw/_inbox/pending/` 或 `data/raw/<domain>/pending/`，正式入库必须经过 duplicate detection。
+
+> **watcher 自动转换说明**：`start.bat` 默认只启动 Web 服务，不启动 watcher（`START_WATCHER=0`）。只有设置 `START_WATCHER=1` 或直接运行 `python watcher.py` 时，watcher 才会扫描 `data/raw/` 根目录并自动转换。这些自动转换的产物是 **unregistered_converted**（manifest 有记录但无 catalog 条目），不会直接进入正式 catalog / library_index / domain catalog / BibTeX。日常正式入库推荐 `register_manual_pdf.py` → `import_pending_pdf.py --apply`。
 
 > **完整验收命令与禁止事项**参见 **[`docs/PROJECT_CONTRACT.md`](docs/PROJECT_CONTRACT.md)**。
 

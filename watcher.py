@@ -27,15 +27,12 @@ from config.settings import (
     RAW_DIR, MINERU_TMP_DIR, SUPPORTED_FORMATS,
     MINERU_BACKEND, MINERU_EFFORT, MINERU_METHOD, MINERU_LANG,
 )
-from src.converter import MinerUConverter
-from src.cleaner import MinerUOutputCleaner
 from src.manifest import PaperManifest
 from src.naming import derive_paper_id, is_known_duplicate, validate_paper_id
-from src.file_fingerprint import compute_sha256, file_meta
+from src.file_fingerprint import compute_sha256
 from src.watcher_utils import is_file_stable, is_uploading_temp
+from src.services.ingest_service import IngestService
 
-converter = MinerUConverter()
-cleaner = MinerUOutputCleaner()
 manifest = PaperManifest()
 manifest.migrate()
 
@@ -75,7 +72,7 @@ def process_file(f: Path, backend: str, method: str, effort: str,
     logger.info(f"  计算 sha256: {f.name}")
     sha = compute_sha256(f)
     existing_by_sha = manifest.find_by_sha256(sha)
-    if existing_by_sha and existing_by_sha.get("status") == "converted":
+    if existing_by_sha and existing_by_sha.get("status") in {"converted", "unregistered_converted"}:
         logger.info(f"  跳过 (sha256 已转换): {f.name} = {existing_by_sha['paper_id']}")
         return False
 
@@ -86,35 +83,23 @@ def process_file(f: Path, backend: str, method: str, effort: str,
         logger.info(f"  跳过 (已转换): {f.name} -> {paper_id}")
         return False
 
-    # 5. 转换
+    # 5. 转换/清理/manifest 注册交给统一 ingest service
     logger.info(f"  转换: {f.name} -> {paper_id} | sha256={sha[:12]} | runner={'api' if api_url else 'cli'}")
-    tmp_out = MINERU_TMP_DIR / paper_id
-    result = converter.convert(f, tmp_out, backend=backend, method=method,
-                               lang=lang, effort=effort, api_url=api_url)
+    ingest = IngestService(manifest=manifest, tmp_dir=MINERU_TMP_DIR)
+    result = ingest.convert_file(
+        pdf_path=f,
+        paper_id=paper_id,
+        backend=backend,
+        method=method,
+        lang=lang,
+        effort=effort,
+        api_url=api_url,
+        overwrite=False,
+    )
     if not result["success"]:
         logger.error(f"  转换失败: {result.get('error')}")
         return False
-
-    # 6. 清理
-    clean = cleaner.extract(result["output_dir"], paper_id, overwrite=False,
-                            method=method, stem=f.stem, backend=backend)
-    if not clean["success"]:
-        logger.error(f"  清理失败: {clean.get('error')}")
-        return False
-
-    # 7. manifest（含指纹 + 后端）
-    meta = file_meta(f)
-    manifest.upsert(
-        paper_id=paper_id, raw_pdf=str(f),
-        markdown=clean["markdown_path"], images_dir=clean["images_dir"],
-        status="converted", images_count=clean["images_count"],
-        md_chars=clean["char_count"],
-        raw_filename=f.name, raw_stem=f.stem,
-        sha256=sha, file_size=meta["file_size"], mtime=meta["mtime"],
-        mineru_backend=backend, effort=effort, method=method,
-        runner=result.get("runner", "cli"),
-    )
-    logger.info(f"  完成: {paper_id} ({clean['char_count']} 字符, {clean['images_count']} 图)")
+    logger.info(f"  完成: {paper_id} ({result.get('char_count', 0)} 字符, {result.get('images_count', 0)} 图)")
     return True
 
 

@@ -61,7 +61,7 @@ def test_duplicate_sha256_does_not_delete_existing_raw(monkeypatch, tmp_path, is
     monkeypatch.setattr(server_mod.converter, "convert", _fake_convert_success)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("existing.pdf", content, "application/pdf")
     })
 
@@ -93,7 +93,7 @@ def test_same_name_different_content_does_not_overwrite_raw(monkeypatch, tmp_pat
     monkeypatch.setattr(server_mod.converter, "convert", _fake_convert_success)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("paper.pdf", b"new different content - conflict!", "application/pdf")
     })
 
@@ -123,7 +123,7 @@ def test_same_sha_different_filename_no_touch_original_raw(monkeypatch, tmp_path
     monkeypatch.setattr(server_mod.converter, "convert", _fake_convert_success)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("copy.pdf", content, "application/pdf")
     })
 
@@ -146,7 +146,7 @@ def test_conversion_failure_does_not_leave_tmp(monkeypatch, tmp_path, isolate_ma
 
     monkeypatch.setattr(server_mod.converter, "convert", _fail_convert)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("fail.pdf", b"content that will fail conversion", "application/pdf")
     })
 

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from src.writer.job_manager import JobManager
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
+from src.writer.safe_write import write_text_safely
 from src.catalog import Catalog
 
 TODO_MARKERS = ["TODO", "待填", "（待填）", "TEMPLATE_ONLY", "由大模型补全", "待补全"]
@@ -53,7 +54,7 @@ def _read(p: Path) -> str:
     return p.read_text(encoding="utf-8") if p.exists() else ""
 
 
-def build_story(job_id: str, jm: JobManager | None = None,
+def build_story(job_id: str, force: bool = False, jm: JobManager | None = None,
                 catalog: Catalog | None = None) -> dict:
     """生成故事线 prompt + story_plan/chapter_outline 模板。
 
@@ -62,6 +63,9 @@ def build_story(job_id: str, jm: JobManager | None = None,
     jm = jm or JobManager()
     catalog = catalog or Catalog()
     jdir = jm.job_dir(job_id)
+    meta = jm.load_meta(job_id) or {}
+    if meta.get("steps", {}).get("story_plan_filled") and not force:
+        raise RuntimeError("story plan is already marked filled; pass force=True to overwrite with backups.")
 
     # 前置：精读笔记必须已填
     jm.require_step(job_id, "deep_read_notes_filled", "build-story")
@@ -99,18 +103,24 @@ def build_story(job_id: str, jm: JobManager | None = None,
 
     # story_plan 模板（含必填 section 占位）
     story_plan = plan_dir / "story_plan.md"
-    story_plan.write_text(
+    story_wr = write_text_safely(story_plan,
         "# 科研故事线（story_plan）\n\n"
         "> STATUS: TEMPLATE_ONLY —— 请由大模型基于 logs/prompts/03_storyline_prompt.md 填写。\n\n"
         + "\n".join(f"## {s}\n（待填）\n" for s in STORY_REQUIRED_SECTIONS) + "\n",
-        encoding="utf-8")
+        force=force,
+    )
+    if not story_wr["written"]:
+        raise RuntimeError(f"refuse to overwrite user-filled story plan: {story_plan}")
 
     outline = plan_dir / "chapter_outline.md"
-    outline.write_text(
+    outline_wr = write_text_safely(outline,
         "# 章节大纲（chapter_outline）\n\n"
         "> STATUS: TEMPLATE_ONLY —— 待大模型基于故事线补全。\n\n"
         "## Introduction\n- （待填）\n\n## Method\n- （待填）\n",
-        encoding="utf-8")
+        force=force,
+    )
+    if not outline_wr["written"]:
+        raise RuntimeError(f"refuse to overwrite user-filled chapter outline: {outline}")
 
     prompt = f"""你是博士论文导师。请基于下面的研究任务、精读笔记与证据表，组织博士论文级科研故事线。
 
@@ -145,6 +155,7 @@ def build_story(job_id: str, jm: JobManager | None = None,
         "prompt_path": str(prompt_path),
         "story_plan": str(story_plan),
         "chapter_outline": str(outline),
+        "writes": [story_wr, outline_wr],
         "plan_filled": False,
     }
 

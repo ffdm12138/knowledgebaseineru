@@ -52,7 +52,7 @@ def test_failed_same_sha_different_paper_id_rejected(monkeypatch, isolated):
     monkeypatch.setattr(server_mod.converter, "convert", _fake_convert_success)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("copy.pdf", content, "application/pdf")
     })
     assert resp.status_code == 409, f"expected 409, got {resp.status_code}: {resp.text}"
@@ -76,13 +76,13 @@ def test_failed_same_sha_same_paper_id_allows_retry(monkeypatch, isolated):
     monkeypatch.setattr(server_mod.converter, "convert", _fake_convert_success)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("original.pdf", content, "application/pdf")
     })
     assert resp.status_code == 200
     assert resp.json()["status"] == "success"
     # 仍只有 original 一条
-    assert m.get("original")["status"] == "converted"
+    assert m.get("original")["status"] == "unregistered_converted"
 
 
 def test_find_by_sha256_prefers_converted_over_failed(isolated):

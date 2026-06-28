@@ -61,7 +61,7 @@ def test_concurrent_same_name_different_content(monkeypatch, tmp_path, isolate_m
     monkeypatch.setattr(server_mod.converter, "convert", fake1.convert)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("race.pdf", old_content, "application/pdf")
     })
     assert resp.status_code == 200
@@ -77,7 +77,7 @@ def test_concurrent_same_name_different_content(monkeypatch, tmp_path, isolate_m
     monkeypatch.setattr(server_mod.converter, "convert", fake2.convert)
 
     def upload_new():
-        return client.post("/upload", files={
+        return client.post("/upload?wait=true", files={
             "file": ("race.pdf", new_content, "application/pdf")
         })
 
@@ -86,7 +86,7 @@ def test_concurrent_same_name_different_content(monkeypatch, tmp_path, isolate_m
     time.sleep(0.1)  # 给线程启动时间
 
     # 第二个请求应该看到冲突 (paper_id 已存在且 sha256 不同)
-    resp2 = client.post("/upload", files={
+    resp2 = client.post("/upload?wait=true", files={
         "file": ("race.pdf", b"CCCC", "application/pdf")
     })
     t.join()
@@ -111,7 +111,7 @@ def test_concurrent_same_sha_no_duplicate_convert(monkeypatch, tmp_path, isolate
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
     # 先 baseline 上传
-    resp1 = client.post("/upload", files={
+    resp1 = client.post("/upload?wait=true", files={
         "file": ("base.pdf", content, "application/pdf")
     })
     assert resp1.status_code == 200
@@ -119,7 +119,7 @@ def test_concurrent_same_sha_no_duplicate_convert(monkeypatch, tmp_path, isolate
 
     # 并发上传同内容不同名
     def upload_copy():
-        client.post("/upload", files={
+        client.post("/upload?wait=true", files={
             "file": ("copy.pdf", content, "application/pdf")
         })
 
@@ -156,7 +156,7 @@ def test_query_param_validation(monkeypatch):
     assert "method" in resp.text.lower()
 
     # 合法 method 仍然接受
-    resp = client.post("/upload?method=ocr", files={
+    resp = client.post("/upload?method=ocr&wait=true", files={
         "file": ("test.pdf", b"%PDF-1.4 fake", "application/pdf")
     })
     assert resp.status_code == 200

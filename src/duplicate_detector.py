@@ -58,7 +58,7 @@ def detect_duplicate_by_sha256(
         return DuplicateResult(matched=False, reason="sha256 not found")
     # failed 记录不算 canonical 已入库（允许同 paper_id 重试，跨 paper_id 由调用方处理）
     status = (entry.get("status") or "").strip()
-    if status in {"converted", "duplicate"}:
+    if status in {"converted", "unregistered_converted", "duplicate"}:
         return DuplicateResult(
             matched=True,
             reason=f"sha256 already converted (status={status})",

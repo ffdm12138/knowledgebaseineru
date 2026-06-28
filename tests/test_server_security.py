@@ -96,6 +96,32 @@ def test_status_ok():
     assert "mineru_backend" in data
 
 
+def test_status_runtime_ok(monkeypatch):
+    from src.mineru_runtime import MinerURuntimeHealth
+
+    monkeypatch.setattr(
+        "src.mineru_runtime.preflight_gpu",
+        lambda: MinerURuntimeHealth(ok=True, runner="cli", message="gpu ok", nvidia_smi=True),
+    )
+    monkeypatch.setattr(
+        "src.mineru_runtime.preflight_mineru_cli",
+        lambda exe: MinerURuntimeHealth(ok=True, runner="cli", message="cli ok", cli_available=True),
+    )
+    monkeypatch.setattr(
+        "src.mineru_runtime.preflight_mineru_api",
+        lambda url: MinerURuntimeHealth(ok=True, runner="api", message="api ok", api_available=True),
+    )
+
+    resp = client.get("/status/runtime")
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["runtime"]["backend"] == "hybrid-engine"
+    assert "gpu" in data
+    assert "cli" in data
+    assert "api" in data
+
+
 # ---- 目录端点 ----
 
 def test_catalog_endpoints_ok():

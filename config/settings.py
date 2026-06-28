@@ -36,6 +36,14 @@ def _env_int(name: str, default: int, min_val: int | None = None,
     return v
 
 
+def _env_bool(name: str, default: bool = False) -> bool:
+    """读取布尔环境变量。"""
+    val = os.environ.get(name, "").strip().lower()
+    if not val:
+        return default
+    return val in {"1", "true", "yes", "on"}
+
+
 def _env_path(name: str, default: Path) -> Path:
     """读取路径环境变量"""
     val = os.environ.get(name, "").strip()
@@ -49,6 +57,7 @@ DATA_DIR = _env_path("MINERU_DATA_DIR", PROJECT_ROOT / "data")
 RAW_DIR = DATA_DIR / "raw"                  # PDF 原文（投放/上传目标，不在 papers 中复制 PDF）
 PAPERS_DIR = DATA_DIR / "papers"            # MinerU 清理后的 AI 可读资产：<paper_id>/paper.md + images/
 MINERU_TMP_DIR = DATA_DIR / "tmp" / "mineru_raw_output"  # MinerU 原始输出临时目录，处理完可清空
+MINERU_LOG_DIR = DATA_DIR / "logs"          # MinerU 转换性能日志
 LEGACY_PARSED_DIR = DATA_DIR / "parsed"     # 旧版 MinerU 输出（仅迁移时读取，新流程不再写入）
 
 # 目录与账本
@@ -59,6 +68,10 @@ MANIFEST_PATH = MANIFESTS_DIR / "papers_manifest.json"
 LIBRARY_INDEX_PATH = CATALOG_DIR / "library_index.json"
 DOMAIN_CATALOG_DIR = CATALOG_DIR / "domains"
 DISCOVERY_DIR = DATA_DIR / "discovery"
+JOBS_DIR = DATA_DIR / "jobs"
+UPLOAD_JOBS_PATH = JOBS_DIR / "upload_jobs.json"
+UPLOAD_STAGING_DIR = JOBS_DIR / "upload_staging"
+REGISTRY_OPS_DIR = DATA_DIR / "transactions" / "registry_ops"
 
 # CUDA 路径（MinerU lmdeploy 后端需要，默认 Windows 标准路径）
 CUDA_PATH_DEFAULT = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6"
@@ -81,12 +94,16 @@ API_HOST = _env_str("MINERU_API_HOST", "127.0.0.1")
 API_PORT = _env_int("MINERU_API_PORT", 8080, min_val=1, max_val=65535)
 # 上传大小上限（字节），默认 500MB
 MAX_UPLOAD_SIZE = _env_int("MINERU_MAX_UPLOAD_SIZE", 500 * 1024 * 1024, min_val=1)
+# PDF fetch 下载大小上限（字节），默认 200MB
+MINERU_FETCH_MAX_BYTES = _env_int("MINERU_FETCH_MAX_BYTES", 200 * 1024 * 1024, min_val=1)
 
 # MinerU 解析超时（秒），默认 600
 MINERU_TIMEOUT = _env_int("MINERU_TIMEOUT", 600, min_val=1)
 
 # MinerU 最大并行转换数（默认 1，防 OOM。多 GPU 时可适当调大）
 MINERU_MAX_WORKERS = _env_int("MINERU_MAX_WORKERS", 1, min_val=1)
+# 成功转换后是否保留 MinerU 临时输出；失败始终保留用于排查
+MINERU_KEEP_TMP = _env_bool("MINERU_KEEP_TMP", False)
 
 # MinerU 解析配置
 # 产品定位固定为 hybrid-engine，不再把 pipeline / vlm-engine 作为首选项维护。
@@ -151,7 +168,11 @@ CITATION_STYLE = _env_str("MINERU_CITATION_STYLE", "author-year")
 SUPPORTED_FORMATS = {".pdf", ".docx", ".pptx", ".xlsx", ".png", ".jpg", ".jpeg"}
 
 # 确保目录存在（导入即创建，有副作用）
-for d in [RAW_DIR, PAPERS_DIR, MINERU_TMP_DIR, CATALOG_DIR, MANIFESTS_DIR, DOMAIN_CATALOG_DIR, DISCOVERY_DIR]:
+for d in [
+    RAW_DIR, PAPERS_DIR, MINERU_TMP_DIR, MINERU_LOG_DIR, CATALOG_DIR,
+    MANIFESTS_DIR, DOMAIN_CATALOG_DIR, DISCOVERY_DIR, JOBS_DIR,
+    UPLOAD_STAGING_DIR, REGISTRY_OPS_DIR,
+]:
     d.mkdir(parents=True, exist_ok=True)
 
 # 启动时安全检查：若 API_HOST 非 localhost 且无认证，打印 warning

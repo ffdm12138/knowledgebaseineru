@@ -314,7 +314,8 @@
       },
       "primary_domain": "aeolian_snow_transport",
       "domains": [
-        "aeolian_snow_transport"
+        "aeolian_snow_transport",
+        "blowing_snow_physics"
       ]
     },
     {
@@ -893,7 +894,7 @@
       "year": 2025,
       "venue": "The Cryosphere",
       "doi": "10.5194/acp-25-12535-2025",
-      "raw_pdf": "data/raw/huang2025破碎.pdf",
+      "raw_pdf": "data/raw/2025_huang_雪粒破碎促进升华.pdf",
       "markdown": "data/papers/2025_huang_雪粒破碎促进升华/paper.md",
       "images_dir": "data/papers/2025_huang_雪粒破碎促进升华/images",
       "status": "summarized",
@@ -1057,9 +1058,9 @@
       "year": 2018,
       "venue": "",
       "doi": "10.3389/feart.2018.00197",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2018_mott_风吹雪耦合季节性积雪综述.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2018_mott_风吹雪耦合季节性积雪综述\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2018_mott_风吹雪耦合季节性积雪综述\\images",
+      "raw_pdf": "data/raw/2018_the_seasonal_snow_cover_dynamics_review_on_wind_driven_coupling_processes.pdf",
+      "markdown": "data/papers/2018_mott_风吹雪耦合季节性积雪综述/paper.md",
+      "images_dir": "data/papers/2018_mott_风吹雪耦合季节性积雪综述/images",
       "status": "unsummarized",
       "primary_domain": "blowing_snow_physics",
       "domains": [
@@ -1108,9 +1109,9 @@
       "year": 2015,
       "venue": "",
       "doi": "10.3389/feart.2015.00077",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2015_dewekker_山地地形对流边界层高度综述.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2015_dewekker_山地地形对流边界层高度综述\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2015_dewekker_山地地形对流边界层高度综述\\images",
+      "raw_pdf": "data/raw/2015_convective_boundary_layer_heights_over_mountainous_terrain_a_review_of_concepts.pdf",
+      "markdown": "data/papers/2015_dewekker_山地地形对流边界层高度综述/paper.md",
+      "images_dir": "data/papers/2015_dewekker_山地地形对流边界层高度综述/images",
       "status": "unsummarized",
       "primary_domain": "abl_pbl",
       "domains": [
@@ -1159,9 +1160,9 @@
       "year": 2014,
       "venue": "",
       "doi": "10.5194/amt-7-1701-2014",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2014_wang_无线电探空大气混合层高度估算.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2014_wang_无线电探空大气混合层高度估算\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2014_wang_无线电探空大气混合层高度估算\\images",
+      "raw_pdf": "data/raw/2014_estimation_of_atmospheric_mixing_layer_height_from_radiosonde_data.pdf",
+      "markdown": "data/papers/2014_wang_无线电探空大气混合层高度估算/paper.md",
+      "images_dir": "data/papers/2014_wang_无线电探空大气混合层高度估算/images",
       "status": "unsummarized",
       "primary_domain": "abl_pbl",
       "domains": [
@@ -1210,9 +1211,9 @@
       "year": 2014,
       "venue": "",
       "doi": "10.5194/acp-14-10931-2014",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2014_lothon_BLLAST下午黄昏边界层湍流实验.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2014_lothon_BLLAST下午黄昏边界层湍流实验\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2014_lothon_BLLAST下午黄昏边界层湍流实验\\images",
+      "raw_pdf": "data/raw/2014_the_bllast_field_experiment_boundary_layer_late_afternoon_and_sunset_turbulence.pdf",
+      "markdown": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/paper.md",
+      "images_dir": "data/papers/2014_lothon_BLLAST下午黄昏边界层湍流实验/images",
       "status": "unsummarized",
       "primary_domain": "abl_pbl",
       "domains": [
@@ -1261,9 +1262,9 @@
       "year": 2015,
       "venue": "",
       "doi": "10.1038/srep14677",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2015_gao_沙丘形态定向相图.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2015_gao_沙丘形态定向相图\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2015_gao_沙丘形态定向相图\\images",
+      "raw_pdf": "data/raw/2015_phase_diagrams_of_dune_shape_and_orientation_depending_on_sand_availability.pdf",
+      "markdown": "data/papers/2015_gao_沙丘形态定向相图/paper.md",
+      "images_dir": "data/papers/2015_gao_沙丘形态定向相图/images",
       "status": "unsummarized",
       "primary_domain": "aeolian_snow_transport",
       "domains": [
@@ -1312,9 +1313,9 @@
       "year": 2018,
       "venue": "",
       "doi": "10.1038/s41467-018-06689-x",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2018_jambonpuillet_冰晶奇异升华.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2018_jambonpuillet_冰晶奇异升华\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2018_jambonpuillet_冰晶奇异升华\\images",
+      "raw_pdf": "data/raw/2018_冰晶奇异升华.pdf",
+      "markdown": "data/papers/2018_jambonpuillet_冰晶奇异升华/paper.md",
+      "images_dir": "data/papers/2018_jambonpuillet_冰晶奇异升华/images",
       "status": "unsummarized",
       "primary_domain": "blowing_snow_physics",
       "domains": [
@@ -1363,9 +1364,9 @@
       "year": 2006,
       "venue": "",
       "doi": "10.3189/172756506781828430",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2006_clifton_风吹雪盐度阈值风洞实验.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2006_clifton_风吹雪盐度阈值风洞实验\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2006_clifton_风吹雪盐度阈值风洞实验\\images",
+      "raw_pdf": "data/raw/2006_风吹雪盐度阈值风洞实验.pdf",
+      "markdown": "data/papers/2006_clifton_风吹雪盐度阈值风洞实验/paper.md",
+      "images_dir": "data/papers/2006_clifton_风吹雪盐度阈值风洞实验/images",
       "status": "unsummarized",
       "primary_domain": "blowing_snow_physics",
       "domains": [
@@ -1414,9 +1415,9 @@
       "year": 2012,
       "venue": "",
       "doi": "10.5194/gmd-5-773-2012",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2012_vionnet_Crocus积雪方案SURFEX.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2012_vionnet_Crocus积雪方案SURFEX\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2012_vionnet_Crocus积雪方案SURFEX\\images",
+      "raw_pdf": "data/raw/2012_Crocus积雪方案SURFEX.pdf",
+      "markdown": "data/papers/2012_vionnet_Crocus积雪方案SURFEX/paper.md",
+      "images_dir": "data/papers/2012_vionnet_Crocus积雪方案SURFEX/images",
       "status": "unsummarized",
       "primary_domain": "blowing_snow_physics",
       "domains": [
@@ -1465,9 +1466,9 @@
       "year": 2014,
       "venue": "",
       "doi": "10.5194/tc-8-395-2014",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2014_vionnet_风吹雪输运升华积雪模拟.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2014_vionnet_风吹雪输运升华积雪模拟\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2014_vionnet_风吹雪输运升华积雪模拟\\images",
+      "raw_pdf": "data/raw/2014_vionnet_风吹雪输运升华积雪模拟.pdf",
+      "markdown": "data/papers/2014_vionnet_风吹雪输运升华积雪模拟/paper.md",
+      "images_dir": "data/papers/2014_vionnet_风吹雪输运升华积雪模拟/images",
       "status": "unsummarized",
       "primary_domain": "blowing_snow_physics",
       "domains": [
@@ -1516,9 +1517,9 @@
       "year": 2008,
       "venue": "",
       "doi": "10.5194/acp-8-7281-2008",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2008_baars_激光雷达连续监测边界层顶.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2008_baars_激光雷达连续监测边界层顶\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2008_baars_激光雷达连续监测边界层顶\\images",
+      "raw_pdf": "data/raw/2008_baars_激光雷达连续监测边界层顶.pdf",
+      "markdown": "data/papers/2008_baars_激光雷达连续监测边界层顶/paper.md",
+      "images_dir": "data/papers/2008_baars_激光雷达连续监测边界层顶/images",
       "status": "unsummarized",
       "primary_domain": "abl_pbl",
       "domains": [
@@ -1567,9 +1568,9 @@
       "year": 2023,
       "venue": "",
       "doi": "10.5194/amt-16-433-2023",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2023_kotthaus_地基遥感边界层高度综述.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2023_kotthaus_地基遥感边界层高度综述\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2023_kotthaus_地基遥感边界层高度综述\\images",
+      "raw_pdf": "data/raw/2023_kotthaus_地基遥感边界层高度综述.pdf",
+      "markdown": "data/papers/2023_kotthaus_地基遥感边界层高度综述/paper.md",
+      "images_dir": "data/papers/2023_kotthaus_地基遥感边界层高度综述/images",
       "status": "unsummarized",
       "primary_domain": "abl_pbl",
       "domains": [
@@ -1618,9 +1619,9 @@
       "year": 2013,
       "venue": "",
       "doi": "10.5194/amt-6-3147-2013",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2013_sathe_地基激光雷达湍流测量综述.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2013_sathe_地基激光雷达湍流测量综述\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2013_sathe_地基激光雷达湍流测量综述\\images",
+      "raw_pdf": "data/raw/2013_sathe_地基激光雷达湍流测量综述.pdf",
+      "markdown": "data/papers/2013_sathe_地基激光雷达湍流测量综述/paper.md",
+      "images_dir": "data/papers/2013_sathe_地基激光雷达湍流测量综述/images",
       "status": "unsummarized",
       "primary_domain": "abl_pbl",
       "domains": [
@@ -1669,9 +1670,9 @@
       "year": 2020,
       "venue": "",
       "doi": "10.1029/2019rg000679",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2020_pahtz_风沙河流沉积物输运起动停止.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2020_pahtz_风沙河流沉积物输运起动停止\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2020_pahtz_风沙河流沉积物输运起动停止\\images",
+      "raw_pdf": "data/raw/2020_pahtz_风沙河流沉积物输运起动停止.pdf",
+      "markdown": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/paper.md",
+      "images_dir": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/images",
       "status": "unsummarized",
       "primary_domain": "aeolian_snow_transport",
       "domains": [
@@ -1720,9 +1721,9 @@
       "year": 2005,
       "venue": "",
       "doi": "10.2151/jmsj.83a.255",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2005_tanaka_全球沙尘气溶胶模拟MASINGAR.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2005_tanaka_全球沙尘气溶胶模拟MASINGAR\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2005_tanaka_全球沙尘气溶胶模拟MASINGAR\\images",
+      "raw_pdf": "data/raw/2005_tanaka_全球沙尘气溶胶模拟MASINGAR.pdf",
+      "markdown": "data/papers/2005_tanaka_全球沙尘气溶胶模拟MASINGAR/paper.md",
+      "images_dir": "data/papers/2005_tanaka_全球沙尘气溶胶模拟MASINGAR/images",
       "status": "unsummarized",
       "primary_domain": "blowing_snow_physics",
       "domains": [
@@ -1760,6 +1761,643 @@
         "citation_style_name": "(2005)",
         "source": "pending_import",
         "verified": true
+      }
+    },
+    {
+      "paper_id": "2016_2016_yakou_aws_data_description",
+      "title": "2016.Yakou.AWS.Data Description",
+      "authors": [],
+      "year": 2016,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2016_2016_yakou_aws_data_description.pdf",
+      "markdown": "data/papers/2016_2016_yakou_aws_data_description/paper.md",
+      "images_dir": "data/papers/2016_2016_yakou_aws_data_description/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2016_2016_yakou_aws_data_description",
+        "bibtex": "@misc{2016_2016_yakou_aws_data_description,\n  author = {{Unknown}},\n  title = {2016.Yakou.AWS.Data Description},\n  year = {2016},\n  note = {[待核验] 作者信息待补充},\n}\n",
+        "citation_style_name": "(2016)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "1966_1966专著_非均匀雪粒的漂移",
+      "title": "1966专著：非均匀雪粒的漂移",
+      "authors": [],
+      "year": 1966,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/1966_1966专著_非均匀雪粒的漂移.pdf",
+      "markdown": "data/papers/1966_1966专著_非均匀雪粒的漂移/paper.md",
+      "images_dir": "data/papers/1966_1966专著_非均匀雪粒的漂移/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "1966_1966专著_非均匀雪粒的漂移",
+        "bibtex": "@misc{1966_1966专著_非均匀雪粒的漂移,\n  author = {{Unknown}},\n  title = {1966专著 非均匀雪粒的漂移},\n  year = {1966},\n  note = {[待核验] 作者信息待补充},\n}\n",
+        "citation_style_name": "(1966)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2003_2003_基于水文气象模型的积雪与冰川物质平衡再分配",
+      "title": "2003：基于水文气象模型的积雪与冰川物质平衡再分配",
+      "authors": [],
+      "year": 2003,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2003_2003_基于水文气象模型的积雪与冰川物质平衡再分配.pdf",
+      "markdown": "data/papers/2003_2003_基于水文气象模型的积雪与冰川物质平衡再分配/paper.md",
+      "images_dir": "data/papers/2003_2003_基于水文气象模型的积雪与冰川物质平衡再分配/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2003_2003_基于水文气象模型的积雪与冰川物质平衡再分配",
+        "bibtex": "@misc{2003_2003_基于水文气象模型的积雪与冰川物质平衡再分配,\n  title = {2003：基于水文气象模型的积雪与冰川物质平衡再分配},\n  year = {2003},\n}\n",
+        "citation_style_name": "(2003)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "4_an_improved_method_for_the_estimation_of_surface",
+      "title": "[4]An improved method for the estimation of surface roughness of obstacle arrays",
+      "authors": [],
+      "year": null,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/4_an_improved_method_for_the_estimation_of_surface.pdf",
+      "markdown": "data/papers/4_an_improved_method_for_the_estimation_of_surface/paper.md",
+      "images_dir": "data/papers/4_an_improved_method_for_the_estimation_of_surface/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "4_an_improved_method_for_the_estimation_of_surface",
+        "bibtex": "@misc{4_an_improved_method_for_the_estimation_of_surface,\n  title = {[4]An improved method for the estimation of surface roughness of obstacle arrays},\n}\n",
+        "citation_style_name": "(n.d.)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2001_2001_一种根据每日温度数据确定度日值的改进模型",
+      "title": "2001：一种根据每日温度数据确定度日值的改进模型",
+      "authors": [],
+      "year": 2001,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2001_2001_一种根据每日温度数据确定度日值的改进模型.pdf",
+      "markdown": "data/papers/2001_2001_一种根据每日温度数据确定度日值的改进模型/paper.md",
+      "images_dir": "data/papers/2001_2001_一种根据每日温度数据确定度日值的改进模型/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2001_2001_一种根据每日温度数据确定度日值的改进模型",
+        "bibtex": "@misc{2001_2001_一种根据每日温度数据确定度日值的改进模型,\n  title = {2001：一种根据每日温度数据确定度日值的改进模型},\n  year = {2001},\n}\n",
+        "citation_style_name": "(2001)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2002_2002_平衡态跃移_质量通量_空气动力夹带作用及颗粒特性依赖关系",
+      "title": "2002：平衡态跃移：质量通量、空气动力夹带作用及颗粒特性依赖关系",
+      "authors": [],
+      "year": 2002,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2002_2002_平衡态跃移_质量通量_空气动力夹带作用及颗粒特性依赖关系.pdf",
+      "markdown": "data/papers/2002_2002_平衡态跃移_质量通量_空气动力夹带作用及颗粒特性依赖关系/paper.md",
+      "images_dir": "data/papers/2002_2002_平衡态跃移_质量通量_空气动力夹带作用及颗粒特性依赖关系/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2002_2002_平衡态跃移_质量通量_空气动力夹带作用及颗粒特性依赖关系",
+        "bibtex": "@misc{2002_2002_平衡态跃移_质量通量_空气动力夹带作用及颗粒特性依赖关系,\n  title = {2002：平衡态跃移：质量通量、空气动力夹带作用及颗粒特性依赖关系},\n  year = {2002},\n}\n",
+        "citation_style_name": "(2002)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2001_2001_气候变化对莱茵河流域水文情势与水资源管理的影响",
+      "title": "2001：气候变化对莱茵河流域水文情势与水资源管理的影响",
+      "authors": [],
+      "year": 2001,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2001_2001_气候变化对莱茵河流域水文情势与水资源管理的影响.pdf",
+      "markdown": "data/papers/2001_2001_气候变化对莱茵河流域水文情势与水资源管理的影响/paper.md",
+      "images_dir": "data/papers/2001_2001_气候变化对莱茵河流域水文情势与水资源管理的影响/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2001_2001_气候变化对莱茵河流域水文情势与水资源管理的影响",
+        "bibtex": "@misc{2001_2001_气候变化对莱茵河流域水文情势与水资源管理的影响,\n  title = {2001：气候变化对莱茵河流域水文情势与水资源管理的影响},\n  year = {2001},\n}\n",
+        "citation_style_name": "(2001)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "1999_1999_吹雪中的静电力",
+      "title": "1999：吹雪中的静电力",
+      "authors": [],
+      "year": 1999,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/1999_1999_吹雪中的静电力.pdf",
+      "markdown": "data/papers/1999_1999_吹雪中的静电力/paper.md",
+      "images_dir": "data/papers/1999_1999_吹雪中的静电力/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "1999_1999_吹雪中的静电力",
+        "bibtex": "@misc{1999_1999_吹雪中的静电力,\n  title = {1999：吹雪中的静电力},\n  year = {1999},\n}\n",
+        "citation_style_name": "(1999)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2004_2004_风吹雪时间发展过程及其与空间发展关系的数值研究",
+      "title": "2004：风吹雪时间发展过程及其与空间发展关系的数值研究",
+      "authors": [],
+      "year": 2004,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2004_2004_风吹雪时间发展过程及其与空间发展关系的数值研究.pdf",
+      "markdown": "data/papers/2004_2004_风吹雪时间发展过程及其与空间发展关系的数值研究/paper.md",
+      "images_dir": "data/papers/2004_2004_风吹雪时间发展过程及其与空间发展关系的数值研究/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2004_2004_风吹雪时间发展过程及其与空间发展关系的数值研究",
+        "bibtex": "@misc{2004_2004_风吹雪时间发展过程及其与空间发展关系的数值研究,\n  title = {2004：风吹雪时间发展过程及其与空间发展关系的数值研究},\n  year = {2004},\n}\n",
+        "citation_style_name": "(2004)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2006_2006_风吹雪风洞中雪粒跃移阈值的测量",
+      "title": "2006：风吹雪风洞中雪粒跃移阈值的测量",
+      "authors": [],
+      "year": 2006,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2006_2006_风吹雪风洞中雪粒跃移阈值的测量.pdf",
+      "markdown": "data/papers/2006_2006_风吹雪风洞中雪粒跃移阈值的测量/paper.md",
+      "images_dir": "data/papers/2006_2006_风吹雪风洞中雪粒跃移阈值的测量/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2006_2006_风吹雪风洞中雪粒跃移阈值的测量",
+        "bibtex": "@misc{2006_2006_风吹雪风洞中雪粒跃移阈值的测量,\n  title = {2006：风吹雪风洞中雪粒跃移阈值的测量},\n  year = {2006},\n}\n",
+        "citation_style_name": "(2006)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2000_2000_通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性",
+      "title": "2000：通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性",
+      "authors": [],
+      "year": 2000,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2000_2000_通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性.pdf",
+      "markdown": "data/papers/2000_2000_通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性/paper.md",
+      "images_dir": "data/papers/2000_2000_通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2000_2000_通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性",
+        "bibtex": "@misc{2000_2000_通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性,\n  title = {2000：通过调整度日模型评估五个瑞士冰川质量平衡对温度变化的敏感性},\n  year = {2000},\n}\n",
+        "citation_style_name": "(2000)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2000_2000_风吹雪中雪粒子恢复系数与弹跳数量的风洞测量_溅射函数的确定",
+      "title": "2000：风吹雪中雪粒子恢复系数与弹跳数量的风洞测量：溅射函数的确定",
+      "authors": [],
+      "year": 2000,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2000_2000_风吹雪中雪粒子恢复系数与弹跳数量的风洞测量_溅射函数的确定.pdf",
+      "markdown": "data/papers/2000_2000_风吹雪中雪粒子恢复系数与弹跳数量的风洞测量_溅射函数的确定/paper.md",
+      "images_dir": "data/papers/2000_2000_风吹雪中雪粒子恢复系数与弹跳数量的风洞测量_溅射函数的确定/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2000_2000_风吹雪中雪粒子恢复系数与弹跳数量的风洞测量_溅射函数的确定",
+        "bibtex": "@misc{2000_2000_风吹雪中雪粒子恢复系数与弹跳数量的风洞测量_溅射函数的确定,\n  title = {2000：风吹雪中雪粒子恢复系数与弹跳数量的风洞测量：溅射函数的确定},\n  year = {2000},\n}\n",
+        "citation_style_name": "(2000)",
+        "source": "local_manual",
+        "verified": false
+      }
+    },
+    {
+      "paper_id": "2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化",
+      "title": "2006：观测到的度日因子及其在中国西部冰川上的空间变化",
+      "authors": [],
+      "year": 2006,
+      "venue": "",
+      "doi": "",
+      "raw_pdf": "data/raw/2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化.pdf",
+      "markdown": "data/papers/2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化/paper.md",
+      "images_dir": "data/papers/2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化/images",
+      "status": "unsummarized",
+      "primary_domain": "blowing_snow_physics",
+      "domains": [
+        "blowing_snow_physics"
+      ],
+      "ai_summary": {
+        "one_sentence": "",
+        "background_problem": "",
+        "research_question": "",
+        "method": "",
+        "data_or_experiment": "",
+        "main_findings": "",
+        "key_equations_or_models": [],
+        "important_figures": [],
+        "limitations": "",
+        "relevance_to_my_work": "",
+        "possible_use_in_paper": ""
+      },
+      "tags": {
+        "topic": [],
+        "method": [],
+        "material_or_region": [],
+        "variables": [],
+        "model_names": []
+      },
+      "selection_hints": {
+        "read_when_question_contains": [],
+        "do_not_use_for": [],
+        "priority": 3
+      },
+      "notes": "local_manual import placeholder — run /prompt/catalog-entry to complete",
+      "citation": {
+        "bib_key": "2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化",
+        "bibtex": "@misc{2006_2006_观测到的度日因子及其在中国西部冰川上的空间变化,\n  title = {2006：观测到的度日因子及其在中国西部冰川上的空间变化},\n  year = {2006},\n}\n",
+        "citation_style_name": "(2006)",
+        "source": "local_manual",
+        "verified": false
       }
     }
   ]

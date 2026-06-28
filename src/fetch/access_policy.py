@@ -16,7 +16,15 @@ class AccessMode(str, Enum):
 
 @dataclass
 class AccessPolicy:
-    """PDF 获取策略：控制启用哪些 resolver、超时、行为。"""
+    """PDF 获取策略：控制启用哪些 resolver、超时、行为。
+
+    规则：
+    - OA_ONLY：仅真正开放获取 / 合法公开来源。
+    - INSTITUTIONAL：OA_ONLY + 机构/TDM 通道（需 token 或机构订阅）。
+    - BROWSER_ASSISTED：OA_ONLY + 浏览器辅助（需用户操作）。
+    - LOCAL_MANUAL：仅本地文件。
+    - CUSTOM：OA_ONLY + 自定义列表，可含 unsafe 通道如 Sci-Hub。
+    """
 
     mode: AccessMode = AccessMode.OA_ONLY
     allow_browser: bool = False
@@ -25,6 +33,7 @@ class AccessPolicy:
     allow_preprints: bool = True
     allow_manual_import: bool = True
     allow_custom_resolvers: bool = False
+    allow_scihub: bool = False  # 仅 CUSTOM 模式下显式启用
     custom_resolvers: list[str] = field(default_factory=list)
     max_attempts_per_resolver: int = 1
     timeout_seconds: int = 60
@@ -42,21 +51,31 @@ class AccessPolicy:
         if self.mode == AccessMode.LOCAL_MANUAL:
             return ["local_manual"]
         if self.mode == AccessMode.CUSTOM:
-            base = self._oa_resolvers()
+            base = list(self._oa_resolvers())
+            if self.allow_publisher_tdm:
+                base += self._tdm_resolvers()
             if self.allow_custom_resolvers:
-                base = base + list(self.custom_resolvers)
+                base += list(self.custom_resolvers)
+            if self.allow_scihub:
+                base += ["scihub"]
             return base
         return []
 
     @staticmethod
     def _oa_resolvers() -> list[str]:
-        return ["unpaywall", "openalex", "semantic_scholar", "arxiv", "publisher_oa",
-                "wiley_tdm", "springer_direct", "elsevier_tdm",
-                "biorxiv", "pmc_oa", "scihub"]
+        """真正开放获取 / 合法公开来源（无需 token、无需付费墙绕过）。"""
+        return ["unpaywall", "openalex", "semantic_scholar", "arxiv",
+                "publisher_oa", "springer_direct",
+                "biorxiv", "pmc_oa"]
+
+    @staticmethod
+    def _tdm_resolvers() -> list[str]:
+        """Publisher TDM 通道（可能需要免费 token，属于机构/授权语义）。"""
+        return ["wiley_tdm", "elsevier_tdm"]
 
     @staticmethod
     def _institutional_resolvers() -> list[str]:
-        return ["publisher_tdm", "institutional_browser"]
+        return ["publisher_tdm", "institutional_browser"] + AccessPolicy._tdm_resolvers()
 
     def clone_with(self, **overrides) -> AccessPolicy:
         kwargs = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}

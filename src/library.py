@@ -9,8 +9,9 @@ from loguru import logger
 
 from config.settings import PAPERS_DIR
 from src.catalog import Catalog
-from src.library_index import LibraryIndex, resolve_repo_path
+from src.library_index import LibraryIndex
 from src.manifest import PaperManifest
+from src.path_utils import resolve_stored_path
 
 
 class PaperLibrary:
@@ -40,15 +41,15 @@ class PaperLibrary:
         validate_paper_id(paper_id)
         idx = self.library_index.get(paper_id) or {}
         if idx.get("markdown_path"):
-            return resolve_repo_path(idx["markdown_path"])
+            return resolve_stored_path(idx["markdown_path"])
 
         manifest_entry = self.manifest.get(paper_id) or {}
         if manifest_entry.get("markdown"):
-            return resolve_repo_path(manifest_entry["markdown"])
+            return resolve_stored_path(manifest_entry["markdown"])
 
         catalog_entry = self.catalog.get(paper_id) or {}
         if catalog_entry.get("markdown"):
-            return resolve_repo_path(catalog_entry["markdown"])
+            return resolve_stored_path(catalog_entry["markdown"])
 
         return self.paper_dir(paper_id) / "paper.md"
 
@@ -59,15 +60,15 @@ class PaperLibrary:
         validate_paper_id(paper_id)
         idx = self.library_index.get(paper_id) or {}
         if idx.get("images_dir"):
-            return resolve_repo_path(idx["images_dir"])
+            return resolve_stored_path(idx["images_dir"])
 
         manifest_entry = self.manifest.get(paper_id) or {}
         if manifest_entry.get("images_dir"):
-            return resolve_repo_path(manifest_entry["images_dir"])
+            return resolve_stored_path(manifest_entry["images_dir"])
 
         catalog_entry = self.catalog.get(paper_id) or {}
         if catalog_entry.get("images_dir"):
-            return resolve_repo_path(catalog_entry["images_dir"])
+            return resolve_stored_path(catalog_entry["images_dir"])
 
         return self.paper_dir(paper_id) / "images"
 

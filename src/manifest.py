@@ -22,12 +22,25 @@ from config.settings import MANIFEST_PATH
 #   converted   转换完成：命中即 duplicate
 #   failed      转换失败：允许显式重试
 #   duplicate   重复（与 converted 等价的去重态，供查询语义使用）
+#   unregistered_converted  转换完成但缺少正式 catalog metadata，不进入 catalog/index
+#   conversion_failed_with_catalog / asset_missing  catalog 保留但全文资产不可读，需人工处理
 # SSOT：upload_service / watcher / batch_convert 写入的 status 必须在此集合内。
-VALID_STATUSES = {"queued", "converting", "converted", "failed", "duplicate"}
+VALID_STATUSES = {
+    "queued", "converting", "converted", "unregistered_converted",
+    "failed", "duplicate", "conversion_failed_with_catalog", "asset_missing",
+}
 
 # find_by_sha256 命中多条记录时的优先级（高 → 低）。
 # 含义：converted/duplicate 优先于 converting，converting 优先于 failed。
-_SHA_PRIORITY = {"converted": 0, "duplicate": 0, "converting": 1, "failed": 2}
+_SHA_PRIORITY = {
+    "converted": 0,
+    "unregistered_converted": 0,
+    "duplicate": 0,
+    "converting": 1,
+    "failed": 2,
+    "conversion_failed_with_catalog": 3,
+    "asset_missing": 3,
+}
 
 
 class PaperManifest:
@@ -120,7 +133,7 @@ class PaperManifest:
                     p["updated_at"] = p.get("converted_at") or now
                     changed = True
                 # converted_at 语义：非 converted 状态不应有新建的 converted_at
-                if p.get("status") != "converted" and not p.get("converted_at"):
+                if p.get("status") not in {"converted", "unregistered_converted"} and not p.get("converted_at"):
                     p["converted_at"] = p.get("converted_at") or ""
                 if p.get("status") not in VALID_STATUSES:
                     p["status"] = "converted"
@@ -204,7 +217,7 @@ class PaperManifest:
                     break
 
             # converted_at 语义：仅 converted 写新时间；其它状态保留旧值或空
-            if status == "converted":
+            if status in {"converted", "unregistered_converted"}:
                 final_converted_at = converted_at or now
             else:
                 # converting/failed/queued/duplicate：保留旧 converted_at，无则空

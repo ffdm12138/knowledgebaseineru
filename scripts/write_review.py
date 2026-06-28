@@ -64,7 +64,7 @@ def cmd_confirm_papers(args):
 
 def cmd_deep_read(args):
     # 不再需要 --papers，从 selected_papers.json 取
-    info = deep_read(args.job, paper_ids=args.papers)
+    info = deep_read(args.job, paper_ids=args.papers, force=args.force)
     logger.info(f"精读 prompt+模板已生成: {args.job}，{len(info['notes'])} 篇笔记")
     logger.info(f"  prompt: {info['prompt_path']}")
     logger.info(f"  notes_filled={info['notes_filled']}（需手动填笔记后 mark-deep-read）")
@@ -83,7 +83,7 @@ def cmd_mark_deep_read(args):
 
 
 def cmd_story(args):
-    info = build_story(args.job)
+    info = build_story(args.job, force=args.force)
     logger.info(f"故事线 prompt+模板已生成: {args.job}")
     logger.info(f"  prompt: {info['prompt_path']}")
     logger.info(f"  plan_filled={info['plan_filled']}（需手动填 story_plan 后 mark-story）")
@@ -140,9 +140,14 @@ def cmd_copy_figures(args):
 
 
 def cmd_validate(args):
-    from scripts.validate_write_job import main as vmain
+    from src.writer.job_validator import validate_job
     sys.argv = ["validate", "--job", args.job]
-    sys.exit(vmain())
+    result = validate_job(args.job)
+    if not result["valid"]:
+        for error in result["errors"]:
+            logger.error(f"  - {error}")
+        sys.exit(1)
+    logger.info(f"✅ 写作任务 {args.job} 校验通过")
 
 
 def main():
@@ -168,12 +173,15 @@ def main():
     d = sub.add_parser("deep-read"); d.add_argument("--job", required=True)
     d.add_argument("--papers", nargs="+", default=None,
                    help="可选，默认从 selected_papers.json 取")
+    d.add_argument("--force", action="store_true", help="覆盖已填文件（先备份）")
     d.set_defaults(func=cmd_deep_read)
 
     mdr = sub.add_parser("mark-deep-read"); mdr.add_argument("--job", required=True)
     mdr.set_defaults(func=cmd_mark_deep_read)
 
-    s = sub.add_parser("story"); s.add_argument("--job", required=True); s.set_defaults(func=cmd_story)
+    s = sub.add_parser("story"); s.add_argument("--job", required=True)
+    s.add_argument("--force", action="store_true", help="覆盖已填 story 文件（先备份）")
+    s.set_defaults(func=cmd_story)
 
     ms = sub.add_parser("mark-story"); ms.add_argument("--job", required=True); ms.set_defaults(func=cmd_mark_story)
 

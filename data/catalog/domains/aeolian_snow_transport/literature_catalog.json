@@ -1,8 +1,8 @@
 {
   "version": "0.1",
-  "description": "Domain catalog: 风沙/风雪颗粒输运动力学",
+  "description": "Domain catalog: Aeolian Snow Transport",
   "domain_id": "aeolian_snow_transport",
-  "domain_name": "风沙/风雪颗粒输运动力学",
+  "domain_name": "Aeolian Snow Transport",
   "papers": [
     {
       "paper_id": "1999_shao_风沙跃移数值模拟",
@@ -80,7 +80,8 @@
       },
       "primary_domain": "aeolian_snow_transport",
       "domains": [
-        "aeolian_snow_transport"
+        "aeolian_snow_transport",
+        "blowing_snow_physics"
       ],
       "domain_view": {
         "domain_id": "aeolian_snow_transport",
@@ -439,9 +440,9 @@
       "year": 2015,
       "venue": "",
       "doi": "10.1038/srep14677",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2015_gao_沙丘形态定向相图.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2015_gao_沙丘形态定向相图\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2015_gao_沙丘形态定向相图\\images",
+      "raw_pdf": "data/raw/2015_phase_diagrams_of_dune_shape_and_orientation_depending_on_sand_availability.pdf",
+      "markdown": "data/papers/2015_gao_沙丘形态定向相图/paper.md",
+      "images_dir": "data/papers/2015_gao_沙丘形态定向相图/images",
       "status": "unsummarized",
       "primary_domain": "aeolian_snow_transport",
       "domains": [
@@ -495,9 +496,9 @@
       "year": 2020,
       "venue": "",
       "doi": "10.1029/2019rg000679",
-      "raw_pdf": "E:\\1\\mineru\\data\\raw\\2020_pahtz_风沙河流沉积物输运起动停止.pdf",
-      "markdown": "E:\\1\\mineru\\data\\papers\\2020_pahtz_风沙河流沉积物输运起动停止\\paper.md",
-      "images_dir": "E:\\1\\mineru\\data\\papers\\2020_pahtz_风沙河流沉积物输运起动停止\\images",
+      "raw_pdf": "data/raw/2020_pahtz_风沙河流沉积物输运起动停止.pdf",
+      "markdown": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/paper.md",
+      "images_dir": "data/papers/2020_pahtz_风沙河流沉积物输运起动停止/images",
       "status": "unsummarized",
       "primary_domain": "aeolian_snow_transport",
       "domains": [

@@ -100,7 +100,7 @@ def test_converting_status_blocks_duplicate_conversion(monkeypatch, isolated):
     monkeypatch.setattr(server_mod.converter, "convert", _spy_convert)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("x.pdf", content, "application/pdf")
     })
     assert resp.status_code == 200
@@ -130,7 +130,7 @@ def test_converted_status_returns_duplicate(monkeypatch, isolated):
     monkeypatch.setattr(server_mod.converter, "convert", _spy_convert)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("copy.pdf", content, "application/pdf")
     })
     assert resp.status_code == 200
@@ -160,14 +160,14 @@ def test_failed_status_allows_retry(monkeypatch, isolated):
     monkeypatch.setattr(server_mod.converter, "convert", _spy_convert)
     monkeypatch.setattr(server_mod.cleaner, "extract", _fake_extract_success)
 
-    resp = client.post("/upload", files={
+    resp = client.post("/upload?wait=true", files={
         "file": ("x.pdf", content, "application/pdf")
     })
     assert resp.status_code == 200
     assert resp.json()["status"] == "success"
     assert call_count["n"] == 1, "failed 状态应允许重试并调用 converter"
-    # 重试后该 sha256 对应的最新记录应为 converted（优先级高于 failed）
-    assert m.find_by_sha256(sha)["status"] == "converted"
+    # 无 metadata 的上传重试成功后进入未注册转换状态，不污染正式 catalog
+    assert m.find_by_sha256(sha)["status"] == "unregistered_converted"
     # failed 记录的 error 字段应已写入（来自上次失败）
     # 重试成功后 status 翻转，error 清空
-    assert m.get("x")["status"] == "converted"
+    assert m.get("x")["status"] == "unregistered_converted"

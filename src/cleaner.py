@@ -22,6 +22,11 @@ from config.settings import PAPERS_DIR
 class MinerUOutputCleaner:
     """清理 MinerU 输出，只保留 paper.md + images/"""
 
+    IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
+
+    def __init__(self, papers_dir: Path = PAPERS_DIR):
+        self.papers_dir = Path(papers_dir)
+
     @staticmethod
     def _method_dirs(method: str, backend: str | None = None) -> list[str]:
         """返回给定 method 应搜索的目录名列表。
@@ -250,10 +255,12 @@ class MinerUOutputCleaner:
         img_dir = md_path.parent / "images"
         if img_dir.is_dir():
             return img_dir
-        # 退而递归找
-        for d in source_dir.rglob("images"):
-            if d.is_dir():
-                return d
+        # 退而递归找：只有唯一 images/ 目录时才接受，避免误复制别的 method 输出
+        candidates = [d for d in source_dir.rglob("images") if d.is_dir()]
+        if len(candidates) == 1:
+            return candidates[0]
+        if len(candidates) > 1:
+            logger.warning(f"多个 images 目录，跳过图片复制: {[str(c) for c in candidates]}")
         return None
 
     def extract(self, source_dir: str | Path, paper_id: str,
@@ -297,7 +304,7 @@ class MinerUOutputCleaner:
             logger.error(msg)
             return {"success": False, "paper_id": paper_id, "error": msg}
 
-        dest_dir = safe_child(PAPERS_DIR, paper_id)
+        dest_dir = safe_child(self.papers_dir, paper_id)
         # 覆盖保护：已存在则备份或报错，不无条件 rmtree
         if dest_dir.exists():
             if not overwrite:
@@ -327,7 +334,7 @@ class MinerUOutputCleaner:
         if src_images and src_images.is_dir():
             dest_images.mkdir(parents=True, exist_ok=True)
             for img in src_images.iterdir():
-                if img.is_file():
+                if img.is_file() and img.suffix.lower() in self.IMAGE_SUFFIXES:
                     shutil.copy2(img, dest_images / img.name)
                     images_count += 1
 

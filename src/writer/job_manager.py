@@ -5,12 +5,14 @@
 import json
 import os
 import re
+import shutil
 from pathlib import Path
 from datetime import datetime
 from loguru import logger
 
 from config.settings import PROJECT_ROOT
 from filelock import FileLock
+from src.utils.atomic_io import atomic_write_json
 
 WRITE_DIR = PROJECT_ROOT / "write"
 
@@ -120,6 +122,9 @@ class JobManager:
     def _meta_lock_path(self, job_id: str) -> Path:
         return self.job_dir(job_id) / ".meta.lock"
 
+    def _jobs_lock_path(self) -> Path:
+        return self.write_dir / ".jobs.lock"
+
     def _locked_meta(self, job_id: str, fn) -> dict:
         """事务级锁：锁住 load_meta → 修改 → save_meta 完整周期"""
         lock = FileLock(str(self._meta_lock_path(job_id)))
@@ -135,11 +140,7 @@ class JobManager:
         """原子写入 run_meta.json：tmp + os.replace，避免中断/并发损坏"""
         meta["updated_at"] = datetime.now().isoformat(timespec="seconds")
         p = self.job_dir(job_id) / "logs" / "run_meta.json"
-        p.parent.mkdir(parents=True, exist_ok=True)
-        tmp = p.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-        json.loads(tmp.read_text(encoding="utf-8"))
-        os.replace(tmp, p)
+        atomic_write_json(p, meta, indent=2)
 
     def touch(self, job_id: str) -> None:
         """仅刷新 updated_at"""
@@ -223,22 +224,34 @@ class JobManager:
                 topic = input_text[:60]
 
         slug = _slugify(topic or "untitled")
-        num = _next_job_num(self.write_dir)
-        suffix = _job_id_suffix()
-        job_id = f"{num:03d}_{slug}_{suffix}"
-        jdir = self.job_dir(job_id)
-        for sub in JOB_SUBDIRS:
-            (jdir / sub).mkdir(parents=True, exist_ok=True)
-
-        # research_input.md
-        (jdir / "input" / "research_input.md").write_text(
-            input_text if input_text else f"# 研究内容\n\n{topic}\n", encoding="utf-8")
-
-        # run_meta.json
         input_type = "input_file" if input_file else "topic_text"
-        meta = _empty_run_meta(job_id, jdir, topic or slug, input_type,
-                               target, language)
-        self.save_meta(job_id, meta)
+        self.write_dir.mkdir(parents=True, exist_ok=True)
+        with FileLock(str(self._jobs_lock_path())):
+            for _ in range(20):
+                num = _next_job_num(self.write_dir)
+                suffix = _job_id_suffix()
+                job_id = f"{num:03d}_{slug}_{suffix}"
+                jdir = self.job_dir(job_id)
+                try:
+                    jdir.mkdir(parents=True, exist_ok=False)
+                except FileExistsError:
+                    continue
+                try:
+                    for sub in JOB_SUBDIRS:
+                        (jdir / sub).mkdir(parents=True, exist_ok=True)
+                    (jdir / "input" / "research_input.md").write_text(
+                        input_text if input_text else f"# 研究内容\n\n{topic}\n",
+                        encoding="utf-8",
+                    )
+                    meta = _empty_run_meta(job_id, jdir, topic or slug, input_type,
+                                           target, language)
+                    self.save_meta(job_id, meta)
+                except Exception:
+                    shutil.rmtree(jdir, ignore_errors=True)
+                    raise
+                break
+            else:
+                raise RuntimeError("failed to allocate a unique job_id after retries")
 
         logger.info(f"创建写作任务: {job_id} -> {jdir}")
         return {"job_id": job_id, "job_dir": str(jdir), "meta": meta}

@@ -33,6 +33,44 @@ def _safe_for_zip(rel_path: str) -> bool:
     return True
 
 
+def _should_pack(rel_path: str) -> bool:
+    path = Path(rel_path)
+    rel = rel_path.replace("\\", "/")
+    # 跳过备份文件
+    if ".bak_" in path.name:
+        return False
+    # 跳过 PDF / 图片 / 大二进制文件（版权语料，不进 zip）
+    _SKIP_SUFFIXES = {".pdf", ".png", ".jpg", ".jpeg", ".docx", ".pptx", ".xlsx"}
+    if path.suffix.lower() in _SKIP_SUFFIXES:
+        return False
+    # 跳过 import 目录（外源 PDF）
+    if path.parts and path.parts[0] == "import":
+        return False
+    # 跳过 _test_batch 目录
+    if path.parts and path.parts[0] == "_test_batch":
+        return False
+    # 跳过数据目录中的版权文件（data/raw, data/papers），但保留 .gitkeep
+    _DATA_SKIP_DIRS = {
+        "data/raw",
+        "data/papers",
+        "data/tmp",
+        "data/logs",
+        "data/jobs",
+        "data/transactions",
+        "data/jobs/upload_staging",
+        "data/discovery/doi_candidates",
+        "data/discovery/pdf_fetch_logs",
+        "data/discovery/fetch_logs",
+    }
+    for skip_dir in _DATA_SKIP_DIRS:
+        if (rel.startswith(skip_dir + "/") or rel == skip_dir) \
+                and path.name != ".gitkeep":
+            return False
+    if rel.startswith("data/locks/") and path.suffix == ".lock":
+        return False
+    return _safe_for_zip(rel_path)
+
+
 def git_tracked_files() -> list[str]:
     """返回 git 跟踪文件 + 未忽略的新文件（相对路径）"""
     try:
@@ -44,11 +82,11 @@ def git_tracked_files() -> list[str]:
         if result.returncode == 0:
             files = [f.replace("\\", "/") for f in result.stdout.split("\0") if f]
             if files:
-                safe = [f for f in files if _safe_for_zip(f)]
+                safe = [f for f in files if _should_pack(f)]
                 if len(safe) < len(files):
                     for f in files:
-                        if not _safe_for_zip(f):
-                            print(f"  [SKIP] unsafe path encoding: {f!r}")
+                        if not _should_pack(f):
+                            print(f"  [SKIP] excluded from snapshot: {f!r}")
                 print(f"  Found {len(safe)} files from git ls-files")
                 return safe
         else:
@@ -79,8 +117,8 @@ def _scan_repo_files() -> list[str]:
         if path.name.startswith("mineru_snapshot") and path.suffix == ".zip":
             continue
         rel = path.relative_to(PROJECT_ROOT).as_posix()
-        if not _safe_for_zip(rel):
-            print(f"  [SKIP] unsafe path encoding: {rel!r}")
+        if not _should_pack(rel):
+            print(f"  [SKIP] excluded from snapshot: {rel!r}")
             continue
         out.append(rel)
     return sorted(out)

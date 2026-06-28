@@ -45,7 +45,9 @@ def validate_catalog_citations(catalog_data: dict | None = None) -> list[str]:
         m = re.match(r"@\w+\s*\{\s*([^,\s]+)", bt)
         if m and m.group(1) != bk:
             errors.append(f"{ctx} bibtex entry key({m.group(1)}) != bib_key({bk})")
-        for field in ["title", "author", "year"]:
+        placeholder = p.get("status") == "unsummarized" and not cit.get("verified", False)
+        required_fields = ["title"] if placeholder else ["title", "author", "year"]
+        for field in required_fields:
             if not re.search(rf"\b{field}\s*=", bt, re.IGNORECASE):
                 errors.append(f"{ctx} bibtex 缺少 {field} 字段")
         doi = p.get("doi")

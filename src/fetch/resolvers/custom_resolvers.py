@@ -17,18 +17,26 @@ class ExternalCommandResolver(PdfResolver):
     name = "custom"
     access_modes = ("custom",)
 
-    def __init__(self, command_template: str = ""):
-        self.command_template = command_template
+    def __init__(self, command_argv: list[str] | tuple[str, ...] | None = None):
+        self.command_argv = list(command_argv or [])
 
     def resolve(self, context: ResolveContext) -> FetchResult:
-        if not self.command_template:
+        if not self.command_argv:
             return FetchResult(
-                doi=context.doi, error="no command template configured",
+                doi=context.doi, source="custom", error="custom resolver command_argv is not configured",
             )
-        cmd = self.command_template.replace("{doi}", context.doi)
+        allowed_dir = Path(
+            (context.metadata or {}).get("allowed_output_dir")
+            or getattr(context.access_policy, "extra", {}).get("allowed_output_dir", "")
+            or Path.cwd()
+        )
+        args = [
+            part.replace("{doi}", context.doi).replace("{output_dir}", str(allowed_dir))
+            for part in self.command_argv
+        ]
         try:
             result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=120,
+                args, shell=False, capture_output=True, text=True, timeout=120,
             )
             if result.returncode != 0:
                 return FetchResult(
@@ -50,6 +58,10 @@ class ExternalCommandResolver(PdfResolver):
 
         pdf_path = output.get("pdf_path", "")
         pdf_url = output.get("pdf_url", "")
+        if pdf_path:
+            error = _validate_pdf_path(Path(pdf_path), allowed_dir)
+            if error:
+                return FetchResult(doi=context.doi, source="custom", error=error)
         return FetchResult(
             doi=context.doi,
             success=bool(pdf_path or pdf_url),
@@ -59,5 +71,24 @@ class ExternalCommandResolver(PdfResolver):
             access_status="custom",
             pdf_url=pdf_url,
             output_path=pdf_path,
-            metadata={"command": cmd, "raw_output": output},
+            metadata={"command_argv": args, "raw_output": output},
         )
+
+
+def _validate_pdf_path(path: Path, allowed_dir: Path) -> str:
+    try:
+        resolved = path.resolve()
+        allowed = allowed_dir.resolve()
+        resolved.relative_to(allowed)
+    except (OSError, ValueError):
+        return f"resolver output path is outside allowed directory: {path}"
+    if resolved.suffix.lower() != ".pdf":
+        return f"resolver output is not a .pdf file: {path}"
+    if not resolved.exists():
+        return f"resolver output PDF does not exist: {path}"
+    if resolved.stat().st_size <= 0:
+        return f"resolver output PDF is empty: {path}"
+    with resolved.open("rb") as fh:
+        if fh.read(5) != b"%PDF-":
+            return f"resolver output is not a valid PDF: {path}"
+    return ""

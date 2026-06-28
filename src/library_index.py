@@ -11,39 +11,20 @@ from typing import Iterable
 from filelock import FileLock
 
 from config.settings import DATA_DIR, LIBRARY_INDEX_PATH
+from src.domain_config import DOMAIN_LABELS, DOMAIN_REGISTRY, VALID_DOMAINS
+from src.path_utils import normalize_repo_path, resolve_stored_path
 
 
 PROJECT_ROOT = DATA_DIR.parent
 
-VALID_DOMAINS = {"abl_pbl", "blowing_snow_physics", "aeolian_snow_transport"}
-
-DOMAIN_LABELS = {
-    "abl_pbl": "大气边界层与行星边界层",
-    "blowing_snow_physics": "风雪动力学与风雪物理",
-    "aeolian_snow_transport": "风沙/风雪颗粒输运动力学",
-}
-
-DOMAIN_REGISTRY = {domain_id: {"label": label} for domain_id, label in DOMAIN_LABELS.items()}
-
-
 def normalize_rel_path(path: str | Path) -> str:
     """Return a stable repo-relative POSIX path when possible."""
-    if not path:
-        return ""
-    p = Path(path)
-    try:
-        rel = p.resolve().relative_to(PROJECT_ROOT.resolve())
-        return rel.as_posix()
-    except (OSError, ValueError):
-        return p.as_posix()
+    return normalize_repo_path(path, project_root=PROJECT_ROOT)
 
 
 def resolve_repo_path(path: str | Path) -> Path:
     """Resolve stored paths without rewriting Windows absolute paths."""
-    p = Path(path)
-    if p.is_absolute():
-        return p
-    return PROJECT_ROOT / p
+    return resolve_stored_path(path, project_root=PROJECT_ROOT)
 
 
 def validate_domains(primary_domain: str, domains: Iterable[str] | None) -> list[str]:
