@@ -136,9 +136,15 @@ def main():
     # the catalog/ledger will be empty too.  Local rebuilds may have altered
     # these files; this step canonicalises them for distribution.
     try:
-        from src.services.v2_library import AllCatalogBuilder
+        from src.services.v2_library import AllCatalogBuilder, PaperNumberLedger
         data = AllCatalogBuilder().build(write=True)
         print(f"[pack] catalog rebuilt: papers={len(data.get('papers', []))}")
+        # If the rebuilt catalog is empty the ledger must be empty too;
+        # otherwise it carries stale max_number/items from a prior local
+        # rebuild that pointed to gitignored data/papers/ assets.
+        if len(data.get("papers", [])) == 0:
+            PaperNumberLedger().save(PaperNumberLedger.empty_data())
+            print("[pack] ledger reset (empty library)")
     except Exception as exc:
         print(f"[pack] catalog rebuild skipped: {exc}")
 

@@ -98,8 +98,24 @@ def cmd_prepare_workset(args):
 
 
 def cmd_confirm_papers(args):
+    # Paper IDs come from --papers, paper_numbers from --paper-numbers.
+    # Resolve paper_numbers via Catalog into paper_ids.
+    paper_ids = list(args.papers or [])
+    catalog = Catalog()
+    if args.paper_numbers:
+        all_papers = catalog.list_papers()
+        by_number = {p.get("paper_number"): p for p in all_papers}
+        for num in args.paper_numbers:
+            entry = by_number.get(num)
+            if entry is None:
+                logger.error(f"paper_number not found: {num}")
+                return
+            paper_ids.append(entry.get("paper_id"))
+    if not paper_ids:
+        logger.error("至少需要 --papers 或 --paper-numbers 中的一个")
+        return
     selected = [{"paper_id": pid, "reason": "", "expected_use": "", "priority": 3}
-                for pid in args.papers]
+                for pid in paper_ids]
     info = confirm_selected_papers(args.job, selected, confirmed_by="manual")
     logger.info(f"已确认精读文献 {len(info['paper_ids'])} 篇: {info['paper_ids']}")
     logger.info(f"  selected: {info['selected_path']}")
@@ -107,9 +123,10 @@ def cmd_confirm_papers(args):
 
 
 def cmd_deep_read(args):
-    # 不再需要 --papers，从 selected_papers.json 取
-    info = deep_read(args.job, paper_ids=args.papers, force=args.force)
+    info = deep_read(args.job, paper_ids=args.papers, force=args.force,
+                     from_papers=args.from_papers)
     logger.info(f"精读 prompt+模板已生成: {args.job}，{len(info['notes'])} 篇笔记")
+    logger.info(f"  来源: {info.get('source', '?')}")
     logger.info(f"  prompt: {info['prompt_path']}")
     logger.info(f"  notes_filled={info['notes_filled']}（需手动填笔记后 mark-deep-read）")
 
@@ -212,7 +229,9 @@ def main():
     m.set_defaults(func=cmd_match)
 
     cp = sub.add_parser("confirm-papers"); cp.add_argument("--job", required=True)
-    cp.add_argument("--papers", nargs="+", required=True); cp.set_defaults(func=cmd_confirm_papers)
+    cp.add_argument("--papers", nargs="+", default=None, help="paper_id 列表")
+    cp.add_argument("--paper-numbers", nargs="+", default=None, help="16 位 paper_number 列表")
+    cp.set_defaults(func=cmd_confirm_papers)
 
     pw = sub.add_parser("prepare-workset", help="将 selected_papers 全文复制到 data/llm_work/<job_id>/<paper_number>/")
     pw.add_argument("--job", required=True)
@@ -223,6 +242,8 @@ def main():
     d.add_argument("--papers", nargs="+", default=None,
                    help="可选，默认从 selected_papers.json 取")
     d.add_argument("--force", action="store_true", help="覆盖已填文件（先备份）")
+    d.add_argument("--from-papers", action="store_true",
+                   help="直接从 data/papers 读取（默认要求 prepare-workset）")
     d.set_defaults(func=cmd_deep_read)
 
     mdr = sub.add_parser("mark-deep-read"); mdr.add_argument("--job", required=True)

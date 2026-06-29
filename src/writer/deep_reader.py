@@ -1,4 +1,8 @@
-"""全文精读：读取确认的 selected_papers 全文，生成精读笔记模板 + 证据表 + 候选图
+"""全文精读：从 llm_work 读取全文生成精读笔记模板 + 证据表 + 候选图。
+
+默认要求先运行 ``prepare-workset``（产出 ``workset_manifest.json``），
+从 ``data/llm_work/<job_id>/<paper_number>/`` 读取全文与图片，
+不直接读取 ``data/papers/``。传 ``--from-papers`` 可回退到旧行为。
 
 状态语义：
   deep_read() 只设置 deep_read_prompt_generated=True，不设置 deep_read_notes_filled。
@@ -6,6 +10,7 @@
 
 前置：selected_papers.json 必须 selection_status=confirmed。
 """
+import json
 import re
 from pathlib import Path
 
@@ -15,8 +20,10 @@ from src.catalog import Catalog
 from src.naming import validate_paper_id
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
 from src.writer.safe_write import write_text_safely
-from config.settings import PAPER_MD_MAX_CHARS
+from config.settings import PAPER_MD_MAX_CHARS, LLM_WORK_DIR
 from src import bib as bibmod
+
+_WORKSET_MANIFEST = "planning/workset_manifest.json"
 
 
 # 模板/待填标记（用于判断笔记是否仍是空模板）
@@ -72,12 +79,70 @@ def _figure_candidates_block(pid: str, library: PaperLibrary) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _load_workset(job_id: str, jm: JobManager, jdir: Path) -> tuple[dict | None, dict[str, str]]:
+    """Load workset_manifest.json and build paper_id → work_dir mapping.
+
+    Returns (manifest, pid_to_work_dir).  manifest is None if not prepared.
+    """
+    wp = jdir / _WORKSET_MANIFEST
+    if not wp.exists():
+        return None, {}
+    manifest = json.loads(wp.read_text(encoding="utf-8"))
+    mapping: dict[str, str] = {}
+    for entry in manifest.get("copied", []):
+        pid = entry.get("paper_id", "")
+        wd = entry.get("work_dir", "")
+        if pid and wd:
+            mapping[pid] = wd
+    return manifest, mapping
+
+
+class _WorksetLibrary:
+    """Minimal PaperLibrary-like facade over llm_work directories."""
+    def __init__(self, pid_to_dir: dict[str, str], max_chars: int = PAPER_MD_MAX_CHARS):
+        by_id: dict[str, Path] = {}
+        for pid, rel in pid_to_dir.items():
+            by_id[pid] = Path(rel)
+        self._by_id = by_id
+        self._max_chars = max_chars
+
+    def exists(self, pid: str) -> bool:
+        pdir = self._by_id.get(pid)
+        return pdir is not None and (pdir / f"{pid}.md").exists()
+
+    def list_images(self, pid: str) -> list[str]:
+        pdir = self._by_id.get(pid)
+        if pdir is None:
+            return []
+        img_dir = pdir / "images"
+        if not img_dir.is_dir():
+            return []
+        return [str(p.relative_to(pdir)) for p in img_dir.iterdir() if p.is_file()]
+
+    def read_multiple(self, pids: list[str], _dummy=None) -> dict[str, str]:
+        out: dict[str, str] = {}
+        for pid in pids:
+            pdir = self._by_id.get(pid)
+            if pdir is None:
+                continue
+            md = pdir / f"{pid}.md"
+            if md.exists():
+                text = md.read_text(encoding="utf-8")
+                out[pid] = text[:self._max_chars] if self._max_chars else text
+        return out
+
+
 def deep_read(job_id: str, paper_ids: list[str] | None = None,
               force: bool = False,
+              from_papers: bool = False,
               jm: JobManager | None = None,
               library: PaperLibrary | None = None,
               catalog: Catalog | None = None) -> dict:
     """对 selected_papers 生成精读笔记模板 + 证据表 + 候选图 + 精读 prompt。
+
+    默认从 data/llm_work/<job_id>/<paper_number>/ 读取全文与图片
+    （要求先运行 prepare-workset）。传 from_papers=True 回退到直接
+    读取 data/papers/（旧行为，安全性由调用方保证）。
 
     前置：catalog_selection_confirmed=True。
     paper_ids 为 None 时取 selected_papers.json 中已确认的列表。
@@ -100,24 +165,41 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
         paper_ids = [p["paper_id"] for p in sel.get("selected_papers", [])]
     if not paper_ids:
         raise RuntimeError("selected_papers 为空，无可精读文献。")
-    # 防御性校验每个 paper_id
     for pid in paper_ids:
         try:
             validate_paper_id(pid)
         except ValueError as e:
             raise RuntimeError(f"Invalid paper_id: {pid!r} — {e}")
 
-    # 校验每个 paper_id 的正式 Markdown 存在
+    # Resolve reading source: workset (preferred) or data/papers (legacy escape hatch).
+    manifest, pid_to_dir = _load_workset(job_id, jm, jdir)
+    reading_lib = library
+    source_label = "data/papers"
+    if not from_papers:
+        if manifest is None:
+            raise RuntimeError(
+                "workset_manifest.json not found. "
+                "Run `write_review.py prepare-workset --job ... --apply` first, "
+                "or pass from_papers=True to read directly from data/papers/.")
+        missing = [pid for pid in paper_ids if pid not in pid_to_dir]
+        if missing:
+            raise RuntimeError(
+                f"workset missing papers: {missing}. "
+                "Re-run prepare-workset to copy them into llm_work.")
+        reading_lib = _WorksetLibrary(pid_to_dir)
+        source_label = f"data/llm_work/{job_id}"
+
+    lib = reading_lib
     for pid in paper_ids:
-        if not library.exists(pid):
-            raise RuntimeError(f"找不到正式 Markdown: {pid}")
+        if not lib.exists(pid):
+            raise RuntimeError(f"找不到 Markdown ({source_label}): {pid}")
 
     notes_dir = jdir / "reading" / "paper_notes"
     notes_dir.mkdir(parents=True, exist_ok=True)
 
     bib_key_of = {p["paper_id"]: bibmod.bib_key_for_entry(p)
                   for p in catalog.list_papers()}
-    full_texts = library.read_multiple(paper_ids, max_chars_each=PAPER_MD_MAX_CHARS)
+    full_texts = lib.read_multiple(paper_ids)
 
     created_notes = []
     write_results = []
@@ -134,7 +216,7 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
             raise RuntimeError(f"refuse to overwrite user-filled note: {note_path}")
         write_results.append(wr)
         created_notes.append(str(note_path))
-        fig_lines.append(_figure_candidates_block(pid, library))
+        fig_lines.append(_figure_candidates_block(pid, lib))
 
     ev = jdir / "reading" / "evidence_table.md"
     ev_wr = write_text_safely(ev,
@@ -180,7 +262,6 @@ Evidence extracted from full text（标注可定位位置）/ Figure candidates�
     prompt_path = jdir / "logs" / "prompts" / "02_deep_reading_prompt.md"
     prompt_path.write_text(prompt, encoding="utf-8")
 
-    # 只标记 prompt 已生成，不标记 notes 已填
     jm.set_step(job_id, "deep_read_prompt_generated", True)
     return {
         "prompt": prompt,
@@ -190,6 +271,7 @@ Evidence extracted from full text（标注可定位位置）/ Figure candidates�
         "figure_candidates": str(fc),
         "writes": write_results,
         "notes_filled": False,
+        "source": source_label,
     }
 
 

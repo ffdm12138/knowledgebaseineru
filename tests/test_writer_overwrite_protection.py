@@ -41,7 +41,7 @@ def test_deep_read_refuses_user_filled_note(tmp_path):
     note.write_text("# Note\n\nThis is carefully filled human content with enough substance.", encoding="utf-8")
 
     with pytest.raises(RuntimeError, match="refuse to overwrite"):
-        deep_read(job_id, jm=jm, library=FakeLibrary(), catalog=FakeCatalog())
+        deep_read(job_id, jm=jm, library=FakeLibrary(), catalog=FakeCatalog(), from_papers=True)
 
     assert "human content" in note.read_text(encoding="utf-8")
 
@@ -51,7 +51,7 @@ def test_deep_read_force_creates_backup(tmp_path):
     note = jdir / "reading" / "paper_notes" / "2024_wang_测试论文.md"
     note.write_text("# Note\n\nThis is carefully filled human content with enough substance.", encoding="utf-8")
 
-    result = deep_read(job_id, force=True, jm=jm, library=FakeLibrary(), catalog=FakeCatalog())
+    result = deep_read(job_id, force=True, jm=jm, library=FakeLibrary(), catalog=FakeCatalog(), from_papers=True)
 
     assert result["writes"][0]["backup"]
     assert any((jdir / "reading" / "paper_notes").glob("*.bak_*"))
