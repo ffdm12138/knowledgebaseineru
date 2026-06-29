@@ -18,7 +18,6 @@ from config.settings import API_HOST, API_PORT, ALL_CATALOG_PATH
 from src.catalog import Catalog
 from src.library import PaperLibrary
 from src.naming import validate_job_id, validate_paper_id
-from src.path_utils import resolve_stored_path
 from src.prompt_builder import PromptBuilder
 from src.services.v2_library import AllCatalogBuilder, LlmWorkService, bibtex_from_metadata
 from src.writer.bib_manager import portability_check, validate_catalog_citations, validate_job_citations
@@ -145,26 +144,19 @@ async def get_by_number(paper_number: str):
 
 @app.get("/papers/by-number/{paper_number}/markdown", response_class=PlainTextResponse)
 async def get_markdown_by_number(paper_number: str):
-    try:
-        entry = LlmWorkService().resolve_paper_number(paper_number)
-    except ValueError as exc:
-        raise HTTPException(400, str(exc))
-    except KeyError as exc:
-        raise HTTPException(404, str(exc))
-    path = resolve_stored_path(entry["main_md"])
-    if not path.exists():
+    text = library.read_markdown(paper_number)
+    if text is None:
         raise HTTPException(404, "markdown asset not found")
-    return path.read_text(encoding="utf-8", errors="ignore")
+    return text
 
 
 @app.get("/papers/by-number/{paper_number}/images/{image_name}")
 async def get_image_by_number(paper_number: str, image_name: str):
     try:
-        entry = LlmWorkService().resolve_paper_number(paper_number)
-        path = library.image_path(entry["paper_id"], image_name)
+        path = library.image_path(paper_number, image_name)
     except ValueError as exc:
         raise HTTPException(400, str(exc))
-    except KeyError as exc:
+    except (KeyError, FileNotFoundError) as exc:
         raise HTTPException(404, str(exc))
     if not path.exists():
         raise HTTPException(404, "image asset not found")
@@ -195,8 +187,10 @@ async def generate_bibtex(req: BibtexRequest):
     entries = []
     for item in data.get("papers", []):
         if item.get("paper_number") in wanted_numbers or item.get("paper_id") in wanted_ids:
-            metadata_path = resolve_stored_path(item["metadata_file"])
-            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            paper_key = item.get("paper_number") or item.get("paper_id")
+            metadata = library.load_metadata(paper_key)
+            if not metadata:
+                raise HTTPException(404, f"metadata asset not found: {paper_key}")
             entries.append(bibtex_from_metadata(metadata, key=item.get("paper_id")))
     if not entries:
         raise HTTPException(404, "no matching papers")

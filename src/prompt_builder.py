@@ -4,14 +4,14 @@
 每个 prompt 返回 chars / estimated_tokens / warning，便于长度控制。
 
 主键是 16 位 paper_number，paper_id 仅作辅助显示。
-catalog 事实源是 data/catalog/all.catalog.json，schema 为 v1.1。
+all.catalog schema v2.0 是 content-only 内容索引；metadata/BibTeX
+事实从正式 paper 文件夹的 metadata.json 读取，路径经 paper_index.json 解析。
 """
 from loguru import logger
 
 from config.settings import PAPER_MD_MAX_CHARS
 from src.catalog import Catalog
 from src.library import PaperLibrary
-from src.path_utils import resolve_stored_path
 from src.services.v2_library import PaperCurationService
 
 # prompt 超过此估算 token 数时给 warning
@@ -47,7 +47,11 @@ class PromptBuilder:
         entry = self.catalog.get(paper_id)
         if entry is None:
             return {"success": False, "error": f"paper not found in all.catalog.json: {paper_id}"}
-        folder = resolve_stored_path(entry["folder_path"])
+        paper_key = entry.get("paper_number") or entry.get("paper_id") or paper_id
+        try:
+            folder = self.library.paper_dir(paper_key)
+        except Exception as exc:
+            return {"success": False, "error": f"paper folder not found for {paper_id}: {exc}"}
         try:
             prompt = PaperCurationService().build_prompt(folder)
         except Exception as exc:
@@ -91,24 +95,30 @@ class PromptBuilder:
         """读取指定若干篇全文（paper_number 或 paper_id），组装写作 prompt。"""
         if not paper_ids:
             return {"success": False, "error": "未提供 paper_ids"}
-        # resolve each input to (paper_number, paper_id); fall back to the raw input
-        resolved: list[tuple[str, str]] = []
+        # resolve each input to (lookup_key, paper_number, paper_id)
+        resolved: list[tuple[str, str, str]] = []
         for key in paper_ids:
             entry = self.catalog.get(key)
             if entry is not None:
-                resolved.append((entry.get("paper_number", ""), entry.get("paper_id", key)))
+                resolved.append((key, entry.get("paper_number", ""), entry.get("paper_id", key)))
             else:
-                resolved.append(("", key))
-        fulltexts = self.library.read_multiple([pid for _, pid in resolved], max_chars_each=PAPER_MD_MAX_CHARS)
+                resolved.append((key, "", key))
+        fulltexts: dict[str, str] = {}
+        for key, _, _ in resolved:
+            text = self.library.read_markdown(key, max_chars=PAPER_MD_MAX_CHARS)
+            if text is not None:
+                fulltexts[key] = text
         if not fulltexts:
             return {"success": False, "error": "未能读取任何全文"}
         blocks = []
-        for number, pid in resolved:
-            md = fulltexts.get(pid)
+        included: list[str] = []
+        for key, number, pid in resolved:
+            md = fulltexts.get(key)
             if not md:
                 continue
             label = f"{number} {pid}" if number else pid
             blocks.append(f"## [{label}]\n\n{md}")
+            included.append(pid)
         joined = "\n\n---\n\n".join(blocks)
         prompt = f"""请基于以下若干篇文献的全文 Markdown，围绕用户的研究问题进行综述 / 写作。
 
@@ -130,9 +140,9 @@ class PromptBuilder:
 
 # --- 文献全文结束 ---
 """
-        missing = [pid for _, pid in resolved if pid not in fulltexts]
+        missing = [pid for key, _, pid in resolved if key not in fulltexts]
         if missing:
             logger.warning(f"以下 paper_id 全文缺失已跳过: {missing}")
         return {"success": True, "question": question, "prompt": prompt,
-                "included_papers": list(fulltexts.keys()), "missing_papers": missing,
+                "included_papers": included, "missing_papers": missing,
                 **prompt_meta(prompt)}

@@ -1,4 +1,9 @@
-"""Prepare an ignored write/jobs/<job_id> article workspace from all.catalog."""
+"""Prepare an ignored write/jobs/<job_id> article workspace from all.catalog.
+
+Global all.catalog is a content-only screening index.  The generated
+selected_catalog.json is a per-job working snapshot and may cache metadata for
+writer compatibility, but citation truth comes from copied article metadata.
+"""
 from __future__ import annotations
 
 import argparse
@@ -108,10 +113,11 @@ def _source_dir_for_entry(entry: dict, papers_dir: Path) -> Path:
 
 
 def _compact_selected_entry(entry: dict, source: Path, target: Path) -> dict:
-    """Build a selected_catalog entry. Reads the on-disk catalog.json (content)
-    and metadata.json (bibliographic) from the formal folder so write modules
-    that still expect `metadata`/`catalog` keep working. all.catalog entries no
-    longer embed these.
+    """Build one per-job selected_catalog entry.
+
+    Reads catalog.json (content) and metadata.json (bibliographic) from the
+    formal paper folder so write modules that still expect `metadata`/`catalog`
+    keep working. The global all.catalog entry itself stays content-only.
     """
     paper_id = str(entry.get("paper_id") or source.name)
     catalog_path = source / f"{paper_id}.catalog.json"

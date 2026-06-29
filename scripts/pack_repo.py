@@ -71,6 +71,17 @@ def _should_pack(rel_path: str) -> bool:
             return False
     if rel.startswith("data/locks/") and path.suffix == ".lock":
         return False
+    # 跳过本地生成的 catalog 索引/账本（含真实库内容，绝不进快照）。
+    # 源码快照只提交对应 *.template.json 空模板与 .gitkeep。
+    # 这条规则在无 .git 元数据、只能走文件系统扫描时同样生效。
+    _GENERATED_CATALOG_FILES = {
+        "data/catalog/all.catalog.json",
+        "data/catalog/paper_index.json",
+        "data/catalog/paper_number_ledger.json",
+        "data/catalog/catalog_migration_report.json",
+    }
+    if rel in _GENERATED_CATALOG_FILES:
+        return False
     return _safe_for_zip(rel_path)
 
 
@@ -141,34 +152,10 @@ def main():
         print("[ERROR] No tracked files, aborting")
         sys.exit(1)
 
-    # Catalog and ledger are tracked SSOT files that get populated locally
-    # by rebuild_all_catalog.  Local rebuilds write real paper data onto
-    # disk, but data/papers/ assets are gitignored (copyright) and excluded
-    # from the zip.  To keep the zip self-consistent we read the *committed*
-    # (tracked) content of these files via git, not the local working-tree
-    # version which may reference papers that are absent from the zip.
-    _GIT_CATALOG_FILES = frozenset({
-        "data/catalog/all.catalog.json",
-        "data/catalog/paper_number_ledger.json",
-    })
-
     count = 0
     skipped = 0
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in sorted(files):
-            if f in _GIT_CATALOG_FILES:
-                # Read from git's HEAD commit, not the local working tree.
-                try:
-                    content = subprocess.check_output(
-                        ["git", "show", f"HEAD:{f}"],
-                        cwd=str(PROJECT_ROOT), encoding="utf-8",
-                        errors="replace",
-                    )
-                    zf.writestr(f, content)
-                    count += 1
-                    continue
-                except subprocess.CalledProcessError:
-                    pass  # fall through to disk read
             src = PROJECT_ROOT / f
             if not src.exists():
                 print(f"  [SKIP] missing: {f}")

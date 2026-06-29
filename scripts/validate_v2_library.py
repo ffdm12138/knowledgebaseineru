@@ -11,8 +11,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.settings import ALL_CATALOG_PATH, PAPERS_DIR
 from src.path_utils import resolve_stored_path
 from src.services.v2_library import (
+    find_forbidden_catalog_keys,
+    find_legacy_all_catalog_entry_keys,
     PaperNumberLedger,
     metadata_reference_warnings_for_commit,
+    validate_all_catalog_entry,
     validate_catalog_schema,
     validate_metadata_completeness_for_commit,
     validate_metadata_schema,
@@ -38,10 +41,12 @@ def validate_v2_library(
     errors: list[str] = []
     warnings: list[str] = []
 
-    ledger_errors, ledger_warnings = PaperNumberLedger().validate(papers_dir)
+    ledger_path = all_catalog_path.parent / "paper_number_ledger.json"
+    ledger_errors, ledger_warnings = PaperNumberLedger(ledger_path).validate(papers_dir)
     errors.extend(ledger_errors)
     warnings.extend(ledger_warnings)
 
+    formal_paper_ids: set[str] = set()
     if papers_dir.exists():
         for folder in sorted(p for p in papers_dir.iterdir() if p.is_dir()):
             pid = folder.name
@@ -67,6 +72,7 @@ def validate_v2_library(
                 errors.append(f"{pid}: import_status marker must not enter formal library")
             if not has_any_v2_asset:
                 continue
+            formal_paper_ids.add(pid)
             for name, path in required.items():
                 if not path.exists():
                     errors.append(f"{pid} missing {name}: {path}")
@@ -83,14 +89,23 @@ def validate_v2_library(
                 errors.append(f"{pid} has multiple .paper.number files")
 
     if not all_catalog_path.exists():
-        errors.append(f"missing all.catalog.json: {all_catalog_path}")
+        if formal_paper_ids:
+            errors.append(f"missing all.catalog.json: {all_catalog_path}")
         return errors, warnings
 
     data = json.loads(all_catalog_path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        errors.append("all.catalog must be an object")
+        return errors, warnings
+    if str(data.get("schema_version") or "") != "2.0":
+        errors.append("all.catalog.schema_version must be 2.0")
     seen_numbers: set[str] = set()
     seen_ids: set[str] = set()
     for i, entry in enumerate(data.get("papers", [])):
         ctx = f"papers[{i}]"
+        if not isinstance(entry, dict):
+            errors.append(f"{ctx} all.catalog entry must be an object")
+            continue
         number = entry.get("paper_number") or ""
         pid = entry.get("paper_id") or ""
         if not number:
@@ -106,10 +121,10 @@ def validate_v2_library(
         # all.catalog entries are content-only; ensure no forbidden bibliographic
         # keys leaked in (full catalog-schema validation happens on the on-disk
         # <pid>.catalog.json above; all.catalog entries omit schema_version/provenance).
-        from src.services.v2_library import find_forbidden_catalog_keys
-        for k in find_forbidden_catalog_keys(entry):
-            errors.append(f"{ctx} all.catalog contains forbidden bibliographic key: {k}")
-        # all.catalog must NOT embed bibliographic metadata
+        for err in validate_all_catalog_entry(entry):
+            errors.append(f"{ctx} {err}")
+        for k in find_legacy_all_catalog_entry_keys(entry):
+            errors.append(f"{ctx} all.catalog entry must not contain legacy wrapper/path key: {k}")
         if "metadata" in entry:
             errors.append(f"{ctx} all.catalog entry must not embed metadata (read metadata.json by paper_number)")
         if check_paths:
@@ -124,9 +139,10 @@ def validate_v2_library(
 
     # paper_index.json: path mapping only, no bibliographic fields
     index_path = all_catalog_path.parent / "paper_index.json"
+    if formal_paper_ids and not index_path.exists():
+        errors.append(f"missing paper_index.json: {index_path}")
     if index_path.exists():
         index_data = json.loads(index_path.read_text(encoding="utf-8"))
-        from src.services.v2_library import find_forbidden_catalog_keys
         for i, item in enumerate(index_data.get("papers", [])):
             ctx = f"paper_index[{i}]"
             forbidden = find_forbidden_catalog_keys(item)

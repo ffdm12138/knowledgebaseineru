@@ -41,13 +41,25 @@ def _authors_short(metadata: dict) -> str:
     return f"{fam} et al." if len(authors) > 1 else fam
 
 
-def build_compact_catalog_text(papers: list[dict], library: PaperLibrary | None = None) -> str:
+def build_compact_catalog_text(
+    papers: list[dict],
+    library: PaperLibrary | None = None,
+    *,
+    include_metadata: bool = False,
+) -> str:
     """Compact inventory text.
 
-    `papers` are all.catalog entries (content only). Bibliographic bits
-    (year/authors/venue/doi/canonical title) are loaded from metadata via
-    `library` (PaperLibrary). If `library` is None, bibliographic bits are
-    omitted (content-only view).
+    `papers` are all.catalog entries (content only). This is a **display-layer
+    view only** — it never writes metadata into all.catalog storage.
+
+    - ``include_metadata=False`` (default): strict content-only. Only catalog
+      content (content_title, classification, screening, research_card, ...) is
+      shown. Use this for catalog-planning prompts so the model picks papers by
+      content, not by bibliography.
+    - ``include_metadata=True``: additionally join bibliographic bits
+      (year/authors/venue/doi/canonical title) loaded from metadata via
+      `library` (PaperLibrary). Use this only when the consumer needs citation
+      context (e.g. BibTeX/export flows). Requires `library`.
     """
     lines = ["# 文献目录（紧凑视图）", ""]
     for entry in papers:
@@ -63,7 +75,7 @@ def build_compact_catalog_text(papers: list[dict], library: PaperLibrary | None 
         card = catalog.get("research_card") or {}
         notes = catalog.get("content_notes") or {}
         title = content_identity.get("content_title") or ""
-        metadata = library.load_metadata(number) if library else None
+        metadata = library.load_metadata(number) if (include_metadata and library) else None
         meta_bits = []
         if metadata:
             year = metadata.get("year")
@@ -167,7 +179,12 @@ class Catalog:
             seen_ids.add(pid)
         return errors
 
-    def build_compact_catalog(self, topics: list[str] | None = None) -> str:
+    def build_compact_catalog(
+        self,
+        topics: list[str] | None = None,
+        *,
+        include_metadata: bool = False,
+    ) -> str:
         papers = self.list_papers()
         if topics:
             wanted = set(topics)
@@ -175,7 +192,9 @@ class Catalog:
                 cls = (p.get("classification") or {})
                 return set(cls.get("topic_tags") or cls.get("topics") or [])
             papers = [p for p in papers if wanted & _topics_of(p)]
-        return build_compact_catalog_text(papers, library=self.library)
+        return build_compact_catalog_text(
+            papers, library=self.library, include_metadata=include_metadata
+        )
 
     def compact_items(self, topics: list[str] | None = None) -> list[dict[str, Any]]:
         papers = self.list_papers()

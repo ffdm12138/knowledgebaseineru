@@ -1,7 +1,9 @@
-"""Migrate per-paper catalog JSON files to the v1.1 schema.
+"""DEPRECATED: compatibility wrapper for old v1.1 catalog migration.
 
-Scans ``data/papers/*/<pid>.catalog.json`` and fills any missing v1.1
-groups/fields (preserving existing values) via ``migrate_catalog_to_v1_1``.
+The active catalog schema is v2.0 content-only. Prefer
+``scripts/migrate_catalog_to_content_only.py``. This script is kept only for
+old automation and delegates to ``migrate_catalog_to_v1_1`` which now returns
+v2.0 content-only catalog data.
 """
 from __future__ import annotations
 
@@ -26,11 +28,14 @@ def _catalog_files(papers_dir: Path) -> list[Path]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Migrate catalog JSON to v1.1 schema.")
+    parser = argparse.ArgumentParser(
+        description="DEPRECATED: use migrate_catalog_to_content_only.py for v2.0 content-only catalogs."
+    )
     parser.add_argument("--papers-dir", default=str(PAPERS_DIR))
     parser.add_argument("--apply", action="store_true", help="write migrated catalogs; default is dry-run")
     parser.add_argument("--dry-run", action="store_true", help="print summary without writing")
     args = parser.parse_args()
+    print("DEPRECATED: migrate_catalog_to_v1_1.py is a compatibility wrapper; use migrate_catalog_to_content_only.py.")
     write = args.apply and not args.dry_run
     papers_dir = Path(args.papers_dir)
     files = _catalog_files(papers_dir)

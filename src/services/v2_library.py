@@ -219,6 +219,16 @@ FORBIDDEN_CATALOG_KEYS = {
     "external_metadata",
 }
 
+LEGACY_ALL_CATALOG_ENTRY_KEYS = {
+    "catalog",
+    "metadata",
+    "display",
+    "folder_path",
+    "main_md",
+    "metadata_file",
+    "catalog_file",
+}
+
 
 def find_forbidden_catalog_keys(catalog: dict, _path: str = "") -> list[str]:
     """Recursively find forbidden bibliographic keys anywhere in a catalog dict.
@@ -239,6 +249,40 @@ def find_forbidden_catalog_keys(catalog: dict, _path: str = "") -> list[str]:
         for i, value in enumerate(catalog):
             found.extend(find_forbidden_catalog_keys(value, f"{_path}[{i}]"))
     return found
+
+
+def find_legacy_all_catalog_entry_keys(entry: dict) -> list[str]:
+    """Return legacy wrapper/path keys that are not allowed in all.catalog entries."""
+    if not isinstance(entry, dict):
+        return []
+    return sorted(key for key in LEGACY_ALL_CATALOG_ENTRY_KEYS if key in entry)
+
+
+def validate_all_catalog_entry(entry: dict) -> list[str]:
+    """Validate one content-only all.catalog entry."""
+    errors: list[str] = []
+    if not isinstance(entry, dict):
+        return ["all.catalog entry must be an object"]
+    required = [
+        "paper_number",
+        "paper_id",
+        "asset_refs",
+        "content_identity",
+        "classification",
+        "screening",
+        "research_card",
+        "evidence_profile",
+        "content_notes",
+        "provenance",
+    ]
+    for key in required:
+        if key not in entry:
+            errors.append(f"all.catalog entry missing {key}")
+    for key in find_legacy_all_catalog_entry_keys(entry):
+        errors.append(f"all.catalog entry contains legacy wrapper/path key: {key}")
+    for key_path in find_forbidden_catalog_keys(entry):
+        errors.append(f"all.catalog entry contains forbidden bibliographic key: {key_path}")
+    return errors
 
 
 def _read_json(path: Path, default: dict | None = None) -> dict:
@@ -912,10 +956,10 @@ class PaperCurationService:
             }, indent=2)
             return {"success": False, "errors": ["curation requires metadata.identifiers.doi"]}
         catalog = _read_json(Path(curated_catalog_path)) if curated_catalog_path else _read_json(catalog_path)
-        # Curator output must be a complete v1.1 catalog; we do NOT auto-migrate
+        # Curator output must be a complete v2.0 content-only catalog; we do NOT auto-migrate
         # missing groups here (that would let an incomplete catalog lacking the
         # critical screening/evidence_profile groups slip into the formal library).
-        # Use scripts/migrate_catalog_to_v1_1.py to upgrade old v1.0 catalogs.
+        # Use scripts/migrate_catalog_to_content_only.py to upgrade old catalogs.
         errors = validate_metadata_schema(metadata) + validate_catalog_schema(catalog)
         if errors:
             atomic_write_json(folder / ".import_status.json", {
@@ -1028,6 +1072,7 @@ class AllCatalogBuilder:
         self.papers_dir = Path(papers_dir)
         self.all_catalog_path = Path(all_catalog_path)
         self.ledger = ledger or PaperNumberLedger()
+        self.last_errors: list[str] = []
 
     def build(self, *, write: bool = True) -> dict:
         """Build all.catalog (content-only, no metadata) + paper_index.json.
@@ -1039,6 +1084,7 @@ class AllCatalogBuilder:
         """
         papers: list[dict] = []
         index_entries: list[dict] = []
+        self.last_errors = []
         if self.papers_dir.exists():
             for folder in sorted(p for p in self.papers_dir.iterdir() if p.is_dir()):
                 pid = folder.name
@@ -1049,8 +1095,14 @@ class AllCatalogBuilder:
                 images_dir = folder / "images"
                 if not (metadata_path.exists() and catalog_path.exists() and md_path.exists() and pdf_path.exists() and images_dir.exists()):
                     continue
-                number = self.ledger.assign(folder)
                 catalog = _read_json(catalog_path)
+                catalog_errors = validate_catalog_schema(catalog)
+                for legacy_key in find_legacy_all_catalog_entry_keys(catalog):
+                    catalog_errors.append(f"catalog contains legacy wrapper/path key: {legacy_key}")
+                if catalog_errors:
+                    self.last_errors.extend([f"{pid}: {err}" for err in catalog_errors])
+                    continue
+                number = self.ledger.assign(folder)
                 asset_refs = (catalog.get("asset_refs") or {}) if isinstance(catalog, dict) else {}
                 # fill any empty asset path from the actual folder location
                 if not asset_refs.get("markdown"):
@@ -1075,6 +1127,10 @@ class AllCatalogBuilder:
                     "content_notes": catalog.get("content_notes") or {},
                     "provenance": catalog.get("provenance") or {},
                 }
+                entry_errors = validate_all_catalog_entry(entry)
+                if entry_errors:
+                    self.last_errors.extend([f"{pid}: {err}" for err in entry_errors])
+                    continue
                 papers.append(entry)
                 index_entries.append({
                     "paper_number": number,
@@ -1089,7 +1145,8 @@ class AllCatalogBuilder:
         if write:
             atomic_write_json(self.all_catalog_path, data, indent=2)
             atomic_write_json(self.all_catalog_path.parent / "paper_index.json", {
-                "schema_version": "1.0",
+                "schema_version": "1.1",
+                "description": "Path index only; bibliographic facts stay in metadata.json.",
                 "updated_at": now_iso(),
                 "papers": index_entries,
             }, indent=2)

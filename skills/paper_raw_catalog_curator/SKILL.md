@@ -1,7 +1,7 @@
 # Paper Raw Catalog Curator Skill
 
 Use this skill to curate a single `data/paper_raw/<source_id>/` folder: generate a
-v1.1 catalog and a metadata patch that fills only empty metadata fields.
+v2.0 content-only catalog from MinerU Markdown/PDF/images.
 
 ## Role
 
@@ -11,8 +11,8 @@ v1.1 catalog and a metadata patch that fills only empty metadata fields.
 
 - `metadata` 是书目信息事实源（BibTeX/书目）。
 - `catalog` 是筛选事实源（大模型快速判断是否值得精读）。
-- 不得覆盖 metadata 中已有的非空字段，只能补空字段。
-- 若发现已有字段疑似错误，写入 `warnings`/`notes`，不要直接改。
+- 本 skill 不生成 metadata patch，不修改 metadata 字段。
+- 若发现 metadata 疑似错误，写入 catalog 的 `content_notes.warnings`，不要直接改。
 - 不得编造 DOI；`metadata.identifiers.doi` 已有值时不得覆盖。
 - 如果 metadata 缺 DOI，本 skill 只能提示需要可靠 metadata match 或人工补 DOI，不能生成可入库结果。
 - 不得生成 16 位 `paper_number`。
@@ -79,4 +79,3 @@ catalog 任何层级都不得出现：`doi`、`authors`、`author`、`first_auth
 导入必须有 DOI；手动 PDF 可以先无 DOI，但不能进入 curation/commit。
 
 Schema 定义见 `catalog_schema.json`（v2.0），示例见 `examples/`。
-（`metadata_patch_schema.json` 保留供 metadata resolver 使用，不再属于 curator 职责。）

@@ -16,9 +16,12 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="print summary without writing")
     args = parser.parse_args()
     write = args.apply and not args.dry_run
-    data = AllCatalogBuilder().build(write=write)
+    builder = AllCatalogBuilder()
+    data = builder.build(write=write)
+    for error in builder.last_errors:
+        print(f"ERROR: {error}")
     print(f"papers={len(data.get('papers', []))} written={write}")
-    return 0
+    return 1 if builder.last_errors else 0
 
 
 if __name__ == "__main__":

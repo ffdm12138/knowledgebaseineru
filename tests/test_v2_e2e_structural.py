@@ -190,11 +190,20 @@ class TestCompactCatalog:
         data = json.loads((tmp_path / "c" / "all.json").read_text(encoding="utf-8"))
         from src.services.paper_library import PaperLibrary
         lib = PaperLibrary(all_catalog_path=tmp_path / "c" / "all.json", papers_dir=tmp_path / "papers")
-        txt = build_compact_catalog_text(data["papers"], library=lib)
-        # paper_number + bibliographic bits (from metadata via library) + content (from catalog)
+        # default include_metadata=False: content-only — paper_number + content, no bibliography
+        txt_content = build_compact_catalog_text(data["papers"], library=lib)
+        for kw in ("0000000000000001", "must_read", "method:", "usefulness:"):
+            assert kw in txt_content, f"compact catalog (content-only) missing: {kw}"
+        # bibliographic bits must NOT leak in the default content-only view.
+        # (year/author surname also appear in paper_id, so only check venue+doi,
+        #  which are purely bibliographic and never part of paper_id.)
+        for kw in ("Test Journal", "10.1/x"):
+            assert kw not in txt_content, f"content-only view leaked bibliography: {kw}"
+        # include_metadata=True: bibliographic bits joined from metadata (display-layer only)
+        txt_meta = build_compact_catalog_text(data["papers"], library=lib, include_metadata=True)
         for kw in ("0000000000000001", "2024", "Wang", "Test Journal", "10.1/x",
                    "must_read", "method:", "usefulness:"):
-            assert kw in txt, f"compact catalog missing: {kw}"
+            assert kw in txt_meta, f"compact catalog (include_metadata) missing: {kw}"
         # catalog must NOT leak its own bibliographic fields into the compact text
         # (they come from metadata; the catalog content is content-only)
 

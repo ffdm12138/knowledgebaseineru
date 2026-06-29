@@ -28,7 +28,7 @@ data/papers/<paper_id>/images/
 data/papers/<paper_id>/<16位编号>.paper.number
 ```
 
-`data/catalog/all.catalog.json` 和 `data/catalog/paper_number_ledger.json` 是 API 与写作事实源。旧数据不自动迁移。
+`data/catalog/all.catalog.json`、`data/catalog/paper_index.json` 和 `data/catalog/paper_number_ledger.json` 是本地生成的 API/写作运行时索引，不提交真实库状态；源码快照只提交对应 `.template.json` 空模板。旧数据不自动迁移。
 
 ## 事实源与主键
 
@@ -56,7 +56,7 @@ python scripts/convert_paper_raw_batch.py --all --apply
 # 生成 curation prompt（在每个 paper_raw 文件夹写出 curation_prompt.md）
 python scripts/curate_paper_raw.py --all-ready --dry-run
 
-# 大模型/项目级 skill paper_raw_catalog_curator 生成 catalog 与 metadata patch 后
+# 大模型/项目级 skill paper_raw_catalog_curator 生成 content-only catalog 后
 python scripts/curate_paper_raw.py --all-ready --apply
 
 python scripts/commit_paper_raw_to_papers.py --all-ready --apply
@@ -76,7 +76,7 @@ python scripts/fetch_pdf_for_paper_raw.py --all --apply
 python scripts/match_paper_raw_metadata.py --all --apply
 python scripts/convert_paper_raw_batch.py --all --apply
 python scripts/curate_paper_raw.py --all-ready --dry-run   # 生成 curation prompt
-python scripts/curate_paper_raw.py --all-ready --apply     # 应用 catalog + metadata patch
+python scripts/curate_paper_raw.py --all-ready --apply     # 应用 content-only catalog
 python scripts/commit_paper_raw_to_papers.py --all-ready --apply
 python scripts/rebuild_all_catalog.py --apply
 python scripts/validate_v2_library.py

@@ -18,6 +18,10 @@ data/jobs/upload_staging/**
 data/discovery/doi_candidates/**
 data/discovery/pdf_fetch_logs/**
 data/discovery/fetch_logs/**
+data/catalog/all.catalog.json
+data/catalog/paper_index.json
+data/catalog/paper_number_ledger.json
+data/catalog/catalog_migration_report.json
 data/cleanup_report.json
 data/locks/*.lock
 import/
@@ -34,6 +38,7 @@ _test_batch/
 !data/discovery/.gitkeep
 !data/discovery/doi_candidates/.gitkeep
 !data/discovery/pdf_fetch_logs/.gitkeep
+!data/catalog/*.template.json
 
 # ===== 写作任务产物（可重新生成，不入库）=====
 write/jobs/**

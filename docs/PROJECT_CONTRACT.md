@@ -9,11 +9,11 @@
 - 所有新文献先进入 `data/paper_raw/<000001>/`。
 - MinerU 只能处理 `data/paper_raw/<000001>/<000001>.pdf`。
 - 正式资产只保存在 `data/papers/<paper_id>/`，同目录保存 PDF、Markdown、metadata、catalog、images 和 paper number。
-- API 与写作只读取 `data/catalog/all.catalog.json`、`data/catalog/paper_number_ledger.json` 和 `data/papers/<paper_id>/`。
+- API 与写作只读取本地生成的 `data/catalog/all.catalog.json`、`data/catalog/paper_index.json`、`data/catalog/paper_number_ledger.json` 和 `data/papers/<paper_id>/`；源码快照只提交对应 `.template.json` 空模板，不提交真实库索引。
 - metadata 管书目信息和 BibTeX 事实；catalog（schema v2.0）只管正文内容理解（分类、研究卡片、证据画像、精读筛选 `screening`），**不含** DOI/作者/年份/期刊/卷期页等书目字段。两者仅通过 `paper_number`/`paper_id` 关联。
 - **metadata is bibliographic truth; catalog is content understanding; paper_number links them. all.catalog is a content index, not a bibliography database.** references/BibTeX 必须从 metadata 生成，绝不从 catalog 生成。
 - catalog 由项目级 skill `paper_raw_catalog_curator` 在 commit 前从 MinerU Markdown 生成（content-only，不生成 metadata patch）；metadata 空字段由 metadata resolver/enrichment 补齐，不覆盖非空字段。
-- `data/catalog/all.catalog.json` 只聚合 catalog 内容（content-only，无 metadata）；`data/catalog/paper_index.json` 做 paper_number→路径映射（也不含书目字段）。需要书目信息时按 paper_number 读 `data/papers/<paper_number>/...metadata.json`。
+- `data/catalog/all.catalog.json` 只聚合 catalog 内容（content-only，无 metadata）；`data/catalog/paper_index.json` 做 paper_number→路径映射（也不含书目字段）。这些文件由 `scripts/rebuild_all_catalog.py --apply` 在本地生成，需要书目信息时按 paper_number 读正式 paper 文件夹中的 metadata。
 - 网络/搜索 metadata 导入必须有 DOI，并写入 `metadata.identifiers.doi`；没有 DOI 的搜索结果不得进入 `paper_raw`。
 - 手动 PDF 可以先生成无 DOI 的空壳 metadata，但只有补齐 DOI 且 `metadata_match.status` 为 `matched` 或 `manual_confirmed` 后才能 curation/commit。
 - 正式库 `data/papers/<paper_id>/` 中每篇论文必须有 DOI；metadata 不完整的 `paper_raw` 保留在 `paper_raw`，不得入库。

@@ -16,7 +16,7 @@
 - 新文献必须先进入 `data/paper_raw/<000001>/`。
 - MinerU 只能处理 `data/paper_raw/<000001>/<000001>.pdf`。
 - 正式资产只保存到 `data/papers/<paper_id>/`。
-- API 和写作只使用 `data/catalog/all.catalog.json`、`data/catalog/paper_number_ledger.json` 和正式 paper 文件夹。
+- API 和写作只使用本地生成的 `data/catalog/all.catalog.json`、`data/catalog/paper_index.json`、`data/catalog/paper_number_ledger.json` 和正式 paper 文件夹；源码只提交对应 `.template.json` 空模板，不提交真实库索引。
 - metadata 管书目信息和 BibTeX；catalog 管阅读价值、分类、主题和筛选。
 - commit 前必须本地查重。
 - `paper_number` 只递增不回收。
