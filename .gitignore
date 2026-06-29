@@ -33,7 +33,6 @@ _test_batch/
 !data/discovery/.gitkeep
 !data/discovery/doi_candidates/.gitkeep
 !data/discovery/pdf_fetch_logs/.gitkeep
-!data/literature_meta/.gitkeep
 
 # ===== 写作任务产物（可重新生成，不入库）=====
 write/

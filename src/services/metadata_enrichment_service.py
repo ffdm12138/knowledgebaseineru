@@ -1,7 +1,7 @@
 """Metadata enrichment service — DOI extraction, Crossref query, metadata normalization.
 
 Provides:
-- DOI extraction from filenames, sidecar, MinerU markdown, PDF text (pymupdf)
+- DOI extraction from filenames, fetch metadata record, MinerU markdown, PDF text (pymupdf)
 - Crossref API metadata query by DOI
 - Normalized bibliographic metadata from Crossref/OpenAlex/Semantic Scholar/Unpaywall
 - Proposed canonical paper_id generation

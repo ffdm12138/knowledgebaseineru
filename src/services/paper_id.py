@@ -1,20 +1,20 @@
-"""Canonical paper_id generation helpers.
+"""Canonical paper_id generation helpers (v2).
 
-Priority chain for paper_id resolution:
-  1. CLI --paper-id (highest, enforced by caller)
-  2. sidecar.canonical_paper_id
-  3. sidecar.proposed_paper_id
-  4. DOI metadata → year + first_author + short_title_slug
-  5. chinese_title → year + first_author + chinese_title_slug
-  6. title/year/authors → year + first_author + title_slug
-  7. title/year → year + title_slug
-  8. filename fallback (last resort, always warns)
+v2 中正式 paper_id 只由 metadata + catalog 生成，不依赖 filename fallback，
+也不存在 sidecar 优先级链：
+
+  - 正式入库：``paper_id_from_metadata_catalog(metadata, catalog)``
+    = 年份_第一作者姓氏_catalog.display.short_name_zh
+    （见 src/services/v2_library.py）
+  - metadata 富化阶段可先用本模块的 ``generate_paper_id`` 生成一个
+    proposed_paper_id（year + first_author + chinese_title/title_slug），
+    仅供预览，最终以 curation 后的正式 paper_id 为准。
+
+filename fallback 不允许用于正式入库。
 """
 from __future__ import annotations
 
 import re
-
-from loguru import logger
 
 from src.naming import sanitize_paper_id, validate_paper_id
 
@@ -73,84 +73,3 @@ def generate_paper_id(
     candidate = sanitize_paper_id(candidate)
     validate_paper_id(candidate)
     return candidate
-
-
-def resolve_paper_id(
-    *,
-    cli_paper_id: str = "",
-    canonical_paper_id: str = "",
-    proposed_paper_id: str = "",
-    doi: str = "",
-    title: str = "",
-    year: int | None = None,
-    authors: list | str | None = None,
-    chinese_title: str = "",
-    filename_stem: str = "",
-) -> tuple[str, list[str]]:
-    """Resolve the final paper_id using the full priority chain.
-
-    Returns (paper_id, warnings).
-
-    Priority:
-      1. cli_paper_id (explicit --paper-id)
-      2. canonical_paper_id (from sidecar, trusted)
-      3. proposed_paper_id (from metadata enrichment)
-      4. Generate from DOI metadata (year + first_author + title)
-      5. Generate from title/year/authors
-      6. Fallback to filename stem (always warns)
-    """
-    warnings: list[str] = []
-
-    # 1. CLI explicit
-    if cli_paper_id:
-        try:
-            validate_paper_id(cli_paper_id)
-        except ValueError as e:
-            raise ValueError(f"invalid --paper-id: {e}") from e
-        return cli_paper_id, warnings
-
-    # 2. sidecar canonical
-    if canonical_paper_id:
-        try:
-            validate_paper_id(canonical_paper_id)
-        except ValueError:
-            warnings.append(f"sidecar canonical_paper_id invalid: {canonical_paper_id!r}")
-        else:
-            return canonical_paper_id, warnings
-
-    # 3. sidecar proposed
-    if proposed_paper_id:
-        try:
-            validate_paper_id(proposed_paper_id)
-        except ValueError:
-            warnings.append(f"sidecar proposed_paper_id invalid: {proposed_paper_id!r}")
-        else:
-            return proposed_paper_id, warnings
-
-    # 4-5. Generate from metadata
-    if title or year or authors:
-        pid = generate_paper_id(
-            year=year,
-            title=title,
-            authors=authors,
-            chinese_title=chinese_title,
-        )
-        return pid, warnings
-
-    # 6. Filename fallback (last resort)
-    if filename_stem:
-        pid = sanitize_paper_id(filename_stem)
-        try:
-            validate_paper_id(pid)
-        except ValueError:
-            pid = "untitled"
-        warnings.append(
-            "paper_id generated from filename fallback; "
-            "pass --doi/--title/--year/--paper-id or run metadata enrichment for canonical naming"
-        )
-        return pid, warnings
-
-    raise ValueError(
-        "cannot resolve paper_id: no CLI paper_id, sidecar metadata, title/year, "
-        "or filename stem provided"
-    )
