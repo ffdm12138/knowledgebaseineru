@@ -346,27 +346,48 @@ def metadata_is_matched(metadata: dict) -> bool:
     return ((metadata.get("metadata_match") or {}).get("status") in {"matched", "manual_confirmed"})
 
 
+def _is_effectively_empty(value: Any) -> bool:
+    """True for None, empty string, empty list/dict, or list of all-empty dicts."""
+    if value in (None, "", [], {}):
+        return True
+    if isinstance(value, list):
+        # Treat a list whose every element is an empty dict (e.g. Crossref
+        # returns [{"full_name":"","family":"",…}]) as empty so patched
+        # real author data can replace it.
+        return all(
+            isinstance(e, dict) and all(v in (None, "", [], {}) for v in e.values())
+            for e in value
+        )
+    return False
+
+
 def merge_missing_metadata(base: dict, patch: dict) -> tuple[dict, list[str]]:
     """Merge ``patch`` into empty fields only, preserving trusted non-empty metadata."""
     warnings: list[str] = []
-
-    def _is_empty(value: Any) -> bool:
-        return value in (None, "", [], {})
 
     def _merge(dst: Any, src: Any, path: str) -> Any:
         if isinstance(dst, dict) and isinstance(src, dict):
             result = dict(dst)
             for key, src_value in src.items():
                 child_path = f"{path}.{key}" if path else key
-                if key not in result or _is_empty(result[key]):
+                if key not in result or _is_effectively_empty(result[key]):
                     result[key] = src_value
                 else:
                     merged = _merge(result[key], src_value, child_path)
                     result[key] = merged
             return result
-        if _is_empty(dst):
+        # Element-wise merge for lists of dicts (e.g. authors).
+        # When both are lists of dicts of the same length, merge each
+        # pair so that a patch can fill individual fields like 'family'
+        # without overwriting already-populated fields like 'full_name'.
+        if (isinstance(dst, list) and isinstance(src, list)
+                and len(dst) == len(src)
+                and all(isinstance(d, dict) for d in dst)
+                and all(isinstance(s, dict) for s in src)):
+            return [_merge(d, s, f"{path}[{i}]") for i, (d, s) in enumerate(zip(dst, src))]
+        if _is_effectively_empty(dst):
             return src
-        if not _is_empty(src) and dst != src:
+        if not _is_effectively_empty(src) and dst != src:
             warnings.append(f"preserved non-empty metadata field: {path}")
         return dst
 
@@ -398,6 +419,18 @@ def migrate_catalog_to_v1_1(data: dict) -> tuple[dict, list[str]]:
     return catalog, notes
 
 
+def _ascii_fold(value: str) -> str:
+    """Fold accented letters to ASCII (Déry → Dery, Müller → Muller).
+
+    paper_id and BibTeX keys must be ASCII-safe; non-letter non-ASCII chars
+    are dropped. Chinese (used in titles, not author slugs) is unaffected
+    because this is only applied to author family names.
+    """
+    import unicodedata
+    nfkd = unicodedata.normalize("NFKD", value)
+    return nfkd.encode("ascii", "ignore").decode("ascii")
+
+
 def first_author_family(metadata: dict) -> str:
     authors = metadata.get("authors") or []
     if authors and isinstance(authors[0], dict):
@@ -406,11 +439,15 @@ def first_author_family(metadata: dict) -> str:
         value = str(authors[0])
     else:
         value = (metadata.get("first_author") or {}).get("family") or ""
+    if not value and authors and isinstance(authors[0], dict) and not any(str(authors[0].get(k, "")).strip() for k in ("family", "full_name")):
+        # authors[0] exists but is essentially empty — fall back to first_author
+        value = (metadata.get("first_author") or {}).get("family") or ""
     value = str(value).strip()
     if not value:
         return "UnknownAuthor"
     if "," in value:
         value = value.split(",", 1)[0]
+    value = _ascii_fold(value)
     return sanitize_paper_id(value.split()[-1] if " " in value else value) or "UnknownAuthor"
 
 
@@ -656,7 +693,10 @@ class PaperCurationService:
             }, indent=2)
             return {"success": False, "errors": ["metadata_match.status must be matched or manual_confirmed"]}
         catalog = _read_json(Path(curated_catalog_path)) if curated_catalog_path else _read_json(catalog_path)
-        catalog, _ = migrate_catalog_to_v1_1(catalog)
+        # Curator output must be a complete v1.1 catalog; we do NOT auto-migrate
+        # missing groups here (that would let an incomplete catalog lacking the
+        # critical screening/evidence_profile groups slip into the formal library).
+        # Use scripts/migrate_catalog_to_v1_1.py to upgrade old v1.0 catalogs.
         errors = validate_metadata_schema(metadata) + validate_catalog_schema(catalog)
         if errors:
             atomic_write_json(folder / ".import_status.json", {

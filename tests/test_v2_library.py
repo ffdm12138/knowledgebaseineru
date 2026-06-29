@@ -329,3 +329,69 @@ def test_migrate_catalog_to_v1_1_fills_missing_and_preserves():
     assert migrated["research_card"]["one_sentence_summary_zh"] == "kept summary"
     assert validate_catalog_schema(migrated) == []
     assert notes  # added some keys
+
+
+def test_paper_id_folds_accented_author_family_to_ascii():
+    """Accented family names (Déry, Müller) must produce an ASCII-safe paper_id, not crash."""
+    from src.services.v2_library import first_author_family, paper_id_from_metadata_catalog
+    from src.naming import validate_paper_id
+    m = empty_metadata("000001")
+    m["year"] = 1999
+    m["authors"] = [{"full_name": "Stephen J. Déry", "family": "Déry", "given": "Stephen J.", "orcid": "", "affiliation": ""}]
+    c = empty_catalog()
+    c["display"]["short_name_zh"] = "体相吹雪模型"
+    assert first_author_family(m) == "Dery"
+    pid = paper_id_from_metadata_catalog(m, c)
+    validate_paper_id(pid)  # must not raise
+    assert pid == "1999_Dery_体相吹雪模型"
+
+
+def test_accented_author_apply_curated_files_completes_rename(tmp_path):
+    """apply_curated_files must not crash and must produce correct ASCII paper_id for accented names."""
+    folder = tmp_path / "paper_raw" / "000001"
+    folder.mkdir(parents=True)
+    metadata = empty_metadata("000001")
+    metadata["title"]["original"] = "A Bulk Blowing-Snow Model"
+    metadata["year"] = 1999
+    metadata["authors"] = [{"full_name": "Stephen J. Déry", "family": "Déry", "given": "Stephen J.", "orcid": "", "affiliation": ""}]
+    metadata["metadata_match"]["status"] = "matched"
+    metadata["metadata_match"]["confidence"] = 1.0
+    catalog = empty_catalog()
+    catalog["display"].update({"title_original": "A Bulk Blowing-Snow Model", "title_zh": "体相吹雪模型",
+                                "short_name_zh": "体相吹雪模型", "year": 1999, "first_author": "Déry"})
+    (folder / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
+    (folder / "000001.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
+    (folder / "000001.md").write_text("# test", encoding="utf-8")
+    (folder / "000001.pdf").write_bytes(b"%PDF")
+    (folder / "images").mkdir()
+    result = PaperCurationService().apply_curated_files(folder, curated_catalog_path=folder / "000001.catalog.json")
+    assert result["success"], f"apply_curated_files failed: {result.get('errors', [])}"
+    assert result["paper_id"] == "1999_Dery_体相吹雪模型"
+    renamed = Path(result["folder"])
+    assert renamed.exists()
+    assert renamed.name == "1999_Dery_体相吹雪模型"
+
+
+def test_apply_rejects_catalog_missing_screening_group(tmp_path):
+    """apply_curated_files must reject a curator catalog missing the critical screening group."""
+    folder = tmp_path / "paper_raw" / "000001"
+    folder.mkdir(parents=True)
+    metadata = empty_metadata("000001")
+    metadata["title"]["original"] = "T"
+    metadata["year"] = 2024
+    metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["metadata_match"]["status"] = "matched"
+    metadata["metadata_match"]["confidence"] = 1.0
+    (folder / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
+    catalog = empty_catalog()
+    del catalog["screening"]
+    catalog_path = folder / "000001.catalog.json"
+    catalog_path.write_text(json.dumps(catalog), encoding="utf-8")
+    (folder / "000001.md").write_text("# T", encoding="utf-8")
+    (folder / "000001.pdf").write_bytes(b"%PDF")
+    (folder / "images").mkdir()
+    result = PaperCurationService().apply_curated_files(folder, curated_catalog_path=catalog_path)
+    assert not result["success"]
+    assert any("screening" in e for e in result["errors"])
+    assert (folder / ".import_status.json").exists(), ".import_status.json must be written on failure"
+    assert folder.exists(), "folder must NOT be renamed on failure"
