@@ -1,11 +1,5 @@
 {
   "schema_version": "1.0",
-  "max_number": "0000000000000001",
-  "items": {
-    "0000000000000001": {
-      "folder_name": "2014_Vionnet_高山风吹雪耦合模拟",
-      "folder_path": "data/papers/2014_Vionnet_高山风吹雪耦合模拟",
-      "created_at": "2026-06-29T15:58:25"
-    }
-  }
+  "max_number": "0000000000000000",
+  "items": {}
 }
