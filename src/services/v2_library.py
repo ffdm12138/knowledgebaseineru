@@ -398,6 +398,18 @@ def migrate_catalog_to_v1_1(data: dict) -> tuple[dict, list[str]]:
     return catalog, notes
 
 
+def _ascii_fold(value: str) -> str:
+    """Fold accented letters to ASCII (Déry → Dery, Müller → Muller).
+
+    paper_id and BibTeX keys must be ASCII-safe; non-letter non-ASCII chars
+    are dropped. Chinese (used in titles, not author slugs) is unaffected
+    because this is only applied to author family names.
+    """
+    import unicodedata
+    nfkd = unicodedata.normalize("NFKD", value)
+    return nfkd.encode("ascii", "ignore").decode("ascii")
+
+
 def first_author_family(metadata: dict) -> str:
     authors = metadata.get("authors") or []
     if authors and isinstance(authors[0], dict):
@@ -411,6 +423,7 @@ def first_author_family(metadata: dict) -> str:
         return "UnknownAuthor"
     if "," in value:
         value = value.split(",", 1)[0]
+    value = _ascii_fold(value)
     return sanitize_paper_id(value.split()[-1] if " " in value else value) or "UnknownAuthor"
 
 
@@ -656,7 +669,10 @@ class PaperCurationService:
             }, indent=2)
             return {"success": False, "errors": ["metadata_match.status must be matched or manual_confirmed"]}
         catalog = _read_json(Path(curated_catalog_path)) if curated_catalog_path else _read_json(catalog_path)
-        catalog, _ = migrate_catalog_to_v1_1(catalog)
+        # Curator output must be a complete v1.1 catalog; we do NOT auto-migrate
+        # missing groups here (that would let an incomplete catalog lacking the
+        # critical screening/evidence_profile groups slip into the formal library).
+        # Use scripts/migrate_catalog_to_v1_1.py to upgrade old v1.0 catalogs.
         errors = validate_metadata_schema(metadata) + validate_catalog_schema(catalog)
         if errors:
             atomic_write_json(folder / ".import_status.json", {
