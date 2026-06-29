@@ -974,6 +974,10 @@ class V2PaperCommitService:
         final = safe_child(self.papers_dir, pid)
         try:
             shutil.copytree(src, staging)
+            # MinerU raw output is a transient build artifact; never commit it.
+            stg_output = staging / "output"
+            if stg_output.exists():
+                shutil.rmtree(stg_output)
             metadata["pdf"]["path"] = normalize_repo_path(staging / f"{pid}.pdf")
             atomic_write_json(staging / f"{pid}.metadata.json", metadata, indent=2)
             os.replace(staging, final)

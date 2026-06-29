@@ -43,6 +43,8 @@ def validate_v2_library(
             has_any_v2_asset = any(path.exists() for path in required.values())
             if (folder / "paper.md").exists():
                 errors.append(f"{pid}: formal v2 library must not contain paper.md")
+            if (folder / "output").exists():
+                errors.append(f"{pid}: MinerU raw output must be removed before commit (delete output/)")
             if not has_any_v2_asset:
                 continue
             for name, path in required.items():
