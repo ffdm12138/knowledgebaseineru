@@ -131,6 +131,17 @@ def main():
     zip_name = f"{ZIP_NAME_BASE}_{suffix}.zip" if suffix else f"{ZIP_NAME_BASE}.zip"
     zip_path = PROJECT_ROOT / zip_name
 
+    # Rebuild catalog from data/papers/ before packing so the zip is always
+    # self-consistent: if data/papers/ is empty (gitignored copyright assets),
+    # the catalog/ledger will be empty too.  Local rebuilds may have altered
+    # these files; this step canonicalises them for distribution.
+    try:
+        from src.services.v2_library import AllCatalogBuilder
+        data = AllCatalogBuilder().build(write=True)
+        print(f"[pack] catalog rebuilt: papers={len(data.get('papers', []))}")
+    except Exception as exc:
+        print(f"[pack] catalog rebuild skipped: {exc}")
+
     files = git_tracked_files()
     if not files:
         print("[ERROR] No tracked files, aborting")

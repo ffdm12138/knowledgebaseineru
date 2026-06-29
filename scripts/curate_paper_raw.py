@@ -64,13 +64,28 @@ def main() -> int:
     report = []
     for folder in _candidates(args.paper_raw_dir, args):
         item = {"folder": str(folder), "status": "planned"}
+        name = folder.name
         try:
             if write:
+                # Auto-detect curated metadata patch if not provided explicitly.
+                curated_meta = args.metadata
+                if curated_meta is None:
+                    for auto_name in (f"{name}.metadata.patch.json", f"{name}.curated_metadata.json"):
+                        auto_path = folder / auto_name
+                        if auto_path.exists():
+                            curated_meta = auto_path
+                            break
+                # Auto-detect curated catalog if not provided explicitly.
+                curated_cat = args.catalog
+                if curated_cat is None:
+                    auto_cat = folder / f"{name}.catalog.json"
+                    if auto_cat.exists():
+                        curated_cat = auto_cat
                 result = service.apply_curated_files(
                     folder,
                     paper_id=args.paper_id,
-                    curated_metadata_path=args.metadata,
-                    curated_catalog_path=args.catalog,
+                    curated_metadata_path=curated_meta,
+                    curated_catalog_path=curated_cat,
                 )
                 item.update(result)
                 item["status"] = "curated" if result.get("success") else "failed"

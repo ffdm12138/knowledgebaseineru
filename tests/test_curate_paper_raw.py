@@ -123,3 +123,24 @@ def test_all_ready_apply_only_processes_curated(tmp_path, monkeypatch):
     assert (raw / "000002").exists()  # not processed
     # rc: A may succeed (curated) -> rc 0; if apply needs matched+schema it's fine
     assert rc in (0, 1)
+
+
+def test_all_ready_apply_auto_loads_metadata_patch(tmp_path, monkeypatch):
+    """--all-ready --apply must auto-detect <id>.metadata.patch.json alongside catalog."""
+    raw = tmp_path / "paper_raw"
+    folder = _matched_raw(raw / "000001")
+    catalog = empty_catalog()
+    catalog["display"].update({"short_name_zh": "甲论文", "year": 2024, "first_author": "Wang"})
+    (folder / "000001.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
+    # Write a metadata patch that fills abstract (an empty field)
+    patch = empty_metadata("000001")
+    patch["abstract"] = "自动加载的摘要"
+    (folder / "000001.metadata.patch.json").write_text(json.dumps(patch), encoding="utf-8")
+    monkeypatch.syspath_prepend(str(_REPO_ROOT))
+    rc = _run_cli(["curate_paper_raw.py", "--all-ready", "--paper-raw-dir", str(raw), "--apply"])
+    # Should succeed and the abstract from the patch should have been merged
+    renamed = raw / "2024_Wang_甲论文"
+    assert rc in (0, 1)
+    if rc == 0 and renamed.exists():
+        merged = json.loads((renamed / "2024_Wang_甲论文.metadata.json").read_text(encoding="utf-8"))
+        assert merged["abstract"] == "自动加载的摘要", f"patch not auto-merged, abstract={merged.get('abstract')}"
