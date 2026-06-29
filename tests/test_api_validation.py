@@ -45,11 +45,6 @@ def test_catalog_entry_rejects_bad_paper_id():
     assert resp.status_code == 400
 
 
-def test_bib_entry_rejects_bad_paper_id():
-    resp = client.post("/prompt/bib-entry", json={"paper_id": "a/b"})
-    assert resp.status_code == 400
-
-
 def test_read_fulltext_rejects_bad_paper_ids():
     resp = client.post("/prompt/read-fulltext", json={
         "question": "test",

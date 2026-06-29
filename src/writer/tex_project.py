@@ -17,6 +17,7 @@ from src.writer.story_builder import extract_note_sections
 from src.writer.safe_write import write_text_safely
 from src.catalog import Catalog
 from src.library import PaperLibrary
+from src import bib as bibmod
 
 TODO_MARKERS = ["TODO", "待填", "（待填）", "TEMPLATE_ONLY", "由大模型补全", "待补全"]
 MIN_TEX_CHARS = 120  # 正文去空白后最小字符数（与 validate_write_job 一致）
@@ -238,7 +239,7 @@ def _build_notes_summary(job_id: str, jdir: Path, catalog: Catalog) -> str:
     notes_dir = jdir / "reading" / "paper_notes"
     if not notes_dir.exists():
         return ""
-    bib_map = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
+    bib_map = {p["paper_id"]: bibmod.bib_key_for_entry(p)
                for p in catalog.list_papers()}
     out = ""
     for n in sorted(notes_dir.glob("*.md")):
@@ -254,7 +255,7 @@ def _build_notes_summary(job_id: str, jdir: Path, catalog: Catalog) -> str:
 def _selected_bib_keys(job_id: str, jdir: Path, catalog: Catalog,
                        jm: JobManager = None) -> list[str]:
     """从 selected_papers.json（已确认）取 bib_key 列表"""
-    bib_map = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
+    bib_map = {p["paper_id"]: bibmod.bib_key_for_entry(p)
                for p in catalog.list_papers()}
     sel = load_selected(job_id, jm)  # 传 jm，不从默认目录错读
     keys = []

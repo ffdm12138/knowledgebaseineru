@@ -1,109 +1,62 @@
-"""Read paper Markdown and images by paper_id.
+"""Read formal v2 paper assets via all.catalog.json."""
+from __future__ import annotations
 
-Path resolution is domain-index aware, while keeping the legacy
-data/papers/<paper_id>/paper.md layout as the final fallback.
-"""
 from pathlib import Path
 
-from loguru import logger
-
-from config.settings import PAPERS_DIR
+from config.settings import ALL_CATALOG_PATH
 from src.catalog import Catalog
-from src.library_index import LibraryIndex
-from src.manifest import PaperManifest
+from src.naming import safe_child, validate_image_name, validate_paper_id
 from src.path_utils import resolve_stored_path
 
 
 class PaperLibrary:
-    """Read cleaned paper.md and images for a paper_id."""
+    def __init__(self, catalog: Catalog | None = None, all_catalog_path: Path = ALL_CATALOG_PATH):
+        self.catalog = catalog or Catalog(all_catalog_path)
 
-    def __init__(
-        self,
-        manifest: PaperManifest | None = None,
-        catalog: Catalog | None = None,
-        library_index: LibraryIndex | None = None,
-    ):
-        self.manifest = manifest or PaperManifest()
-        self.catalog = catalog or Catalog()
-        self.library_index = library_index or LibraryIndex()
+    def _entry(self, paper_or_number: str) -> dict | None:
+        return self.catalog.get(paper_or_number)
 
-    def paper_dir(self, paper_id: str) -> Path:
-        """Legacy paper directory path for existing callers."""
-        from src.naming import safe_child, validate_paper_id
+    def exists(self, paper_or_number: str) -> bool:
+        return self._entry(paper_or_number) is not None
 
-        validate_paper_id(paper_id)
-        return safe_child(PAPERS_DIR, paper_id)
+    def markdown_path(self, paper_or_number: str) -> Path:
+        entry = self._entry(paper_or_number)
+        if not entry:
+            validate_paper_id(paper_or_number)
+            raise FileNotFoundError(f"paper not found: {paper_or_number}")
+        return resolve_stored_path(entry["main_md"])
 
-    def markdown_path(self, paper_id: str) -> Path:
-        """Resolve paper.md path: library_index -> manifest -> catalog -> legacy."""
-        from src.naming import validate_paper_id
+    def images_dir(self, paper_or_number: str) -> Path:
+        entry = self._entry(paper_or_number)
+        if not entry:
+            validate_paper_id(paper_or_number)
+            raise FileNotFoundError(f"paper not found: {paper_or_number}")
+        return resolve_stored_path(entry["images_dir"])
 
-        validate_paper_id(paper_id)
-        idx = self.library_index.get(paper_id) or {}
-        if idx.get("markdown_path"):
-            return resolve_stored_path(idx["markdown_path"])
-
-        manifest_entry = self.manifest.get(paper_id) or {}
-        if manifest_entry.get("markdown"):
-            return resolve_stored_path(manifest_entry["markdown"])
-
-        catalog_entry = self.catalog.get(paper_id) or {}
-        if catalog_entry.get("markdown"):
-            return resolve_stored_path(catalog_entry["markdown"])
-
-        return self.paper_dir(paper_id) / "paper.md"
-
-    def images_dir(self, paper_id: str) -> Path:
-        """Resolve images path: library_index -> manifest -> catalog -> legacy."""
-        from src.naming import validate_paper_id
-
-        validate_paper_id(paper_id)
-        idx = self.library_index.get(paper_id) or {}
-        if idx.get("images_dir"):
-            return resolve_stored_path(idx["images_dir"])
-
-        manifest_entry = self.manifest.get(paper_id) or {}
-        if manifest_entry.get("images_dir"):
-            return resolve_stored_path(manifest_entry["images_dir"])
-
-        catalog_entry = self.catalog.get(paper_id) or {}
-        if catalog_entry.get("images_dir"):
-            return resolve_stored_path(catalog_entry["images_dir"])
-
-        return self.paper_dir(paper_id) / "images"
-
-    def exists(self, paper_id: str) -> bool:
-        return self.markdown_path(paper_id).exists()
-
-    def list_papers(self) -> list[dict]:
-        """Return all papers from the manifest."""
-        return self.manifest.list_all()
-
-    def read_markdown(self, paper_id: str, max_chars: int | None = None) -> str | None:
-        """Read a paper.md file, optionally truncated."""
-        md_path = self.markdown_path(paper_id)
-        if not md_path.exists():
-            logger.warning(f"paper.md does not exist: {paper_id}")
+    def read_markdown(self, paper_or_number: str, max_chars: int | None = None) -> str | None:
+        path = self.markdown_path(paper_or_number)
+        if not path.exists():
             return None
-        content = md_path.read_text(encoding="utf-8")
-        if max_chars and len(content) > max_chars:
-            content = content[:max_chars] + "\n\n...(truncated)"
-        return content
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        return text[:max_chars] if max_chars else text
 
-    def list_images(self, paper_id: str) -> list[str]:
-        """Return image file names for a paper."""
-        img_dir = self.images_dir(paper_id)
-        if not img_dir.is_dir():
+    def list_images(self, paper_or_number: str) -> list[str]:
+        folder = self.images_dir(paper_or_number)
+        if not folder.exists():
             return []
-        return sorted([f.name for f in img_dir.iterdir() if f.is_file()])
+        return sorted(p.name for p in folder.iterdir() if p.is_file())
 
-    def read_multiple(
-        self, paper_ids: list[str], max_chars_each: int | None = None
-    ) -> dict[str, str]:
-        """Read multiple papers, skipping missing files."""
-        out = {}
+    def image_path(self, paper_or_number: str, image_name: str) -> Path:
+        validate_image_name(image_name)
+        return safe_child(self.images_dir(paper_or_number), image_name)
+
+    def list_all(self) -> list[dict]:
+        return self.catalog.list_papers()
+
+    def read_multiple(self, paper_ids: list[str], max_chars_each: int | None = None) -> dict[str, str]:
+        out: dict[str, str] = {}
         for pid in paper_ids:
-            md = self.read_markdown(pid, max_chars=max_chars_each)
-            if md is not None:
-                out[pid] = md
+            text = self.read_markdown(pid, max_chars=max_chars_each)
+            if text is not None:
+                out[pid] = text
         return out

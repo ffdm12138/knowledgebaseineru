@@ -4,7 +4,7 @@
     python scripts/benchmark_mineru.py "E:\\papers_to_import\\test.pdf"
 
 行为：
-    - 不写 manifest / catalog / library_index（不会污染文献库）
+    - 不写正式 v2 catalog（不会污染文献库）
     - 只调用 MinerUConverter 转到临时目录
     - 输出 timing summary + GPU snapshot
     - 转换前检查 GPU 是否 busy（需要 --force 跳过）

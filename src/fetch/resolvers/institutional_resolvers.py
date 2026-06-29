@@ -24,8 +24,8 @@ class PublisherTDMResolver(PdfResolver):
             landing_url=f"https://doi.org/{doi}",
             action_hint=(
                 f"打开 {doi} 所在出版商网站，用机构登录态下载 PDF，"
-                f"放入 pending 目录后运行 "
-                f"python scripts/register_manual_pdf.py <pdf> --doi {doi}"
+                f"放入 data/raw/ 根目录后运行 "
+                f"python scripts/stage_raw_pdfs_to_paper_raw.py --apply"
             ),
             metadata={
                 "doi": doi,
@@ -52,6 +52,6 @@ class InstitutionalBrowserResolver(PdfResolver):
             action_hint=(
                 f"用浏览器打开 https://doi.org/{context.doi}，"
                 f"通过机构登录态访问，手动下载 PDF，"
-                f"然后运行 register_manual_pdf.py"
+                f"然后运行 stage_raw_pdfs_to_paper_raw.py"
             ),
         )

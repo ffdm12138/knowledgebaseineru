@@ -1,4 +1,4 @@
-"""Local manual resolver：用户已有 PDF，只做 sha256 / sidecar / pending。"""
+"""Local manual resolver for user-provided PDF paths."""
 from pathlib import Path
 
 from ..models import FetchResult

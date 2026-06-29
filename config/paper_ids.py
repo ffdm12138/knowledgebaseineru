@@ -1,7 +1,8 @@
 """现有 15 篇 raw PDF → paper_id 映射
 
-paper_id 命名规则：年份_首位作者_中文标题（snake_case，作文件夹名与 paper.md 标识）。
-权威的年份/作者/标题等书目信息由 literature_catalog.json 记录，paper_id 仅为稳定标识。
+paper_id 命名规则：年份_首位作者_中文标题（snake_case，作 data/papers 文件夹名）。
+权威的年份/作者/标题等书目信息由 data/papers/<paper_id>/<paper_id>.metadata.json 记录，
+paper_id 仅为稳定标识。
 
 其中两组为重复上传（md 字节完全相同），仅保留一条，重复 raw 列于 DUPLICATE_RAW_STEMS：
   - 1999悬移控制方程 ≡ Dery_Yau_1999_A_Bulk_Blowing_Snow_Model  (Déry & Yau 1999, A Bulk Blowing Snow Model)

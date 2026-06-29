@@ -12,6 +12,11 @@ from src.writer.job_manager import JobManager
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
 from src.writer.safe_write import write_text_safely
 from src.catalog import Catalog
+from src import bib as bibmod
+
+
+def _bib_key(entry: dict) -> str:
+    return bibmod.bib_key_for_entry(entry)
 
 TODO_MARKERS = ["TODO", "待填", "（待填）", "TEMPLATE_ONLY", "由大模型补全", "待补全"]
 
@@ -82,11 +87,10 @@ def build_story(job_id: str, force: bool = False, jm: JobManager | None = None,
     # 结构化抽取每篇笔记
     notes_dir = read_dir / "paper_notes"
     notes_summary = ""
-    bib_map = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
-               for p in catalog.list_papers()}
-    one_sentence_map = {p["paper_id"]: (p.get("ai_summary") or {}).get("one_sentence", "")
+    bib_map = {p["paper_id"]: _bib_key(p) for p in catalog.list_papers()}
+    one_sentence_map = {p["paper_id"]: ((p.get("catalog") or {}).get("research_card") or {}).get("one_sentence_summary_zh", "")
                         for p in catalog.list_papers()}
-    relevance_map = {p["paper_id"]: (p.get("ai_summary") or {}).get("relevance_to_my_work", "")
+    relevance_map = {p["paper_id"]: ((p.get("catalog") or {}).get("research_card") or {}).get("usefulness_for_project_zh", "")
                      for p in catalog.list_papers()}
 
     if notes_dir.exists():
@@ -96,7 +100,7 @@ def build_story(job_id: str, force: bool = False, jm: JobManager | None = None,
             secs = extract_note_sections(text)
             notes_summary += f"\n\n### [{pid}]  \\cite{{{bib_map.get(pid,'')}}}\n"
             notes_summary += f"one_sentence: {one_sentence_map.get(pid,'')}\n"
-            notes_summary += f"relevance_to_my_work: {relevance_map.get(pid,'')}\n"
+            notes_summary += f"usefulness_for_project: {relevance_map.get(pid,'')}\n"
             for sk, sv in secs.items():
                 if sv:
                     notes_summary += f"- **{sk}**: {sv[:600]}\n"

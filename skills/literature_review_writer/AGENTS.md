@@ -20,7 +20,7 @@
 ```
 create                          → status=created
 match                           → catalog_match_prompt_generated=True
-                                 （selected_papers.json 为空，selection_status=pending）
+                                 （selected_papers.json 为空，selection_status=awaiting_llm_or_manual_review）
 confirm-papers                  → catalog_selection_confirmed=True
                                  （selected_papers.json confirmed，非空）
 deep-read                       → deep_read_prompt_generated=True

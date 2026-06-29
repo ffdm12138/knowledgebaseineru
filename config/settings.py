@@ -1,10 +1,4 @@
-"""项目配置
-
-重构后定位：文献资产库 + AI 摘要目录 + 按需全文阅读。
-不再做 chunk / embedding / ChromaDB 语义检索。
-
-所有配置项均可通过环境变量覆盖（保留默认值），支持 .env 文件。
-"""
+"""Pure v2 project configuration."""
 import os
 import warnings
 from pathlib import Path
@@ -54,24 +48,21 @@ PROJECT_ROOT = Path(__file__).parent.parent
 
 # 数据目录
 DATA_DIR = _env_path("MINERU_DATA_DIR", PROJECT_ROOT / "data")
-RAW_DIR = DATA_DIR / "raw"                  # PDF 原文（投放/上传目标，不在 papers 中复制 PDF）
-PAPERS_DIR = DATA_DIR / "papers"            # MinerU 清理后的 AI 可读资产：<paper_id>/paper.md + images/
+RAW_DIR = DATA_DIR / "raw"
+PAPER_RAW_DIR = DATA_DIR / "paper_raw"
+PAPERS_DIR = DATA_DIR / "papers"
+LLM_WORK_DIR = DATA_DIR / "llm_work"
 MINERU_TMP_DIR = DATA_DIR / "tmp" / "mineru_raw_output"  # MinerU 原始输出临时目录，处理完可清空
 MINERU_LOG_DIR = DATA_DIR / "logs"          # MinerU 转换性能日志
-LEGACY_PARSED_DIR = DATA_DIR / "parsed"     # 旧版 MinerU 输出（仅迁移时读取，新流程不再写入）
 
 # 目录与账本
 CATALOG_DIR = DATA_DIR / "catalog"          # AI 维护的文献理解目录
-MANIFESTS_DIR = DATA_DIR / "manifests"      # 系统维护的文件账本
-CATALOG_PATH = CATALOG_DIR / "literature_catalog.json"
-MANIFEST_PATH = MANIFESTS_DIR / "papers_manifest.json"
-LIBRARY_INDEX_PATH = CATALOG_DIR / "library_index.json"
-DOMAIN_CATALOG_DIR = CATALOG_DIR / "domains"
+ALL_CATALOG_PATH = CATALOG_DIR / "all.catalog.json"
+PAPER_NUMBER_LEDGER_PATH = CATALOG_DIR / "paper_number_ledger.json"
 DISCOVERY_DIR = DATA_DIR / "discovery"
 JOBS_DIR = DATA_DIR / "jobs"
 UPLOAD_JOBS_PATH = JOBS_DIR / "upload_jobs.json"
 UPLOAD_STAGING_DIR = JOBS_DIR / "upload_staging"
-REGISTRY_OPS_DIR = DATA_DIR / "transactions" / "registry_ops"
 
 # CUDA 路径（MinerU lmdeploy 后端需要，默认 Windows 标准路径）
 CUDA_PATH_DEFAULT = r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6"
@@ -79,7 +70,7 @@ CUDA_PATH = _env_str("CUDA_PATH", CUDA_PATH_DEFAULT)
 # 自动注入进程环境变量，确保子进程（MinerU lmdeploy）能继承
 os.environ.setdefault("CUDA_PATH", CUDA_PATH)
 
-# 代理配置（用于 Sci-Hub 等后备渠道，默认空=直连）
+# 代理配置（默认空=直连）
 FETCH_PROXY = _env_str("FETCH_PROXY", "")
 
 # Publisher TDM API 密钥（免费注册后使用，默认空=下降级通道）
@@ -155,8 +146,7 @@ def enforce_backend_effort_override(parser, args) -> None:
 # 全文阅读 prompt 的单篇最大字符数（防止 prompt 过长）
 PAPER_MD_MAX_CHARS = _env_int("MINERU_PAPER_MD_MAX_CHARS", 12000, min_val=1)
 
-# 文献研究方向配置（用于 catalog-entry prompt 的 relevance_to_my_work 字段）
-# 默认不写死领域；用户通过环境变量 MINERU_RESEARCH_DOMAIN 配置
+# 文献研究方向配置（用于 catalog screening.relevance_score 与 research_card 字段）
 RESEARCH_DOMAIN = _env_str("MINERU_RESEARCH_DOMAIN", "")
 
 # 写作/综述风格配置（用于 prompt builder）
@@ -169,9 +159,10 @@ SUPPORTED_FORMATS = {".pdf", ".docx", ".pptx", ".xlsx", ".png", ".jpg", ".jpeg"}
 
 # 确保目录存在（导入即创建，有副作用）
 for d in [
-    RAW_DIR, PAPERS_DIR, MINERU_TMP_DIR, MINERU_LOG_DIR, CATALOG_DIR,
-    MANIFESTS_DIR, DOMAIN_CATALOG_DIR, DISCOVERY_DIR, JOBS_DIR,
-    UPLOAD_STAGING_DIR, REGISTRY_OPS_DIR,
+    RAW_DIR, PAPER_RAW_DIR, PAPERS_DIR, LLM_WORK_DIR,
+    MINERU_TMP_DIR, MINERU_LOG_DIR,
+    CATALOG_DIR, DISCOVERY_DIR,
+    JOBS_DIR, UPLOAD_STAGING_DIR,
 ]:
     d.mkdir(parents=True, exist_ok=True)
 

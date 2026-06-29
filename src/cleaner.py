@@ -1,12 +1,7 @@
 """MinerU 输出清理器
 
-把 MinerU 杂乱的原始输出（md + images + 一堆 json/layout/中间文件）清理为
-长期 AI 可读资产：
-
-    data/papers/<paper_id>/
-    ├── paper.md
-    └── images/
-
+定位 MinerU 原始输出中的正文 Markdown 与 images 目录（供 PaperRawConverter 使用）。
+``extract()`` 是历史辅助入口，按 v2 语义把正文写成 ``<paper_id>.md``。
 不复制 PDF，不保留 json sidecars。
 """
 import shutil
@@ -20,7 +15,7 @@ from config.settings import PAPERS_DIR
 
 
 class MinerUOutputCleaner:
-    """清理 MinerU 输出，只保留 paper.md + images/"""
+    """定位 MinerU 输出正文 Markdown 与 images/，并按 v2 语义提取为 <paper_id>.md。"""
 
     IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
 
@@ -268,7 +263,7 @@ class MinerUOutputCleaner:
                 method: str | None = None,
                 stem: str | None = None,
                 backend: str | None = None) -> dict:
-        """从 MinerU 原始输出目录提取 paper.md + images 到 data/papers/<paper_id>/
+        """从 MinerU 原始输出目录提取 <paper_id>.md + images 到 data/papers/<paper_id>/
 
         覆盖保护：默认 overwrite=False，目标已存在则报错；overwrite=True 先备份再重建。
 
@@ -320,9 +315,9 @@ class MinerUOutputCleaner:
             logger.info(f"已备份旧目录: {dest_dir.name} -> {bak.name}")
         dest_dir.mkdir(parents=True, exist_ok=True)
         dest_images = dest_dir / "images"
-        dest_md = dest_dir / "paper.md"
+        dest_md = dest_dir / f"{paper_id}.md"
 
-        # 1. 写入 paper.md，统一图片相对路径为 images/...
+        # 1. 写入 <paper_id>.md，统一图片相对路径为 images/...
         md_content = md_path.read_text(encoding="utf-8")
         # MinerU 已用 ![](images/xxx) 形式，无需改写；若出现 ./images/ 也归一化
         md_content = md_content.replace("](./images/", "](images/")

@@ -1,7 +1,7 @@
 """Metadata enrichment service — DOI extraction, Crossref query, metadata normalization.
 
 Provides:
-- DOI extraction from filenames, sidecar, paper.md, PDF text (pymupdf)
+- DOI extraction from filenames, sidecar, MinerU markdown, PDF text (pymupdf)
 - Crossref API metadata query by DOI
 - Normalized bibliographic metadata from Crossref/OpenAlex/Semantic Scholar/Unpaywall
 - Proposed canonical paper_id generation
@@ -75,8 +75,8 @@ def extract_doi_from_sidecar(sidecar: dict) -> str | None:
     return None
 
 
-def extract_doi_from_paper_md(md_text: str, max_lines: int = 60) -> str | None:
-    """Extract DOI from the first *max_lines* of a paper.md."""
+def extract_doi_from_markdown(md_text: str, max_lines: int = 60) -> str | None:
+    """Extract DOI from the first *max_lines* of MinerU markdown."""
     if not md_text:
         return None
     lines = md_text.split("\n")[:max_lines]
@@ -509,7 +509,7 @@ def enrich_from_pdf(
     sidecar: dict | None = None,
     chinese_title: str = "",
 ) -> EnrichmentResult:
-    """Full enrichment pipeline for a pending PDF.
+    """Full enrichment pipeline for a v2 paper_raw PDF.
 
     1. Try DOI from sidecar
     2. Try DOI from PDF filename

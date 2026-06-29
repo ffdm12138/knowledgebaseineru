@@ -1,5 +1,4 @@
 """Chinese/English query expansion for snow and boundary-layer literature."""
-from src.library_index import VALID_DOMAINS
 
 
 DOMAIN_TERMS = {
@@ -86,9 +85,8 @@ def expand_query(query: str, domain_id: str | None = None, max_queries: int = 8)
     query = (query or "").strip()
     if not query:
         raise ValueError("query is required")
-    if domain_id and domain_id not in VALID_DOMAINS:
-        raise ValueError(f"invalid domain_id: {domain_id}")
-
+    if domain_id and domain_id not in DOMAIN_TERMS:
+        raise ValueError(f"unknown topic set: {domain_id}")
     terms: list[str] = []
     for cn_term, translations in TERM_TRANSLATIONS.items():
         if cn_term in query:
@@ -109,4 +107,3 @@ def expand_query(query: str, domain_id: str | None = None, max_queries: int = 8)
         "terms": terms,
         "expanded_queries": _dedupe(expanded)[:max_queries],
     }
-

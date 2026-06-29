@@ -1,0 +1,12 @@
+{
+  "warnings": [
+    "metadata.title.translated_zh was empty; filled from catalog.display.title_zh",
+    "metadata.container.journal looks incomplete; not overwritten, please verify"
+  ],
+  "title": {
+    "translated_zh": "一种体相吹雪模型",
+    "short_zh": "体相吹雪模型"
+  },
+  "citation_key": "dery1999_bulk_blowing_snow",
+  "keywords": ["blowing snow", "bulk model", "sublimation", "boundary layer"]
+}

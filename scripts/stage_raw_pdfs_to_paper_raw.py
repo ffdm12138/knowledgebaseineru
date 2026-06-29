@@ -1,0 +1,78 @@
+"""Stage root data/raw/*.pdf files into data/paper_raw/<000001>/."""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from loguru import logger
+
+from config.settings import PAPER_RAW_DIR, RAW_DIR
+from src.services.v2_library import PaperRawAllocator
+
+
+def _is_pdf(path: Path) -> bool:
+    try:
+        return path.read_bytes()[:5].startswith(b"%PDF")
+    except OSError:
+        return False
+
+
+def _next_ids(paper_raw_dir: Path, count: int) -> list[str]:
+    existing = [
+        int(p.name)
+        for p in paper_raw_dir.iterdir()
+        if p.is_dir() and p.name.isdigit() and len(p.name) == 6
+    ] if paper_raw_dir.exists() else []
+    start = (max(existing) if existing else 0) + 1
+    return [f"{start + i:06d}" for i in range(count)]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Stage data/raw/*.pdf into v2 paper_raw workspaces.")
+    parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
+    parser.add_argument("--paper-raw-dir", type=Path, default=PAPER_RAW_DIR)
+    parser.add_argument("--copy", action="store_true", help="copy PDFs instead of moving them")
+    parser.add_argument("--move", action="store_true", help="move PDFs (default when --apply)")
+    parser.add_argument("--apply", action="store_true", help="write changes; default is dry-run")
+    parser.add_argument("--dry-run", action="store_true", help="force dry-run")
+    parser.add_argument("--report", type=Path, default=None)
+    args = parser.parse_args()
+
+    write = args.apply and not args.dry_run
+    pdfs = sorted(p for p in args.raw_dir.glob("*.pdf") if p.is_file())
+    ids = _next_ids(args.paper_raw_dir, len(pdfs))
+    report: list[dict] = []
+    allocator = PaperRawAllocator(args.paper_raw_dir)
+    move = not args.copy
+
+    for pdf, planned_id in zip(pdfs, ids):
+        item = {"source_pdf": str(pdf), "planned_source_id": planned_id, "status": "planned"}
+        if not _is_pdf(pdf):
+            item.update({"status": "failed", "error": "file does not look like a PDF"})
+            logger.warning("{} skipped: {}", pdf, item["error"])
+            report.append(item)
+            continue
+        if write:
+            try:
+                result = allocator.allocate_from_pdf(pdf, source_type="manual_pdf", move=move)
+                item.update(result)
+                item["status"] = "staged"
+            except Exception as exc:
+                item.update({"status": "failed", "error": str(exc)})
+                logger.error("stage failed for {}: {}", pdf, exc)
+        logger.info("{} {} -> paper_raw/{}", "STAGE" if write else "DRY-RUN", pdf.name, planned_id)
+        report.append(item)
+
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps({"applied": write, "count": len(report), "items": report}, ensure_ascii=False, indent=2))
+    return 1 if any(i["status"] == "failed" for i in report) else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

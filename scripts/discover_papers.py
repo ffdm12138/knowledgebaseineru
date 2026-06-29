@@ -10,13 +10,12 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config.settings import DISCOVERY_DIR  # noqa: E402
 from src.discovery.pipeline import discover_papers  # noqa: E402
-from src.library_index import VALID_DOMAINS  # noqa: E402
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Discover DOI candidates from OpenAlex/Semantic Scholar/Crossref.")
     parser.add_argument("query", help="Chinese or English literature search query.")
-    parser.add_argument("--domain", choices=sorted(VALID_DOMAINS), default=None)
+    parser.add_argument("--topic", default=None)
     parser.add_argument("--limit-per-query", type=int, default=15)
     parser.add_argument("--max-candidates", type=int, default=50)
     parser.add_argument("--output-dir", type=Path, default=DISCOVERY_DIR / "doi_candidates")
@@ -24,7 +23,7 @@ def main() -> int:
 
     batch = discover_papers(
         args.query,
-        domain_id=args.domain,
+        domain_id=args.topic,
         limit_per_query=args.limit_per_query,
         max_candidates=args.max_candidates,
         output_dir=args.output_dir,
@@ -39,4 +38,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -15,7 +15,8 @@ from src.catalog import Catalog
 from src.naming import validate_paper_id
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
 from src.writer.safe_write import write_text_safely
-from config.settings import PAPER_MD_MAX_CHARS, PAPERS_DIR
+from config.settings import PAPER_MD_MAX_CHARS
+from src import bib as bibmod
 
 
 # 模板/待填标记（用于判断笔记是否仍是空模板）
@@ -54,7 +55,7 @@ NOTE_TEMPLATE = """# {pid}
 （待填）
 
 ## Evidence extracted from full text
-（待填，标注 paper.md 中可定位的位置）
+（待填，标注正式 Markdown 中可定位的位置）
 
 ## Figure candidates
 （待填：列出 data/papers/{pid}/images/ 中值得引用的图及理由）
@@ -106,15 +107,15 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
         except ValueError as e:
             raise RuntimeError(f"Invalid paper_id: {pid!r} — {e}")
 
-    # 校验每个 paper_id 的 paper.md 存在
+    # 校验每个 paper_id 的正式 Markdown 存在
     for pid in paper_ids:
         if not library.exists(pid):
-            raise RuntimeError(f"找不到 paper.md: {pid} (data/papers/{pid}/paper.md)")
+            raise RuntimeError(f"找不到正式 Markdown: {pid}")
 
     notes_dir = jdir / "reading" / "paper_notes"
     notes_dir.mkdir(parents=True, exist_ok=True)
 
-    bib_key_of = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
+    bib_key_of = {p["paper_id"]: bibmod.bib_key_for_entry(p)
                   for p in catalog.list_papers()}
     full_texts = library.read_multiple(paper_ids, max_chars_each=PAPER_MD_MAX_CHARS)
 

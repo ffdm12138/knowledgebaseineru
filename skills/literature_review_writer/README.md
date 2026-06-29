@@ -56,7 +56,8 @@ python scripts/write_review.py validate       --job 001_风吹雪升华参数化
 
 ## 依赖
 
-- `data/papers/`、`data/catalog/literature_catalog.json`、`data/catalog/references.bib`
+- `data/papers/`、`data/catalog/all.catalog.json`（v2 catalog 事实源）
+- per-job `references.bib` 由 `src/bib.py` 从 `metadata.json` 经 `bibtex_from_metadata` 逐篇生成
 - `src/writer/` 包、`src/bib.py`、`scripts/write_review.py`、`scripts/validate_write_job.py`
 
 详细规则与状态位含义见 `CLAUDE.md`。

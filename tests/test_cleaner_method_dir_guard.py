@@ -16,9 +16,9 @@ def _make(path: Path, content: str = "# test"):
 def _dir_case(td, dirname, method, backend):
     """source_dir 本身就是 method 目录，stem.md 直接放在里面。"""
     d = Path(td) / dirname
-    _make(d / "paper.md", f"# {dirname}")
+    _make(d / "doc.md", f"# {dirname}")
     c = MinerUOutputCleaner()
-    return c.locate_markdown(d, method=method, stem="paper", backend=backend)
+    return c.locate_markdown(d, method=method, stem="doc", backend=backend)
 
 
 def test_hybrid_ocr_method_auto_rejected():

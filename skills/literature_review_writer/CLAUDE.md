@@ -20,7 +20,7 @@
 ```
 create                          → status=created
 match                           → catalog_match_prompt_generated=True
-                                 （selected_papers.json 为空，selection_status=pending）
+                                 （selected_papers.json 为空，selection_status=awaiting_llm_or_manual_review）
 confirm-papers                  → catalog_selection_confirmed=True
                                  （selected_papers.json confirmed，非空）
 deep-read                       → deep_read_prompt_generated=True
@@ -69,7 +69,7 @@ validated                        validate 全量通过
 ## TeX 项目解耦
 
 每个 `write/<job>/tex/` 自包含可整体挪走：
-- `tex/references.bib` 是任务专属副本（从全局库按 selected 抽取），不依赖全局 bib/catalog。
+- `tex/references.bib` 是任务专属副本（由 `bibtex_from_metadata` 从 `metadata.json` 逐篇生成），不依赖全局 bib/catalog。
 - `main.tex` 用相对路径 `\bibliography{references}`、`\input{sections/...}`；图片用 `../figures/<pid>/<img>`。
 - `validate` 含 `portability_check`：拦截指向 `data/papers` 等外部路径的引用。
 

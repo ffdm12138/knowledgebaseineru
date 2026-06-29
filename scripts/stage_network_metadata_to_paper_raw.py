@@ -1,0 +1,121 @@
+"""Stage network/discovery metadata records into data/paper_raw/<000001>/."""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+from typing import Any
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from loguru import logger
+
+from config.settings import PAPER_RAW_DIR
+from src.services.v2_library import PaperRawAllocator, empty_metadata, merge_missing_metadata
+
+
+def _records(path: Path) -> list[dict]:
+    if path.suffix.lower() == ".jsonl":
+        out = []
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                out.append(json.loads(line))
+        return out
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return data if isinstance(data, list) else data.get("items") or data.get("papers") or [data]
+
+
+def _next_ids(paper_raw_dir: Path, count: int) -> list[str]:
+    existing = [
+        int(p.name)
+        for p in paper_raw_dir.iterdir()
+        if p.is_dir() and p.name.isdigit() and len(p.name) == 6
+    ] if paper_raw_dir.exists() else []
+    start = (max(existing) if existing else 0) + 1
+    return [f"{start + i:06d}" for i in range(count)]
+
+
+def _metadata_from_record(source_id: str, record: dict[str, Any]) -> dict:
+    base = empty_metadata(source_id, source_type="network_search")
+    patch = empty_metadata(source_id, source_type="network_search")
+    title = record.get("title") or record.get("title_original") or record.get("display_name") or ""
+    patch["title"]["original"] = title
+    patch["title"]["translated_zh"] = record.get("title_zh") or record.get("translated_zh") or ""
+    patch["title"]["short_zh"] = record.get("short_zh") or record.get("short_name_zh") or ""
+    patch["year"] = record.get("year") or record.get("publication_year")
+    doi = record.get("doi") or ""
+    patch["identifiers"]["doi"] = doi
+    patch["identifiers"]["openalex_id"] = record.get("openalex_id") or record.get("id") or ""
+    patch["identifiers"]["semantic_scholar_id"] = record.get("semantic_scholar_id") or ""
+    patch["links"]["url"] = record.get("url") or record.get("landing_url") or ""
+    patch["links"]["pdf_url"] = record.get("pdf_url") or record.get("url_for_pdf") or ""
+    patch["abstract"] = record.get("abstract") or ""
+    patch["keywords"] = record.get("keywords") or []
+    venue = record.get("venue") or record.get("journal") or record.get("container_title") or ""
+    patch["container"]["journal"] = venue
+    authors = record.get("authors") or []
+    if authors:
+        normalized = []
+        for author in authors:
+            if isinstance(author, dict):
+                normalized.append({
+                    "full_name": author.get("full_name") or author.get("name") or author.get("display_name") or "",
+                    "family": author.get("family") or "",
+                    "given": author.get("given") or "",
+                    "orcid": author.get("orcid") or "",
+                    "affiliation": author.get("affiliation") or "",
+                })
+            else:
+                normalized.append({"full_name": str(author), "family": "", "given": "", "orcid": "", "affiliation": ""})
+        patch["authors"] = normalized
+        first = normalized[0]
+        patch["first_author"] = {"family": first.get("family", ""), "display": first.get("full_name", "")}
+    patch["source"].update({
+        "kind": "network_search",
+        "provider": record.get("provider") or record.get("source") or "",
+        "query": record.get("query") or "",
+        "retrieved_at": record.get("retrieved_at") or record.get("created_at") or "",
+        "raw_record": record,
+    })
+    merged, _ = merge_missing_metadata(base, patch)
+    return merged
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Stage network metadata into v2 paper_raw workspaces.")
+    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--paper-raw-dir", type=Path, default=PAPER_RAW_DIR)
+    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--report", type=Path, default=None)
+    args = parser.parse_args()
+
+    write = args.apply and not args.dry_run
+    records = _records(args.input)
+    ids = _next_ids(args.paper_raw_dir, len(records))
+    allocator = PaperRawAllocator(args.paper_raw_dir)
+    report = []
+    for record, planned_id in zip(records, ids):
+        item = {"planned_source_id": planned_id, "status": "planned", "title": record.get("title", "")}
+        metadata = _metadata_from_record(planned_id, record)
+        if write:
+            try:
+                result = allocator.allocate_metadata(metadata, source_type="network_search")
+                item.update(result)
+                item["status"] = "staged"
+            except Exception as exc:
+                item.update({"status": "failed", "error": str(exc)})
+                logger.error("network metadata stage failed: {}", exc)
+        logger.info("{} metadata -> paper_raw/{}", "STAGE" if write else "DRY-RUN", planned_id)
+        report.append(item)
+
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps({"applied": write, "count": len(report), "items": report}, ensure_ascii=False, indent=2))
+    return 1 if any(i["status"] == "failed" for i in report) else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

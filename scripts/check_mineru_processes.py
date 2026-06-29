@@ -51,7 +51,7 @@ def _find_mineru_processes() -> list[dict]:
                 continue
             lower = line.lower()
             # 匹配 mineru / python 进程，且命令行包含 mineru 相关
-            if "mineru" in lower or ("python" in lower and ("mineru" in lower or "watcher" in lower or "batch_convert" in lower or "benchmark" in lower or "import_pending" in lower or "server" in lower)):
+            if "mineru" in lower or ("python" in lower and ("mineru" in lower or "watcher" in lower or "batch_convert" in lower or "benchmark" in lower or "server" in lower)):
                 try:
                     parts = line.rsplit(",", 2)
                     if len(parts) >= 3:

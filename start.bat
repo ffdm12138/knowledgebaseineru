@@ -35,7 +35,7 @@ if "%START_WATCHER%"=="1" (
     echo      监控目录: data\raw
     echo      检查间隔: 30秒
     echo      *** 注意: watcher 自动转换产物为 unregistered_converted，不会直接进入正式 catalog ***
-    echo      *** 正式文献入库建议使用: register_manual_pdf -^> import_pending_pdf --apply ***
+    echo      *** 正式文献入库建议使用 v2 流程: stage_raw_pdfs_to_paper_raw -^> match_paper_raw_metadata -^> convert_paper_raw_batch -^> curate_paper_raw -^> commit_paper_raw_to_papers --apply ***
     echo      *** 如果不需要自动转换 data/raw 根目录，请手动运行 python -m src.server ***
     echo      注意: mineru-api 不会在本脚本中同时启动，避免 GPU 双模型 OOM。
     echo.

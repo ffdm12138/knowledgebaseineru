@@ -52,7 +52,9 @@ def _should_pack(rel_path: str) -> bool:
     # 跳过数据目录中的版权文件（data/raw, data/papers），但保留 .gitkeep
     _DATA_SKIP_DIRS = {
         "data/raw",
+        "data/paper_raw",
         "data/papers",
+        "data/llm_work",
         "data/tmp",
         "data/logs",
         "data/jobs",

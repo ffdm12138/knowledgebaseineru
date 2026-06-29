@@ -14,6 +14,7 @@ from src.writer.job_manager import JobManager
 from src.catalog import Catalog
 from src.library import PaperLibrary
 from src.naming import validate_paper_id, validate_image_name, safe_child
+from src import bib as bibmod
 
 
 def copy_figures(job_id: str, figures: list[dict] | None = None,
@@ -34,7 +35,7 @@ def copy_figures(job_id: str, figures: list[dict] | None = None,
         return {"copied": [], "used_figures": [],
                 "note": "未提供 figures 列表，未复制任何图（需明确指定要用的图）"}
 
-    bib_map = {p["paper_id"]: (p.get("citation") or {}).get("bib_key", "")
+    bib_map = {p["paper_id"]: bibmod.bib_key_for_entry(p)
                for p in catalog.list_papers()}
 
     copied = []
@@ -70,7 +71,7 @@ def copy_figures(job_id: str, figures: list[dict] | None = None,
             f"- original_path: data/papers/{pid}/images/{img}\n"
             f"- paper_id: {pid}\n"
             f"- bib_key: {bib_map.get(pid, '')}\n"
-            f"- source_markdown: data/papers/{pid}/paper.md\n"
+            f"- source_markdown: data/papers/{pid}/{pid}.md\n"
             f"- suggested_caption: {item.get('suggested_caption', '')}\n"
             f"- used_in_tex: false\n"
             f"- notes:\n"

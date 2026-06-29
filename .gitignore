@@ -7,7 +7,9 @@ __pycache__/
 # ===== 数据语料（受版权保护，不入库）=====
 # PDF 原文与派生 md/图：体积大且含版权，不推送到远程
 data/raw/*
+data/paper_raw/*
 data/papers/*
+data/llm_work/*
 data/tmp/**
 data/logs/**
 data/jobs/**
@@ -16,11 +18,14 @@ data/jobs/upload_staging/**
 data/discovery/doi_candidates/**
 data/discovery/pdf_fetch_logs/**
 data/discovery/fetch_logs/**
+data/cleanup_report.json
 data/locks/*.lock
 import/
 _test_batch/
 !data/raw/.gitkeep
+!data/paper_raw/.gitkeep
 !data/papers/.gitkeep
+!data/llm_work/.gitkeep
 !data/tmp/.gitkeep
 !data/logs/.gitkeep
 !data/jobs/.gitkeep
@@ -28,6 +33,7 @@ _test_batch/
 !data/discovery/.gitkeep
 !data/discovery/doi_candidates/.gitkeep
 !data/discovery/pdf_fetch_logs/.gitkeep
+!data/literature_meta/.gitkeep
 
 # ===== 写作任务产物（可重新生成，不入库）=====
 write/

@@ -242,7 +242,7 @@ class MinerUConverter:
         """通过 mineru CLI 子进程转换。
 
         所有返回分支都带 backend/method/effort/runner 四字段，便于调用方
-        （upload_service / watcher / batch_convert / 测试）直接取用，不依赖
+        （v2 paper_raw converter / 测试）直接取用，不依赖
         传入参数回填。
 
         Args:

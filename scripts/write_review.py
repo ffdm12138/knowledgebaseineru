@@ -43,10 +43,10 @@ def cmd_create(args):
 
 
 def cmd_match(args):
-    info = match_catalog(args.job, domain_ids=args.domains)
+    info = match_catalog(args.job, topics=args.topics)
     logger.info(f"目录匹配完成: {args.job}")
-    if args.domains:
-        logger.info(f"  领域视图选文: {args.domains}（已 compact 去重）")
+    if args.topics:
+        logger.info(f"  topics: {args.topics}")
     logger.info(f"  prompt: {info['prompt_path']}")
     logger.info(f"  candidates: {info['candidates_path']}（含候选，need_fulltext=null）")
     logger.info(f"  selected: {info['selected_path']}（空，待 confirm-papers）")
@@ -163,8 +163,8 @@ def main():
 
     m = sub.add_parser("match")
     m.add_argument("--job", required=True)
-    m.add_argument("--domains", nargs="+", default=None,
-                   help="按领域视图选文（多领域会 compact 去重）；不传则用全局 catalog")
+    m.add_argument("--topics", nargs="+", default=None,
+                   help="按 all.catalog 中 catalog.classification.topics 过滤")
     m.set_defaults(func=cmd_match)
 
     cp = sub.add_parser("confirm-papers"); cp.add_argument("--job", required=True)

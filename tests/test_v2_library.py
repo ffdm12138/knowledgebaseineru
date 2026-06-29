@@ -1,0 +1,331 @@
+import json
+from pathlib import Path
+
+import pytest
+
+from src.services.v2_library import (
+    AllCatalogBuilder,
+    LlmWorkService,
+    PaperCurationService,
+    PaperNumberLedger,
+    PaperRawAllocator,
+    PaperRawConverter,
+    V2PaperCommitService,
+    empty_catalog,
+    empty_metadata,
+    migrate_catalog_to_v1_1,
+    validate_catalog_schema,
+)
+
+
+def _curated_raw(root: Path, pid: str = "2024_wang_测试论文") -> Path:
+    folder = root / "paper_raw" / pid
+    folder.mkdir(parents=True)
+    metadata = empty_metadata(pid)
+    metadata["title"]["original"] = "Test Paper"
+    metadata["title"]["translated_zh"] = "测试论文"
+    metadata["year"] = 2024
+    metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["identifiers"]["doi"] = "10.1/test"
+    metadata["metadata_match"] = {
+        "status": "matched",
+        "source": "test",
+        "confidence": 1.0,
+        "matched_at": "2026-01-01T00:00:00",
+        "warnings": [],
+        "candidates": [],
+    }
+    catalog = empty_catalog()
+    catalog["display"].update({
+        "title_original": "Test Paper",
+        "title_zh": "测试论文",
+        "short_name_zh": "测试论文",
+        "year": 2024,
+        "first_author": "Wang",
+    })
+    catalog["classification"].update({
+        "primary_domain": "blowing_snow_physics",
+        "domains": ["blowing_snow_physics"],
+    })
+    catalog["research_card"]["one_sentence_summary_zh"] = "测试论文摘要"
+    (folder / f"{pid}.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
+    (folder / f"{pid}.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
+    (folder / f"{pid}.md").write_text("# Test Paper", encoding="utf-8")
+    (folder / f"{pid}.pdf").write_bytes(b"%PDF")
+    (folder / "images").mkdir()
+    return folder
+
+
+def test_paper_raw_allocator_uses_monotonic_six_digit_ids(tmp_path):
+    raw = tmp_path / "data" / "raw"
+    raw.mkdir(parents=True)
+    pdf = raw / "a.pdf"
+    pdf.write_bytes(b"%PDF")
+    paper_raw = tmp_path / "data" / "paper_raw"
+    (paper_raw / "000003").mkdir(parents=True)
+
+    result = PaperRawAllocator(paper_raw).allocate_from_pdf(pdf)
+
+    assert result["source_id"] == "000004"
+    assert (paper_raw / "000004" / "000004.pdf").exists()
+    metadata = json.loads((paper_raw / "000004" / "000004.metadata.json").read_text(encoding="utf-8"))
+    assert metadata["pdf"]["sha256"]
+
+
+def test_v2_commit_assigns_number_and_builds_all_catalog(tmp_path):
+    raw_folder = _curated_raw(tmp_path)
+    papers = tmp_path / "papers"
+    all_catalog = tmp_path / "catalog" / "all.catalog.json"
+    ledger = tmp_path / "catalog" / "paper_number_ledger.json"
+
+    result = V2PaperCommitService(
+        papers_dir=papers,
+        all_catalog_path=all_catalog,
+        ledger_path=ledger,
+    ).commit_paper_raw(raw_folder)
+
+    pid = "2024_wang_测试论文"
+    assert result["status"] == "imported"
+    assert result["paper_number"] == "0000000000000001"
+    assert (papers / pid / f"{pid}.pdf").exists()
+    assert (papers / pid / f"{pid}.md").exists()
+    assert (papers / pid / "0000000000000001.paper.number").exists()
+    data = json.loads(all_catalog.read_text(encoding="utf-8"))
+    assert data["papers"][0]["paper_id"] == pid
+    assert data["papers"][0]["paper_number"] == "0000000000000001"
+    assert not raw_folder.exists()
+
+
+def test_all_catalog_rebuild_drops_deleted_folders_without_reusing_number(tmp_path):
+    raw_folder = _curated_raw(tmp_path)
+    papers = tmp_path / "papers"
+    all_catalog = tmp_path / "catalog" / "all.catalog.json"
+    ledger = tmp_path / "catalog" / "paper_number_ledger.json"
+    svc = V2PaperCommitService(papers_dir=papers, all_catalog_path=all_catalog, ledger_path=ledger)
+    svc.commit_paper_raw(raw_folder)
+    for child in papers.iterdir():
+        if child.is_dir():
+            import shutil
+            shutil.rmtree(child)
+
+    rebuilt = AllCatalogBuilder(papers, all_catalog, PaperNumberLedger(ledger)).build(write=True)
+
+    assert rebuilt["papers"] == []
+    ledger_data = json.loads(ledger.read_text(encoding="utf-8"))
+    assert ledger_data["max_number"] == "0000000000000001"
+
+
+def test_llm_work_copy_by_paper_number(tmp_path):
+    raw_folder = _curated_raw(tmp_path)
+    papers = tmp_path / "papers"
+    all_catalog = tmp_path / "catalog" / "all.catalog.json"
+    ledger = tmp_path / "catalog" / "paper_number_ledger.json"
+    V2PaperCommitService(papers_dir=papers, all_catalog_path=all_catalog, ledger_path=ledger).commit_paper_raw(raw_folder)
+
+    result = LlmWorkService(all_catalog_path=all_catalog, llm_work_dir=tmp_path / "llm_work").copy_to_session(
+        "0000000000000001",
+        "session_1",
+    )
+
+    assert result["paper_id"] == "2024_wang_测试论文"
+    assert (tmp_path / "llm_work" / "session_1" / "0000000000000001" / "2024_wang_测试论文.md").exists()
+
+
+def test_v2_commit_quarantines_duplicate_doi(tmp_path):
+    first = _curated_raw(tmp_path, "2024_wang_测试论文")
+    papers = tmp_path / "papers"
+    all_catalog = tmp_path / "catalog" / "all.catalog.json"
+    ledger = tmp_path / "catalog" / "paper_number_ledger.json"
+    svc = V2PaperCommitService(papers_dir=papers, all_catalog_path=all_catalog, ledger_path=ledger)
+    svc.commit_paper_raw(first)
+    second = _curated_raw(tmp_path, "2024_li_重复论文")
+    meta_path = second / "2024_li_重复论文.metadata.json"
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    meta["identifiers"]["doi"] = "10.1/test"
+    meta_path.write_text(json.dumps(meta), encoding="utf-8")
+
+    result = svc.commit_paper_raw(second)
+
+    assert result["status"] == "possible_duplicate"
+    assert Path(result["quarantine_dir"]).exists()
+    assert not (papers / "2024_li_重复论文").exists()
+
+
+def test_ledgers_reports_marker_conflict(tmp_path):
+    folder = tmp_path / "papers" / "pid"
+    folder.mkdir(parents=True)
+    (folder / "0000000000000002.paper.number").write_text("{}", encoding="utf-8")
+    ledger = PaperNumberLedger(tmp_path / "catalog" / "paper_number_ledger.json")
+    ledger.save({
+        "schema_version": "1.0",
+        "max_number": "0000000000000001",
+        "items": {
+            "0000000000000001": {
+                "folder_name": "pid",
+                "folder_path": str(folder),
+                "created_at": "",
+            }
+        },
+    })
+
+    errors, _ = ledger.validate(tmp_path / "papers")
+
+    assert any("conflict" in err for err in errors)
+
+
+def test_v2_commit_blocks_unmatched_metadata(tmp_path):
+    raw_folder = _curated_raw(tmp_path, "2024_wang_未匹配论文")
+    meta_path = raw_folder / "2024_wang_未匹配论文.metadata.json"
+    metadata = json.loads(meta_path.read_text(encoding="utf-8"))
+    metadata["metadata_match"]["status"] = "unmatched"
+    meta_path.write_text(json.dumps(metadata), encoding="utf-8")
+
+    result = V2PaperCommitService(
+        papers_dir=tmp_path / "papers",
+        all_catalog_path=tmp_path / "catalog" / "all.catalog.json",
+        ledger_path=tmp_path / "catalog" / "paper_number_ledger.json",
+    ).commit_paper_raw(raw_folder)
+
+    assert result["status"] == "metadata_unmatched"
+    assert not (tmp_path / "papers" / "2024_wang_未匹配论文").exists()
+    assert (raw_folder / ".import_status.json").exists()
+
+
+class _FakeRawConverter:
+    def convert(self, input_path, output_dir, **kwargs):
+        source_id = Path(input_path).stem
+        out = Path(output_dir) / source_id / "hybrid_auto"
+        out.mkdir(parents=True)
+        (out / f"{source_id}.md").write_text("![x](./images/a.png)\n\ntext", encoding="utf-8")
+        (out / "images").mkdir()
+        (out / "images" / "a.png").write_bytes(b"png")
+        return {"success": True, "output_dir": str(Path(output_dir) / source_id), "runner": "cli"}
+
+
+def test_paper_raw_converter_guards_input_and_extracts_images(tmp_path):
+    paper_raw = tmp_path / "paper_raw"
+    src = paper_raw / "000001"
+    src.mkdir(parents=True)
+    (src / "000001.pdf").write_bytes(b"%PDF")
+    metadata = empty_metadata("000001")
+    (src / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
+
+    converter = PaperRawConverter(paper_raw_dir=paper_raw, converter=_FakeRawConverter())
+    result = converter.convert("000001")
+
+    assert result["success"]
+    assert (src / "000001.md").read_text(encoding="utf-8").startswith("![x](images/a.png)")
+    assert (src / "images" / "a.png").exists()
+    with pytest.raises(ValueError):
+        converter.convert(tmp_path / "raw" / "000001")
+
+
+def test_curation_merges_only_empty_metadata_and_renames(tmp_path):
+    folder = tmp_path / "paper_raw" / "000001"
+    folder.mkdir(parents=True)
+    metadata = empty_metadata("000001")
+    metadata["title"]["original"] = "Trusted Original"
+    metadata["year"] = 2024
+    metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["metadata_match"]["status"] = "matched"
+    metadata["metadata_match"]["confidence"] = 1.0
+    catalog = empty_catalog()
+    catalog["display"].update({
+        "title_original": "Trusted Original",
+        "title_zh": "可信论文",
+        "short_name_zh": "可信论文",
+        "year": 2024,
+        "first_author": "Wang",
+    })
+    (folder / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
+    (folder / "000001.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
+    (folder / "000001.md").write_text("# Trusted", encoding="utf-8")
+    (folder / "000001.pdf").write_bytes(b"%PDF")
+    (folder / "images").mkdir()
+    patch = empty_metadata("000001")
+    patch["title"]["original"] = "Overwrite Attempt"
+    patch["abstract"] = "new abstract"
+    patch_path = tmp_path / "patch.metadata.json"
+    patch_path.write_text(json.dumps(patch), encoding="utf-8")
+
+    result = PaperCurationService().apply_curated_files(folder, curated_metadata_path=patch_path)
+
+    assert result["success"]
+    renamed = Path(result["folder"])
+    assert renamed.name == "2024_Wang_可信论文"
+    merged = json.loads((renamed / f"{renamed.name}.metadata.json").read_text(encoding="utf-8"))
+    assert merged["title"]["original"] == "Trusted Original"
+    assert merged["abstract"] == "new abstract"
+    assert (renamed / f"{renamed.name}.catalog.json").exists()
+
+
+def test_v2_commit_does_not_write_pdf_mirror(tmp_path):
+    raw_folder = _curated_raw(tmp_path)
+    papers = tmp_path / "papers"
+    mirror_dir = tmp_path / "pdf_mirror"
+    result = V2PaperCommitService(
+        papers_dir=papers,
+        all_catalog_path=tmp_path / "catalog" / "all.catalog.json",
+        ledger_path=tmp_path / "catalog" / "paper_number_ledger.json",
+    ).commit_paper_raw(raw_folder)
+
+    assert result["status"] == "imported"
+    assert not mirror_dir.exists()
+
+
+def test_empty_catalog_is_v1_1_with_new_groups():
+    cat = empty_catalog()
+    assert cat["schema_version"] == "1.1"
+    for key in ("authors_short", "venue", "doi"):
+        assert key in cat["display"]
+    for key in ("research_background_zh", "study_type", "model_or_algorithm_zh", "main_results_zh", "limitations_zh"):
+        assert key in cat["research_card"]
+    assert "evidence_profile" in cat
+    assert "screening" in cat
+    for key in ("relevance_score", "reading_priority", "read_decision", "best_for_sections", "need_fulltext"):
+        assert key in cat["screening"]
+
+
+def test_validate_catalog_schema_rejects_missing_v1_1_groups():
+    cat = empty_catalog()
+    del cat["evidence_profile"]
+    del cat["screening"]
+    errors = validate_catalog_schema(cat)
+    assert any("evidence_profile" in e for e in errors)
+    assert any("screening" in e for e in errors)
+
+
+def test_validate_catalog_schema_accepts_v1_1():
+    assert validate_catalog_schema(empty_catalog()) == []
+
+
+def test_validate_catalog_schema_rejects_missing_display_fields():
+    cat = empty_catalog()
+    del cat["display"]["authors_short"]
+    del cat["display"]["venue"]
+    errors = validate_catalog_schema(cat)
+    assert any("authors_short" in e for e in errors)
+    assert any("venue" in e for e in errors)
+
+
+def test_migrate_catalog_to_v1_1_fills_missing_and_preserves():
+    old = {
+        "schema_version": "1.0",
+        "display": {"title_original": "Keep", "title_zh": "", "short_name_zh": "", "year": 2020, "first_author": "X"},
+        "classification": {"primary_domain": "", "domains": [], "topics": [], "keywords_en": [], "keywords_zh": []},
+        "research_card": {"one_sentence_summary_zh": "kept summary", "research_question_zh": "", "object_zh": "",
+                          "method_zh": "", "data_or_experiment_zh": "", "key_variables": [], "main_conclusion_zh": "",
+                          "usefulness_for_project_zh": "", "recommended_use_cases_zh": []},
+        "reading_priority": {"score": None, "reason_zh": "", "must_read_sections": [], "key_figures_or_tables": []},
+        "technical_tags": {"model_or_theory": [], "experiment_or_data": [], "parameterization": [],
+                           "equations_or_metrics": [], "materials_or_particles": [], "spatial_temporal_scale": []},
+        "llm_search_text": {"compact_zh": "", "compact_en": ""},
+    }
+    migrated, notes = migrate_catalog_to_v1_1(old)
+    assert migrated["schema_version"] == "1.1"
+    assert "evidence_profile" in migrated
+    assert "screening" in migrated
+    assert migrated["display"]["title_original"] == "Keep"
+    assert migrated["research_card"]["one_sentence_summary_zh"] == "kept summary"
+    assert validate_catalog_schema(migrated) == []
+    assert notes  # added some keys

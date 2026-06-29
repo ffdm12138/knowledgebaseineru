@@ -16,8 +16,9 @@ except Exception:  # pragma: no cover - 配置缺失时降级
     RAW_STEM_TO_PAPER_ID = {}
     DUPLICATE_RAW_STEMS = set()
 
-# Windows 文件系统非法字符
-_ILLEGAL = re.compile(r'[\\/:*?"<>|]')
+# Windows 文件系统非法字符 + paper_id 不允许的字符
+# 允许: A-Z a-z 0-9 _ - 和中文 (一-鿿)
+_ILLEGAL = re.compile(r'[\\/:*?"<>|.\s()+\-&#%!;=@~`\[\]{}]+')
 # 合法 paper_id：字母数字下划线短横线中文
 _PAPER_ID_RE = re.compile(r"^[A-Za-z0-9_\-一-鿿]+$")
 
@@ -36,6 +37,7 @@ def sanitize_paper_id(raw: str) -> str:
     """清洗字符串为文件系统安全的 paper_id（保留中文，非法字符→_，空白折叠）"""
     s = _ILLEGAL.sub("_", raw)
     s = re.sub(r"\s+", "_", s.strip())
+    s = s.strip("_")
     return s or "untitled"
 
 

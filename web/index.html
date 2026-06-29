@@ -99,7 +99,7 @@
             <div id="tab-plan" class="hidden">
                 <div class="row"><input type="text" id="planQ" placeholder="研究问题，如：风吹雪升华参数化的发展脉络"></div>
                 <button class="btn btn-primary" onclick="genPlan()">生成「根据目录规划阅读」Prompt</button>
-                <p class="hint">需先在 literature_catalog.json 中补全文献摘要条目。</p>
+                <p class="hint">需先完成 paper_raw 入库与 curation（all.catalog.json）。</p>
             </div>
 
             <div id="tab-full" class="hidden">
@@ -118,8 +118,8 @@
 
         <!-- 目录 -->
         <div class="card">
-            <h2>文献目录 (literature_catalog.json) <button class="btn btn-ghost btn-sm" onclick="validateCatalog()">校验</button> <button class="btn btn-ghost btn-sm" onclick="loadUnsummarized()">未总结列表</button> <button class="btn btn-ghost btn-sm" onclick="loadCatalog()">查看目录</button></h2>
-            <div class="hint">目录由 AI 维护。先用 ① 生成条目 prompt，让大模型产出 JSON，再粘贴回 <code>data/catalog/literature_catalog.json</code>。</div>
+            <h2>文献目录 (all.catalog.json) <button class="btn btn-ghost btn-sm" onclick="validateCatalog()">校验</button> <button class="btn btn-ghost btn-sm" onclick="loadCatalog()">查看目录</button></h2>
+            <div class="hint">目录由 curation 生成，事实源为 <code>data/catalog/all.catalog.json</code>。</div>
             <pre id="catalogView" class="mdview" style="min-height:120px;"></pre>
         </div>
 
@@ -279,10 +279,6 @@
             const d = await (await fetch(API + '/catalog/validate', {method:'POST'})).json();
             showToast(d.valid ? '✅ 校验通过' : '❌ ' + d.errors.length + ' 个错误', !d.valid);
             if (!d.valid) document.getElementById('catalogView').textContent = d.errors.join('\n');
-        }
-        async function loadUnsummarized() {
-            const d = await (await fetch(API + '/catalog/unsummarized')).json();
-            document.getElementById('catalogView').textContent = '未总结 paper_id：\n' + (d.unsummarized.length ? d.unsummarized.join('\n') : '（全部已总结）');
         }
 
         // 上传

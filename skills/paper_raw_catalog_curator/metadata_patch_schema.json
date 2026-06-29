@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "paper_raw metadata patch",
+  "description": "Patch produced by the paper_raw_catalog_curator skill. It is merged into the existing metadata via src/services/v2_library.py::merge_missing_metadata(), which fills ONLY empty fields and preserves trusted non-empty fields. Conflicts are recorded as warnings, never overwritten.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Suspected errors in existing non-empty metadata fields. Recorded as notes, never auto-corrected."
+    },
+    "title": {
+      "type": "object",
+      "properties": {
+        "original": { "type": "string" },
+        "translated_zh": { "type": "string" },
+        "short_zh": { "type": "string" }
+      }
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "full_name": { "type": "string" },
+          "family": { "type": "string" },
+          "given": { "type": "string" },
+          "orcid": { "type": "string" },
+          "affiliation": { "type": "string" }
+        }
+      }
+    },
+    "year": { "type": ["integer", "string", "null"] },
+    "container": {
+      "type": "object",
+      "properties": {
+        "journal": { "type": "string" },
+        "booktitle": { "type": "string" },
+        "conference": { "type": "string" },
+        "series": { "type": "string" },
+        "publisher": { "type": "string" },
+        "institution": { "type": "string" },
+        "school": { "type": "string" }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "properties": {
+        "volume": { "type": "string" },
+        "number": { "type": "string" },
+        "issue": { "type": "string" },
+        "pages": { "type": "string" },
+        "article_number": { "type": "string" },
+        "edition": { "type": "string" }
+      }
+    },
+    "identifiers": {
+      "type": "object",
+      "properties": {
+        "doi": { "type": "string" },
+        "arxiv_id": { "type": "string" },
+        "isbn": { "type": "string" },
+        "issn": { "type": "string" }
+      }
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "pdf_url": { "type": "string" },
+        "publisher_url": { "type": "string" },
+        "repository_url": { "type": "string" }
+      }
+    },
+    "abstract": { "type": "string" },
+    "keywords": { "type": "array", "items": { "type": "string" } },
+    "language": { "type": "string" },
+    "citation_key": { "type": "string" }
+  }
+}

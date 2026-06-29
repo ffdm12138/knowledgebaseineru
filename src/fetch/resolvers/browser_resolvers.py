@@ -19,7 +19,7 @@ class BrowserAssistedResolver(PdfResolver):
             landing_url=f"https://doi.org/{context.doi}",
             action_hint=(
                 f"用浏览器打开 https://doi.org/{context.doi}，"
-                f"手动下载 PDF，放入 pending 目录后运行 "
-                f"python scripts/register_manual_pdf.py <pdf> --doi {context.doi}"
+                f"手动下载 PDF，放入 data/raw/ 根目录后运行 "
+                f"python scripts/stage_raw_pdfs_to_paper_raw.py --apply"
             ),
         )

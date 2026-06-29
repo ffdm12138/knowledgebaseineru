@@ -6,6 +6,7 @@ import shutil
 import subprocess
 from dataclasses import asdict, dataclass
 from enum import Enum
+from pathlib import Path
 
 from src.path_utils import is_windows_abs_path
 
@@ -98,6 +99,12 @@ def build_mineru_env(config: MinerURuntimeConfig | None = None, base_env: dict |
 
     if config.cuda_visible_devices:
         env["CUDA_VISIBLE_DEVICES"] = config.cuda_visible_devices
+
+    # 修复 SSL_CERT_FILE：如果环境变量指向不存在的文件，移除它，
+    # 否则 httpx/ssl 会报 FileNotFoundError 导致 mineru CLI 启动失败。
+    ssl_cert = env.get("SSL_CERT_FILE", "")
+    if ssl_cert and not Path(ssl_cert).exists():
+        env.pop("SSL_CERT_FILE", None)
     return env
 
 
