@@ -67,7 +67,9 @@ def main() -> int:
         name = folder.name
         try:
             if write:
-                # Auto-detect curated metadata patch if not provided explicitly.
+                # Auto-detect metadata resolver patch if not provided explicitly.
+                # NOTE: catalog curator must NOT generate a metadata patch; this
+                # patch is produced by the metadata resolver / enrichment flow.
                 curated_meta = args.metadata
                 if curated_meta is None:
                     for auto_name in (f"{name}.metadata.patch.json", f"{name}.curated_metadata.json"):

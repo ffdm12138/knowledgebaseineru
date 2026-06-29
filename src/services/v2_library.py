@@ -560,15 +560,6 @@ def merge_missing_metadata(base: dict, patch: dict) -> tuple[dict, list[str]]:
     return merged, warnings
 
 
-def migrate_catalog_to_v1_1(data: dict) -> tuple[dict, list[str]]:
-    """Deprecated v1.1 migration — kept only for backward-compat imports.
-
-    v2 catalogs use migrate_catalog_to_v2_0(). This now delegates to v2.0
-    migration (the v1.1 schema no longer exists).
-    """
-    return migrate_catalog_to_v2_0(data)
-
-
 def migrate_catalog_to_v2_0(data: dict) -> tuple[dict, list[str]]:
     """Convert any old catalog dict (v1.0/v1.1, with `display`) to catalog v2.0.
 

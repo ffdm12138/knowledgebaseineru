@@ -117,8 +117,12 @@ async def index():
 
 @app.get("/catalog/all")
 async def get_all_catalog(rebuild: bool = False):
-    if rebuild or not ALL_CATALOG_PATH.exists():
+    # Only an explicit ?rebuild=true writes to disk. A read on a missing
+    # all.catalog returns an in-memory snapshot without creating the file.
+    if rebuild:
         return AllCatalogBuilder().build(write=True)
+    if not ALL_CATALOG_PATH.exists():
+        return AllCatalogBuilder().build(write=False)
     return json.loads(ALL_CATALOG_PATH.read_text(encoding="utf-8"))
 
 
@@ -177,9 +181,12 @@ async def copy_paper_number_to_llm_work(paper_number: str, req: CopyPaperNumberR
 
 @app.post("/bibtex")
 async def generate_bibtex(req: BibtexRequest):
+    # Read-only: build an in-memory snapshot if all.catalog is missing; do not
+    # write to disk from a bibtex request.
     if not ALL_CATALOG_PATH.exists():
-        AllCatalogBuilder().build(write=True)
-    data = json.loads(ALL_CATALOG_PATH.read_text(encoding="utf-8"))
+        data = AllCatalogBuilder().build(write=False)
+    else:
+        data = json.loads(ALL_CATALOG_PATH.read_text(encoding="utf-8"))
     wanted_numbers = set(req.paper_numbers or [])
     wanted_ids = set(req.paper_ids or [])
     if not wanted_numbers and not wanted_ids:

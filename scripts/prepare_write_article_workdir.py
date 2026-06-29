@@ -115,6 +115,11 @@ def _source_dir_for_entry(entry: dict, papers_dir: Path) -> Path:
 def _compact_selected_entry(entry: dict, source: Path, target: Path) -> dict:
     """Build one per-job selected_catalog entry.
 
+    NOTE: this is a WRITE-JOB SNAPSHOT, not the global all.catalog. It bundles
+    both catalog (content) and metadata (bibliographic) so write modules
+    (bib.py / writer/*) can read everything by paper_number without re-hitting
+    disk. The global all.catalog itself stays content-only & separated.
+
     Reads catalog.json (content) and metadata.json (bibliographic) from the
     formal paper folder so write modules that still expect `metadata`/`catalog`
     keep working. The global all.catalog entry itself stays content-only.
@@ -131,8 +136,9 @@ def _compact_selected_entry(entry: dict, source: Path, target: Path) -> dict:
     return {
         "paper_number": str(entry.get("paper_number") or ""),
         "paper_id": paper_id,
-        "source_dir": normalize_repo_path(source),
-        "catalog_folder_path": normalize_repo_path(source),
+        "formal_paper_dir": normalize_repo_path(source),
+        "source_dir": normalize_repo_path(source),  # deprecated alias of formal_paper_dir
+        "catalog_folder_path": normalize_repo_path(source),  # deprecated compat alias
         "article_dir": normalize_repo_path(target),
         # content (from catalog.json)
         "content_identity": catalog.get("content_identity") or {},

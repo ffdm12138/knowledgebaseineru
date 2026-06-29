@@ -214,3 +214,16 @@ def test_all_catalog_builder_skips_invalid_source_catalog(tmp_path):
 
     assert data["papers"] == []
     assert any("catalog.schema_version must be 2.0" in error for error in builder.last_errors)
+
+
+def test_catalog_load_does_not_write_all_catalog_file(tmp_path):
+    """Catalog.load() is read-only: a missing all.catalog must NOT create a file."""
+    from src.catalog import Catalog
+
+    all_catalog = tmp_path / "catalog" / "all.catalog.json"
+    cat = Catalog(path=all_catalog, papers_dir=tmp_path / "papers")
+    data = cat.load()
+    # the read must not have created the file on disk (content may come from the
+    # global papers_dir default, but the point is: no file is written)
+    assert not all_catalog.exists(), "Catalog.load() wrote all.catalog.json (read must be side-effect free)"
+    assert isinstance(data.get("papers"), list)

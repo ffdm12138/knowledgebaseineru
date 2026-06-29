@@ -144,8 +144,11 @@ class Catalog:
         return {"schema_version": "2.0", "papers": []}
 
     def load(self) -> dict:
+        # Read-only: if all.catalog is absent, build an in-memory snapshot WITHOUT
+        # writing to disk. Disk writes belong to `rebuild_all_catalog.py --apply`,
+        # commit, or an explicit `?rebuild=true` API call.
         if not self.path.exists():
-            return AllCatalogBuilder(all_catalog_path=self.path).build(write=True)
+            return AllCatalogBuilder(all_catalog_path=self.path).build(write=False)
         return _read_json(self.path, self._empty_data())
 
     def list_papers(self) -> list[dict]:

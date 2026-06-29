@@ -64,6 +64,7 @@ def _should_pack(rel_path: str) -> bool:
         "data/discovery/doi_candidates",
         "data/discovery/pdf_fetch_logs",
         "data/discovery/fetch_logs",
+        "data/import_work",
     }
     for skip_dir in _DATA_SKIP_DIRS:
         if (rel.startswith(skip_dir + "/") or rel == skip_dir) \
