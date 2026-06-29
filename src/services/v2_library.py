@@ -346,27 +346,39 @@ def metadata_is_matched(metadata: dict) -> bool:
     return ((metadata.get("metadata_match") or {}).get("status") in {"matched", "manual_confirmed"})
 
 
+def _is_effectively_empty(value: Any) -> bool:
+    """True for None, empty string, empty list/dict, or list of all-empty dicts."""
+    if value in (None, "", [], {}):
+        return True
+    if isinstance(value, list):
+        # Treat a list whose every element is an empty dict (e.g. Crossref
+        # returns [{"full_name":"","family":"",…}]) as empty so patched
+        # real author data can replace it.
+        return all(
+            isinstance(e, dict) and all(v in (None, "", [], {}) for v in e.values())
+            for e in value
+        )
+    return False
+
+
 def merge_missing_metadata(base: dict, patch: dict) -> tuple[dict, list[str]]:
     """Merge ``patch`` into empty fields only, preserving trusted non-empty metadata."""
     warnings: list[str] = []
-
-    def _is_empty(value: Any) -> bool:
-        return value in (None, "", [], {})
 
     def _merge(dst: Any, src: Any, path: str) -> Any:
         if isinstance(dst, dict) and isinstance(src, dict):
             result = dict(dst)
             for key, src_value in src.items():
                 child_path = f"{path}.{key}" if path else key
-                if key not in result or _is_empty(result[key]):
+                if key not in result or _is_effectively_empty(result[key]):
                     result[key] = src_value
                 else:
                     merged = _merge(result[key], src_value, child_path)
                     result[key] = merged
             return result
-        if _is_empty(dst):
+        if _is_effectively_empty(dst):
             return src
-        if not _is_empty(src) and dst != src:
+        if not _is_effectively_empty(src) and dst != src:
             warnings.append(f"preserved non-empty metadata field: {path}")
         return dst
 
@@ -417,6 +429,9 @@ def first_author_family(metadata: dict) -> str:
     elif authors:
         value = str(authors[0])
     else:
+        value = (metadata.get("first_author") or {}).get("family") or ""
+    if not value and authors and isinstance(authors[0], dict) and not any(str(authors[0].get(k, "")).strip() for k in ("family", "full_name")):
+        # authors[0] exists but is essentially empty — fall back to first_author
         value = (metadata.get("first_author") or {}).get("family") or ""
     value = str(value).strip()
     if not value:
