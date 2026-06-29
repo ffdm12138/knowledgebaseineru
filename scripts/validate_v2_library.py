@@ -45,6 +45,14 @@ def validate_v2_library(
                 errors.append(f"{pid}: formal v2 library must not contain paper.md")
             if (folder / "output").exists():
                 errors.append(f"{pid}: MinerU raw output must be removed before commit (delete output/)")
+            for vestige in folder.glob("*.metadata.patch.json"):
+                errors.append(f"{pid}: paper_raw transient file must not enter formal library: {vestige.name}")
+            for vestige in folder.glob("*.tmp"):
+                errors.append(f"{pid}: temporary file must not enter formal library: {vestige.name}")
+            if (folder / "curation_prompt.md").exists():
+                errors.append(f"{pid}: curation prompt must not enter formal library")
+            if (folder / ".import_status.json").exists():
+                errors.append(f"{pid}: import_status marker must not enter formal library")
             if not has_any_v2_asset:
                 continue
             for name, path in required.items():
