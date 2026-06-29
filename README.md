@@ -36,6 +36,14 @@ data/papers/<paper_id>/<16位编号>.paper.number
 - **catalog**（`<paper_id>.catalog.json`，schema v1.1）：大模型快速筛选精读文献的事实源。必须包含标题、作者简表、研究内容、研究对象、主要方法、数据/实验、关键变量、主要结果、主要结论、局限、项目用途、是否建议精读（`screening`）。
 - **paper_number**（16 位）：API 与写作流程主键。大模型先看 `all.catalog.json` 选号，再用 `copy_paper_to_llm_work.py` 复制全文到 `data/llm_work/` 精读写作。
 
+## Metadata 完整性门槛
+
+- 网络/搜索 metadata 导入必须有 DOI，并写入 `metadata.identifiers.doi`；没有 DOI 的候选不得 stage 到 `paper_raw`。
+- 手动 PDF 可以先进入 `data/paper_raw/<000001>/` 并保持 `metadata_match.status = unmatched`，但匹配或人工确认没有 DOI 时不得 curation/commit。
+- curation、formal commit 和正式库 validate 都要求 DOI 非空；不完整的 `paper_raw` 留在原工作区，写 `.import_status.json` 说明原因。
+- LLM/curator 只能补空 metadata 字段，不能编造 DOI，也不能覆盖已有非空 DOI。
+- BibTeX 和 APA 参考文献只从 metadata 读取标题、作者、venue、卷期页、DOI 和 URL，不从 catalog 或 MinerU 正文拼接。
+
 ## 手动 PDF 导入
 
 把 PDF 放到 `data/raw/` 根目录后运行：
@@ -83,6 +91,8 @@ python scripts/attach_pdf_to_paper_raw.py --source-id 000001 --pdf "E:\papers\pa
 ## Curation
 
 `curate_paper_raw.py` 不调用大模型：`--dry-run` 在每个 `data/paper_raw/<source_id>/` 写出 `curation_prompt.md`（含 skill `paper_raw_catalog_curator`、catalog v1.1 schema、metadata patch 规则、命名规则）；`--apply` 应用大模型产出的 catalog 与 metadata patch，只补 metadata 空字段、按 `年份_第一作者_中文标题` 规范重命名。`metadata_match.status` 必须为 `matched` 或 `manual_confirmed`，否则 curation 和 commit 都会拒绝。详见项目级 skill `skills/paper_raw_catalog_curator/`。
+
+`metadata.identifiers.doi` 也必须非空；没有 DOI 的手动 PDF 需要先完成可靠 metadata match 或人工补 DOI，不能生成正式 curation prompt，也不能入库。
 
 ## API
 

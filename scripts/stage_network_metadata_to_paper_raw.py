@@ -12,7 +12,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from loguru import logger
 
 from config.settings import PAPER_RAW_DIR
+from src.discovery.models import normalize_doi
 from src.services.v2_library import PaperRawAllocator, empty_metadata, merge_missing_metadata
+
+
+DOI_REQUIRED_ERROR = "network/search metadata import requires metadata.identifiers.doi"
 
 
 def _records(path: Path) -> list[dict]:
@@ -44,7 +48,7 @@ def _metadata_from_record(source_id: str, record: dict[str, Any]) -> dict:
     patch["title"]["translated_zh"] = record.get("title_zh") or record.get("translated_zh") or ""
     patch["title"]["short_zh"] = record.get("short_zh") or record.get("short_name_zh") or ""
     patch["year"] = record.get("year") or record.get("publication_year")
-    doi = record.get("doi") or ""
+    doi = _record_doi(record)
     patch["identifiers"]["doi"] = doi
     patch["identifiers"]["openalex_id"] = record.get("openalex_id") or record.get("id") or ""
     patch["identifiers"]["semantic_scholar_id"] = record.get("semantic_scholar_id") or ""
@@ -54,6 +58,20 @@ def _metadata_from_record(source_id: str, record: dict[str, Any]) -> dict:
     patch["keywords"] = record.get("keywords") or []
     venue = record.get("venue") or record.get("journal") or record.get("container_title") or ""
     patch["container"]["journal"] = venue
+    volume = record.get("volume") or ""
+    issue = record.get("issue") or ""
+    number = record.get("number") or issue
+    pages = record.get("page") or record.get("pages") or ""
+    article_number = record.get("article-number") or record.get("article_number") or ""
+    if number and not issue:
+        issue = number
+    if issue and not number:
+        number = issue
+    patch["publication"]["volume"] = str(volume) if volume else ""
+    patch["publication"]["number"] = str(number) if number else ""
+    patch["publication"]["issue"] = str(issue) if issue else ""
+    patch["publication"]["pages"] = str(pages) if pages else ""
+    patch["publication"]["article_number"] = str(article_number) if article_number else ""
     authors = record.get("authors") or []
     if authors:
         normalized = []
@@ -82,6 +100,11 @@ def _metadata_from_record(source_id: str, record: dict[str, Any]) -> dict:
     return merged
 
 
+def _record_doi(record: dict[str, Any]) -> str:
+    identifiers = record.get("identifiers") if isinstance(record.get("identifiers"), dict) else {}
+    return normalize_doi(record.get("doi") or record.get("DOI") or identifiers.get("doi") or identifiers.get("DOI") or "")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Stage network metadata into v2 paper_raw workspaces.")
     parser.add_argument("--input", type=Path, required=True)
@@ -98,6 +121,13 @@ def main() -> int:
     report = []
     for record, planned_id in zip(records, ids):
         item = {"planned_source_id": planned_id, "status": "planned", "title": record.get("title", "")}
+        doi = _record_doi(record)
+        if not doi:
+            item.update({"status": "failed", "error": DOI_REQUIRED_ERROR})
+            logger.error("network metadata stage rejected: {}", DOI_REQUIRED_ERROR)
+            report.append(item)
+            continue
+        record = {**record, "doi": doi}
         metadata = _metadata_from_record(planned_id, record)
         if write:
             try:

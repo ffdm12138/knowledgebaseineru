@@ -26,6 +26,7 @@ def _curated_raw(root: Path, pid: str = "2024_wang_测试论文") -> Path:
     metadata["title"]["translated_zh"] = "测试论文"
     metadata["year"] = 2024
     metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["container"]["journal"] = "Test Journal"
     metadata["identifiers"]["doi"] = "10.1/test"
     metadata["metadata_match"] = {
         "status": "matched",
@@ -191,6 +192,54 @@ def test_v2_commit_blocks_unmatched_metadata(tmp_path):
     assert (raw_folder / ".import_status.json").exists()
 
 
+def test_pdf_metadata_without_doi_cannot_commit(tmp_path):
+    raw_folder = _curated_raw(tmp_path, "2024_wang_无doi论文")
+    meta_path = raw_folder / "2024_wang_无doi论文.metadata.json"
+    metadata = json.loads(meta_path.read_text(encoding="utf-8"))
+    metadata["identifiers"]["doi"] = ""
+    meta_path.write_text(json.dumps(metadata), encoding="utf-8")
+    papers = tmp_path / "papers"
+    all_catalog = tmp_path / "catalog" / "all.catalog.json"
+    ledger = tmp_path / "catalog" / "paper_number_ledger.json"
+
+    result = V2PaperCommitService(
+        papers_dir=papers,
+        all_catalog_path=all_catalog,
+        ledger_path=ledger,
+    ).commit_paper_raw(raw_folder)
+
+    assert result == {
+        "success": False,
+        "status": "metadata_incomplete",
+        "errors": ["metadata.identifiers.doi is required for formal commit"],
+    }
+    assert not (papers / "2024_wang_无doi论文").exists()
+    assert not ledger.exists()
+    assert not all_catalog.exists()
+    assert (raw_folder / ".import_status.json").exists()
+
+
+def test_commit_normalizes_doi_into_formal_metadata(tmp_path):
+    raw_folder = _curated_raw(tmp_path, "2024_wang_doi标准化")
+    meta_path = raw_folder / "2024_wang_doi标准化.metadata.json"
+    metadata = json.loads(meta_path.read_text(encoding="utf-8"))
+    metadata["identifiers"]["doi"] = "https://doi.org/10.1038/s41586-023-06185-3"
+    meta_path.write_text(json.dumps(metadata), encoding="utf-8")
+    papers = tmp_path / "papers"
+
+    result = V2PaperCommitService(
+        papers_dir=papers,
+        all_catalog_path=tmp_path / "catalog" / "all.catalog.json",
+        ledger_path=tmp_path / "catalog" / "paper_number_ledger.json",
+    ).commit_paper_raw(raw_folder)
+
+    assert result["status"] == "imported"
+    formal = json.loads(
+        (papers / "2024_wang_doi标准化" / "2024_wang_doi标准化.metadata.json").read_text(encoding="utf-8")
+    )
+    assert formal["identifiers"]["doi"] == "10.1038/s41586-023-06185-3"
+
+
 class _FakeRawConverter:
     def convert(self, input_path, output_dir, **kwargs):
         source_id = Path(input_path).stem
@@ -227,6 +276,8 @@ def test_curation_merges_only_empty_metadata_and_renames(tmp_path):
     metadata["title"]["original"] = "Trusted Original"
     metadata["year"] = 2024
     metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["container"]["journal"] = "Test Journal"
+    metadata["identifiers"]["doi"] = "10.1/test"
     metadata["metadata_match"]["status"] = "matched"
     metadata["metadata_match"]["confidence"] = 1.0
     catalog = empty_catalog()
@@ -354,6 +405,8 @@ def test_accented_author_apply_curated_files_completes_rename(tmp_path):
     metadata["title"]["original"] = "A Bulk Blowing-Snow Model"
     metadata["year"] = 1999
     metadata["authors"] = [{"full_name": "Stephen J. Déry", "family": "Déry", "given": "Stephen J.", "orcid": "", "affiliation": ""}]
+    metadata["container"]["journal"] = "Test Journal"
+    metadata["identifiers"]["doi"] = "10.1/dery"
     metadata["metadata_match"]["status"] = "matched"
     metadata["metadata_match"]["confidence"] = 1.0
     catalog = empty_catalog()
@@ -380,6 +433,8 @@ def test_apply_rejects_catalog_missing_screening_group(tmp_path):
     metadata["title"]["original"] = "T"
     metadata["year"] = 2024
     metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["container"]["journal"] = "Test Journal"
+    metadata["identifiers"]["doi"] = "10.1/test"
     metadata["metadata_match"]["status"] = "matched"
     metadata["metadata_match"]["confidence"] = 1.0
     (folder / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")

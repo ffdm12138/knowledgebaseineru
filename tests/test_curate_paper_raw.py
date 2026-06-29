@@ -15,6 +15,8 @@ def _matched_raw(folder: Path, source_id: str = "000001") -> Path:
     metadata["title"]["original"] = "Trusted Original"
     metadata["year"] = 2024
     metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["container"]["journal"] = "Test Journal"
+    metadata["identifiers"]["doi"] = "10.1/test"
     metadata["metadata_match"]["status"] = "matched"
     metadata["metadata_match"]["confidence"] = 1.0
     (folder / f"{source_id}.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
@@ -105,6 +107,23 @@ def test_apply_rejects_unmatched_metadata(tmp_path, monkeypatch):
     rc = _run_cli(["curate_paper_raw.py", "--paper-dir", str(folder), "--apply"])
     assert rc == 1
     assert (folder / ".import_status.json").exists()
+
+
+def test_pdf_metadata_without_doi_cannot_curate(tmp_path, monkeypatch):
+    raw = tmp_path / "paper_raw"
+    folder = _matched_raw(raw / "000001")
+    meta_path = folder / "000001.metadata.json"
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    meta["metadata_match"]["status"] = "manual_confirmed"
+    meta["identifiers"]["doi"] = ""
+    meta_path.write_text(json.dumps(meta), encoding="utf-8")
+    monkeypatch.syspath_prepend(str(_REPO_ROOT))
+
+    rc = _run_cli(["curate_paper_raw.py", "--paper-dir", str(folder), "--apply"])
+
+    assert rc == 1
+    status = json.loads((folder / ".import_status.json").read_text(encoding="utf-8"))
+    assert status["reason"] == "curation requires metadata.identifiers.doi"
 
 
 def test_all_ready_apply_only_processes_curated(tmp_path, monkeypatch):

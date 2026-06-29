@@ -19,6 +19,7 @@ def _commit_one(tmp_path: Path) -> tuple[Path, Path, str]:
     metadata["title"]["translated_zh"] = "测试论文"
     metadata["year"] = 2024
     metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
+    metadata["container"]["journal"] = "Test Journal"
     metadata["identifiers"]["doi"] = "10.1/test"
     metadata["metadata_match"] = {"status": "matched", "source": "test", "confidence": 1.0,
                                   "matched_at": "2026-01-01", "warnings": [], "candidates": []}

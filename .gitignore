@@ -35,7 +35,11 @@ _test_batch/
 !data/discovery/pdf_fetch_logs/.gitkeep
 
 # ===== 写作任务产物（可重新生成，不入库）=====
-write/
+write/jobs/**
+!write/.gitkeep
+!write/README.md
+!write/jobs/
+!write/jobs/.gitkeep
 
 # ===== 日志与临时 =====
 *.log

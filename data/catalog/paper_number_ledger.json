@@ -1,5 +1,61 @@
 {
   "schema_version": "1.0",
-  "max_number": "0000000000000000",
-  "items": {}
+  "max_number": "0000000000000011",
+  "items": {
+    "0000000000000001": {
+      "folder_name": "2014_Vionnet_高山风吹雪耦合模拟",
+      "folder_path": "data/papers/2014_Vionnet_高山风吹雪耦合模拟",
+      "created_at": "2026-06-29T16:17:14"
+    },
+    "0000000000000002": {
+      "folder_name": "2005_TANAKA_MASINGAR全球沙尘气溶胶模拟",
+      "folder_path": "data/papers/2005_TANAKA_MASINGAR全球沙尘气溶胶模拟",
+      "created_at": "2026-06-29T17:48:34"
+    },
+    "0000000000000003": {
+      "folder_name": "2006_Clifton_风吹雪风洞跃移阈值测量",
+      "folder_path": "data/papers/2006_Clifton_风吹雪风洞跃移阈值测量",
+      "created_at": "2026-06-29T17:48:34"
+    },
+    "0000000000000004": {
+      "folder_name": "2008_DavidsonArnott_海滩湿度对风沙输运阈值与通量影响",
+      "folder_path": "data/papers/2008_DavidsonArnott_海滩湿度对风沙输运阈值与通量影响",
+      "created_at": "2026-06-29T17:48:35"
+    },
+    "0000000000000005": {
+      "folder_name": "2014_Lothon_边界层午后日落湍流观测试验",
+      "folder_path": "data/papers/2014_Lothon_边界层午后日落湍流观测试验",
+      "created_at": "2026-06-29T17:48:35"
+    },
+    "0000000000000006": {
+      "folder_name": "2015_Gao_沙丘形态与走向相图",
+      "folder_path": "data/papers/2015_Gao_沙丘形态与走向相图",
+      "created_at": "2026-06-29T17:48:35"
+    },
+    "0000000000000007": {
+      "folder_name": "2015_Wekker_山区对流边界层高度综述",
+      "folder_path": "data/papers/2015_Wekker_山区对流边界层高度综述",
+      "created_at": "2026-06-29T17:48:36"
+    },
+    "0000000000000008": {
+      "folder_name": "2018_Jambon_Puillet_冰雪晶奇异升华动力学",
+      "folder_path": "data/papers/2018_Jambon_Puillet_冰雪晶奇异升华动力学",
+      "created_at": "2026-06-29T17:48:36"
+    },
+    "0000000000000009": {
+      "folder_name": "2018_Mott_风吹雪耦合过程综述",
+      "folder_path": "data/papers/2018_Mott_风吹雪耦合过程综述",
+      "created_at": "2026-06-29T17:48:36"
+    },
+    "0000000000000010": {
+      "folder_name": "2020_Pahtz_风水环境泥沙输运启停物理",
+      "folder_path": "data/papers/2020_Pahtz_风水环境泥沙输运启停物理",
+      "created_at": "2026-06-29T17:48:37"
+    },
+    "0000000000000011": {
+      "folder_name": "2025_Huang_雪粒破碎增强升华",
+      "folder_path": "data/papers/2025_Huang_雪粒破碎增强升华",
+      "created_at": "2026-06-29T17:48:37"
+    }
+  }
 }

@@ -5,7 +5,7 @@ Provides:
 - Crossref API metadata query by DOI
 - Normalized bibliographic metadata from Crossref/OpenAlex/Semantic Scholar/Unpaywall
 - Proposed canonical paper_id generation
-- Sidecar enrichment
+- Fetch metadata record enrichment
 
 All network calls are isolated so tests can mock them.
 """
@@ -64,15 +64,20 @@ def extract_doi_from_filename(filename: str) -> str | None:
     return extract_doi_from_text(Path(filename).stem)
 
 
-def extract_doi_from_sidecar(sidecar: dict) -> str | None:
-    """Extract DOI from a sidecar JSON dict."""
+def extract_doi_from_metadata_record(record: dict) -> str | None:
+    """Extract DOI from a fetch/search metadata record."""
     for key in ("doi", "DOI", "Doi"):
-        val = sidecar.get(key, "")
+        val = record.get(key, "")
         if val:
             doi = extract_doi_from_text(str(val))
             if doi:
                 return doi
     return None
+
+
+def extract_doi_from_sidecar(sidecar: dict) -> str | None:
+    """Backward-compatible alias for metadata-record DOI extraction."""
+    return extract_doi_from_metadata_record(sidecar)
 
 
 def extract_doi_from_markdown(md_text: str, max_lines: int = 60) -> str | None:
@@ -135,6 +140,14 @@ class EnrichmentResult:
     first_author: str = ""
     venue: str = ""
     publisher: str = ""
+    volume: str = ""
+    number: str = ""
+    issue: str = ""
+    pages: str = ""
+    article_number: str = ""
+    url: str = ""
+    issn: str = ""
+    published: str = ""
     source: str = ""           # crossref / openalex / semantic_scholar / unpaywall / manual
     confidence: float = 0.0
     proposed_paper_id: str = ""
@@ -151,6 +164,14 @@ class EnrichmentResult:
             "first_author": self.first_author,
             "venue": self.venue,
             "publisher": self.publisher,
+            "volume": self.volume,
+            "number": self.number,
+            "issue": self.issue,
+            "pages": self.pages,
+            "article_number": self.article_number,
+            "url": self.url,
+            "issn": self.issn,
+            "published": self.published,
             "source": self.source,
             "confidence": self.confidence,
             "proposed_paper_id": self.proposed_paper_id,
@@ -162,6 +183,17 @@ class EnrichmentResult:
 
 def normalize_crossref_metadata(raw: dict) -> dict:
     """Normalize Crossref API work response into canonical metadata fields."""
+    def _first(value: Any) -> str:
+        if isinstance(value, list):
+            return str(value[0]) if value else ""
+        return str(value) if value not in (None, "") else ""
+
+    def _date_string(value: Any) -> str:
+        parts = (value or {}).get("date-parts") or []
+        if not parts or not parts[0]:
+            return ""
+        return "-".join(str(part).zfill(2) if i else str(part) for i, part in enumerate(parts[0]))
+
     title = ""
     title_list = raw.get("title") or []
     if isinstance(title_list, list) and title_list:
@@ -197,14 +229,32 @@ def normalize_crossref_metadata(raw: dict) -> dict:
         venue = container
 
     publisher = raw.get("publisher", "")
+    doi = normalize_doi(raw.get("DOI") or raw.get("doi") or "")
+    issue = str(raw.get("issue") or "").strip()
+    number = str(raw.get("number") or issue or "").strip()
+    published = ""
+    for date_field in ("published-print", "published-online", "issued", "created"):
+        published = _date_string(raw.get(date_field))
+        if published:
+            break
 
     return {
+        "doi": doi,
         "title": title,
         "year": year,
         "authors": authors,
         "first_author": first_author,
         "venue": venue,
+        "journal": venue,
         "publisher": publisher,
+        "volume": str(raw.get("volume") or "").strip(),
+        "number": number,
+        "issue": issue,
+        "pages": str(raw.get("page") or raw.get("pages") or "").strip(),
+        "article_number": str(raw.get("article-number") or raw.get("article_number") or "").strip(),
+        "url": str(raw.get("URL") or raw.get("url") or "").strip(),
+        "issn": _first(raw.get("ISSN") or raw.get("issn")),
+        "published": published,
         "source": "crossref",
     }
 
@@ -420,12 +470,21 @@ def enrich_from_doi(
         result.confidence = 0.3
 
     if meta:
+        result.doi = meta.get("doi") or result.doi
         result.title = meta.get("title", "")
         result.year = meta.get("year")
         result.authors = meta.get("authors", [])
         result.first_author = meta.get("first_author", "")
         result.venue = meta.get("venue", "")
         result.publisher = meta.get("publisher", "")
+        result.volume = meta.get("volume", "")
+        result.number = meta.get("number", "")
+        result.issue = meta.get("issue", "")
+        result.pages = meta.get("pages", "")
+        result.article_number = meta.get("article_number", "")
+        result.url = meta.get("url", "")
+        result.issn = meta.get("issn", "")
+        result.published = meta.get("published", "")
         if not result.source or result.source == "doi_only":
             result.source = meta.get("source", result.source)
 
@@ -440,19 +499,19 @@ def enrich_from_doi(
     return result
 
 
-def enrich_from_sidecar(sidecar: dict, chinese_title: str = "") -> EnrichmentResult:
-    """Enrich metadata from a sidecar JSON (may have partial metadata from fetch)."""
-    doi = extract_doi_from_sidecar(sidecar) or sidecar.get("doi", "")
-    title = sidecar.get("title", "") or ""
-    year = sidecar.get("year")
-    authors = sidecar.get("authors") or sidecar.get("author") or []
+def enrich_from_metadata_record(record: dict, chinese_title: str = "") -> EnrichmentResult:
+    """Enrich metadata from a fetch/search metadata record."""
+    doi = extract_doi_from_metadata_record(record) or record.get("doi", "")
+    title = record.get("title", "") or ""
+    year = record.get("year")
+    authors = record.get("authors") or record.get("author") or []
     if isinstance(authors, str):
         authors = [authors]
-    first_author = sidecar.get("first_author", "")
+    first_author = record.get("first_author", "")
 
     if doi:
         result = enrich_from_doi(doi, chinese_title=chinese_title)
-        # Sidecar data may fill gaps if Crossref failed
+        # Metadata record data may fill gaps if Crossref failed.
         if not result.title and title:
             result.title = title
         if result.year is None and year:
@@ -467,17 +526,17 @@ def enrich_from_sidecar(sidecar: dict, chinese_title: str = "") -> EnrichmentRes
         elif not result.first_author and authors:
             result.first_author = authors[0] if isinstance(authors, list) else str(authors)
         if result.source == "doi_only" or not result.source:
-            result.source = sidecar.get("source_kind") or sidecar.get("resolver") or "sidecar"
+            result.source = record.get("source_kind") or record.get("resolver") or "metadata_record"
         # Re-generate proposed_paper_id after filling gaps
         result.proposed_paper_id = generate_paper_id(
             year=result.year,
             title=result.title,
             authors=[result.first_author] if result.first_author else None,
-            chinese_title=chinese_title or sidecar.get("chinese_title", ""),
+            chinese_title=chinese_title or record.get("chinese_title", ""),
         )
         return result
 
-    # No DOI — build from sidecar data only
+    # No DOI — build from metadata record data only.
     if year is not None:
         try:
             year = int(year)
@@ -489,10 +548,10 @@ def enrich_from_sidecar(sidecar: dict, chinese_title: str = "") -> EnrichmentRes
         year=year,
         authors=list(authors) if isinstance(authors, list) else [str(authors)] if authors else [],
         first_author=str(first_author) if first_author else (authors[0] if isinstance(authors, list) and authors else ""),
-        source="sidecar",
+        source="metadata_record",
         confidence=0.4,
-        chinese_title=chinese_title or sidecar.get("chinese_title", ""),
-        warnings=["no DOI in sidecar; metadata from sidecar only"],
+        chinese_title=chinese_title or record.get("chinese_title", ""),
+        warnings=["no DOI in metadata record; metadata from record only"],
     )
     result.proposed_paper_id = generate_paper_id(
         year=result.year,
@@ -503,6 +562,11 @@ def enrich_from_sidecar(sidecar: dict, chinese_title: str = "") -> EnrichmentRes
     return result
 
 
+def enrich_from_sidecar(sidecar: dict, chinese_title: str = "") -> EnrichmentResult:
+    """Backward-compatible alias for metadata-record enrichment."""
+    return enrich_from_metadata_record(sidecar, chinese_title=chinese_title)
+
+
 def enrich_from_pdf(
     pdf_path: str | Path,
     *,
@@ -511,7 +575,7 @@ def enrich_from_pdf(
 ) -> EnrichmentResult:
     """Full enrichment pipeline for a v2 paper_raw PDF.
 
-    1. Try DOI from sidecar
+    1. Try DOI from fetch metadata record
     2. Try DOI from PDF filename
     3. Try DOI from PDF text (pymupdf)
     4. If DOI found, query Crossref
@@ -521,11 +585,11 @@ def enrich_from_pdf(
     sidecar = sidecar or {}
     warnings: list[str] = []
 
-    # 1. Try sidecar DOI first
-    doi = extract_doi_from_sidecar(sidecar)
+    # 1. Try fetch metadata record DOI first.
+    doi = extract_doi_from_metadata_record(sidecar)
     if doi:
         result = enrich_from_doi(doi, chinese_title=chinese_title)
-        # Merge sidecar fields
+        # Merge metadata record fields.
         if not result.title and sidecar.get("title"):
             result.title = sidecar["title"]
         if result.year is None and sidecar.get("year"):
@@ -555,7 +619,7 @@ def enrich_from_pdf(
         # 3. Try DOI from PDF text
         doi = extract_doi_from_pdf_file(pdf_path)
         if not doi:
-            warnings.append("no DOI found in sidecar, filename, or PDF text")
+            warnings.append("no DOI found in metadata record, filename, or PDF text")
         else:
             warnings.append("DOI extracted from PDF text (pymupdf)")
     else:
@@ -566,7 +630,7 @@ def enrich_from_pdf(
         result.warnings.extend(warnings)
         return result
 
-    # No DOI at all — use sidecar or filename metadata
+    # No DOI at all — use metadata record or filename metadata.
     result = EnrichmentResult(
         chinese_title=chinese_title,
         warnings=warnings,
@@ -583,7 +647,7 @@ def enrich_from_pdf(
             result.warnings.append("title fallback from filename stem")
     else:
         result.title = pdf_path.stem
-        result.warnings.append("no sidecar, title from filename stem")
+        result.warnings.append("no metadata record, title from filename stem")
 
     result.proposed_paper_id = generate_paper_id(
         year=result.year,

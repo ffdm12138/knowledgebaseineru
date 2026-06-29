@@ -13,6 +13,8 @@ v1.1 catalog and a metadata patch that fills only empty metadata fields.
 - `catalog` 是筛选事实源（大模型快速判断是否值得精读）。
 - 不得覆盖 metadata 中已有的非空字段，只能补空字段。
 - 若发现已有字段疑似错误，写入 `warnings`/`notes`，不要直接改。
+- 不得编造 DOI；`metadata.identifiers.doi` 已有值时不得覆盖。
+- 如果 metadata 缺 DOI，本 skill 只能提示需要可靠 metadata match 或人工补 DOI，不能生成可入库结果。
 - 不得生成 16 位 `paper_number`。
 - 不得移动或修改 `data/papers` 正式库；不得入库。
 - 不确定的字段留空，不要编造。
@@ -59,5 +61,9 @@ data/paper_raw/<source_id>/
 - 生成 prompt：`python scripts/curate_paper_raw.py --source-id <id> --dry-run`
   （在文件夹下写出 `curation_prompt.md`）。
 - 应用结果：`python scripts/curate_paper_raw.py --source-id <id> --catalog <path> --metadata <path> --apply`。
+
+注意：curation prompt 和 apply 都要求 `metadata_match.status` 为 `matched` 或
+`manual_confirmed`，且 `metadata.identifiers.doi` 非空。网络/搜索 metadata
+导入必须有 DOI；手动 PDF 可以先无 DOI，但不能进入 curation/commit。
 
 Schema 定义见 `catalog_schema.json` 与 `metadata_patch_schema.json`，示例见 `examples/`。

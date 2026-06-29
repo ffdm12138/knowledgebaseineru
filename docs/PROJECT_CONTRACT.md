@@ -12,6 +12,10 @@
 - API 与写作只读取 `data/catalog/all.catalog.json`、`data/catalog/paper_number_ledger.json` 和 `data/papers/<paper_id>/`。
 - metadata 管书目信息和 BibTeX 事实；catalog（schema v1.1）管阅读价值、分类、主题、证据画像与精读筛选（`screening`），让大模型只看 catalog 即可判断是否值得精读。
 - catalog 由项目级 skill `paper_raw_catalog_curator` 在 commit 前生成；不得覆盖 metadata 非空字段，只补空字段。
+- 网络/搜索 metadata 导入必须有 DOI，并写入 `metadata.identifiers.doi`；没有 DOI 的搜索结果不得进入 `paper_raw`。
+- 手动 PDF 可以先生成无 DOI 的空壳 metadata，但只有补齐 DOI 且 `metadata_match.status` 为 `matched` 或 `manual_confirmed` 后才能 curation/commit。
+- 正式库 `data/papers/<paper_id>/` 中每篇论文必须有 DOI；metadata 不完整的 `paper_raw` 保留在 `paper_raw`，不得入库。
+- LLM/curator 只能补 metadata 空字段，不能编造 DOI，不能覆盖非空 DOI。
 - 全局 `references.bib` 已移除；写作 per-job `references.bib` 由 `bibtex_from_metadata` 从 metadata 逐篇生成。
 - JSON 写入必须原子化：filelock、临时文件、`os.replace`。
 - 外部输入的 id、文件名和路径必须校验并通过 safe child 解析。

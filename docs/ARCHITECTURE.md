@@ -32,3 +32,7 @@ raw PDF or network metadata
 - `data/catalog/all.catalog.json` is the catalog API entry (per-paper catalog schema v1.1).
 - `data/catalog/paper_number_ledger.json` owns long-term numbering.
 - `data/llm_work/` contains copied paper folders for model-facing work sessions.
+- Network/search metadata records must carry DOI before they can be staged into `paper_raw`.
+- Manual PDF records may start without DOI, but curation and formal commit require `metadata.identifiers.doi`.
+- Formal library metadata completeness is enforced in `src/services/v2_library.py` and `scripts/validate_v2_library.py`; incomplete `paper_raw` folders stay outside `data/papers/`.
+- Bibliography helpers read only metadata fields, never catalog summaries or converted Markdown text.

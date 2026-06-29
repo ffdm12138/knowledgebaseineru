@@ -14,6 +14,7 @@ import zipfile
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 ZIP_NAME_BASE = "mineru_snapshot"
 _SURROGATE_RE = re.compile(r"[\ud800-\udfff]")
 
@@ -82,7 +83,11 @@ def git_tracked_files() -> list[str]:
             check=False,
         )
         if result.returncode == 0:
-            files = [f.replace("\\", "/") for f in result.stdout.split("\0") if f]
+            files = [
+                f.replace("\\", "/")
+                for f in result.stdout.split("\0")
+                if f and (PROJECT_ROOT / f).exists()
+            ]
             if files:
                 safe = [f for f in files if _should_pack(f)]
                 if len(safe) < len(files):
@@ -131,32 +136,39 @@ def main():
     zip_name = f"{ZIP_NAME_BASE}_{suffix}.zip" if suffix else f"{ZIP_NAME_BASE}.zip"
     zip_path = PROJECT_ROOT / zip_name
 
-    # Rebuild catalog from data/papers/ before packing so the zip is always
-    # self-consistent: if data/papers/ is empty (gitignored copyright assets),
-    # the catalog/ledger will be empty too.  Local rebuilds may have altered
-    # these files; this step canonicalises them for distribution.
-    try:
-        from src.services.v2_library import AllCatalogBuilder, PaperNumberLedger
-        data = AllCatalogBuilder().build(write=True)
-        print(f"[pack] catalog rebuilt: papers={len(data.get('papers', []))}")
-        # If the rebuilt catalog is empty the ledger must be empty too;
-        # otherwise it carries stale max_number/items from a prior local
-        # rebuild that pointed to gitignored data/papers/ assets.
-        if len(data.get("papers", [])) == 0:
-            PaperNumberLedger().save(PaperNumberLedger.empty_data())
-            print("[pack] ledger reset (empty library)")
-    except Exception as exc:
-        print(f"[pack] catalog rebuild skipped: {exc}")
-
     files = git_tracked_files()
     if not files:
         print("[ERROR] No tracked files, aborting")
         sys.exit(1)
 
+    # Catalog and ledger are tracked SSOT files that get populated locally
+    # by rebuild_all_catalog.  Local rebuilds write real paper data onto
+    # disk, but data/papers/ assets are gitignored (copyright) and excluded
+    # from the zip.  To keep the zip self-consistent we read the *committed*
+    # (tracked) content of these files via git, not the local working-tree
+    # version which may reference papers that are absent from the zip.
+    _GIT_CATALOG_FILES = frozenset({
+        "data/catalog/all.catalog.json",
+        "data/catalog/paper_number_ledger.json",
+    })
+
     count = 0
     skipped = 0
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in sorted(files):
+            if f in _GIT_CATALOG_FILES:
+                # Read from git's HEAD commit, not the local working tree.
+                try:
+                    content = subprocess.check_output(
+                        ["git", "show", f"HEAD:{f}"],
+                        cwd=str(PROJECT_ROOT), encoding="utf-8",
+                        errors="replace",
+                    )
+                    zf.writestr(f, content)
+                    count += 1
+                    continue
+                except subprocess.CalledProcessError:
+                    pass  # fall through to disk read
             src = PROJECT_ROOT / f
             if not src.exists():
                 print(f"  [SKIP] missing: {f}")

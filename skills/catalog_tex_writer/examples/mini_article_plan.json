@@ -1,0 +1,26 @@
+{
+  "job_id": "demo_catalog_article",
+  "title": "Catalog-first mini review",
+  "language": "zh",
+  "selected_paper_numbers": [
+    "0000000000000001",
+    "0000000000000002",
+    "0000000000000003"
+  ],
+  "sections": [
+    {
+      "name": "Introduction",
+      "purpose": "Frame the shared research problem from selected_catalog.json.",
+      "paper_numbers": ["0000000000000001", "0000000000000002"]
+    },
+    {
+      "name": "Literature Basis",
+      "purpose": "Summarize catalog-level evidence and cite metadata-derived keys.",
+      "paper_numbers": [
+        "0000000000000001",
+        "0000000000000002",
+        "0000000000000003"
+      ]
+    }
+  ]
+}

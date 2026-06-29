@@ -13,6 +13,7 @@ import json
 import os
 import re
 import shutil
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,7 @@ from config.settings import (
 )
 from src.cleaner import MinerUOutputCleaner
 from src.converter import MinerUConverter
+from src.discovery.models import normalize_doi
 from src.file_fingerprint import compute_sha256
 from src.naming import safe_child, sanitize_paper_id, validate_paper_id
 from src.path_utils import normalize_repo_path, resolve_stored_path
@@ -346,6 +348,86 @@ def metadata_is_matched(metadata: dict) -> bool:
     return ((metadata.get("metadata_match") or {}).get("status") in {"matched", "manual_confirmed"})
 
 
+def metadata_doi(metadata: dict) -> str:
+    return normalize_doi(((metadata.get("identifiers") or {}).get("doi") or ""))
+
+
+def metadata_reference_warnings_for_commit(metadata: dict) -> list[str]:
+    warnings_out: list[str] = []
+    publication = metadata.get("publication") or {}
+    if not str(publication.get("volume") or "").strip():
+        warnings_out.append("metadata.publication.volume is missing")
+    if not (str(publication.get("number") or "").strip() or str(publication.get("issue") or "").strip()):
+        warnings_out.append("metadata.publication.number or metadata.publication.issue is missing")
+    if not (str(publication.get("pages") or "").strip() or str(publication.get("article_number") or "").strip()):
+        warnings_out.append("metadata.publication.pages or metadata.publication.article_number is missing")
+    return warnings_out
+
+
+def validate_metadata_completeness_for_commit(metadata: dict) -> list[str]:
+    errors: list[str] = []
+    if not metadata_doi(metadata):
+        errors.append("metadata.identifiers.doi is required for formal commit")
+
+    title = ((metadata.get("title") or {}).get("original") or "").strip()
+    if not title:
+        errors.append("metadata.title.original is required for formal commit")
+
+    year = metadata.get("year")
+    try:
+        year_int = int(year)
+    except (TypeError, ValueError):
+        year_int = None
+    max_year = datetime.now().year + 1
+    if year_int is None:
+        errors.append("metadata.year is required for formal commit")
+    elif not (1500 <= year_int <= max_year):
+        errors.append(f"metadata.year must be a reasonable year (1500-{max_year})")
+
+    authors = metadata.get("authors") or []
+    if not isinstance(authors, list) or not authors:
+        errors.append("metadata.authors must contain at least one author for formal commit")
+    else:
+        has_author = any(
+            (
+                (isinstance(author, dict) and ((author.get("family") or "").strip() or (author.get("full_name") or "").strip()))
+                or (not isinstance(author, dict) and str(author).strip())
+            )
+            for author in authors
+        )
+        if not has_author:
+            errors.append("metadata.authors must contain at least one named author for formal commit")
+        first = authors[0]
+        first_ok = (
+            (isinstance(first, dict) and ((first.get("family") or "").strip() or (first.get("full_name") or "").strip()))
+            or (not isinstance(first, dict) and str(first).strip())
+        )
+        first_author = metadata.get("first_author") or {}
+        first_fallback = ((first_author.get("family") or "").strip() or (first_author.get("display") or "").strip()) if isinstance(first_author, dict) else ""
+        if not first_ok and not first_fallback:
+            errors.append("metadata first author family or full_name is required for formal commit")
+
+    container = metadata.get("container") or {}
+    has_venue = any(str(container.get(key) or "").strip() for key in ("journal", "conference", "booktitle", "book_title"))
+    if not has_venue:
+        errors.append("metadata.container.journal, conference, or booktitle is required for formal commit")
+
+    if not metadata_is_matched(metadata):
+        errors.append("metadata.metadata_match.status must be matched or manual_confirmed for formal commit")
+
+    pdf = metadata.get("pdf") or {}
+    if not str(pdf.get("sha256") or "").strip():
+        errors.append("metadata.pdf.sha256 is required for formal commit")
+    try:
+        file_size = int(pdf.get("file_size") or 0)
+    except (TypeError, ValueError):
+        file_size = 0
+    if file_size <= 0:
+        errors.append("metadata.pdf.file_size must be > 0 for formal commit")
+
+    return errors
+
+
 def _is_effectively_empty(value: Any) -> bool:
     """True for None, empty string, empty list/dict, or list of all-empty dicts."""
     if value in (None, "", [], {}):
@@ -626,6 +708,13 @@ class PaperCurationService:
         metadata = _read_json(folder / f"{source_id}.metadata.json")
         if not metadata_is_matched(metadata):
             raise ValueError("paper_raw curation requires metadata_match.status matched or manual_confirmed")
+        if not metadata_doi(metadata):
+            atomic_write_json(folder / ".import_status.json", {
+                "status": "metadata_incomplete",
+                "reason": "curation requires metadata.identifiers.doi",
+                "created_at": now_iso(),
+            }, indent=2)
+            raise ValueError("curation requires metadata.identifiers.doi")
         markdown_path = folder / f"{source_id}.md"
         markdown = markdown_path.read_text(encoding="utf-8") if markdown_path.exists() else ""
         return (
@@ -692,6 +781,13 @@ class PaperCurationService:
                 "created_at": now_iso(),
             }, indent=2)
             return {"success": False, "errors": ["metadata_match.status must be matched or manual_confirmed"]}
+        if not metadata_doi(metadata):
+            atomic_write_json(folder / ".import_status.json", {
+                "status": "metadata_incomplete",
+                "reason": "curation requires metadata.identifiers.doi",
+                "created_at": now_iso(),
+            }, indent=2)
+            return {"success": False, "errors": ["curation requires metadata.identifiers.doi"]}
         catalog = _read_json(Path(curated_catalog_path)) if curated_catalog_path else _read_json(catalog_path)
         # Curator output must be a complete v1.1 catalog; we do NOT auto-migrate
         # missing groups here (that would let an incomplete catalog lacking the
@@ -941,6 +1037,17 @@ class V2PaperCommitService:
         schema_errors = validate_metadata_schema(metadata) + validate_catalog_schema(catalog)
         if schema_errors:
             raise ValueError("; ".join(schema_errors))
+        normalized_doi = metadata_doi(metadata)
+        if not normalized_doi:
+            errors = ["metadata.identifiers.doi is required for formal commit"]
+            atomic_write_json(src / ".import_status.json", {
+                "status": "metadata_incomplete",
+                "reason": "; ".join(errors),
+                "errors": errors,
+                "created_at": now_iso(),
+            }, indent=2)
+            return {"success": False, "status": "metadata_incomplete", "errors": errors}
+        metadata.setdefault("identifiers", {})["doi"] = normalized_doi
         if not metadata_is_matched(metadata):
             atomic_write_json(src / ".import_status.json", {
                 "status": "metadata_unmatched",
@@ -957,6 +1064,24 @@ class V2PaperCommitService:
             "file_size": required["pdf"].stat().st_size,
         })
         metadata.setdefault("content", {})["markdown_sha256"] = md_sha
+        completeness_errors = validate_metadata_completeness_for_commit(metadata)
+        reference_warnings = metadata_reference_warnings_for_commit(metadata)
+        if completeness_errors:
+            atomic_write_json(src / ".import_status.json", {
+                "status": "metadata_incomplete",
+                "reason": "; ".join(completeness_errors),
+                "errors": completeness_errors,
+                "warnings": reference_warnings,
+                "created_at": now_iso(),
+            }, indent=2)
+            return {"success": False, "status": "metadata_incomplete", "errors": completeness_errors}
+        if reference_warnings:
+            atomic_write_json(src / ".import_status.json", {
+                "status": "metadata_warnings",
+                "reason": "; ".join(reference_warnings),
+                "warnings": reference_warnings,
+                "created_at": now_iso(),
+            }, indent=2)
         duplicate_errors = self._duplicate_errors(paper_id=pid, metadata=metadata, pdf_sha256=pdf_sha, md_sha256=md_sha)
         if duplicate_errors:
             qdir = src.parent / "quarantine" / f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{pid}"
@@ -997,7 +1122,7 @@ class V2PaperCommitService:
             if src.exists():
                 shutil.rmtree(src)
             all_catalog = AllCatalogBuilder(self.papers_dir, self.all_catalog_path, self.ledger).build(write=True)
-            return {
+            result = {
                 "success": True,
                 "status": "imported",
                 "paper_id": pid,
@@ -1005,6 +1130,9 @@ class V2PaperCommitService:
                 "paper_dir": normalize_repo_path(final),
                 "all_catalog_count": len(all_catalog.get("papers", [])),
             }
+            if reference_warnings:
+                result["warnings"] = reference_warnings
+            return result
         except Exception:
             shutil.rmtree(staging, ignore_errors=True)
             if final.exists():
@@ -1053,8 +1181,18 @@ class LlmWorkService:
 def bibtex_from_metadata(metadata: dict, *, key: str | None = None) -> str:
     title = _metadata_field(metadata, ("title", "original"), "") or _metadata_field(metadata, ("title", "translated_zh"), "Untitled")
     year = metadata.get("year") or ""
-    doi = _metadata_field(metadata, ("identifiers", "doi"), "")
+    doi = str(_metadata_field(metadata, ("identifiers", "doi"), "") or "").strip()
     journal = _metadata_field(metadata, ("container", "journal"), "")
+    booktitle = (
+        _metadata_field(metadata, ("container", "booktitle"), "")
+        or _metadata_field(metadata, ("container", "conference"), "")
+    )
+    publisher = _metadata_field(metadata, ("container", "publisher"), "")
+    volume = _metadata_field(metadata, ("publication", "volume"), "")
+    number = _metadata_field(metadata, ("publication", "number"), "") or _metadata_field(metadata, ("publication", "issue"), "")
+    pages = _metadata_field(metadata, ("publication", "pages"), "")
+    article_number = _metadata_field(metadata, ("publication", "article_number"), "")
+    url = _metadata_field(metadata, ("links", "url"), "")
     authors = metadata.get("authors") or []
     author_text = " and ".join(
         a.get("full_name") or " ".join(x for x in [a.get("given", ""), a.get("family", "")] if x)
@@ -1069,9 +1207,119 @@ def bibtex_from_metadata(metadata: dict, *, key: str | None = None) -> str:
         lines.append(f"  author = {{{author_text}}},")
     if journal:
         lines.append(f"  journal = {{{journal}}},")
+    elif booktitle:
+        lines.append(f"  booktitle = {{{booktitle}}},")
     if year:
         lines.append(f"  year = {{{year}}},")
+    if volume:
+        lines.append(f"  volume = {{{volume}}},")
+    if number:
+        lines.append(f"  number = {{{number}}},")
+    if pages:
+        lines.append(f"  pages = {{{pages}}},")
+    if article_number:
+        lines.append(f"  article-number = {{{article_number}}},")
     if doi:
         lines.append(f"  doi = {{{doi}}},")
+    if url:
+        lines.append(f"  url = {{{url}}},")
+    if publisher:
+        lines.append(f"  publisher = {{{publisher}}},")
     lines.append("}")
     return "\n".join(lines)
+
+
+def _initials(given: str) -> str:
+    parts = [p for p in re.split(r"[\s\-]+", str(given).strip()) if p]
+    initials = []
+    for part in parts:
+        clean = re.sub(r"[^A-Za-z]", "", part)
+        if clean:
+            initials.append(f"{clean[0].upper()}.")
+    return " ".join(initials)
+
+
+def _apa_author(author: Any) -> str:
+    if isinstance(author, dict):
+        family = str(author.get("family") or "").strip()
+        given = str(author.get("given") or "").strip()
+        full_name = str(author.get("full_name") or "").strip()
+        if not family and full_name:
+            parts = full_name.split()
+            if len(parts) > 1:
+                family = parts[-1]
+                given = " ".join(parts[:-1])
+            else:
+                family = full_name
+        initials = _initials(given)
+        return f"{family}, {initials}".strip().rstrip(",") if initials else family
+    text = str(author).strip()
+    if "," in text:
+        family, given = [p.strip() for p in text.split(",", 1)]
+        initials = _initials(given)
+        return f"{family}, {initials}".strip().rstrip(",") if initials else family
+    parts = text.split()
+    if len(parts) > 1:
+        return f"{parts[-1]}, {_initials(' '.join(parts[:-1]))}".strip().rstrip(",")
+    return text
+
+
+def _join_apa_authors(authors: list[Any]) -> str:
+    formatted = [a for a in (_apa_author(author) for author in authors) if a]
+    if not formatted:
+        return ""
+    if len(formatted) == 1:
+        return formatted[0]
+    if len(formatted) == 2:
+        return f"{formatted[0]}, & {formatted[1]}"
+    return f"{', '.join(formatted[:-1])}, & {formatted[-1]}"
+
+
+def format_reference_from_metadata(metadata: dict, style: str = "apa") -> str:
+    """Format a human-readable reference from metadata facts only."""
+    if style.lower() != "apa":
+        raise ValueError(f"unsupported reference style: {style}")
+
+    authors = _join_apa_authors(metadata.get("authors") or [])
+    year = metadata.get("year") or "n.d."
+    title = _metadata_field(metadata, ("title", "original"), "") or _metadata_field(metadata, ("title", "translated_zh"), "")
+    journal = (
+        _metadata_field(metadata, ("container", "journal"), "")
+        or _metadata_field(metadata, ("container", "booktitle"), "")
+        or _metadata_field(metadata, ("container", "conference"), "")
+    )
+    volume = _metadata_field(metadata, ("publication", "volume"), "")
+    number = _metadata_field(metadata, ("publication", "number"), "") or _metadata_field(metadata, ("publication", "issue"), "")
+    pages = _metadata_field(metadata, ("publication", "pages"), "") or _metadata_field(metadata, ("publication", "article_number"), "")
+    doi = str(_metadata_field(metadata, ("identifiers", "doi"), "") or "").strip()
+
+    parts: list[str] = []
+    if authors:
+        parts.append(f"{authors} ({year}).")
+    else:
+        parts.append(f"({year}).")
+    if title:
+        parts.append(f"{title}.")
+    if journal:
+        journal_part = str(journal)
+        if volume:
+            journal_part += f", {volume}"
+            if number:
+                journal_part += f"({number})"
+            if pages:
+                journal_part += f", {pages}"
+        elif pages:
+            journal_part += f", {pages}"
+        parts.append(f"{journal_part}.")
+    elif pages:
+        parts.append(f"{pages}.")
+
+    if doi:
+        parts.append(f"doi: {doi}")
+    else:
+        warnings.warn(
+            "metadata.identifiers.doi is empty; reference omitted DOI.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    return " ".join(parts)

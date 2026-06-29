@@ -2,6 +2,17 @@
 
 The repository does not call any LLM. It prepares model-readable assets and prompts.
 
+## Metadata Boundaries
+
+Only formal papers with complete metadata enter `data/papers/`. In particular,
+`metadata.identifiers.doi` is required before curation and commit. Network/search
+metadata imports without DOI are rejected before `paper_raw` allocation; manual PDF
+imports may start without DOI but remain outside the formal library until DOI is
+matched or manually confirmed.
+
+Curator and writing prompts may fill empty metadata fields but must not invent DOI
+or overwrite a non-empty DOI. References are generated from metadata only.
+
 ## Read Selection
 
 Use `data/catalog/all.catalog.json` as the compact inventory. Each item contains metadata, a v1.1 catalog (display, classification, research_card, evidence_profile, screening, reading_priority, technical_tags, llm_search_text), paths and a stable `paper_number`. The catalog is the screening fact source — the model can decide whether to read full text from the catalog alone.

@@ -17,6 +17,13 @@ python scripts/validate_v2_library.py
 
 Curation 由项目级 skill `paper_raw_catalog_curator` 产出 catalog（v1.1）与 metadata patch。
 
+Metadata rules:
+
+- Network/search metadata imports must include DOI before staging.
+- Manual PDF imports may start without DOI, but curation and formal commit require `metadata.identifiers.doi`.
+- Formal `data/papers/<paper_id>/` entries must have DOI and complete commit metadata.
+- LLM/curator output may fill empty metadata fields only; it must not invent DOI or overwrite a non-empty DOI.
+
 按 16 位 `paper_number` 复制精读文献到写作工作区：
 
 ```bash

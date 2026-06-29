@@ -40,6 +40,7 @@ def _curated_raw(root: Path, pid: str, *, doi: str = "10.1/x", year: int = 2024,
     metadata["authors"] = [
         {"full_name": f"{family} A", "family": family, "given": "A", "orcid": "", "affiliation": ""}
     ]
+    metadata["container"]["journal"] = "Test Journal"
     metadata["identifiers"]["doi"] = doi
     metadata["metadata_match"] = {
         "status": "matched", "source": "test", "confidence": 1.0,

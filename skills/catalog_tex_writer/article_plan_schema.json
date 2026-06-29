@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CatalogTeXArticlePlan",
+  "type": "object",
+  "required": ["job_id", "title", "language", "selected_paper_numbers", "sections"],
+  "properties": {
+    "job_id": {"type": "string"},
+    "title": {"type": "string"},
+    "language": {"type": "string", "enum": ["zh", "en"]},
+    "selected_paper_numbers": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^\\d{16}$"},
+      "minItems": 3
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "purpose", "paper_numbers"],
+        "properties": {
+          "name": {"type": "string"},
+          "purpose": {"type": "string"},
+          "paper_numbers": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^\\d{16}$"}
+          }
+        }
+      }
+    }
+  }
+}

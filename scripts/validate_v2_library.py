@@ -12,9 +12,21 @@ from config.settings import ALL_CATALOG_PATH, PAPERS_DIR
 from src.path_utils import resolve_stored_path
 from src.services.v2_library import (
     PaperNumberLedger,
+    metadata_reference_warnings_for_commit,
     validate_catalog_schema,
+    validate_metadata_completeness_for_commit,
     validate_metadata_schema,
 )
+
+
+def _formal_metadata_errors(ctx: str, metadata: dict) -> list[str]:
+    errors = []
+    for err in validate_metadata_completeness_for_commit(metadata):
+        if err == "metadata.identifiers.doi is required for formal commit":
+            errors.append(f"{ctx} metadata.identifiers.doi is required in formal library")
+        else:
+            errors.append(f"{ctx} {err}")
+    return errors
 
 
 def validate_v2_library(
@@ -61,6 +73,8 @@ def validate_v2_library(
             if required["metadata"].exists():
                 metadata = json.loads(required["metadata"].read_text(encoding="utf-8"))
                 errors.extend([f"{pid} {err}" for err in validate_metadata_schema(metadata)])
+                errors.extend(_formal_metadata_errors(pid, metadata))
+                warnings.extend([f"{pid} {warning}" for warning in metadata_reference_warnings_for_commit(metadata)])
             if required["catalog"].exists():
                 catalog = json.loads(required["catalog"].read_text(encoding="utf-8"))
                 errors.extend([f"{pid} {err}" for err in validate_catalog_schema(catalog)])
@@ -92,6 +106,8 @@ def validate_v2_library(
         metadata = entry.get("metadata") or {}
         catalog = entry.get("catalog") or {}
         errors.extend([f"{ctx} {err}" for err in validate_metadata_schema(metadata)])
+        errors.extend(_formal_metadata_errors(ctx, metadata))
+        warnings.extend([f"{ctx} {warning}" for warning in metadata_reference_warnings_for_commit(metadata)])
         errors.extend([f"{ctx} {err}" for err in validate_catalog_schema(catalog)])
         if check_paths:
             for field in ("folder_path", "main_md", "pdf", "images_dir", "catalog_file", "metadata_file"):

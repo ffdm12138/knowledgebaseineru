@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from loguru import logger
 
 from config.settings import PAPER_RAW_DIR
+from src.discovery.models import normalize_doi
 from src.services.metadata_enrichment_service import enrich_from_pdf, enrich_from_doi
 from src.services.v2_library import empty_metadata, merge_missing_metadata
 from src.utils.atomic_io import atomic_write_json
@@ -35,6 +36,28 @@ def _patch_from_enrichment(source_id: str, result) -> dict:
         patch["identifiers"]["doi"] = result.doi
     if getattr(result, "venue", ""):
         patch["container"]["journal"] = result.venue
+    if getattr(result, "publisher", ""):
+        patch["container"]["publisher"] = result.publisher
+    for attr, key in (
+        ("volume", "volume"),
+        ("number", "number"),
+        ("issue", "issue"),
+        ("pages", "pages"),
+        ("article_number", "article_number"),
+    ):
+        value = getattr(result, attr, "")
+        if value:
+            patch["publication"][key] = str(value)
+    if not patch["publication"]["number"] and patch["publication"]["issue"]:
+        patch["publication"]["number"] = patch["publication"]["issue"]
+    if not patch["publication"]["issue"] and patch["publication"]["number"]:
+        patch["publication"]["issue"] = patch["publication"]["number"]
+    if getattr(result, "issn", ""):
+        patch["identifiers"]["issn"] = result.issn
+    if getattr(result, "url", ""):
+        patch["links"]["url"] = result.url
+    if getattr(result, "published", ""):
+        patch["date"]["published"] = result.published
     authors = getattr(result, "authors", None) or []
     if authors:
         normalized = []
@@ -60,7 +83,7 @@ def _has_bibliographic_identity(metadata: dict) -> bool:
     year = metadata.get("year")
     authors = metadata.get("authors") or []
     has_author = any((a.get("full_name") or a.get("family")) for a in authors if isinstance(a, dict))
-    return bool(doi or (title and year and has_author))
+    return bool(doi and title and year and has_author)
 
 
 def main() -> int:
@@ -96,11 +119,25 @@ def main() -> int:
                     item["warnings"].append(f"DOI enrichment failed: {exc}")
             if result is None:
                 result = enrich_from_pdf(pdf)
+            result_doi = normalize_doi(getattr(result, "doi", ""))
+            existing_doi = normalize_doi(doi)
+            doi_conflict = bool(existing_doi and result_doi and existing_doi != result_doi)
+            if doi_conflict:
+                item["warnings"].append(
+                    "Crossref DOI conflicts with existing metadata.identifiers.doi; manual confirmation required"
+                )
             patch = _patch_from_enrichment(source_id, result)
             metadata, merge_warnings = merge_missing_metadata(metadata, patch)
             item["warnings"].extend(merge_warnings)
-            matched = _has_bibliographic_identity(metadata) or bool(getattr(result, "doi", ""))
-            status = "manual_confirmed" if args.manual_confirm else "matched" if matched else "unmatched"
+            final_doi = normalize_doi((metadata.get("identifiers") or {}).get("doi"))
+            if final_doi:
+                metadata["identifiers"]["doi"] = final_doi
+            if args.manual_confirm and not final_doi:
+                item["warnings"].append("manual confirmation requires metadata.identifiers.doi")
+            if not final_doi:
+                item["warnings"].append("metadata.identifiers.doi is required for matched metadata")
+            matched = bool(final_doi and _has_bibliographic_identity(metadata) and not doi_conflict)
+            status = "manual_confirmed" if args.manual_confirm and matched else "matched" if matched else "unmatched"
             metadata["metadata_match"] = {
                 "status": status,
                 "source": getattr(result, "source", "") if matched else "",
