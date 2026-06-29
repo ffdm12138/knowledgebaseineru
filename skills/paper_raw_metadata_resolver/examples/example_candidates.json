@@ -1,0 +1,51 @@
+{
+  "source_id": "000001",
+  "generated_at": "2026-06-29T00:00:00",
+  "candidates": [
+    {
+      "candidate_id": "cand_001",
+      "doi": "10.5194/tc-8-395-2014",
+      "title": "Simulation of wind-induced snow transport and sublimation in alpine terrain using a fully coupled snowpack/atmosphere model",
+      "authors": ["Vionnet, V.", "Martin, E.", "Masson, V."],
+      "year": 2014,
+      "venue": "The Cryosphere",
+      "source": "crossref",
+      "confidence": 0.95,
+      "score": 0.93,
+      "evidence": [
+        "doi extracted from markdown header (line: https://doi.org/10.5194/tc-8-395-2014)",
+        "crossref work resolved for doi 10.5194/tc-8-395-2014",
+        "title similarity 0.91 (>=0.85)",
+        "year 2014 matches local 2014",
+        "first author surname 'vionnet' matches",
+        "venue nonempty: The Cryosphere",
+        "not a formal-library DOI duplicate"
+      ],
+      "warnings": []
+    },
+    {
+      "candidate_id": "cand_002",
+      "doi": "10.1007/978-3-642-61171-1_19",
+      "title": "Wind-Blown Snow: Sublimation, Transport and Changes to Polar Snow",
+      "authors": ["Pomeroy, J. W."],
+      "year": 1996,
+      "venue": "Physics of Snow",
+      "source": "network_title",
+      "confidence": 0.6,
+      "score": 0.42,
+      "evidence": [
+        "doi appeared only in markdown References section — treated as reference-list DOI",
+        "network title-search candidate; never auto-matched"
+      ],
+      "warnings": [
+        "DOI from references region; not this paper's DOI",
+        "low title similarity"
+      ]
+    }
+  ],
+  "recommendation": {
+    "best_candidate_id": "cand_001",
+    "decision": "auto_matched",
+    "reason": "cand_001 DOI from markdown header, Crossref-resolved, title/year/author/venue consistent, no duplicate"
+  }
+}

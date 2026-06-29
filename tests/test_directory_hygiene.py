@@ -51,3 +51,57 @@ def test_directory_hygiene_reports_warnings_without_deleting_files(tmp_path):
     assert any("metadata.identifiers.doi missing" in warning for warning in report["warnings"])
     assert any("missing formal paper folder" in warning for warning in report["warnings"])
     assert any("data/paper_raw" in warning for warning in report["warnings"])
+
+
+def _hygiene_with_paper_raw(tmp_path, paper_raw_meta: dict, *, md: bool = False,
+                            candidates: bool = False, resolve_report: bool = False,
+                            import_status: str | None = None):
+    paper_raw_dir = tmp_path / "data" / "paper_raw"
+    all_catalog = tmp_path / "data" / "catalog" / "all.catalog.json"
+    folder = paper_raw_dir / "000001"
+    folder.mkdir(parents=True)
+    _write_json(folder / "000001.metadata.json", paper_raw_meta)
+    if md:
+        (folder / "000001.md").write_text("# title", encoding="utf-8")
+    if candidates:
+        _write_json(folder / "000001.metadata.candidates.json", {"candidates": []})
+    if resolve_report:
+        _write_json(folder / "000001.metadata.resolve_report.json", {"decision": "manual_review"})
+    if import_status is not None:
+        _write_json(folder / ".import_status.json", {"status": import_status})
+    _write_json(all_catalog, {"papers": []})
+    return check_directory_hygiene(
+        project_root=tmp_path,
+        all_catalog_path=all_catalog,
+        papers_dir=tmp_path / "data" / "papers",
+        paper_raw_dir=paper_raw_dir,
+        write_jobs_dir=tmp_path / "write" / "jobs",
+    )
+
+
+def test_hygiene_warns_md_present_but_unmatched(tmp_path):
+    report = _hygiene_with_paper_raw(
+        tmp_path, {"metadata_match": {"status": "unmatched"}}, md=True,
+    )
+    assert report["valid"] is True
+    assert any("has markdown but metadata_match.status is unmatched" in w for w in report["warnings"])
+    # no files deleted
+    assert ((tmp_path / "data" / "paper_raw" / "000001" / "000001.md")).exists()
+
+
+def test_hygiene_warns_unresolved_candidates(tmp_path):
+    report = _hygiene_with_paper_raw(
+        tmp_path, {"metadata_match": {"status": "unmatched"}}, candidates=True,
+    )
+    assert report["valid"] is True
+    assert any("unresolved metadata candidates" in w for w in report["warnings"])
+
+
+def test_hygiene_warns_stuck_import_status(tmp_path):
+    report = _hygiene_with_paper_raw(
+        tmp_path, {"metadata_match": {"status": "unmatched"}},
+        import_status="metadata_candidates_found",
+    )
+    assert report["valid"] is True
+    assert any("stuck at metadata_candidates_found" in w for w in report["warnings"])
+

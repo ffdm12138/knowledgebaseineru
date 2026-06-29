@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "paper_raw metadata candidates",
+  "description": "Candidates produced by the paper_raw_metadata_resolver skill. Each candidate carries evidence (which Markdown line / DOI / network source it came from). The resolver script scores them and decides auto_matched/manual_review/rejected; the skill itself never sets metadata_match.status.",
+  "type": "object",
+  "required": ["source_id", "candidates", "recommendation"],
+  "additionalProperties": true,
+  "properties": {
+    "source_id": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["candidate_id", "doi", "title", "authors", "year", "venue", "source", "confidence", "evidence", "warnings"],
+        "additionalProperties": true,
+        "properties": {
+          "candidate_id": { "type": "string" },
+          "doi": { "type": "string", "pattern": "^10\\..+/.+" },
+          "title": { "type": "string" },
+          "authors": { "type": "array", "items": { "type": "string" } },
+          "year": { "type": ["integer", "null"] },
+          "venue": { "type": "string" },
+          "source": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "evidence": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Provenance lines: which md line / DOI / network source this candidate came from."
+          },
+          "warnings": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "required": ["best_candidate_id", "decision", "reason"],
+      "additionalProperties": true,
+      "properties": {
+        "best_candidate_id": { "type": ["string", "null"] },
+        "decision": { "type": "string", "enum": ["auto_matched", "manual_review", "rejected", "no_candidates"] },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

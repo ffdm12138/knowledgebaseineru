@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -13,9 +14,46 @@ from loguru import logger
 
 from config.settings import PAPER_RAW_DIR
 from src.discovery.models import normalize_doi
-from src.services.metadata_enrichment_service import enrich_from_pdf, enrich_from_doi
+from src.services.metadata_enrichment_service import (
+    enrich_from_pdf,
+    enrich_from_doi,
+    extract_doi_from_text,
+)
 from src.services.v2_library import empty_metadata, merge_missing_metadata
 from src.utils.atomic_io import atomic_write_json
+
+
+# Markdown header region scan: collect DOIs only from the first ~60 lines /
+# ~15000 chars, before any References/Bibliography/参考文献 heading. A DOI in
+# the reference list is NOT this paper's DOI and must not be auto-used here.
+_MD_HEADER_SCAN_LINES = 60
+_MD_HEADER_SCAN_CHARS = 15000
+_REFERENCES_HEADING_RE = re.compile(
+    r"^\s{0,6}#{1,6}\s*(references|bibliography|参考文献)", re.IGNORECASE
+)
+
+
+def _collect_markdown_header_dois(md_text: str) -> list[str]:
+    """Collect distinct normalized DOIs from the Markdown header region only.
+
+    Returns [] if none. Multiple distinct DOIs → caller treats as conflict.
+    """
+    lines = md_text.splitlines()
+    boundary = len(lines)
+    for idx, line in enumerate(lines):
+        if _REFERENCES_HEADING_RE.match(line):
+            boundary = idx
+            break
+    header = "\n".join(lines[:boundary])
+    if len(header) > _MD_HEADER_SCAN_CHARS:
+        header = header[:_MD_HEADER_SCAN_CHARS]
+    seen: list[str] = []
+    for match in re.finditer(r"10\.\d{4,}/[^\s<>\"')\]};,]+", header):
+        raw = re.sub(r"[.,;)\]};:'\"]+$", "", match.group(0))
+        norm = normalize_doi(raw)
+        if norm and "/" in norm and norm not in seen:
+            seen.append(norm)
+    return seen
 
 
 def _source_ids(root: Path, all_sources: bool, one: str | None) -> list[str]:
@@ -120,9 +158,35 @@ def main() -> int:
             if result is None:
                 result = enrich_from_pdf(pdf)
             result_doi = normalize_doi(getattr(result, "doi", ""))
+            # If no DOI yet, try the MinerU Markdown header region (before references).
+            # Collect ALL distinct DOIs there; only enrich when exactly one is found.
+            # Multiple distinct DOIs → conflict, keep unmatched for the resolver.
+            md_conflict = False
+            if not result_doi:
+                md_path = folder / f"{source_id}.md"
+                if md_path.exists():
+                    try:
+                        md_dois = _collect_markdown_header_dois(md_path.read_text(encoding="utf-8"))
+                    except Exception:
+                        md_dois = []
+                    if len(md_dois) == 1:
+                        try:
+                            md_result = enrich_from_doi(md_dois[0])
+                            md_result.warnings.append("DOI extracted from MinerU markdown header")
+                            result = md_result
+                            result_doi = normalize_doi(md_result.doi)
+                        except Exception as exc:
+                            item["warnings"].append(f"Markdown DOI enrichment failed: {exc}")
+                    elif len(md_dois) >= 2:
+                        md_conflict = True
+                        item["warnings"].append(
+                            "Multiple distinct DOIs in MinerU markdown header: "
+                            + ", ".join(md_dois)
+                            + "; leaving unmatched for resolve_paper_raw_metadata.py"
+                        )
             existing_doi = normalize_doi(doi)
-            doi_conflict = bool(existing_doi and result_doi and existing_doi != result_doi)
-            if doi_conflict:
+            doi_conflict = bool(existing_doi and result_doi and existing_doi != result_doi) or md_conflict
+            if doi_conflict and not md_conflict:
                 item["warnings"].append(
                     "Crossref DOI conflicts with existing metadata.identifiers.doi; manual confirmation required"
                 )
@@ -151,8 +215,9 @@ def main() -> int:
                 atomic_write_json(meta_path, metadata, indent=2)
                 if status == "unmatched":
                     atomic_write_json(folder / ".import_status.json", {
-                        "status": "metadata_unmatched",
+                        "status": "metadata_candidate_conflict" if md_conflict else "metadata_unmatched",
                         "reason": "; ".join(metadata["metadata_match"]["warnings"]),
+                        "hint": "metadata_candidates_required: run scripts/resolve_paper_raw_metadata.py --source-id " + source_id,
                         "created_at": datetime.now().isoformat(timespec="seconds"),
                     }, indent=2)
         except Exception as exc:

@@ -102,6 +102,37 @@ def check_directory_hygiene(
             if doi and doi in formal_dois:
                 warnings.append(f"paper_raw appears to duplicate formal DOI {doi}: {normalize_repo_path(meta_path)}")
 
+    # paper_raw metadata-resolution hygiene (warnings only; never delete).
+    if paper_raw_dir.exists():
+        for folder in sorted(p for p in paper_raw_dir.iterdir()
+                             if p.is_dir() and p.name.isdigit() and len(p.name) == 6):
+            source_id = folder.name
+            meta_path = _metadata_file(folder)
+            if not meta_path:
+                continue
+            metadata = _read_json(meta_path, {})
+            status = str(((metadata.get("metadata_match") or {}).get("status")) or "")
+            has_md = (folder / f"{source_id}.md").exists()
+            has_candidates = (folder / f"{source_id}.metadata.candidates.json").exists()
+            has_resolve_report = (folder / f"{source_id}.metadata.resolve_report.json").exists()
+            import_status_path = folder / ".import_status.json"
+            import_status = ""
+            if import_status_path.exists():
+                import_status = str((_read_json(import_status_path, {}) or {}).get("status") or "")
+            rel = normalize_repo_path(folder)
+            if has_md and status == "unmatched":
+                warnings.append(
+                    f"paper_raw has markdown but metadata_match.status is unmatched: {rel}"
+                )
+            if has_candidates and (not has_resolve_report or status == "unmatched"):
+                warnings.append(
+                    f"paper_raw has unresolved metadata candidates (.metadata.candidates.json present): {rel}"
+                )
+            if import_status in {"metadata_candidates_found", "metadata_manual_review_required"}:
+                warnings.append(
+                    f"paper_raw import_status stuck at {import_status}: {rel}"
+                )
+
     if write_jobs_dir.exists():
         for path in write_jobs_dir.rglob("*"):
             if not path.is_file():
