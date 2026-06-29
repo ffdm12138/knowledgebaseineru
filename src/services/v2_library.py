@@ -376,6 +376,15 @@ def merge_missing_metadata(base: dict, patch: dict) -> tuple[dict, list[str]]:
                     merged = _merge(result[key], src_value, child_path)
                     result[key] = merged
             return result
+        # Element-wise merge for lists of dicts (e.g. authors).
+        # When both are lists of dicts of the same length, merge each
+        # pair so that a patch can fill individual fields like 'family'
+        # without overwriting already-populated fields like 'full_name'.
+        if (isinstance(dst, list) and isinstance(src, list)
+                and len(dst) == len(src)
+                and all(isinstance(d, dict) for d in dst)
+                and all(isinstance(s, dict) for s in src)):
+            return [_merge(d, s, f"{path}[{i}]") for i, (d, s) in enumerate(zip(dst, src))]
         if _is_effectively_empty(dst):
             return src
         if not _is_effectively_empty(src) and dst != src:
