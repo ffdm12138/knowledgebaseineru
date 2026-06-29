@@ -19,7 +19,6 @@ FORBIDDEN_TOKENS = [
     "legacy-only",
     "literature_catalog",
     "ai_summary",
-    "main_findings",
     "relevance_to_my_work",
 ]
 

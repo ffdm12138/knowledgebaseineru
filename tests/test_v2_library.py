@@ -13,7 +13,7 @@ from src.services.v2_library import (
     V2PaperCommitService,
     empty_catalog,
     empty_metadata,
-    migrate_catalog_to_v1_1,
+    migrate_catalog_to_v2_0,
     validate_catalog_schema,
 )
 
@@ -37,18 +37,14 @@ def _curated_raw(root: Path, pid: str = "2024_wang_测试论文") -> Path:
         "candidates": [],
     }
     catalog = empty_catalog()
-    catalog["display"].update({
-        "title_original": "Test Paper",
-        "title_zh": "测试论文",
-        "short_name_zh": "测试论文",
-        "year": 2024,
-        "first_author": "Wang",
-    })
+    catalog["content_identity"]["content_title"] = "Test Paper"
     catalog["classification"].update({
         "primary_domain": "blowing_snow_physics",
-        "domains": ["blowing_snow_physics"],
+        "secondary_domains": ["blowing_snow_physics"],
+        "topic_tags": ["blowing_snow"],
     })
-    catalog["research_card"]["one_sentence_summary_zh"] = "测试论文摘要"
+    catalog["research_card"]["research_problem"] = "测试论文摘要"
+    catalog["content_notes"]["short_summary"] = "测试论文摘要"
     (folder / f"{pid}.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
     (folder / f"{pid}.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
     (folder / f"{pid}.md").write_text("# Test Paper", encoding="utf-8")
@@ -274,6 +270,7 @@ def test_curation_merges_only_empty_metadata_and_renames(tmp_path):
     folder.mkdir(parents=True)
     metadata = empty_metadata("000001")
     metadata["title"]["original"] = "Trusted Original"
+    metadata["title"]["short_zh"] = "可信论文"
     metadata["year"] = 2024
     metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
     metadata["container"]["journal"] = "Test Journal"
@@ -281,13 +278,8 @@ def test_curation_merges_only_empty_metadata_and_renames(tmp_path):
     metadata["metadata_match"]["status"] = "matched"
     metadata["metadata_match"]["confidence"] = 1.0
     catalog = empty_catalog()
-    catalog["display"].update({
-        "title_original": "Trusted Original",
-        "title_zh": "可信论文",
-        "short_name_zh": "可信论文",
-        "year": 2024,
-        "first_author": "Wang",
-    })
+    catalog["content_identity"]["content_title"] = "Trusted Original"
+    catalog["classification"]["primary_domain"] = "blowing_snow"
     (folder / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
     (folder / "000001.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
     (folder / "000001.md").write_text("# Trusted", encoding="utf-8")
@@ -324,20 +316,19 @@ def test_v2_commit_does_not_write_pdf_mirror(tmp_path):
     assert not mirror_dir.exists()
 
 
-def test_empty_catalog_is_v1_1_with_new_groups():
+def test_empty_catalog_is_v2_0_with_content_groups():
     cat = empty_catalog()
-    assert cat["schema_version"] == "1.1"
-    for key in ("authors_short", "venue", "doi"):
-        assert key in cat["display"]
-    for key in ("research_background_zh", "study_type", "model_or_algorithm_zh", "main_results_zh", "limitations_zh"):
-        assert key in cat["research_card"]
-    assert "evidence_profile" in cat
-    assert "screening" in cat
-    for key in ("relevance_score", "reading_priority", "read_decision", "best_for_sections", "need_fulltext"):
+    assert cat["schema_version"] == "2.0"
+    assert "display" not in cat  # display removed in v2.0
+    for key in ("content_identity", "classification", "screening", "research_card", "evidence_profile", "content_notes", "provenance", "asset_refs"):
+        assert key in cat
+    for key in ("read_decision", "relevance_score", "reason"):
         assert key in cat["screening"]
+    for key in ("research_problem", "main_findings", "usefulness_for_user"):
+        assert key in cat["research_card"]
 
 
-def test_validate_catalog_schema_rejects_missing_v1_1_groups():
+def test_validate_catalog_schema_rejects_missing_v2_0_groups():
     cat = empty_catalog()
     del cat["evidence_profile"]
     del cat["screening"]
@@ -346,40 +337,38 @@ def test_validate_catalog_schema_rejects_missing_v1_1_groups():
     assert any("screening" in e for e in errors)
 
 
-def test_validate_catalog_schema_accepts_v1_1():
+def test_validate_catalog_schema_accepts_v2_0():
     assert validate_catalog_schema(empty_catalog()) == []
 
 
-def test_validate_catalog_schema_rejects_missing_display_fields():
+def test_validate_catalog_schema_rejects_forbidden_metadata_keys():
     cat = empty_catalog()
-    del cat["display"]["authors_short"]
-    del cat["display"]["venue"]
+    cat["doi"] = "10.1/x"  # forbidden at top level
     errors = validate_catalog_schema(cat)
-    assert any("authors_short" in e for e in errors)
-    assert any("venue" in e for e in errors)
+    assert any("forbidden bibliographic key: doi" in e for e in errors)
+    cat2 = empty_catalog()
+    cat2["content_identity"]["identifiers"] = {"doi": "10.1/x"}  # forbidden nested
+    errors2 = validate_catalog_schema(cat2)
+    assert any("forbidden bibliographic key: content_identity.identifiers" in e for e in errors2)
 
 
-def test_migrate_catalog_to_v1_1_fills_missing_and_preserves():
+def test_migrate_catalog_to_v2_0_strips_forbidden_and_preserves_content():
     old = {
-        "schema_version": "1.0",
-        "display": {"title_original": "Keep", "title_zh": "", "short_name_zh": "", "year": 2020, "first_author": "X"},
-        "classification": {"primary_domain": "", "domains": [], "topics": [], "keywords_en": [], "keywords_zh": []},
+        "schema_version": "1.1",
+        "display": {"title_original": "Keep", "title_zh": "", "short_name_zh": "", "year": 2020, "first_author": "X", "doi": "10.1/x"},
+        "classification": {"primary_domain": "snow", "domains": ["snow"], "topics": ["drift"], "keywords_en": [], "keywords_zh": []},
         "research_card": {"one_sentence_summary_zh": "kept summary", "research_question_zh": "", "object_zh": "",
                           "method_zh": "", "data_or_experiment_zh": "", "key_variables": [], "main_conclusion_zh": "",
                           "usefulness_for_project_zh": "", "recommended_use_cases_zh": []},
-        "reading_priority": {"score": None, "reason_zh": "", "must_read_sections": [], "key_figures_or_tables": []},
-        "technical_tags": {"model_or_theory": [], "experiment_or_data": [], "parameterization": [],
-                           "equations_or_metrics": [], "materials_or_particles": [], "spatial_temporal_scale": []},
-        "llm_search_text": {"compact_zh": "", "compact_en": ""},
     }
-    migrated, notes = migrate_catalog_to_v1_1(old)
-    assert migrated["schema_version"] == "1.1"
-    assert "evidence_profile" in migrated
-    assert "screening" in migrated
-    assert migrated["display"]["title_original"] == "Keep"
-    assert migrated["research_card"]["one_sentence_summary_zh"] == "kept summary"
+    migrated, removed = migrate_catalog_to_v2_0(old)
+    assert migrated["schema_version"] == "2.0"
+    assert "display" not in migrated
+    assert migrated["content_identity"]["content_title"] == "Keep"
+    assert migrated["content_notes"]["short_summary"] == "kept summary"
     assert validate_catalog_schema(migrated) == []
-    assert notes  # added some keys
+    assert any("doi" in r for r in removed)
+    assert any("year" in r for r in removed)
 
 
 def test_paper_id_folds_accented_author_family_to_ascii():
@@ -388,9 +377,9 @@ def test_paper_id_folds_accented_author_family_to_ascii():
     from src.naming import validate_paper_id
     m = empty_metadata("000001")
     m["year"] = 1999
+    m["title"]["short_zh"] = "体相吹雪模型"
     m["authors"] = [{"full_name": "Stephen J. Déry", "family": "Déry", "given": "Stephen J.", "orcid": "", "affiliation": ""}]
     c = empty_catalog()
-    c["display"]["short_name_zh"] = "体相吹雪模型"
     assert first_author_family(m) == "Dery"
     pid = paper_id_from_metadata_catalog(m, c)
     validate_paper_id(pid)  # must not raise
@@ -403,6 +392,7 @@ def test_accented_author_apply_curated_files_completes_rename(tmp_path):
     folder.mkdir(parents=True)
     metadata = empty_metadata("000001")
     metadata["title"]["original"] = "A Bulk Blowing-Snow Model"
+    metadata["title"]["short_zh"] = "体相吹雪模型"
     metadata["year"] = 1999
     metadata["authors"] = [{"full_name": "Stephen J. Déry", "family": "Déry", "given": "Stephen J.", "orcid": "", "affiliation": ""}]
     metadata["container"]["journal"] = "Test Journal"
@@ -410,8 +400,8 @@ def test_accented_author_apply_curated_files_completes_rename(tmp_path):
     metadata["metadata_match"]["status"] = "matched"
     metadata["metadata_match"]["confidence"] = 1.0
     catalog = empty_catalog()
-    catalog["display"].update({"title_original": "A Bulk Blowing-Snow Model", "title_zh": "体相吹雪模型",
-                                "short_name_zh": "体相吹雪模型", "year": 1999, "first_author": "Déry"})
+    catalog["content_identity"]["content_title"] = "A Bulk Blowing-Snow Model"
+    catalog["classification"]["primary_domain"] = "blowing_snow"
     (folder / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
     (folder / "000001.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
     (folder / "000001.md").write_text("# test", encoding="utf-8")

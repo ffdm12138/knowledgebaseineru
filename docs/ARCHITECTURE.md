@@ -29,7 +29,8 @@ raw PDF or network metadata
 
 - `data/paper_raw/` is the pre-ingest workspace.
 - `data/papers/` is the only formal asset storage.
-- `data/catalog/all.catalog.json` is the catalog API entry (per-paper catalog schema v1.1).
+- `data/catalog/all.catalog.json` is the content-only catalog index (per-paper catalog schema v2.0; no bibliographic metadata).
+- `data/catalog/paper_index.json` maps paper_number → asset paths (metadata/catalog/markdown/pdf/images), no bibliographic fields.
 - `data/catalog/paper_number_ledger.json` owns long-term numbering.
 - `data/llm_work/` contains copied paper folders for model-facing work sessions.
 - Network/search metadata records must carry DOI before they can be staged into `paper_raw`.

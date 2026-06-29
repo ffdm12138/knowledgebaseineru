@@ -92,7 +92,8 @@ def test_validate_formal_library_requires_doi(tmp_path):
     metadata["pdf"]["sha256"] = "abc"
     metadata["pdf"]["file_size"] = 4
     catalog = empty_catalog()
-    catalog["display"].update({"title_original": "Test Paper", "short_name_zh": "测试论文", "year": 2024, "first_author": "Wang"})
+    catalog["content_identity"]["content_title"] = "Test Paper"
+    catalog["classification"]["primary_domain"] = "test"
     (folder / f"{pid}.metadata.json").write_text(json.dumps(metadata, ensure_ascii=False), encoding="utf-8")
     (folder / f"{pid}.catalog.json").write_text(json.dumps(catalog, ensure_ascii=False), encoding="utf-8")
     (folder / f"{pid}.md").write_text("# Test", encoding="utf-8")

@@ -15,7 +15,7 @@ or overwrite a non-empty DOI. References are generated from metadata only.
 
 ## Read Selection
 
-Use `data/catalog/all.catalog.json` as the compact inventory. Each item contains metadata, a v1.1 catalog (display, classification, research_card, evidence_profile, screening, reading_priority, technical_tags, llm_search_text), paths and a stable `paper_number`. The catalog is the screening fact source — the model can decide whether to read full text from the catalog alone.
+Use `data/catalog/all.catalog.json` as the compact content inventory. Each item carries ONLY catalog content (content_identity, classification, screening, research_card, evidence_profile, content_notes, asset_refs) and a stable `paper_number` — it does NOT embed bibliographic metadata (DOI/authors/year/journal). To cite or render bibliography, load `data/papers/<paper_number>/...metadata.json` via `data/catalog/paper_index.json` (or `src.services.paper_library.PaperLibrary`). The catalog is the screening fact source — the model can decide whether to read full text from the catalog alone.
 
 ## Full-Text Copy
 

@@ -31,39 +31,52 @@ data/paper_raw/<source_id>/
 
 ## 输出
 
-在同一个 `data/paper_raw/<source_id>/` 文件夹下输出两个 JSON：
+在同一个 `data/paper_raw/<source_id>/` 文件夹下输出：
 
-1. `<source_id>.catalog.json` —— 符合 `catalog_schema.json`（v1.1）。
-2. `<source_id>.metadata.patch.json` —— 只包含建议补齐的空字段与 `warnings`（见 `metadata_patch_schema.json`）。
+1. `<source_id>.catalog.json` —— 符合 `catalog_schema.json`（**v2.0，content-only**）。
 
-> 项目实现上也可输出 `<source_id>.curated_metadata.json`；`PaperCurationService.apply_curated_files()` 通过 `merge_missing_metadata()` 保证非空字段不被覆盖。
+> catalog curator **不生成 metadata patch**。书目字段（DOI/作者/期刊/年份/BibTeX/citation_key）
+> 由 metadata resolver / enrichment 负责。如需补 metadata 空字段，交给
+> `scripts/resolve_paper_raw_metadata.py` 或 metadata enrichment，不要在 catalog 里处理。
 
-## catalog v1.1 填写要点
+## catalog v2.0 填写要点（只填正文内容，禁止书目字段）
 
-- `display.short_name_zh`：8-24 个汉字，用于文件夹命名（`年份_第一作者_中文标题`）。
-- `display.authors_short`：简洁作者，如 `Shao et al.` 或 `Déry and Yau`。
-- `display.venue`：从 metadata 的 `journal`/`booktitle`/`publisher` 提取简写。
-- `display.doi`：从 `metadata.identifiers.doi` 提取。
-- `research_card`：必须能回答——研究什么 / 为什么 / 研究对象 / 研究类型（实验/模拟/理论/观测/综述）/ 主要方法 / 数据或实验 / 关键变量 / 主要结果 / 主要结论 / 局限 / 项目用途 / 适用场景。
-  - `main_results_zh` 用列表保存具体结果；`main_conclusion_zh` 用一句话总结最终结论。
-- `evidence_profile`：证据类型与适用范围（`evidence_type`、`materials_or_region`、`spatial_scale`、`temporal_scale` 等）。
-- `screening`：`relevance_score`(1-5)、`reading_priority`(1-5)、`read_decision`(`must_read`/`maybe_read`/`skip`)、`reason_zh`、`best_for_sections`、`not_useful_for`、`need_fulltext`。
-- `llm_search_text.compact_zh`(200-400 字)、`compact_en`(100-200 words)，须包含标题、作者、研究对象、方法、关键变量、主要结论、项目用途。
+- `content_identity.content_title`：从 Markdown 正文标题/首屏提取的标题候选（**非 canonical title**）。
+- `classification`：`primary_domain`、`secondary_domains`、`topic_tags`、`methods_tags`、
+  `phenomena_tags`、`material_tags`、`model_tags`。
+- `screening`：`read_decision`(`must_read`/`maybe_read`/`skip`)、`relevance_score`(1-5)、
+  `novelty_score`、`method_quality_score`、`reason`。
+- `research_card`：`research_problem` / `core_question` / `hypothesis_or_objective` / `study_object` /
+  `method_summary` / `data_or_experiment` / `main_findings`(列表) / `mechanisms` / `limitations` /
+  `usefulness_for_user`。
+- `evidence_profile`：`key_claims` / `important_equations` / `important_figures` / `important_tables` /
+  `quoted_terms` / `page_or_section_evidence`。
+- `content_notes`：`short_summary` / `long_summary` / `possible_use_in_writing` / `open_questions` / `warnings`。
+- `provenance`：`generated_from='mineru_markdown'`、`markdown_path`、`generated_at`、`generator`、`notes`。
+
+### 禁止字段（递归检查，命中即校验失败）
+
+catalog 任何层级都不得出现：`doi`、`authors`、`author`、`first_author`、`journal`、`venue`、
+`publisher`、`year`、`volume`、`issue`、`pages`、`article_number`、`url`、`publisher_url`、
+`repository_url`、`bibtex`、`citation_key`、`identifiers`、`metadata_match`、`crossref`、
+`openalex`、`semantic_scholar`、`external_metadata`。如正文中出现 DOI，只能写进
+`evidence_profile.page_or_section_evidence` 或 `content_notes.warnings`，不得写入 catalog 顶层。
 
 ## paper_id 命名规则
 
-`paper_id = 年份_第一作者姓氏_short_name_zh`（snake_case）。由项目在 `apply` 时根据
-`catalog.display.short_name_zh` + `metadata.year` + `metadata.authors[0].family` 自动生成，
-你不要输出 `paper_id`。
+`paper_id = 年份_第一作者姓氏_short_name_zh`（snake_case）。由项目在 `apply` 时**只从 metadata**
+（`metadata.year` + `metadata.authors[0].family` + `metadata.title.short_zh`）自动生成，你不要输出
+`paper_id`，也不要把 short_name_zh/year/author 写进 catalog。
 
 ## 接入
 
 - 生成 prompt：`python scripts/curate_paper_raw.py --source-id <id> --dry-run`
   （在文件夹下写出 `curation_prompt.md`）。
-- 应用结果：`python scripts/curate_paper_raw.py --source-id <id> --catalog <path> --metadata <path> --apply`。
+- 应用结果：`python scripts/curate_paper_raw.py --source-id <id> --catalog <path> --apply`。
 
 注意：curation prompt 和 apply 都要求 `metadata_match.status` 为 `matched` 或
 `manual_confirmed`，且 `metadata.identifiers.doi` 非空。网络/搜索 metadata
 导入必须有 DOI；手动 PDF 可以先无 DOI，但不能进入 curation/commit。
 
-Schema 定义见 `catalog_schema.json` 与 `metadata_patch_schema.json`，示例见 `examples/`。
+Schema 定义见 `catalog_schema.json`（v2.0），示例见 `examples/`。
+（`metadata_patch_schema.json` 保留供 metadata resolver 使用，不再属于 curator 职责。）

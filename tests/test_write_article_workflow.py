@@ -28,35 +28,55 @@ def _metadata(idx: int) -> dict:
 
 def _catalog(idx: int, *, primary_domain: str = "snow_model", topic: str = "blowing snow") -> dict:
     return {
-        "schema_version": "1.1",
-        "display": {
-            "title_original": f"Workflow Paper {idx}",
-            "title_zh": f"流程论文{idx}",
-            "year": 2024,
-            "first_author": f"Author{idx}",
-            "authors_short": f"Author{idx} et al.",
-            "venue": "Workflow Journal",
-            "doi": f"10.1234/workflow.{idx}",
+        "schema_version": "2.0",
+        "paper_number": f"{idx:016d}",
+        "paper_id": f"2024_author{idx}_workflow_paper_{idx}",
+        "source_id": "",
+        "asset_refs": {"markdown": "", "pdf": "", "images_dir": "", "figures": []},
+        "content_identity": {
+            "content_title": f"Workflow Paper {idx}",
+            "md_title_candidates": [],
+            "content_language": "en",
+            "document_type": "",
         },
         "classification": {
             "primary_domain": primary_domain,
-            "domains": [primary_domain],
-            "topics": [topic],
-            "keywords_en": [topic],
-            "keywords_zh": ["测试"],
-        },
-        "research_card": {
-            "one_sentence_summary_zh": f"论文{idx}提供了一个可用于写作流程测试的证据点。",
-            "method_zh": f"方法{idx}",
-            "main_conclusion_zh": f"结论{idx}",
-            "usefulness_for_project_zh": f"用途{idx}",
+            "secondary_domains": [primary_domain],
+            "topic_tags": [topic],
+            "methods_tags": [],
+            "phenomena_tags": [],
+            "material_tags": [],
+            "model_tags": [],
         },
         "screening": {
-            "relevance_score": idx,
-            "reading_priority": idx,
             "read_decision": "must_read" if idx >= 2 else "optional",
-            "best_for_sections": ["introduction", "discussion"],
+            "relevance_score": idx,
+            "novelty_score": None,
+            "method_quality_score": None,
+            "reason": "",
         },
+        "research_card": {
+            "research_problem": f"论文{idx}提供了一个可用于写作流程测试的证据点。",
+            "core_question": "",
+            "hypothesis_or_objective": "",
+            "study_object": "",
+            "method_summary": f"方法{idx}",
+            "data_or_experiment": "",
+            "main_findings": [f"结论{idx}"],
+            "mechanisms": [],
+            "limitations": [],
+            "usefulness_for_user": f"用途{idx}",
+        },
+        "evidence_profile": {
+            "key_claims": [], "important_equations": [], "important_figures": [],
+            "important_tables": [], "quoted_terms": [], "page_or_section_evidence": [],
+        },
+        "content_notes": {
+            "short_summary": f"论文{idx}提供了一个可用于写作流程测试的证据点。",
+            "long_summary": "", "possible_use_in_writing": ["introduction", "discussion"],
+            "open_questions": [], "warnings": [],
+        },
+        "provenance": {"generated_from": "mineru_markdown", "markdown_path": "", "generated_at": "", "generator": "", "notes": ""},
     }
 
 
@@ -124,8 +144,13 @@ def test_prepare_by_paper_numbers_copies_and_writes_report(tmp_path):
     assert (job_dir / "selected_catalog.json").exists()
     assert (job_dir / "reports" / "prepare_article_report.json").exists()
     selected = json.loads((job_dir / "selected_catalog.json").read_text(encoding="utf-8"))
-    assert "metadata" not in selected["papers"][0]
-    assert "catalog" not in selected["papers"][0]
+    # selected_catalog entries carry content fields (from catalog.json) and, for
+    # write-module compatibility, the bibliographic metadata + full catalog dict
+    # (read from disk). all.catalog itself remains content-only & separated.
+    p0 = selected["papers"][0]
+    assert "classification" in p0 and "screening" in p0 and "research_card" in p0
+    assert "metadata" in p0  # write modules need bibliographic facts
+    assert "catalog" in p0
     for entry in entries:
         copied = job_dir / "article" / entry["paper_number"] / f"{entry['paper_id']}.metadata.json"
         assert copied.exists()

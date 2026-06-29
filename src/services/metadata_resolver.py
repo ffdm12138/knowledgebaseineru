@@ -197,18 +197,12 @@ def formal_dois(
     all_catalog_path: str | Path = ALL_CATALOG_PATH,
     papers_dir: str | Path = PAPERS_DIR,
 ) -> set[str]:
-    """Union of DOIs from all.catalog.json AND data/papers/*/*.metadata.json.
+    """Set of normalized DOIs from data/papers/*/*.metadata.json.
 
-    Catalog may be stale vs data/papers, so both are read. Returns normalized
-    (lowercased) DOIs.
+    all.catalog no longer embeds metadata, so we read formal metadata files
+    directly. (all_catalog_path kept for signature compat.)
     """
     dois: set[str] = set()
-    catalog = _read_json(Path(all_catalog_path), {"papers": []})
-    for entry in (catalog.get("papers") or []):
-        meta = entry.get("metadata") or {}
-        doi = normalize_doi(((meta.get("identifiers") or {}).get("doi") or ""))
-        if doi:
-            dois.add(doi)
     papers_dir = Path(papers_dir)
     if papers_dir.exists():
         for meta_path in papers_dir.glob("*/*.metadata.json"):
@@ -223,14 +217,8 @@ def formal_pdf_shas(
     all_catalog_path: str | Path = ALL_CATALOG_PATH,
     papers_dir: str | Path = PAPERS_DIR,
 ) -> set[str]:
-    """Union of pdf.sha256 from all.catalog.json AND data/papers/*/*.metadata.json."""
+    """Set of pdf.sha256 from data/papers/*/*.metadata.json."""
     shas: set[str] = set()
-    catalog = _read_json(Path(all_catalog_path), {"papers": []})
-    for entry in (catalog.get("papers") or []):
-        meta = entry.get("metadata") or {}
-        sha = str(((meta.get("pdf") or {}).get("sha256") or "")).strip().lower()
-        if sha:
-            shas.add(sha)
     papers_dir = Path(papers_dir)
     if papers_dir.exists():
         for meta_path in papers_dir.glob("*/*.metadata.json"):

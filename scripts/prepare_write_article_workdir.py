@@ -37,7 +37,11 @@ def _validate_paper_number(paper_number: str) -> str:
 
 
 def _entry_catalog(entry: dict) -> dict:
-    return entry.get("catalog") or {}
+    """all.catalog v2 entries are flat (content at top level); legacy entries
+    nested content under "catalog". Handle both."""
+    if isinstance(entry.get("catalog"), dict) and entry["catalog"]:
+        return entry["catalog"]
+    return entry
 
 
 def _matches_filter(entry: dict, args: argparse.Namespace) -> bool:
@@ -47,7 +51,9 @@ def _matches_filter(entry: dict, args: argparse.Namespace) -> bool:
 
     if args.primary_domain:
         primary = str(classification.get("primary_domain") or "").lower()
-        domains = [str(x).lower() for x in classification.get("domains") or []]
+        domains = [str(x).lower() for x in (
+            classification.get("secondary_domains") or classification.get("domains") or []
+        )]
         wanted = args.primary_domain.lower()
         if wanted != primary and wanted not in domains:
             return False
@@ -56,7 +62,11 @@ def _matches_filter(entry: dict, args: argparse.Namespace) -> bool:
         haystack = " ".join(
             str(x)
             for x in (
-                (classification.get("topics") or [])
+                (classification.get("topic_tags") or classification.get("topics") or [])
+                + (classification.get("methods_tags") or [])
+                + (classification.get("phenomena_tags") or [])
+                + (classification.get("material_tags") or [])
+                + (classification.get("model_tags") or [])
                 + (classification.get("keywords_en") or [])
                 + (classification.get("keywords_zh") or [])
             )
@@ -98,19 +108,36 @@ def _source_dir_for_entry(entry: dict, papers_dir: Path) -> Path:
 
 
 def _compact_selected_entry(entry: dict, source: Path, target: Path) -> dict:
-    catalog = entry.get("catalog") or {}
+    """Build a selected_catalog entry. Reads the on-disk catalog.json (content)
+    and metadata.json (bibliographic) from the formal folder so write modules
+    that still expect `metadata`/`catalog` keep working. all.catalog entries no
+    longer embed these.
+    """
+    paper_id = str(entry.get("paper_id") or source.name)
+    catalog_path = source / f"{paper_id}.catalog.json"
+    metadata_path = source / f"{paper_id}.metadata.json"
+    catalog = {}
+    if catalog_path.exists():
+        catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+    metadata = {}
+    if metadata_path.exists():
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     return {
         "paper_number": str(entry.get("paper_number") or ""),
-        "paper_id": str(entry.get("paper_id") or ""),
+        "paper_id": paper_id,
         "source_dir": normalize_repo_path(source),
-        "catalog_folder_path": str(entry.get("folder_path") or ""),
+        "catalog_folder_path": normalize_repo_path(source),
         "article_dir": normalize_repo_path(target),
-        "display": catalog.get("display") or {},
+        # content (from catalog.json)
+        "content_identity": catalog.get("content_identity") or {},
         "classification": catalog.get("classification") or {},
         "screening": catalog.get("screening") or {},
         "research_card": catalog.get("research_card") or {},
         "evidence_profile": catalog.get("evidence_profile") or {},
-        "llm_search_text": catalog.get("llm_search_text") or {},
+        "content_notes": catalog.get("content_notes") or {},
+        "catalog": catalog,
+        # bibliographic (from metadata.json) — kept for write-module compat
+        "metadata": metadata,
     }
 
 

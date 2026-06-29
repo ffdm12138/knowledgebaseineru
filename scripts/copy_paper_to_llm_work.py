@@ -58,7 +58,7 @@ def main() -> int:
         try:
             entry = service.resolve_paper_number(number)
             item["paper_id"] = entry.get("paper_id")
-            source = resolve_stored_path(entry["folder_path"])
+            source = service._folder_for(entry)
             item["source_dir"] = str(source)
             target = args.llm_work_dir / args.session_id / number
             item["target_dir"] = str(target)

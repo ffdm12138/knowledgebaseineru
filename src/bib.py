@@ -48,14 +48,38 @@ def parse_blocks(bib_text: str) -> dict[str, str]:
     return blocks
 
 
+def _resolve_metadata(entry: dict) -> dict:
+    """Get metadata for an entry. all.catalog entries no longer embed metadata,
+    so fall back to PaperLibrary by paper_number (then paper_id)."""
+    meta = entry.get("metadata")
+    if isinstance(meta, dict) and meta:
+        return meta
+    number = entry.get("paper_number")
+    pid = entry.get("paper_id")
+    if number or pid:
+        try:
+            from src.services.paper_library import PaperLibrary
+            lib = PaperLibrary()
+            m = lib.load_metadata(number) if number else None
+            if not m and pid:
+                idx = lib.resolve(pid)
+                if idx:
+                    m = lib.load_metadata(idx.get("paper_number") or "")
+            if m:
+                return m
+        except Exception:
+            pass
+    return {}
+
+
 def bib_key_for_entry(entry: dict) -> str:
     """v2 bib_key：metadata.citation_key 或 paper_id（经 sanitize）。"""
-    meta = entry.get("metadata") or {}
+    meta = _resolve_metadata(entry)
     key = meta.get("citation_key") or entry.get("paper_id") or ""
     return sanitize_paper_id(str(key))
 
 
 def bibtex_for_entry(entry: dict) -> str:
     """根据 all.catalog 条目生成单篇 BibTeX（来自 metadata.json）。"""
-    meta = entry.get("metadata") or {}
+    meta = _resolve_metadata(entry)
     return bibtex_from_metadata(meta, key=bib_key_for_entry(entry))

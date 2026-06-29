@@ -87,15 +87,20 @@ def _metadata_doi(entry: dict) -> str:
 def _paper_label(entry: dict) -> str:
     catalog = entry.get("catalog") or {}
     metadata = entry.get("metadata") or {}
-    title = _catalog_text(catalog, "display", "title_zh") or _catalog_text(catalog, "display", "title_original")
-    if not title:
-        title = (
-            (metadata.get("title") or {}).get("translated_zh")
-            or (metadata.get("title") or {}).get("original")
-            or entry.get("paper_id")
-        )
-    author = _catalog_text(catalog, "display", "authors_short") or _catalog_text(catalog, "display", "first_author")
-    year = _catalog_text(catalog, "display", "year") or str(metadata.get("year") or "")
+    # title/author/year come from METADATA (catalog v2.0 has no display fields)
+    title = (
+        (metadata.get("title") or {}).get("translated_zh")
+        or (metadata.get("title") or {}).get("original")
+        or (catalog.get("content_identity") or {}).get("content_title")
+        or entry.get("paper_id")
+    )
+    authors = metadata.get("authors") or []
+    first = authors[0] if authors else {}
+    fam = (first.get("family") or first.get("full_name") or "") if isinstance(first, dict) else str(first)
+    author = str(fam).split(",")[0].strip()
+    if author and len(authors) > 1:
+        author = f"{author} et al."
+    year = str(metadata.get("year") or "")
     return f"{author} ({year}) {title}"
 
 

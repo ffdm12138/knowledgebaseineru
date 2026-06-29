@@ -47,22 +47,18 @@ def _curated_raw(root: Path, pid: str, *, doi: str = "10.1/x", year: int = 2024,
         "matched_at": "2026-01-01", "warnings": [], "candidates": [],
     }
     catalog = empty_catalog()
-    catalog["display"].update({
-        "title_original": f"Paper {pid}", "title_zh": tz, "short_name_zh": tz,
-        "year": year, "first_author": family, "authors_short": f"{family} et al.",
-        "venue": "Test Journal", "doi": doi,
-    })
-    catalog["classification"].update({"primary_domain": "test", "topics": ["test"]})
+    catalog["content_identity"]["content_title"] = f"Paper {pid}"
+    catalog["classification"].update({"primary_domain": "test", "topic_tags": ["test"]})
     catalog["research_card"].update({
-        "one_sentence_summary_zh": "一句话摘要",
-        "method_zh": "测试方法",
-        "main_conclusion_zh": "测试结论",
-        "usefulness_for_project_zh": "测试用途",
+        "research_problem": "一句话摘要",
+        "method_summary": "测试方法",
+        "usefulness_for_user": "测试用途",
     })
     catalog["screening"].update({
-        "relevance_score": 5, "reading_priority": 4, "read_decision": "must_read",
-        "need_fulltext": True, "best_for_sections": ["method"], "reason_zh": "测试",
+        "relevance_score": 5, "read_decision": "must_read", "reason": "测试",
     })
+    catalog["content_notes"]["short_summary"] = "一句话摘要"
+    catalog["content_notes"]["possible_use_in_writing"] = ["method"]
     (folder / f"{pid}.metadata.json").write_text(json.dumps(metadata, ensure_ascii=False), encoding="utf-8")
     (folder / f"{pid}.catalog.json").write_text(json.dumps(catalog, ensure_ascii=False), encoding="utf-8")
     (folder / f"{pid}.md").write_text(f"# {pid}\nbody content", encoding="utf-8")
@@ -192,11 +188,15 @@ class TestCompactCatalog:
         AllCatalogBuilder(tmp_path / "papers", tmp_path / "c" / "all.json",
                           PaperNumberLedger(tmp_path / "c" / "l.json")).build(write=True)
         data = json.loads((tmp_path / "c" / "all.json").read_text(encoding="utf-8"))
-        txt = build_compact_catalog_text(data["papers"])
-        # Each of these must appear in the compact text
-        for kw in ("0000000000000001", "2024", "Wang et al.", "Test Journal", "10.1/x",
-                   "must_read", "method:", "conclusion:", "usefulness:", "best_for_sections:"):
+        from src.services.paper_library import PaperLibrary
+        lib = PaperLibrary(all_catalog_path=tmp_path / "c" / "all.json", papers_dir=tmp_path / "papers")
+        txt = build_compact_catalog_text(data["papers"], library=lib)
+        # paper_number + bibliographic bits (from metadata via library) + content (from catalog)
+        for kw in ("0000000000000001", "2024", "Wang", "Test Journal", "10.1/x",
+                   "must_read", "method:", "usefulness:"):
             assert kw in txt, f"compact catalog missing: {kw}"
+        # catalog must NOT leak its own bibliographic fields into the compact text
+        # (they come from metadata; the catalog content is content-only)
 
 
 class TestLlmWorkCopy:

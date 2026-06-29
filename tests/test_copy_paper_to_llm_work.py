@@ -24,7 +24,8 @@ def _commit_one(tmp_path: Path) -> tuple[Path, Path, str]:
     metadata["metadata_match"] = {"status": "matched", "source": "test", "confidence": 1.0,
                                   "matched_at": "2026-01-01", "warnings": [], "candidates": []}
     catalog = empty_catalog()
-    catalog["display"].update({"short_name_zh": "测试论文", "year": 2024, "first_author": "Wang"})
+    catalog["content_identity"]["content_title"] = "Test Paper"
+    catalog["classification"]["primary_domain"] = "test"
     (raw / f"{pid}.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
     (raw / f"{pid}.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
     (raw / f"{pid}.md").write_text("# Test", encoding="utf-8")

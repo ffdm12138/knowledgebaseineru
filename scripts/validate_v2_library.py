@@ -92,7 +92,7 @@ def validate_v2_library(
     for i, entry in enumerate(data.get("papers", [])):
         ctx = f"papers[{i}]"
         number = entry.get("paper_number") or ""
-        pid = entry.get("paper_id") or entry.get("folder_name") or ""
+        pid = entry.get("paper_id") or ""
         if not number:
             errors.append(f"{ctx} missing paper_number")
         elif number in seen_numbers:
@@ -103,20 +103,43 @@ def validate_v2_library(
         elif pid in seen_ids:
             errors.append(f"{ctx} duplicate paper_id: {pid}")
         seen_ids.add(pid)
-        metadata = entry.get("metadata") or {}
-        catalog = entry.get("catalog") or {}
-        errors.extend([f"{ctx} {err}" for err in validate_metadata_schema(metadata)])
-        errors.extend(_formal_metadata_errors(ctx, metadata))
-        warnings.extend([f"{ctx} {warning}" for warning in metadata_reference_warnings_for_commit(metadata)])
-        errors.extend([f"{ctx} {err}" for err in validate_catalog_schema(catalog)])
+        # all.catalog entries are content-only; ensure no forbidden bibliographic
+        # keys leaked in (full catalog-schema validation happens on the on-disk
+        # <pid>.catalog.json above; all.catalog entries omit schema_version/provenance).
+        from src.services.v2_library import find_forbidden_catalog_keys
+        for k in find_forbidden_catalog_keys(entry):
+            errors.append(f"{ctx} all.catalog contains forbidden bibliographic key: {k}")
+        # all.catalog must NOT embed bibliographic metadata
+        if "metadata" in entry:
+            errors.append(f"{ctx} all.catalog entry must not embed metadata (read metadata.json by paper_number)")
         if check_paths:
-            for field in ("folder_path", "main_md", "pdf", "images_dir", "catalog_file", "metadata_file"):
-                value = entry.get(field) or ""
+            asset_refs = entry.get("asset_refs") or {}
+            for field in ("markdown", "pdf", "images_dir"):
+                value = asset_refs.get(field) or ""
                 if not value:
-                    errors.append(f"{ctx} missing {field}")
+                    errors.append(f"{ctx} missing asset_refs.{field}")
                     continue
                 if not resolve_stored_path(value).exists():
-                    errors.append(f"{ctx} {field} does not exist: {value}")
+                    errors.append(f"{ctx} asset_refs.{field} does not exist: {value}")
+
+    # paper_index.json: path mapping only, no bibliographic fields
+    index_path = all_catalog_path.parent / "paper_index.json"
+    if index_path.exists():
+        index_data = json.loads(index_path.read_text(encoding="utf-8"))
+        from src.services.v2_library import find_forbidden_catalog_keys
+        for i, item in enumerate(index_data.get("papers", [])):
+            ctx = f"paper_index[{i}]"
+            forbidden = find_forbidden_catalog_keys(item)
+            for k in forbidden:
+                errors.append(f"{ctx} forbidden bibliographic key in paper_index: {k}")
+            if check_paths:
+                for field in ("metadata_path", "catalog_path", "markdown_path", "pdf_path", "images_dir"):
+                    value = item.get(field) or ""
+                    if not value:
+                        errors.append(f"{ctx} missing {field}")
+                        continue
+                    if not resolve_stored_path(value).exists():
+                        errors.append(f"{ctx} {field} does not exist: {value}")
     return errors, warnings
 
 

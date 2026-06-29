@@ -13,6 +13,7 @@ def _matched_raw(folder: Path, source_id: str = "000001") -> Path:
     folder.mkdir(parents=True, exist_ok=True)
     metadata = empty_metadata(source_id)
     metadata["title"]["original"] = "Trusted Original"
+    metadata["title"]["short_zh"] = "可信论文"
     metadata["year"] = 2024
     metadata["authors"] = [{"full_name": "Wang A", "family": "Wang", "given": "A", "orcid": "", "affiliation": ""}]
     metadata["container"]["journal"] = "Test Journal"
@@ -65,13 +66,8 @@ def test_apply_merges_only_empty_and_renames(tmp_path, monkeypatch):
     raw = tmp_path / "paper_raw"
     folder = _matched_raw(raw / "000001")
     catalog = empty_catalog()
-    catalog["display"].update({
-        "title_original": "Trusted Original",
-        "title_zh": "可信论文",
-        "short_name_zh": "可信论文",
-        "year": 2024,
-        "first_author": "Wang",
-    })
+    catalog["content_identity"]["content_title"] = "Trusted Original"
+    catalog["classification"]["primary_domain"] = "blowing_snow"
     catalog_path = folder / "000001.catalog.json"
     catalog_path.write_text(json.dumps(catalog), encoding="utf-8")
     patch = empty_metadata("000001")
@@ -130,8 +126,12 @@ def test_all_ready_apply_only_processes_curated(tmp_path, monkeypatch):
     raw = tmp_path / "paper_raw"
     # folder A has a curated catalog output
     folder_a = _matched_raw(raw / "000001")
+    meta_a = json.loads((folder_a / "000001.metadata.json").read_text(encoding="utf-8"))
+    meta_a["title"]["short_zh"] = "甲论文"
+    (folder_a / "000001.metadata.json").write_text(json.dumps(meta_a), encoding="utf-8")
     catalog = empty_catalog()
-    catalog["display"].update({"short_name_zh": "甲论文", "year": 2024, "first_author": "Wang"})
+    catalog["content_identity"]["content_title"] = "甲论文"
+    catalog["classification"]["primary_domain"] = "blowing_snow"
     (folder_a / "000001.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
     # folder B is ready (metadata+md+images) but has NO curated catalog output
     _matched_raw(raw / "000002")
@@ -148,8 +148,12 @@ def test_all_ready_apply_auto_loads_metadata_patch(tmp_path, monkeypatch):
     """--all-ready --apply must auto-detect <id>.metadata.patch.json alongside catalog."""
     raw = tmp_path / "paper_raw"
     folder = _matched_raw(raw / "000001")
+    meta_m = json.loads((folder / "000001.metadata.json").read_text(encoding="utf-8"))
+    meta_m["title"]["short_zh"] = "甲论文"
+    (folder / "000001.metadata.json").write_text(json.dumps(meta_m), encoding="utf-8")
     catalog = empty_catalog()
-    catalog["display"].update({"short_name_zh": "甲论文", "year": 2024, "first_author": "Wang"})
+    catalog["content_identity"]["content_title"] = "甲论文"
+    catalog["classification"]["primary_domain"] = "blowing_snow"
     (folder / "000001.catalog.json").write_text(json.dumps(catalog), encoding="utf-8")
     # Write a metadata patch that fills abstract (an empty field)
     patch = empty_metadata("000001")

@@ -1,11 +1,17 @@
-"""Read-only v2 catalog access backed by data/catalog/all.catalog.json."""
+"""Read-only v2 catalog access backed by data/catalog/all.catalog.json.
+
+After catalog/metadata separation, all.catalog entries are content-only (no
+metadata). Bibliographic facts for the compact view are loaded from
+data/papers/<pid>/...metadata.json via PaperLibrary.
+"""
 from __future__ import annotations
 
 import json
 from pathlib import Path
 from typing import Any
 
-from config.settings import ALL_CATALOG_PATH
+from config.settings import ALL_CATALOG_PATH, PAPERS_DIR
+from src.services.paper_library import PaperLibrary
 from src.services.v2_library import AllCatalogBuilder
 
 
@@ -19,48 +25,79 @@ def _fmt_score(value: Any) -> str:
     return str(value) if value not in (None, "") else "-"
 
 
-def build_compact_catalog_text(papers: list[dict]) -> str:
+def _authors_short(metadata: dict) -> str:
+    authors = metadata.get("authors") or []
+    if not authors:
+        return ""
+    first = authors[0]
+    fam = ""
+    if isinstance(first, dict):
+        fam = first.get("family") or first.get("full_name") or ""
+    else:
+        fam = str(first)
+    fam = str(fam).split(",")[0].strip()
+    if not fam:
+        return ""
+    return f"{fam} et al." if len(authors) > 1 else fam
+
+
+def build_compact_catalog_text(papers: list[dict], library: PaperLibrary | None = None) -> str:
+    """Compact inventory text.
+
+    `papers` are all.catalog entries (content only). Bibliographic bits
+    (year/authors/venue/doi/canonical title) are loaded from metadata via
+    `library` (PaperLibrary). If `library` is None, bibliographic bits are
+    omitted (content-only view).
+    """
     lines = ["# 文献目录（紧凑视图）", ""]
     for entry in papers:
         pid = entry.get("paper_id", "")
         number = entry.get("paper_number", "")
-        catalog = entry.get("catalog") or {}
-        metadata = entry.get("metadata") or {}
-        display = catalog.get("display") or {}
-        card = catalog.get("research_card") or {}
+        catalog = entry  # all.catalog entry IS the content (flat, not nested under "catalog")
+        # accept either flat (v2 all.catalog) or nested (legacy) shape
+        if "catalog" in entry and isinstance(entry["catalog"], dict):
+            catalog = entry["catalog"]
+        content_identity = catalog.get("content_identity") or {}
         classification = catalog.get("classification") or {}
         screening = catalog.get("screening") or {}
-        title = display.get("title_zh") or display.get("title_original") or (metadata.get("title") or {}).get("original", "")
-        year = display.get("year")
-        if year is None or year == "":
-            year = metadata.get("year") or ""
-        venue = display.get("venue") or ""
-        doi = display.get("doi") or ""
+        card = catalog.get("research_card") or {}
+        notes = catalog.get("content_notes") or {}
+        title = content_identity.get("content_title") or ""
+        metadata = library.load_metadata(number) if library else None
+        meta_bits = []
+        if metadata:
+            year = metadata.get("year")
+            if year:
+                meta_bits.append(str(year))
+            ashort = _authors_short(metadata)
+            if ashort:
+                meta_bits.append(ashort)
+            venue = ((metadata.get("container") or {}).get("journal")
+                     or (metadata.get("container") or {}).get("conference")
+                     or "")
+            if venue:
+                meta_bits.append(venue)
+            doi = ((metadata.get("identifiers") or {}).get("doi") or "")
+            if doi:
+                meta_bits.append(doi)
+            if not title:
+                title = (metadata.get("title") or {}).get("original") or ""
         domain_bits = []
         if classification.get("primary_domain"):
             domain_bits.append(str(classification["primary_domain"]))
-        topics = classification.get("topics") or []
+        topics = classification.get("topic_tags") or classification.get("topics") or []
         if topics:
             domain_bits.append(",".join(topics))
         domain = " / ".join(domain_bits)
         read_decision = screening.get("read_decision") or ""
         relevance = _fmt_score(screening.get("relevance_score"))
-        priority = _fmt_score(screening.get("reading_priority"))
-        one_sentence = card.get("one_sentence_summary_zh") or "(未总结)"
-        method = card.get("method_zh") or ""
-        conclusion = card.get("main_conclusion_zh") or ""
-        usefulness = card.get("usefulness_for_project_zh") or ""
-        best_for = ",".join(screening.get("best_for_sections") or [])
+        priority = _fmt_score(screening.get("reading_priority") or screening.get("method_quality_score"))
+        one_sentence = notes.get("short_summary") or card.get("research_problem") or "(未总结)"
+        method = card.get("method_summary") or ""
+        conclusion = " ".join(card.get("main_findings") or [])[:80]
+        usefulness = card.get("usefulness_for_user") or ""
+        best_for = ",".join(notes.get("possible_use_in_writing") or [])
         lines.append(f"- [{priority}] {number} {pid} {title}")
-        meta_bits = []
-        if year not in ("", None):
-            meta_bits.append(str(year))
-        if display.get("authors_short"):
-            meta_bits.append(display["authors_short"])
-        if venue:
-            meta_bits.append(venue)
-        if doi:
-            meta_bits.append(doi)
         if meta_bits:
             lines.append(f"  meta: {' | '.join(meta_bits)}")
         if domain:
@@ -86,12 +123,13 @@ def build_compact_catalog_text(papers: list[dict]) -> str:
 class Catalog:
     """Small compatibility wrapper over the v2 all-catalog file."""
 
-    def __init__(self, path: Path = ALL_CATALOG_PATH):
+    def __init__(self, path: Path = ALL_CATALOG_PATH, papers_dir: Path = PAPERS_DIR):
         self.path = Path(path)
+        self.library = PaperLibrary(all_catalog_path=self.path, papers_dir=papers_dir)
 
     @staticmethod
     def _empty_data() -> dict:
-        return {"schema_version": "1.0", "papers": []}
+        return {"schema_version": "2.0", "papers": []}
 
     def load(self) -> dict:
         if not self.path.exists():
@@ -116,7 +154,7 @@ class Catalog:
         seen_ids: set[str] = set()
         for i, item in enumerate(data["papers"]):
             ctx = f"papers[{i}]"
-            for key in ("paper_number", "paper_id", "folder_path", "main_md", "pdf", "images_dir", "metadata_file", "catalog_file", "metadata", "catalog"):
+            for key in ("paper_number", "paper_id"):
                 if key not in item:
                     errors.append(f"{ctx} missing {key}")
             number = item.get("paper_number")
@@ -133,18 +171,18 @@ class Catalog:
         papers = self.list_papers()
         if topics:
             wanted = set(topics)
-            papers = [
-                p for p in papers
-                if wanted & set(((p.get("catalog") or {}).get("classification") or {}).get("topics") or [])
-            ]
-        return build_compact_catalog_text(papers)
+            def _topics_of(p):
+                cls = (p.get("classification") or {})
+                return set(cls.get("topic_tags") or cls.get("topics") or [])
+            papers = [p for p in papers if wanted & _topics_of(p)]
+        return build_compact_catalog_text(papers, library=self.library)
 
     def compact_items(self, topics: list[str] | None = None) -> list[dict[str, Any]]:
         papers = self.list_papers()
         if topics:
             wanted = set(topics)
-            papers = [
-                p for p in papers
-                if wanted & set(((p.get("catalog") or {}).get("classification") or {}).get("topics") or [])
-            ]
+            def _topics_of(p):
+                cls = (p.get("classification") or {})
+                return set(cls.get("topic_tags") or cls.get("topics") or [])
+            papers = [p for p in papers if wanted & _topics_of(p)]
         return papers

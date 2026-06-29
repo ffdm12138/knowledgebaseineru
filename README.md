@@ -32,9 +32,9 @@ data/papers/<paper_id>/<16位编号>.paper.number
 
 ## 事实源与主键
 
-- **metadata**（`<paper_id>.metadata.json`）：BibTeX/书目信息事实源。
-- **catalog**（`<paper_id>.catalog.json`，schema v1.1）：大模型快速筛选精读文献的事实源。必须包含标题、作者简表、研究内容、研究对象、主要方法、数据/实验、关键变量、主要结果、主要结论、局限、项目用途、是否建议精读（`screening`）。
-- **paper_number**（16 位）：API 与写作流程主键。大模型先看 `all.catalog.json` 选号，再用 `copy_paper_to_llm_work.py` 复制全文到 `data/llm_work/` 精读写作。
+- **metadata**（`<paper_id>.metadata.json`）：BibTeX/书目信息事实源（DOI、作者、年份、期刊、卷期页、链接、metadata_match）。
+- **catalog**（`<paper_id>.catalog.json`，schema v2.0，**content-only**）：大模型快速筛选精读文献的内容索引。只含正文内容理解（content_identity、classification、screening、research_card、evidence_profile、content_notes、provenance），**不含** DOI/作者/年份/期刊/卷期页等书目字段（这些只在 metadata）。catalog 与 metadata 仅通过 `paper_number`/`paper_id` 关联。
+- **paper_number**（16 位）：API 与写作流程主键。大模型先看 `all.catalog.json`（content-only）选号，再按 `paper_number` 读 metadata 取书目信息、用 `copy_paper_to_llm_work.py` 复制全文到 `data/llm_work/` 精读写作。`all.catalog` 是内容索引不是书目库；references/BibTeX 只从 metadata 生成。
 
 ## Metadata 完整性门槛
 
@@ -90,7 +90,7 @@ python scripts/attach_pdf_to_paper_raw.py --source-id 000001 --pdf "E:\papers\pa
 
 ## Curation
 
-`curate_paper_raw.py` 不调用大模型：`--dry-run` 在每个 `data/paper_raw/<source_id>/` 写出 `curation_prompt.md`（含 skill `paper_raw_catalog_curator`、catalog v1.1 schema、metadata patch 规则、命名规则）；`--apply` 应用大模型产出的 catalog 与 metadata patch，只补 metadata 空字段、按 `年份_第一作者_中文标题` 规范重命名。`metadata_match.status` 必须为 `matched` 或 `manual_confirmed`，否则 curation 和 commit 都会拒绝。详见项目级 skill `skills/paper_raw_catalog_curator/`。
+`curate_paper_raw.py` 不调用大模型：`--dry-run` 在每个 `data/paper_raw/<source_id>/` 写出 `curation_prompt.md`（含 skill `paper_raw_catalog_curator`、catalog v2.0 content-only schema、命名规则）；`--apply` 应用大模型产出的 catalog（content-only，不含书目字段），按 `年份_第一作者_中文标题` 规范重命名（paper_id 仅从 metadata 生成）。metadata 空字段由 `resolve_paper_raw_metadata.py` / enrichment 补齐，不在 curate 阶段处理。`metadata_match.status` 必须为 `matched` 或 `manual_confirmed`，否则 curation 和 commit 都会拒绝。详见项目级 skill `skills/paper_raw_catalog_curator/`。
 
 `metadata.identifiers.doi` 也必须非空；没有 DOI 的手动 PDF 需要先完成可靠 metadata match 或人工补 DOI，不能生成正式 curation prompt，也不能入库。
 
