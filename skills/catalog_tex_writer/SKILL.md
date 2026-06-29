@@ -20,6 +20,7 @@ job-local `article/` directory.
 
 Do not read `data/papers` directly. The job-local `article/` copy is the only
 paper source for this writing pass.
+Do not read `data/paper_raw`, `data/raw`, or `data/llm_work` directly.
 
 ## Writing Rules
 
@@ -27,7 +28,10 @@ paper source for this writing pass.
 - Generate `references.bib` only from metadata, preferably through
   `bibtex_from_metadata()` or `src.bib.bibtex_for_entry()`.
 - Every `\cite{}` key in TeX must exist in `references.bib`.
-- Do not guess DOI, authors, venue, volume, pages, or article number.
+- Every `references.bib` entry must have a DOI. If evidence is insufficient,
+  write a TODO or report the shortage instead of inventing facts.
+- Do not guess DOI, authors, year, venue, journal, volume, issue, pages, or
+  article number.
 - Images may only be referenced from copied `article/<paper_number>/images/`
   or files copied into the job TeX project.
 - Keep the mini article compact: Abstract, Introduction, Literature Basis, Key

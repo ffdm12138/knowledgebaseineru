@@ -22,6 +22,7 @@ from src.utils.atomic_io import atomic_write_json
 WRITE_DIR = PROJECT_ROOT / "write" / "jobs"
 _CITE_RE = re.compile(r"\\cite\w*\s*\{([^}]+)\}")
 _GRAPHICS_RE = re.compile(r"\\includegraphics(?:\[[^\]]*\])?\s*\{([^}]+)\}")
+_RESTRICTED_PATH_TOKENS = ("data/papers", "data/paper_raw", "data/raw", "data/llm_work")
 
 
 def _read_text(path: Path) -> str:
@@ -49,6 +50,14 @@ def _graphics_exists(tex_dir: Path, ref: str) -> bool:
     return False
 
 
+def _restricted_token(text: str) -> str | None:
+    norm = text.replace("\\", "/")
+    for token in _RESTRICTED_PATH_TOKENS:
+        if token in norm:
+            return token
+    return None
+
+
 def _run_compile(tex_dir: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -63,7 +72,15 @@ def _run_compile(tex_dir: Path) -> tuple[list[str], list[str]]:
     else:
         warnings.append("LaTeX compiler not found; skipped compile")
         return errors, warnings
-    result = subprocess.run(cmd, cwd=tex_dir, text=True, capture_output=True, check=False)
+    result = subprocess.run(
+        cmd,
+        cwd=tex_dir,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        capture_output=True,
+        check=False,
+    )
     (output_dir / "compile.log").write_text((result.stdout or "") + "\n" + (result.stderr or ""), encoding="utf-8")
     if result.returncode != 0:
         errors.append(f"LaTeX compile failed with exit code {result.returncode}")
@@ -105,8 +122,9 @@ def check_tex_project(args: argparse.Namespace) -> dict:
         for path in sorted(tex_dir.rglob("*.tex")):
             text = _read_text(path)
             tex_texts.append((path, text))
-            if "data/papers" in text.replace("\\", "/"):
-                errors.append(f"{normalize_repo_path(path)} contains direct data/papers path")
+            token = _restricted_token(text)
+            if token:
+                errors.append(f"{normalize_repo_path(path)} contains direct {token} path")
     bib_text = _read_text(bib_path) if bib_path.exists() else ""
     blocks = parse_blocks(bib_text)
     if len(blocks) < 3:
@@ -123,10 +141,10 @@ def check_tex_project(args: argparse.Namespace) -> dict:
 
     for path, text in tex_texts:
         for ref in _GRAPHICS_RE.findall(text):
-            norm = ref.replace("\\", "/")
-            if "data/papers" in norm:
-                errors.append(f"{normalize_repo_path(path)} includes direct data/papers image path")
-            elif not _graphics_exists(tex_dir, norm):
+            token = _restricted_token(ref)
+            if token:
+                errors.append(f"{normalize_repo_path(path)} includes direct {token} image path")
+            elif not _graphics_exists(tex_dir, ref):
                 errors.append(f"{normalize_repo_path(path)} image not found: {ref}")
 
     if args.compile and not errors:
@@ -158,6 +176,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = build_parser()
     args = parser.parse_args()
     report = check_tex_project(args)

@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config.settings import ALL_CATALOG_PATH, PAPERS_DIR, PROJECT_ROOT
 from src.naming import safe_child, validate_job_id
-from src.path_utils import normalize_repo_path, resolve_stored_path
+from src.path_utils import normalize_repo_path
 from src.utils.atomic_io import atomic_write_json
 
 
@@ -79,19 +79,39 @@ def _matches_filter(entry: dict, args: argparse.Namespace) -> bool:
     return True
 
 
+def _is_forbidden_source(path: Path) -> bool:
+    rel = path.resolve().as_posix().lower()
+    forbidden = ("/data/raw", "/data/paper_raw", "/data/llm_work")
+    return any(rel.endswith(item) or f"{item}/" in rel for item in forbidden)
+
+
 def _source_dir_for_entry(entry: dict, papers_dir: Path) -> Path:
     paper_id = str(entry.get("paper_id") or "").strip()
-    folder_path = str(entry.get("folder_path") or "").strip()
-    candidates: list[Path] = []
-    if folder_path:
-        raw = Path(folder_path)
-        candidates.append(raw if raw.is_absolute() else resolve_stored_path(folder_path))
-    if paper_id:
-        candidates.append(papers_dir / paper_id)
-    for candidate in candidates:
-        if candidate.exists():
-            return candidate.resolve()
+    if not paper_id:
+        raise ValueError(f"{entry.get('paper_number')} missing paper_id")
+    source = safe_child(papers_dir, paper_id)
+    if _is_forbidden_source(source):
+        raise ValueError(f"write article source must be formal papers dir, got: {source}")
+    if source.exists():
+        return source.resolve()
     raise FileNotFoundError(f"formal paper folder not found for {paper_id or entry.get('paper_number')}")
+
+
+def _compact_selected_entry(entry: dict, source: Path, target: Path) -> dict:
+    catalog = entry.get("catalog") or {}
+    return {
+        "paper_number": str(entry.get("paper_number") or ""),
+        "paper_id": str(entry.get("paper_id") or ""),
+        "source_dir": normalize_repo_path(source),
+        "catalog_folder_path": str(entry.get("folder_path") or ""),
+        "article_dir": normalize_repo_path(target),
+        "display": catalog.get("display") or {},
+        "classification": catalog.get("classification") or {},
+        "screening": catalog.get("screening") or {},
+        "research_card": catalog.get("research_card") or {},
+        "evidence_profile": catalog.get("evidence_profile") or {},
+        "llm_search_text": catalog.get("llm_search_text") or {},
+    }
 
 
 def _check_formal_folder(source: Path, paper_id: str) -> None:
@@ -139,7 +159,7 @@ def prepare_workdir(args: argparse.Namespace) -> dict:
     article_dir = safe_child(job_dir, "article")
     reports_dir = safe_child(job_dir, "reports")
 
-    catalog_data = _read_json(all_catalog_path, {"papers": []})
+    catalog_data = _read_json(all_catalog_path)
     selected = _select_entries(catalog_data, args)
     if not selected:
         raise ValueError("no papers selected")
@@ -155,22 +175,18 @@ def prepare_workdir(args: argparse.Namespace) -> dict:
         source = _source_dir_for_entry(entry, papers_dir)
         _check_formal_folder(source, paper_id)
         target = article_dir / paper_number
-        planned.append({
-            "paper_number": paper_number,
-            "paper_id": paper_id,
-            "_source_abs": str(source),
-            "source_dir": normalize_repo_path(source),
-            "article_dir": normalize_repo_path(target),
-            "catalog": entry.get("catalog") or {},
-            "metadata": entry.get("metadata") or {},
-        })
+        item = _compact_selected_entry(entry, source, target)
+        item.update({"_source_abs": str(source), "status": "planned"})
+        planned.append(item)
+
+    public_planned = [{k: v for k, v in item.items() if not k.startswith("_")} for item in planned]
 
     report = {
         "job_id": job_id,
         "write_dir": normalize_repo_path(job_dir),
         "dry_run": not args.apply,
         "selected_count": len(planned),
-        "papers": planned,
+        "papers": public_planned,
         "created_at": datetime.now().isoformat(timespec="seconds"),
     }
 
@@ -187,6 +203,7 @@ def prepare_workdir(args: argparse.Namespace) -> dict:
         if target.exists():
             shutil.rmtree(target)
         shutil.copytree(source, target)
+        item["status"] = "copied"
 
     public_planned = [{k: v for k, v in item.items() if not k.startswith("_")} for item in planned]
     report["papers"] = public_planned
@@ -231,6 +248,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = build_parser()
     args = parser.parse_args()
     if args.dry_run:

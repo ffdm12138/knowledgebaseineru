@@ -123,6 +123,9 @@ def test_prepare_by_paper_numbers_copies_and_writes_report(tmp_path):
     job_dir = write_dir / "job_article"
     assert (job_dir / "selected_catalog.json").exists()
     assert (job_dir / "reports" / "prepare_article_report.json").exists()
+    selected = json.loads((job_dir / "selected_catalog.json").read_text(encoding="utf-8"))
+    assert "metadata" not in selected["papers"][0]
+    assert "catalog" not in selected["papers"][0]
     for entry in entries:
         copied = job_dir / "article" / entry["paper_number"] / f"{entry['paper_id']}.metadata.json"
         assert copied.exists()
@@ -159,6 +162,36 @@ def test_prepare_missing_paper_number_does_not_create_job(tmp_path):
     assert not (write_dir / "job_article").exists()
 
 
+def test_prepare_rejects_existing_job_without_overwrite(tmp_path):
+    catalog_path, papers_dir, write_dir, entries = _make_library(tmp_path)
+    args = _prepare_args(catalog_path, papers_dir, write_dir, paper_numbers=[e["paper_number"] for e in entries])
+    prepare_workdir(args)
+
+    with pytest.raises(FileExistsError):
+        prepare_workdir(args)
+
+
+@pytest.mark.parametrize("forbidden", ["raw", "paper_raw", "llm_work"])
+def test_prepare_rejects_forbidden_source_dirs(tmp_path, forbidden):
+    catalog_path, _, write_dir, entries = _make_library(tmp_path)
+    forbidden_dir = tmp_path / "data" / forbidden
+    for entry in entries:
+        source = tmp_path / "data" / "papers" / entry["paper_id"]
+        target = forbidden_dir / entry["paper_id"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        source.rename(target)
+
+    args = _prepare_args(
+        catalog_path,
+        forbidden_dir,
+        write_dir,
+        paper_numbers=[entries[0]["paper_number"]],
+    )
+
+    with pytest.raises(ValueError, match="formal papers dir"):
+        prepare_workdir(args)
+
+
 def test_tex_article_generation_and_check_success(tmp_path):
     catalog_path, papers_dir, write_dir, entries = _make_library(tmp_path)
     prepare_workdir(_prepare_args(catalog_path, papers_dir, write_dir, paper_numbers=[e["paper_number"] for e in entries]))
@@ -179,6 +212,26 @@ def test_tex_article_generation_and_check_success(tmp_path):
     assert (write_dir / "job_article" / "tex" / "references.bib").exists()
     assert check_report["valid"] is True
     assert check_report["bib_count"] == 3
+
+
+def test_write_catalog_tex_article_requires_three_doi_papers(tmp_path):
+    catalog_path, papers_dir, write_dir, entries = _make_library(tmp_path)
+    prepare_workdir(_prepare_args(catalog_path, papers_dir, write_dir, paper_numbers=[e["paper_number"] for e in entries]))
+    first = write_dir / "job_article" / "article" / entries[0]["paper_number"] / f"{entries[0]['paper_id']}.metadata.json"
+    metadata = json.loads(first.read_text(encoding="utf-8"))
+    metadata["identifiers"]["doi"] = ""
+    first.write_text(json.dumps(metadata, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="metadata.identifiers.doi"):
+        write_article(argparse.Namespace(
+            job_id="job_article",
+            title="Workflow Mini Article",
+            language="zh",
+            apply=True,
+            dry_run=False,
+            overwrite=False,
+            write_dir=write_dir,
+        ))
 
 
 def test_check_catches_missing_bib_key_data_papers_path_and_missing_doi(tmp_path):
@@ -209,3 +262,25 @@ def test_check_catches_missing_bib_key_data_papers_path_and_missing_doi(tmp_path
     assert any("missingkey" in error for error in report["errors"])
     assert any("data/papers" in error for error in report["errors"])
     assert any("missing nonempty doi" in error for error in report["errors"])
+
+
+@pytest.mark.parametrize("restricted", ["data/paper_raw/bad", "data/raw/bad", "data/llm_work/bad"])
+def test_check_rejects_restricted_tex_paths(tmp_path, restricted):
+    catalog_path, papers_dir, write_dir, entries = _make_library(tmp_path)
+    prepare_workdir(_prepare_args(catalog_path, papers_dir, write_dir, paper_numbers=[e["paper_number"] for e in entries]))
+    write_article(argparse.Namespace(
+        job_id="job_article",
+        title="Workflow Mini Article",
+        language="zh",
+        apply=True,
+        dry_run=False,
+        overwrite=False,
+        write_dir=write_dir,
+    ))
+    main_path = write_dir / "job_article" / "tex" / "main.tex"
+    main_path.write_text(main_path.read_text(encoding="utf-8") + f"\n% {restricted}\n", encoding="utf-8")
+
+    report = check_tex_project(argparse.Namespace(job_id="job_article", compile=False, write_dir=write_dir))
+
+    assert report["valid"] is False
+    assert any(restricted.split("/")[1] in error for error in report["errors"])

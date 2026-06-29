@@ -80,6 +80,10 @@ def _load_article_entries(job_dir: Path, selected: dict) -> list[dict]:
     return out
 
 
+def _metadata_doi(entry: dict) -> str:
+    return str(((entry.get("metadata") or {}).get("identifiers") or {}).get("doi") or "").strip()
+
+
 def _paper_label(entry: dict) -> str:
     catalog = entry.get("catalog") or {}
     metadata = entry.get("metadata") or {}
@@ -155,6 +159,9 @@ def write_article(args: argparse.Namespace) -> dict:
     entries = _load_article_entries(job_dir, selected)
     if len(entries) < 3:
         raise ValueError("at least 3 selected papers are required to write the mini article")
+    missing_doi = [entry["paper_number"] for entry in entries if not _metadata_doi(entry)]
+    if missing_doi:
+        raise ValueError(f"all selected papers must have metadata.identifiers.doi: {', '.join(missing_doi)}")
 
     tex_dir = job_dir / "tex"
     sections_dir = tex_dir / "sections"
@@ -236,6 +243,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = build_parser()
     args = parser.parse_args()
     if args.dry_run:

@@ -6,10 +6,10 @@ __pycache__/
 
 # ===== 数据语料（受版权保护，不入库）=====
 # PDF 原文与派生 md/图：体积大且含版权，不推送到远程
-data/raw/*
-data/paper_raw/*
-data/papers/*
-data/llm_work/*
+data/raw/**
+data/paper_raw/**
+data/papers/**
+data/llm_work/**
 data/tmp/**
 data/logs/**
 data/jobs/**
@@ -25,6 +25,7 @@ _test_batch/
 !data/raw/.gitkeep
 !data/paper_raw/.gitkeep
 !data/papers/.gitkeep
+!data/catalog/.gitkeep
 !data/llm_work/.gitkeep
 !data/tmp/.gitkeep
 !data/logs/.gitkeep

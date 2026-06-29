@@ -1,7 +1,409 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-06-29T17:48:57",
+  "updated_at": "2026-06-29T19:36:11",
   "papers": [
+    {
+      "paper_number": "0000000000000012",
+      "paper_id": "2001_Massom_南极海冰积雪物理特性综述",
+      "folder_name": "2001_Massom_南极海冰积雪物理特性综述",
+      "folder_path": "data/papers/2001_Massom_南极海冰积雪物理特性综述",
+      "main_md": "data/papers/2001_Massom_南极海冰积雪物理特性综述/2001_Massom_南极海冰积雪物理特性综述.md",
+      "pdf": "data/papers/2001_Massom_南极海冰积雪物理特性综述/2001_Massom_南极海冰积雪物理特性综述.pdf",
+      "images_dir": "data/papers/2001_Massom_南极海冰积雪物理特性综述/images",
+      "catalog_file": "data/papers/2001_Massom_南极海冰积雪物理特性综述/2001_Massom_南极海冰积雪物理特性综述.catalog.json",
+      "metadata_file": "data/papers/2001_Massom_南极海冰积雪物理特性综述/2001_Massom_南极海冰积雪物理特性综述.metadata.json",
+      "catalog": {
+        "schema_version": "1.1",
+        "display": {
+          "title_original": "Snow on Antarctic sea ice",
+          "title_zh": "南极海冰上的积雪",
+          "short_name_zh": "南极海冰积雪物理特性综述",
+          "year": 2001,
+          "first_author": "Massom",
+          "authors_short": "Massom et al.",
+          "venue": "Rev. Geophys.",
+          "doi": "10.1029/2000rg000085"
+        },
+        "classification": {
+          "primary_domain": "极地海冰与积雪气候学",
+          "domains": [
+            "极地科学",
+            "海冰物理学",
+            "积雪学",
+            "气候学"
+          ],
+          "topics": [
+            "南极海冰积雪",
+            "积雪物理特性",
+            "风吹雪再分布",
+            "雪冰形成",
+            "积雪热传导",
+            "反照率",
+            "海冰-大气相互作用"
+          ],
+          "keywords_en": [
+            "Antarctic sea ice",
+            "snow",
+            "snow thickness",
+            "snow properties",
+            "thermal conductivity",
+            "albedo",
+            "snow-ice formation",
+            "flooding",
+            "aeolian redistribution",
+            "metamorphism"
+          ],
+          "keywords_zh": [
+            "南极海冰",
+            "积雪",
+            "积雪厚度",
+            "积雪特性",
+            "热传导率",
+            "反照率",
+            "雪冰形成",
+            "海水浸淹",
+            "风成再分布",
+            "变质作用"
+          ]
+        },
+        "research_card": {
+          "one_sentence_summary_zh": "本文综述南极海冰积雪的物理特性（厚度、类型、密度、粒径、盐度、热导率、反照率）及其在海冰-大气-海洋相互作用中的关键作用，指出南极积雪热导率实测值低于模型常用值，且雪冰形成是南极海冰独有的重要过程。",
+          "research_question_zh": "南极海冰积雪的物理性质（厚度、类型、密度、粒径、盐度、热导率、反照率）有何区域和季节差异？积雪在海冰-大气-海洋相互作用系统中扮演什么角色？全球变暖条件下积雪作用将如何变化？",
+          "research_background_zh": "南极海冰最大覆盖面积约1900万km²，积雪显著改变海冰热力学（低热导率）、表面反照率、粗糙度及微波特性，进而影响全球气候系统。然而过去5-10年才有详细野外观测，积雪对海冰生长/消融、雪冰形成、海冰质量收支的作用尚需系统总结。",
+          "object_zh": "南极海冰上的积雪覆盖（涵盖威德尔海、印度洋、西太平洋、罗斯海、别林斯高晋/阿蒙森海五个扇区）",
+          "study_type": "综述（review）",
+          "method_zh": "基于过去约10年多次南极考察航次的实测数据，按五个南极扇区汇总分析积雪厚度、层理、粒径、密度、盐度、热导率、反照率等物理量；结合冰芯氧同位素分析估算雪冰比例；利用GASP大气分析数据计算降水-蒸发收支；引用耦合模式（Wu et al. 1999）评估热导率和降雪变化对海冰厚度的影响。",
+          "data_or_experiment_zh": "多航次船基与冰基观测：钻孔测厚、雪坑剖面、粒径筛分、密度取样、电导率测盐度、针探针测热导率、光谱辐射计与宽带辐射计测反照率；冰芯δ18O分析；GASP 39个月大气再分析数据。",
+          "model_or_algorithm_zh": "引用Wu et al.[1999]耦合大气-海冰模式敏感性实验（雪量减半/加倍、热导率取0.164 vs 0.31 W m⁻¹K⁻¹）；Fichefet et al.[2000]全球耦合海洋-海冰模式；Maksym and Jeffries[2000]洪水与雪冰形成数值模拟。",
+          "key_variables": [
+            "积雪厚度 zs",
+            "海冰厚度 zi",
+            "积雪密度 ρs",
+            "粒径",
+            "盐度",
+            "有效热导率 keff/kbulk",
+            "温度梯度 ∇T",
+            "反照率",
+            "自由板高 zf",
+            "雪冰比例"
+          ],
+          "main_results_zh": [
+            "积雪平均厚度0.02–0.49 m，区域与季节差异大，威德尔海西侧和别林斯高晋/阿蒙森/罗斯海扇区最厚",
+            "冬季六类雪型：新雪、软/中硬风板、硬风板、faceted/depth hoar、冰层、盐性泥浆；depth hoar在秋季比例最高",
+            "实测体均有效热导率kbulk=0.112–0.164 W m⁻¹K⁻¹，显著低于模型常用值0.31 W m⁻¹K⁻¹",
+            "负自由板发生率11–51%，雪冰占冰芯8–38%，雪冰形成是南极海冰质量收支的重要贡献",
+            "南极夏季融池远少于北极，融冰主要自底部发生；冬季亦出现大尺度融雪事件",
+            "降雪加倍使南极海冰增厚（雪冰形成抵消保温），与北极相反",
+            "积雪反照率随雪厚、粒径、湿度变化，雪厚≥3 cm时一年冰反照率达0.77–0.85"
+          ],
+          "main_conclusion_zh": "南极海冰积雪在物理特性与气候作用上与北极差异显著：雪冰形成广泛、热导率低于模型假设、冬季亦有大范围融雪。气候模式与遥感反演需区分两极并改进积雪参数化（时间依赖的热导率、雪冰形成过程、风成再分布与升华损失）。全球变暖若增加高纬降水，南极积雪的气候反馈将增强。",
+          "limitations_zh": "夏季积雪数据稀缺；遥感尚无法可靠反演积雪厚度；风成再分布、升华损失、海洋涌浪对积雪的移除等过程尚未纳入模式；直接测量与模式尺度差异导致热导率难以匹配；积雪盐分释放对海洋混合层的影响未知。",
+          "usefulness_for_project_zh": "对高山风吹雪耦合模拟有间接参考价值：积雪风成再分布阈值（>6–8 m/s）、风板/sastrugi形成机制、粒径与密度对热导率的影响、表面粗糙度对拖曳系数的作用等物理过程可迁移至高山积雪场景；实测热导率-密度-雪型关系可用于积雪热力学参数化。但研究对象为海冰积雪，地形与边界条件与高山差异大，需谨慎借用。",
+          "recommended_use_cases_zh": [
+            "风吹雪再分布阈值与形态参数参考",
+            "积雪热导率参数化方案校验",
+            "积雪层理与变质过程理解",
+            "积雪-大气粗糙度/拖曳系数关系",
+            "积雪反照率随厚度/粒径变化规律"
+          ]
+        },
+        "evidence_profile": {
+          "evidence_type": "综述（综合多源野外观测与模式研究）",
+          "data_source": "多航次船基/冰基实测 + 冰芯分析 + GASP大气再分析 + 耦合模式",
+          "experiment_or_simulation_setup": "跨5个南极扇区、多季节航次观测；引用Wu et al.[1999]与Fichefet et al.[2000]耦合模式敏感性实验",
+          "materials_or_region": "南极海冰区（威德尔海、印度洋、西太平洋、罗斯海、别林斯高晋/阿蒙森海）",
+          "spatial_scale": "南大洋环南极（单浮冰米级到跨扇区区域尺度）",
+          "temporal_scale": "主要1980s–1990s约10年观测，季节尺度（秋/冬/春/夏）",
+          "sample_size_or_cases": "数千至上万次钻孔/雪坑观测（如Jeffries and Adolphs 11114次）；173次热导率测量",
+          "main_equations_or_metrics": [
+            "∇T = (Ts - Ti)/zs",
+            "keff / kbulk (W m⁻¹K⁻¹)",
+            "反照率（0.3–2.8 μm宽带）",
+            "盐度 psu",
+            "雪/冰厚度比 zs/zi",
+            "自由板高 zf",
+            "耦合模式海冰厚度变化"
+          ]
+        },
+        "screening": {
+          "relevance_score": 3,
+          "reading_priority": 3,
+          "read_decision": "maybe_read",
+          "reason_zh": "本文系统综述南极海冰积雪物理特性与气候作用，其中风吹雪再分布、风板/sastrugi形成、热导率-密度-雪型关系、粗糙度-拖曳系数等内容对高山风吹雪耦合模拟与积雪水文参数化有借鉴价值；但研究对象为海冰积雪，地形与边界条件差异较大，属间接参考。",
+          "best_for_sections": [
+            "积雪物理特性参数化",
+            "风吹雪再分布过程",
+            "积雪-大气热力学耦合"
+          ],
+          "not_useful_for": [
+            "风沙跃移（研究对象为雪而非沙）",
+            "高山地形风场模拟（无山地地形）"
+          ],
+          "need_fulltext": true
+        },
+        "reading_priority": {
+          "score": 3,
+          "reason_zh": "作为积雪物理特性与风成过程的背景资料有参考价值，建议精读2.2.1-2.2.5（雪型/密度/热导率）、3.1.1-3.1.2（小尺度变异与粗糙度/拖曳系数）、3.4（热环境）部分；其余海冰专属内容可略读。",
+          "must_read_sections": [
+            "2.2.1 Snow stratigraphic and textural characteristics",
+            "2.2.5 Effective thermal conductivity of snow",
+            "3.1.1 Small-scale variability",
+            "3.1.2 Snow-surface roughness",
+            "3.4 Snow Thermal Properties and Thermal Environment"
+          ],
+          "key_figures_or_tables": [
+            "Table 4 (雪型粒径/密度)",
+            "Table 10 (各雪型有效热导率)",
+            "Table 12 (Ts/Ti/∇T)",
+            "Figure 3 (气温/风速时间序列与风雪事件)",
+            "Figure 12 (sastrugi与barchan dunes)"
+          ]
+        },
+        "technical_tags": {
+          "model_or_theory": [
+            "耦合大气-海冰模式(Wu et al. 1999)",
+            "全球耦合海洋-海冰模式(Fichefet et al. 2000)",
+            "雪冰形成数值模拟(Maksym & Jeffries 2000)",
+            "Colbeck雪变质分类"
+          ],
+          "experiment_or_data": [
+            "钻孔测厚",
+            "雪坑剖面",
+            "针探针热导率测量",
+            "光谱/宽带辐射反照率",
+            "冰芯δ18O",
+            "GASP大气再分析"
+          ],
+          "parameterization": [
+            "kbulk=0.164 W m⁻¹K⁻¹",
+            "热导率-密度-雪型关系",
+            "反照率-雪厚/粒径关系",
+            "拖曳系数-风向/sastrugi关系"
+          ],
+          "equations_or_metrics": [
+            "∇T=(Ts-Ti)/zs",
+            "keff/kbulk",
+            "反照率α",
+            "盐度psu",
+            "zs/zi",
+            "自由板高zf"
+          ],
+          "materials_or_particles": [
+            "积雪(新雪/风板/depth hoar/冰层/泥浆)",
+            "海冰(一年冰/多年冰/nilas/fast ice)",
+            "霜花",
+            "雪冰",
+            "叠加冰"
+          ],
+          "spatial_temporal_scale": [
+            "环南极5扇区",
+            "单浮冰米级到跨扇区区域",
+            "1980s-1990s约10年",
+            "季节尺度"
+          ]
+        },
+        "llm_search_text": {
+          "compact_zh": "Massom等(2001)发表于Reviews of Geophysics的综述，系统总结南极海冰积雪物理特性与气候作用。积雪平均厚0.02–0.49 m，区域/季节差异大；冬季六类雪型中新雪、风板、depth hoar、冰层、盐性泥浆并存。实测体均有效热导率kbulk=0.112–0.164 W m⁻¹K⁻¹，显著低于模型常用值0.31。负自由板发生率11–51%，雪冰占冰芯8–38%，雪冰形成是南极海冰质量收支重要过程，区别于北极。南极夏季融池少、融冰主要自底部，冬季亦有大范围融雪。风吹雪再分布阈值>6–8 m/s，形成sastrugi与barchan dune。降雪加倍使南极海冰增厚（雪冰抵消保温），与北极相反。对高山风吹雪耦合模拟的借鉴点：风成再分布阈值、风板/sastrugi形态、热导率-密度-雪型关系、粗糙度-拖曳系数耦合。",
+          "compact_en": "Massom et al. (2001, Reviews of Geophysics) review snow on Antarctic sea ice, synthesizing about 10 years of field data across five sectors. Snow thickness 0.02–0.49 m with large regional and seasonal variability; six winter snow types include wind slab, depth hoar, icy layers, and saline slush. Measured bulk effective thermal conductivity (0.112–0.164 W m⁻¹K⁻¹) is well below the model-assumed ~0.31. Negative freeboard occurs in 11–51% of cases; snow ice comprises 8–38% of ice cores, a key Antarctic mass-budget process largely absent in the Arctic. Aeolian redistribution threshold above 6–8 m/s forms sastrugi and barchan dunes; snow smooths the surface and modulates the drag coefficient. Antarctic summer melt is sparse (mainly basal), with episodic winter melt events. Doubling snowfall thickens Antarctic ice via snow-ice formation, opposite to the Arctic. Relevant to alpine wind-blown snow simulation for aeolian thresholds, slab and sastrugi formation, thermal-conductivity parameterization, and roughness-drag coupling."
+        }
+      },
+      "metadata": {
+        "schema_version": "1.0",
+        "source_id": "000007",
+        "source_type": "network_search",
+        "entry_type": "article",
+        "citation_key": null,
+        "title": {
+          "original": "Snow on Antarctic sea ice",
+          "translated_zh": "",
+          "short_zh": ""
+        },
+        "authors": [
+          {
+            "full_name": "Massom",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Eicken",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Hass",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Jeffries",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Drinkwater",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Sturm",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Worby",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Wu",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Lytle",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Ushio",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Morris",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Reid",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Warren",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Allison",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          }
+        ],
+        "first_author": {
+          "family": "",
+          "display": "Massom"
+        },
+        "year": 2001,
+        "date": {
+          "published": "2001-08",
+          "online": "",
+          "accessed": ""
+        },
+        "container": {
+          "journal": "Reviews of Geophysics",
+          "booktitle": "",
+          "conference": "",
+          "series": "",
+          "publisher": "American Geophysical Union (AGU)",
+          "institution": "",
+          "school": ""
+        },
+        "publication": {
+          "volume": "39",
+          "number": "3",
+          "issue": "3",
+          "pages": "413-445",
+          "article_number": "",
+          "edition": ""
+        },
+        "identifiers": {
+          "doi": "10.1029/2000rg000085",
+          "arxiv_id": "",
+          "isbn": "",
+          "issn": "8755-1209",
+          "pmid": "",
+          "pmcid": "",
+          "openalex_id": "",
+          "semantic_scholar_id": "",
+          "crossref_id": ""
+        },
+        "links": {
+          "url": "https://doi.org/10.1029/2000rg000085",
+          "pdf_url": "",
+          "publisher_url": "",
+          "repository_url": ""
+        },
+        "abstract": "",
+        "keywords": [],
+        "language": "en",
+        "source": {
+          "kind": "network_search",
+          "provider": "manual_doi",
+          "query": "",
+          "retrieved_at": "",
+          "raw_record": {
+            "doi": "10.1029/2000rg000085",
+            "provider": "manual_doi"
+          }
+        },
+        "pdf": {
+          "status": "present",
+          "path": "data/papers/2001_Massom_南极海冰积雪物理特性综述/2001_Massom_南极海冰积雪物理特性综述.pdf",
+          "sha256": "c3db82479a1deedf249f7df2095c09e799e8c701d7565958c90a71e64b13c01f",
+          "file_size": 3385690
+        },
+        "metadata_match": {
+          "status": "matched",
+          "source": "crossref",
+          "confidence": 0.95,
+          "matched_at": "2026-06-29T19:19:07",
+          "warnings": [
+            "preserved non-empty metadata field: source_type",
+            "preserved non-empty metadata field: source.kind",
+            "preserved non-empty metadata field: pdf.status"
+          ],
+          "candidates": []
+        },
+        "bibtex": {
+          "status": "not_generated",
+          "last_generated_at": "",
+          "note": "BibTeX is generated later by API/writing workflow from metadata.json."
+        },
+        "notes": "",
+        "content": {
+          "markdown_sha256": "6fbfd59071d36d3d6e6a85ea7c658d0977b9762cec11c6af59a00197b86ee9ca"
+        }
+      }
+    },
     {
       "paper_number": "0000000000000002",
       "paper_id": "2005_TANAKA_MASINGAR全球沙尘气溶胶模拟",
@@ -666,6 +1068,309 @@
       }
     },
     {
+      "paper_number": "0000000000000013",
+      "paper_id": "2008_Baars_激光雷达边界层顶监测",
+      "folder_name": "2008_Baars_激光雷达边界层顶监测",
+      "folder_path": "data/papers/2008_Baars_激光雷达边界层顶监测",
+      "main_md": "data/papers/2008_Baars_激光雷达边界层顶监测/2008_Baars_激光雷达边界层顶监测.md",
+      "pdf": "data/papers/2008_Baars_激光雷达边界层顶监测/2008_Baars_激光雷达边界层顶监测.pdf",
+      "images_dir": "data/papers/2008_Baars_激光雷达边界层顶监测/images",
+      "catalog_file": "data/papers/2008_Baars_激光雷达边界层顶监测/2008_Baars_激光雷达边界层顶监测.catalog.json",
+      "metadata_file": "data/papers/2008_Baars_激光雷达边界层顶监测/2008_Baars_激光雷达边界层顶监测.metadata.json",
+      "catalog": {
+        "schema_version": "1.1",
+        "display": {
+          "title_original": "Continuous monitoring of the boundary-layer top with lidar",
+          "title_zh": "利用激光雷达连续监测大气边界层顶高度",
+          "short_name_zh": "激光雷达边界层顶监测",
+          "year": 2008,
+          "first_author": "Baars",
+          "authors_short": "Baars et al.",
+          "venue": "Atmos. Chem. Phys.",
+          "doi": "10.5194/acp-8-7281-2008"
+        },
+        "classification": {
+          "primary_domain": "大气边界层遥感观测",
+          "domains": [
+            "大气边界层",
+            "激光雷达遥感",
+            "大气气溶胶",
+            "数值天气预报验证"
+          ],
+          "topics": [
+            "边界层顶高度",
+            "激光雷达探测",
+            "小波协方差变换",
+            "边界层增长速率",
+            "COSMO模式验证"
+          ],
+          "keywords_en": [
+            "boundary layer top",
+            "lidar",
+            "Raman lidar",
+            "wavelet covariance transform",
+            "COSMO model",
+            "aerosol",
+            "boundary layer height"
+          ],
+          "keywords_zh": [
+            "边界层顶",
+            "激光雷达",
+            "拉曼激光雷达",
+            "小波协方差变换",
+            "COSMO模式",
+            "气溶胶",
+            "边界层高度"
+          ]
+        },
+        "research_card": {
+          "one_sentence_summary_zh": "本文利用紧凑型拉曼激光雷达Polly在德国莱比锡开展为期一年的边界层顶高度连续观测，改进小波协方差变换法实现全年白天自动化反演，并与COSMO天气预报模式结果对比，发现模式系统性低估边界层顶约20%。",
+          "research_question_zh": "能否利用激光雷达实现全年全天候的边界层顶高度自动化连续监测，其结果与数值天气预报模式相比精度如何？",
+          "research_background_zh": "边界层顶高度是影响局地和区域天气及空气质量预报的基本参数，连续高分辨率观测有助于验证和改进天气与空气质量预测模式。激光雷达以气溶胶为示踪物，具备高垂直和时间分辨率且测量范围不受限，但需要稳健的自动化反演方法以适应全年不同天气与气溶胶条件，且需与数值模式结果进行系统比对。",
+          "object_zh": "德国莱比锡(51.3°N, 12.4°E)大陆性中欧站点的白天边界层顶高度及其季节变化与日演变",
+          "study_type": "观测研究与方法对比",
+          "method_zh": "使用紧凑型拉曼激光雷达Polly(532 nm弹性后向散射信号)在每小时的第8-13分钟进行观测；比较四种激光雷达边界层顶反演方法(梯度法、方差分析、小波协方差变换WCT、理想化廓线拟合)；改进WCT法，引入归一化阈值0.05、随高度二次增长的膨胀参数和云筛选(阈值-0.1)以实现全年白天自动化反演；个例日辅以多普勒激光雷达WiLi垂直风速观测和Vaisala RS-80探空。",
+          "data_or_experiment_zh": "2006年2月至2007年1月在莱比锡的Polly拉曼激光雷达全年每小时5分钟观测(共2669个白天时段，2310个有效，数据覆盖率87%)；选取3个个例日(2006年9月11日晴空、9月13日撒哈拉沙尘、7月4日积云)辅以WiLi多普勒激光雷达连续观测和每日2-3次探空；与COSMO模式逐时边界层顶预报(00:00和12:00 UTC初始化)对比。",
+          "model_or_algorithm_zh": "改进的小波协方差变换(WCT)算法：基于Haar小波，归一化阈值0.05识别边界层顶，膨胀参数a随高度二次增长，云筛选阈值-0.1；对比的COSMO数值天气预报模式采用梯度理查森数方案(临界Ri=0.38，水平分辨率7 km，35层)诊断边界层顶。",
+          "key_variables": [
+            "边界层顶高度",
+            "边界层增长速率",
+            "距离校正后向散射信号",
+            "垂直风速",
+            "虚位温",
+            "水汽混合比",
+            "梯度理查森数"
+          ],
+          "main_results_zh": [
+            "改进的WCT方法(阈值0.05、随高度二次增长膨胀参数、云筛选)可实现全年白天边界层顶的自动化稳健反演",
+            "季节平均白天最大边界层顶高度：春季1400 m、夏季1800 m、秋季1200 m、冬季800 m",
+            "对流日早晨边界层顶增长速率多为100-300 m/h(约占65%)，最大小时增长速率940 m/h，最大平均增长速率510 m/h",
+            "数据覆盖率平均87%(2310/2669个白天5分钟时段)，其中约50%因低云、降水或无明显后向散射梯度而无法反演边界层顶",
+            "COSMO模式系统性低估边界层顶约20%、平均增长速率约25%，最大偏差出现在云预报错误(漏报或误报云)时",
+            "复杂气溶胶分层(如撒哈拉沙尘)和积云条件下，拟合法与5分钟方差法可靠性下降，WCT与梯度法表现较稳健"
+          ],
+          "main_conclusion_zh": "改进的小波协方差变换法可实现全年白天边界层顶的稳健自动化连续监测；中欧大陆站点季节平均白天最大边界层顶高度夏高冬低(800-1800 m)，COSMO模式系统性低估边界层顶约20%和增长速率约25%。",
+          "limitations_zh": "主要针对白天边界层，夜间边界层观测受限于激光雷达近场重叠与阈值设置；仅单站观测，空间代表性有限；约50%观测因低云、降水或无显著后向散射梯度无法反演；WCT在复杂气溶胶分层和积云条件下可靠性下降；COSMO偏差的物理归因(湍流与土壤参数化)难以明确。",
+          "usefulness_for_project_zh": "为大气边界层顶高度的观测识别与模式验证提供方法学参考；改进的WCT自动化反演思路(归一化阈值、随高度变化的膨胀参数、云筛选)可借鉴用于边界层结构识别；COSMO模式系统性低估边界层顶的偏差对积雪水文与风吹雪耦合模拟中的边界层参数化有警示意义；季节变化与增长速率统计可作为模式验证基准。",
+          "recommended_use_cases_zh": [
+            "边界层顶高度识别与自动化反演方法借鉴",
+            "数值天气预报模式边界层参数化验证基准",
+            "边界层季节变化与增长速率统计参考"
+          ]
+        },
+        "evidence_profile": {
+          "evidence_type": "观测/实测研究",
+          "data_source": "地面激光雷达遥感 + 探空 + 数值天气预报模式",
+          "experiment_or_simulation_setup": "单站(莱比锡)拉曼激光雷达Polly全年每小时5分钟观测，个例日辅以多普勒激光雷达WiLi和Vaisala RS-80探空；与COSMO模式逐时边界层顶预报对比",
+          "materials_or_region": "德国莱比锡(51.3°N, 12.4°E)，中欧大陆性站点；以大气气溶胶为532 nm后向散射示踪物",
+          "spatial_scale": "单点/局地(单站垂直廓线，高度约0.2-4 km)",
+          "temporal_scale": "一年(2006年2月-2007年1月)，每小时5分钟观测，逐时分辨率",
+          "sample_size_or_cases": "2669个白天5分钟时段(2310个有效，1160个成功反演边界层顶)；3个个例研究日；65个晴空日用于增长速率分析",
+          "main_equations_or_metrics": [
+            "Haar小波协方差变换 W_f(a,b) = (1/a)∫f(z)h((z-b)/a)dz",
+            "离散化WCT：(1/n)(ΣP(z)z²_below - ΣP(z)z²_above)",
+            "膨胀参数 a = nΔz (Δz=37.5 m)",
+            "边界层顶高度 z (m)",
+            "边界层增长速率 (m/h)",
+            "梯度理查森数 Rig (临界值0.38)"
+          ]
+        },
+        "screening": {
+          "relevance_score": 3,
+          "reading_priority": 3,
+          "read_decision": "maybe_read",
+          "reason_zh": "该文属大气边界层遥感观测与模式验证，与项目“大气边界层”主题直接相关，可为边界层顶识别方法(COSMO低估偏差、WCT自动化反演)和模式验证提供参考；但其核心为激光雷达观测技术，与高山风吹雪耦合模拟的直接关联较弱，建议选读以获取边界层参数化与验证思路。",
+          "best_for_sections": [
+            "大气边界层结构与参数化",
+            "模式验证方法"
+          ],
+          "not_useful_for": [
+            "高山风吹雪跃移模拟",
+            "积雪水文过程"
+          ],
+          "need_fulltext": false
+        },
+        "reading_priority": {
+          "score": 3,
+          "reason_zh": "提供边界层顶观测方法学与COSMO模式验证参考，对边界层参数化改进有间接价值；优先级中等，建议重点阅读第4节(WCT改进)、第6节(统计结果与模式对比)和第3.2节(COSMO边界层方案)。",
+          "must_read_sections": [
+            "Section 4 Wavelet covariance transform",
+            "Section 6 Statistical analysis",
+            "Section 3.2 BL top from COSMO model"
+          ],
+          "key_figures_or_tables": [
+            "Fig. 4 归一化信号与WCT阈值示例",
+            "Fig. 5 随高度变化的膨胀参数",
+            "Fig. 12 月均白天最大边界层顶高度季节变化",
+            "Fig. 15 激光雷达与COSMO边界层顶高度对比"
+          ]
+        },
+        "technical_tags": {
+          "model_or_theory": [
+            "COSMO数值天气预报模式",
+            "梯度理查森数边界层方案",
+            "小波协方差变换(WCT)",
+            "Haar小波"
+          ],
+          "experiment_or_data": [
+            "Raman激光雷达Polly",
+            "多普勒激光雷达WiLi",
+            "Vaisala RS-80探空"
+          ],
+          "parameterization": [
+            "临界理查森数0.38",
+            "WCT归一化阈值0.05",
+            "随高度二次增长膨胀参数",
+            "云筛选阈值-0.1"
+          ],
+          "equations_or_metrics": [
+            "Haar小波协方差变换Wf(a,b)",
+            "边界层顶高度z",
+            "边界层增长速率(m/h)",
+            "梯度理查森数Rig"
+          ],
+          "materials_or_particles": [
+            "大气气溶胶(532 nm弹性后向散射示踪)",
+            "撒哈拉沙尘(个例)"
+          ],
+          "spatial_temporal_scale": [
+            "单站垂直廓线(0.2-4 km)",
+            "一年逐时(2006.2-2007.1)"
+          ]
+        },
+        "llm_search_text": {
+          "compact_zh": "Baars等(2008)在德国莱比锡利用紧凑型拉曼激光雷达Polly开展2006年2月至2007年1月全年的边界层顶高度连续观测。研究比较梯度法、方差分析、小波协方差变换(WCT)和理想化廓线拟合四种激光雷达反演方法，改进WCT法(引入归一化阈值0.05、随高度二次增长的膨胀参数、云筛选阈值-0.1)实现全年白天边界层顶自动化反演，并辅以多普勒激光雷达WiLi垂直风速和探空观测。统计表明季节平均白天最大边界层顶高度春季1400 m、夏季1800 m、秋季1200 m、冬季800 m，对流日早晨增长速率多为100-300 m/h。与COSMO天气预报模式(梯度理查森数方案，临界值0.38)对比发现模式系统性低估边界层顶约20%、增长速率约25%，偏差主要源于云预报误差和稳态假设。约50%观测因低云、降水或无明显梯度无法反演。",
+          "compact_en": "Baars et al. (2008) present one year (Feb 2006-Jan 2007) of continuous boundary-layer (BL) top monitoring with a compact Raman lidar (Polly) at Leipzig, Germany. Four lidar methods (gradient, variance, wavelet covariance transform WCT, idealized profile fitting) are compared; the WCT is modified with a normalized threshold (0.05), height-dependent quadratic dilation, and cloud screening (threshold -0.1) for automated year-round daytime BL-top retrieval. Doppler lidar (WiLi) and radiosonde observations support three case studies. Seasonal mean daytime maximum BL top is 1400 m (spring), 1800 m (summer), 1200 m (autumn), 800 m (winter); morning growth rates mostly 100-300 m/h. Comparison with the COSMO NWP model (gradient-Richardson-number scheme, critical Ri=0.38) shows systematic underestimation of BL top by ~20% and growth rate by ~25%, mainly from cloud-prediction errors and steady-state assumptions. About 50% of observations could not be retrieved due to low clouds, precipitation, or weak gradients."
+        }
+      },
+      "metadata": {
+        "schema_version": "1.0",
+        "source_id": "000001",
+        "source_type": "network_search",
+        "entry_type": "article",
+        "citation_key": null,
+        "title": {
+          "original": "Continuous monitoring of the boundary-layer top with lidar",
+          "translated_zh": "",
+          "short_zh": ""
+        },
+        "authors": [
+          {
+            "full_name": "Baars",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Ansmann",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Engelmann",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Althausen",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          }
+        ],
+        "first_author": {
+          "family": "",
+          "display": "Baars"
+        },
+        "year": 2008,
+        "date": {
+          "published": "2008-12-10",
+          "online": "",
+          "accessed": ""
+        },
+        "container": {
+          "journal": "Atmospheric Chemistry and Physics",
+          "booktitle": "",
+          "conference": "",
+          "series": "",
+          "publisher": "Copernicus GmbH",
+          "institution": "",
+          "school": ""
+        },
+        "publication": {
+          "volume": "8",
+          "number": "23",
+          "issue": "23",
+          "pages": "7281-7296",
+          "article_number": "",
+          "edition": ""
+        },
+        "identifiers": {
+          "doi": "10.5194/acp-8-7281-2008",
+          "arxiv_id": "",
+          "isbn": "",
+          "issn": "1680-7324",
+          "pmid": "",
+          "pmcid": "",
+          "openalex_id": "",
+          "semantic_scholar_id": "",
+          "crossref_id": ""
+        },
+        "links": {
+          "url": "https://doi.org/10.5194/acp-8-7281-2008",
+          "pdf_url": "",
+          "publisher_url": "",
+          "repository_url": ""
+        },
+        "abstract": "",
+        "keywords": [],
+        "language": "en",
+        "source": {
+          "kind": "network_search",
+          "provider": "manual_doi",
+          "query": "",
+          "retrieved_at": "",
+          "raw_record": {
+            "doi": "10.5194/acp-8-7281-2008",
+            "provider": "manual_doi"
+          }
+        },
+        "pdf": {
+          "status": "present",
+          "path": "data/papers/2008_Baars_激光雷达边界层顶监测/2008_Baars_激光雷达边界层顶监测.pdf",
+          "sha256": "a82d5bcb244510ebcc7295b2f375f1973da94294063bb4e8fda74bfbb2bc71da",
+          "file_size": 1005446
+        },
+        "metadata_match": {
+          "status": "matched",
+          "source": "crossref",
+          "confidence": 0.95,
+          "matched_at": "2026-06-29T19:19:00",
+          "warnings": [
+            "preserved non-empty metadata field: source_type",
+            "preserved non-empty metadata field: source.kind",
+            "preserved non-empty metadata field: pdf.status"
+          ],
+          "candidates": []
+        },
+        "bibtex": {
+          "status": "not_generated",
+          "last_generated_at": "",
+          "note": "BibTeX is generated later by API/writing workflow from metadata.json."
+        },
+        "notes": "",
+        "content": {
+          "markdown_sha256": "01431d1ed43615bfa8bddfe404207681b516cb79f2be2e8936ed01dee22210a2"
+        }
+      }
+    },
+    {
       "paper_number": "0000000000000004",
       "paper_id": "2008_DavidsonArnott_海滩湿度对风沙输运阈值与通量影响",
       "folder_name": "2008_DavidsonArnott_海滩湿度对风沙输运阈值与通量影响",
@@ -974,6 +1679,659 @@
         "notes": "",
         "content": {
           "markdown_sha256": "ede9055ffca258f4822d0cb3c4e956dcb5f7f0c6ff959ef3b4b0d97eb7072dc5"
+        }
+      }
+    },
+    {
+      "paper_number": "0000000000000014",
+      "paper_id": "2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现",
+      "folder_name": "2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现",
+      "folder_path": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现",
+      "main_md": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现.md",
+      "pdf": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现.pdf",
+      "images_dir": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现/images",
+      "catalog_file": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现.catalog.json",
+      "metadata_file": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现.metadata.json",
+      "catalog": {
+        "schema_version": "1.1",
+        "display": {
+          "title_original": "The detailed snowpack scheme Crocus and its implementation in SURFEX v7.2",
+          "title_zh": "Crocus 详细雪层方案及其在 SURFEX v7.2 中的实现",
+          "short_name_zh": "Crocus 详细雪层方案 SURFEX 实现",
+          "year": 2012,
+          "first_author": "Vionnet",
+          "authors_short": "Vionnet et al.",
+          "venue": "Geosci. Model Dev.",
+          "doi": "10.5194/gmd-5-773-2012"
+        },
+        "classification": {
+          "primary_domain": "积雪物理与陆面过程模拟",
+          "domains": [
+            "积雪物理学",
+            "陆面过程模拟",
+            "雪水文学",
+            "冰冻圈"
+          ],
+          "topics": [
+            "详细雪层方案",
+            "雪变质作用",
+            "风吹雪参数化",
+            "雪面能量平衡",
+            "雪-大气耦合"
+          ],
+          "keywords_en": [
+            "Crocus",
+            "snowpack model",
+            "SURFEX",
+            "ISBA",
+            "snow metamorphism",
+            "wind drift",
+            "snow albedo",
+            "surface energy balance",
+            "avalanche forecasting"
+          ],
+          "keywords_zh": [
+            "雪层模型",
+            "雪变质",
+            "风吹雪",
+            "雪反照率",
+            "地表能量平衡",
+            "陆面方案",
+            "雪-土壤耦合"
+          ]
+        },
+        "research_card": {
+          "one_sentence_summary_zh": "本文系统描述了详细雪层方案 Crocus 的物理基础与参数化，及其在 SURFEX v7.2 陆面模块中的实现，支持独立运行和与大气模式全耦合。",
+          "research_question_zh": "如何在统一的 SURFEX 陆面平台中实现详细雪层方案 Crocus，使其能与土壤、植被和大气模式完整耦合，并克服早期版本雪-土界面热通量固定、缺乏风吹雪参数化等局限？",
+          "research_background_zh": "雪层过程模拟对天气预报、水文预报和雪崩风险预报至关重要。现有雪层模型分为单层、中等复杂度和详细三类；Crocus 是少数能显式描述雪层分层与雪晶变质的详细模型，已用于法国业务化雪崩预报 20 年，但早期版本存在雪-土热通量固定、缺少雪-植被相互作用及与大气模式耦合有限等问题。",
+          "object_zh": "Crocus 雪层方案本身（物理过程、参数化、数值架构）及其在 SURFEX/ISBA 中的实现与耦合能力。",
+          "study_type": "模型描述与评估（model description paper）",
+          "method_zh": "在 SURFEX 陆面框架内、基于 ISBA-ES 架构重写 Crocus；逐过程给出参数化方程（降雪、分层动态调整、变质、压实、风吹雪、反照率、能量平衡、热扩散、融化、水流动与再冻结、升华）；通过 Col de Porte 站 18 年（1993-2011）离线模拟、Grandes Rousses 山系分布式模拟和 Dome C 南极雪-大气耦合模拟进行评估。",
+          "data_or_experiment_zh": "Col de Porte（法国阿尔卑斯，1325 m）1993-2011 年小时气象强迫与雪深/SWE 观测；Grandes Rousses 山系 2010/2011 雪季 SAFRAN 强迫；Dome C（南极）11 天 AROME 耦合模拟的雪温与边界层观测。",
+          "model_or_algorithm_zh": "Crocus 一维多层雪层方案：动态分层有限单元网格；状态变量为层厚、热含量、密度、年龄及雪晶变量（枝状度 d、球形度 s、粒径 gs）；采用隐式后向差分热扩散；与 ISBA 土壤半隐式耦合；支持与 AROME/MESO-NH/ARPEGE 大气模式显式或全隐式耦合。",
+          "key_variables": [
+            "雪水当量(SWE)",
+            "雪深",
+            "雪层密度",
+            "雪层温度",
+            "液态水含量",
+            "雪晶枝状度(dendricity)",
+            "雪晶球形度(sphericity)",
+            "粒径(grain size)",
+            "雪反照率",
+            "漂移性指数(driftability index)"
+          ],
+          "main_results_zh": [
+            "ISBA-Crocus 在 Col de Porte 十年（2001-2011）SWE 的 rmsd 为 37.0 kg/m²（bias -2.3），雪深 rmsd 0.132 m，总体与 ISBA-ES 性能相当且优于独立 Crocus。",
+            "50 层 Crocus 的计算成本仅为 ES 的 2.3 倍，与既往对比（2.5 倍）量级相当。",
+            "Dome C 耦合模拟较好再现雪面温度及大气边界层演变，无显著偏差或漂移。",
+            "风吹雪参数化（迁移率指数 Mo 与漂移性指数 SI）可刻画雪表在风蚀下的压实与破碎，并通过指数衰减传播至下层。"
+          ],
+          "main_conclusion_zh": "新版 Crocus 已完整纳入 SURFEX v7.2，与 ISBA 土壤组件全耦合，可独立运行或与多种大气模式全耦合，物理过程（含风吹雪）适用于从极地到高山的环境，是雪崩预报、水文与气候研究的统一模拟平台。",
+          "limitations_zh": "独立模式不显式处理风致雪再分布（各格点独立）；未显式表达表面霜特性；未含雪-林冠相互作用（正在开发）；太阳辐射传输与变质律计划重写；与 Meso-NH 耦合模拟风吹雪事件仍在进行中。",
+          "usefulness_for_project_zh": "本文是 Crocus 雪层模型的权威描述，其风吹雪参数化（迁移率指数 Mo、漂移性指数 SI、阈值风速）与雪面能量平衡、湍流通量方案对高山风吹雪耦合模拟直接相关，可为风-雪耦合、跃移破碎与升华参数化提供物理基础与参照。",
+          "recommended_use_cases_zh": [
+            "风-雪耦合模拟中雪层状态与风吹雪参数化参照",
+            "雪面能量平衡与湍流通量方案设计",
+            "雪-大气边界层耦合架构参考",
+            "雪水文与雪崩预报模型选型对比"
+          ]
+        },
+        "evidence_profile": {
+          "evidence_type": "model description / process-based simulation",
+          "data_source": "站点观测（Col de Porte 气象与雪深/SWE）+ SAFRAN 再分析强迫 + AROME 大气模式耦合",
+          "experiment_or_simulation_setup": "1-D 离线模拟（Col de Porte，1993-2011，最多 50 层）+ 分布式离线模拟（Grandes Rousses，150 m 分辨率，2010/2011 雪季）+ 3-D 雪-大气耦合模拟（Dome C，2.5 km，60 垂直层，11 天）",
+          "materials_or_region": "法国阿尔卑斯（Col de Porte、Grandes Rousses）、南极 Dome C 冰盖",
+          "spatial_scale": "点尺度到山系尺度（150 m 网格）到区域尺度（625×625 km²）",
+          "temporal_scale": "小时步长（离线最长 1 h，耦合 30 min）；评估期 10-18 年（离线）/ 11 天（耦合）",
+          "sample_size_or_cases": "Col de Porte 10 个雪季（2001-2011）；Grandes Rousses 1 个雪季；Dome C 11 天耦合个例",
+          "main_equations_or_metrics": [
+            "降雪密度 ρ_new = a_ρ + b_ρ(T_a - T_fus) + c_ρ U^(1/2)（式1）",
+            "压实 dD/D = -σ/η dt（式5）",
+            "雪粘度 η = f1 f2 η0 (ρ/c_η) exp(a_η(T_fus-T) + b_η ρ)（式7）",
+            "漂移性指数 SI = -2.868 exp(-0.085 U) + 1 + Mo（式11）",
+            "迁移率指数 Mo（式10，区分枝状/非枝状雪）",
+            "三波段反照率与吸收系数（表4）",
+            "热导率 k = k_ice (ρ/ρ_w)^1.88（式18）",
+            "SWE/雪深 rmsd 与 bias（表5）"
+          ]
+        },
+        "screening": {
+          "relevance_score": 5,
+          "reading_priority": 5,
+          "read_decision": "must_read",
+          "reason_zh": "Crocus 是积雪水文核心雪层模型，其风吹雪参数化（迁移率/漂移性指数、阈值风速、跃移破碎）与雪面能量平衡、雪-大气耦合方案与本项目高山风吹雪耦合模拟高度契合，是物理参数化的直接参照。",
+          "best_for_sections": [
+            "3.5 Impact of wind drift（风吹雪参数化）",
+            "3.7 Surface fluxes and surface energy balance（雪面能量平衡与湍流通量）",
+            "3.2-3.3 雪层动态分层与变质",
+            "5.3 Atmosphere/snow coupled simulation（雪-大气耦合）"
+          ],
+          "not_useful_for": [
+            "风沙跃移机理（本文为雪而非沙）",
+            "积雪水文遥感反演"
+          ],
+          "need_fulltext": true
+        },
+        "reading_priority": {
+          "score": 5,
+          "reason_zh": "本文提供 Crocus 完整物理参数化方程表，风吹雪与雪面通量章节对耦合模拟设计至关重要，需精读 3.5、3.7 及附录参数。",
+          "must_read_sections": [
+            "3.5 Impact of wind drift",
+            "3.7 Surface fluxes and surface energy balance",
+            "3.2 Evolution of the vertical discretization",
+            "3.6 Snow albedo and transmission of solar radiation",
+            "5.3 Atmosphere/snow coupled simulation"
+          ],
+          "key_figures_or_tables": [
+            "Fig.1 主物理过程与模型变量",
+            "Fig.2 Crocus/SURFEX 例程流程图",
+            "Table 1 干雪变质经验律",
+            "Table 3 风吹雪下粒径与密度演变率",
+            "Table 4 三波段反照率与吸收系数",
+            "Table 5 Col de Porte 十年 SWE/雪深统计"
+          ]
+        },
+        "technical_tags": {
+          "model_or_theory": [
+            "Crocus",
+            "SURFEX",
+            "ISBA",
+            "ISBA-ES",
+            "ISBA-DF",
+            "AROME",
+            "Meso-NH",
+            "ARPEGE",
+            "SAFRAN"
+          ],
+          "experiment_or_data": [
+            "Col de Porte 观测",
+            "SAFRAN 强迫",
+            "SnowMIP",
+            "ECOCLIMAP 土壤"
+          ],
+          "parameterization": [
+            "降雪密度参数化",
+            "雪变质经验律（干/湿）",
+            "雪粘度与压实",
+            "风吹雪迁移率/漂移性指数",
+            "三波段反照率",
+            "湍流通量交换系数 CH（Louis 1979）"
+          ],
+          "equations_or_metrics": [
+            "ρ_new 经验式",
+            "压实 dD/D=-σ/η dt",
+            "雪粘度 η",
+            "漂移性指数 SI",
+            "迁移率指数 Mo",
+            "热导率 k=k_ice(ρ/ρ_w)^1.88",
+            "rmsd/bias"
+          ],
+          "materials_or_particles": [
+            "雪花/雪晶",
+            "深霜(depth hoar)",
+            "圆晶(rounded crystals)",
+            "枝状雪(dendritic snow)",
+            "冰盖积雪"
+          ],
+          "spatial_temporal_scale": [
+            "点尺度",
+            "山系尺度 150 m",
+            "区域 625×625 km²",
+            "小时步长",
+            "10-18 年评估"
+          ]
+        },
+        "llm_search_text": {
+          "compact_zh": "本文系统描述详细雪层方案 Crocus 的物理基础与参数化，及其在 SURFEX v7.2 陆面模块（ISBA）中的实现。Crocus 为一维多层雪层模型，状态变量含层厚、热含量、密度、年龄及雪晶枝状度、球形度、粒径；动态分层有限单元网格最多可设 50 层。涵盖降雪、变质（干/湿）、压实、风吹雪、三波段反照率与太阳辐射传输、雪面能量平衡、热扩散、融化、水流动与再冻结、升华等过程。风吹雪参数化以迁移率指数 Mo 和漂移性指数 SI 刻画雪的可蚀性与阈值风速，跃移破碎使表雪向圆晶演化并压实，对高山风吹雪耦合模拟直接相关。模型可与 ISBA 土壤半隐式耦合，并支持与 AROME/MESO-NH/ARPEGE 大气模式显式或全隐式耦合。在 Col de Porte（法国阿尔卑斯）18 年离线评估中 ISBA-Crocus 性能与 ISBA-ES 相当（SWE rmsd 37.0 kg/m²）；Dome C 南极 11 天雪-大气耦合模拟较好再现雪面温度与边界层演变。计算成本 50 层仅为 ES 的 2.3 倍。",
+          "compact_en": "This paper documents the detailed snowpack scheme Crocus and its implementation in SURFEX v7.2 within the ISBA land surface model. Crocus is a one-dimensional multilayer snow model with dynamical layering and explicit snow metamorphism (dendricity, sphericity, grain size). It parameterizes snowfall, compaction, wind drift (mobility and driftability indices, threshold wind speed, saltation-induced fragmentation), three-band albedo, surface energy balance, heat diffusion, melt, water percolation/refreezing, and sublimation. It is fully coupled to the ISBA soil component and can run standalone or coupled (explicit/implicit) with AROME, MESO-NH, and ARPEGE atmospheric models. Evaluation at Col de Porte (French Alps, 1993-2011) shows ISBA-Crocus performs comparably to ISBA-ES (SWE rmsd 37.0 kg/m2); a coupled snow-atmosphere simulation at Dome C (Antarctica) reproduces surface temperature and boundary layer evolution. The wind-drift parameterization is directly relevant to alpine blowing-snow coupling simulations."
+        }
+      },
+      "metadata": {
+        "schema_version": "1.0",
+        "source_id": "000005",
+        "source_type": "network_search",
+        "entry_type": "article",
+        "citation_key": null,
+        "title": {
+          "original": "The detailed snowpack scheme Crocus and its implementation in SURFEX v7.2",
+          "translated_zh": "",
+          "short_zh": ""
+        },
+        "authors": [
+          {
+            "full_name": "Vionnet",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Brun",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Morin",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Boone",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Faroux",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Le Moigne",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Martin",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Willemet",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          }
+        ],
+        "first_author": {
+          "family": "",
+          "display": "Vionnet"
+        },
+        "year": 2012,
+        "date": {
+          "published": "2012-05-24",
+          "online": "",
+          "accessed": ""
+        },
+        "container": {
+          "journal": "Geoscientific Model Development",
+          "booktitle": "",
+          "conference": "",
+          "series": "",
+          "publisher": "Copernicus GmbH",
+          "institution": "",
+          "school": ""
+        },
+        "publication": {
+          "volume": "5",
+          "number": "3",
+          "issue": "3",
+          "pages": "773-791",
+          "article_number": "",
+          "edition": ""
+        },
+        "identifiers": {
+          "doi": "10.5194/gmd-5-773-2012",
+          "arxiv_id": "",
+          "isbn": "",
+          "issn": "1991-9603",
+          "pmid": "",
+          "pmcid": "",
+          "openalex_id": "",
+          "semantic_scholar_id": "",
+          "crossref_id": ""
+        },
+        "links": {
+          "url": "https://doi.org/10.5194/gmd-5-773-2012",
+          "pdf_url": "",
+          "publisher_url": "",
+          "repository_url": ""
+        },
+        "abstract": "",
+        "keywords": [],
+        "language": "en",
+        "source": {
+          "kind": "network_search",
+          "provider": "manual_doi",
+          "query": "",
+          "retrieved_at": "",
+          "raw_record": {
+            "doi": "10.5194/gmd-5-773-2012",
+            "provider": "manual_doi"
+          }
+        },
+        "pdf": {
+          "status": "present",
+          "path": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现.pdf",
+          "sha256": "a4c028efd081b867955f9fc8063c94f8ceb4548e9e7ef87f01bf2122f6eb63b8",
+          "file_size": 1630682
+        },
+        "metadata_match": {
+          "status": "matched",
+          "source": "crossref",
+          "confidence": 0.95,
+          "matched_at": "2026-06-29T19:19:05",
+          "warnings": [
+            "preserved non-empty metadata field: source_type",
+            "preserved non-empty metadata field: source.kind",
+            "preserved non-empty metadata field: pdf.status"
+          ],
+          "candidates": []
+        },
+        "bibtex": {
+          "status": "not_generated",
+          "last_generated_at": "",
+          "note": "BibTeX is generated later by API/writing workflow from metadata.json."
+        },
+        "notes": "",
+        "content": {
+          "markdown_sha256": "e356d0cfdcc3a58b5049f71bbe1845e8c151b9a7c1904566df2f937f649a7a6a"
+        }
+      }
+    },
+    {
+      "paper_number": "0000000000000015",
+      "paper_id": "2013_Sathe_地基测风激光雷达湍流测量综述",
+      "folder_name": "2013_Sathe_地基测风激光雷达湍流测量综述",
+      "folder_path": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述",
+      "main_md": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述/2013_Sathe_地基测风激光雷达湍流测量综述.md",
+      "pdf": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述/2013_Sathe_地基测风激光雷达湍流测量综述.pdf",
+      "images_dir": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述/images",
+      "catalog_file": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述/2013_Sathe_地基测风激光雷达湍流测量综述.catalog.json",
+      "metadata_file": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述/2013_Sathe_地基测风激光雷达湍流测量综述.metadata.json",
+      "catalog": {
+        "schema_version": "1.1",
+        "display": {
+          "title_original": "A review of turbulence measurements using ground-based wind lidars",
+          "title_zh": "地基测风激光雷达湍流测量综述",
+          "short_name_zh": "地基测风激光雷达湍流测量综述",
+          "year": 2013,
+          "first_author": "Sathe",
+          "authors_short": "Sathe & Mann",
+          "venue": "Atmos. Meas. Tech.",
+          "doi": "10.5194/amt-6-3147-2013"
+        },
+        "classification": {
+          "primary_domain": "大气边界层湍流遥感测量",
+          "domains": [
+            "大气边界层湍流",
+            "激光雷达遥感",
+            "风能气象"
+          ],
+          "topics": [
+            "湍流测量",
+            "激光雷达数据处理算法",
+            "湍流统计量估计",
+            "扫描构型"
+          ],
+          "keywords_en": [
+            "wind lidar",
+            "turbulence measurements",
+            "atmospheric boundary layer",
+            "VAD scanning",
+            "RHI scanning",
+            "staring mode",
+            "turbulent kinetic energy dissipation rate",
+            "probe volume averaging",
+            "Mann turbulence model"
+          ],
+          "keywords_zh": [
+            "测风激光雷达",
+            "湍流测量",
+            "大气边界层",
+            "VAD扫描",
+            "探体体积平均",
+            "湍动能耗散率",
+            "Mann湍流模型"
+          ]
+        },
+        "research_card": {
+          "one_sentence_summary_zh": "综述1972-2012年间地基测风激光雷达测量大气湍流的研究进展，重点讨论原始激光雷达数据处理算法、三种扫描构型（staring/VAD/RHI）及探体体积平均效应的修正方法。",
+          "research_question_zh": "地基测风激光雷达测量大气湍流的现状如何？在激光雷达技术或数据处理算法方面是否需要进一步改进以使湍流测量更可靠？",
+          "research_background_zh": "传统气象塔风速仪难以在大型风机轮毂高度（可达200m）及海上长期测量湍流，激光雷达具有克服这些限制的潜力，但其大测量体积导致湍流空间平均、不同风场分量交叉污染及低采样率等问题，至今尚未被广泛接受用于湍流测量。",
+          "object_zh": "1972-2012年间发表的地基测风激光雷达湍流测量相关研究，其中80%以上集中在1997-2012年。",
+          "study_type": "综述（review）",
+          "method_zh": "系统梳理地基激光雷达三种扫描构型（staring/VAD/RHI）下的径向速度测量原理与数学表达，归纳原始数据处理的先驱性工作（Wilson、Eberhard、Frisch、Smalikho、Banakh、Frehlich、Kristensen、Mann等），并按所估计的湍流量（ε、Rij、ℓij、⟨vr'²⟩、滤波谱、结构函数等）对以往研究进行分类。",
+          "data_or_experiment_zh": "本文为综述，未开展新实验；汇总并对比了过去30年（1972-2012）超过60项激光雷达湍流测量研究的算法与结果，并提供了研究数量随年份的统计（图4）。",
+          "model_or_algorithm_zh": "涉及各向同性湍流模型（Kolmogorov惯性子区、von Kármán谱）与Mann(1994)各向异性谱张量模型；数据处理算法包括：Doppler谱宽法、径向速度谱法、视线方向/方位角方向径向速度结构函数法、部分傅里叶分解法（Wilson/Eberhard）、Mann et al.(2010)平均Doppler谱法（无需湍流模型）。",
+          "key_variables": [
+            "湍动能耗散率ε",
+            "雷诺应力Rij",
+            "积分长度尺度ℓij",
+            "外尺度L",
+            "径向速度方差⟨vr'²⟩",
+            "滤波径向速度谱F̃(k1)",
+            "滤波径向速度结构函数D̃(r)",
+            "湍流强度I",
+            "感热通量⟨w'θ'⟩"
+          ],
+          "main_results_zh": [
+            "湍流测量研究集中在ε（29项）、Rij（17项）、长度尺度（16项）、径向速度方差（12项）等量的估计。",
+            "从大探体体积获取未滤波湍流统计量一直且仍然是最具挑战性的问题。",
+            "现有算法多通过将各向同性湍流模型与原始激光雷达测量结合得到未滤波统计量。",
+            "由高频vr逐时刻反演u/v/w再求湍流统计量会引入显著系统误差（Sathe et al. 2011b, 2012），应改用⟨vr'²⟩反演Rij。",
+            "现代商用激光雷达仪器噪声可忽略。"
+          ],
+          "main_conclusion_zh": "建议采用各向异性湍流模型（Mann 1994）替代各向同性模型以获得更真实的湍流统计量；未来算法发展应尽可能减少对湍流模型的依赖（如Mann et al. 2010仅用原始数据）；扫描构型方面，三台staring激光雷达交于一点可显著降低水平均匀性假设并适用于复杂地形；随风电产业发展，激光雷达用于湍流测量将大幅增加。",
+          "limitations_zh": "多数早期研究缺乏参考仪器对比，测量可靠性未经验证；Mann(1994)模型仅适用于中性均匀地表层，不适用于复杂地形和稳定条件；C-W激光雷达Rayleigh长度随聚焦距离平方增长，高处测量探体过大；VAD/RHI扫描需水平均匀性假设，限制复杂地形应用。",
+          "usefulness_for_project_zh": "对本项目（高山风吹雪耦合、风沙跃移、大气边界层、积雪水文）的直接适用性有限：本文聚焦激光雷达测量技术与数据处理，而非风吹雪/风沙输运建模。但其对大气边界层湍流统计量（谱、结构函数、Mann模型、湍流强度、长度尺度）的系统梳理，可作为理解ABL湍流特征、为风吹雪/风沙跃移提供湍流入口条件的背景参考。",
+          "recommended_use_cases_zh": [
+            "ABL湍流统计量（谱、结构函数、长度尺度）概念参考",
+            "Mann(1994)湍流模型背景",
+            "激光雷达湍流测量可行性评估",
+            "风场湍流入口条件理解"
+          ]
+        },
+        "evidence_profile": {
+          "evidence_type": "综述/二次文献（review）",
+          "data_source": "文献综述（1972-2012年激光雷达湍流测量研究）",
+          "experiment_or_simulation_setup": "无新实验；汇总对比已有仿真与外场观测研究",
+          "materials_or_region": "地基测风激光雷达（C-W与脉冲式），大气边界层",
+          "spatial_scale": "大气边界层（近地面至约1-2km，重点关注风机运行高度0-200m）",
+          "temporal_scale": "1972-2012年文献；单次观测通常30分钟时序",
+          "sample_size_or_cases": "汇总60余项研究（Table 1按湍流量分类统计）",
+          "main_equations_or_metrics": [
+            "Rij(r)自协方差函数",
+            "Dij(r)速度结构函数",
+            "Φij(k)三维谱张量",
+            "Fij(k1)一维谱",
+            "cohij(k1)相干函数",
+            "ε耗散率（Doppler谱宽/谱/结构函数法）",
+            "Mann(1994)模型参数",
+            "湍流强度I=√(⟨u'²⟩/⟨u⟩)"
+          ]
+        },
+        "screening": {
+          "relevance_score": 2,
+          "reading_priority": 2,
+          "read_decision": "skip",
+          "reason_zh": "本文为激光雷达湍流测量技术综述，核心为仪器数据处理算法与扫描构型，与本项目风吹雪/风沙跃移耦合模拟的直接关联较弱；仅其ABL湍流统计量梳理可作为背景参考，优先级较低。",
+          "best_for_sections": [
+            "大气边界层湍流统计量背景",
+            "Mann湍流模型参考"
+          ],
+          "not_useful_for": [
+            "风吹雪/风沙输运建模",
+            "积雪水文过程",
+            "耦合模拟数值方法"
+          ],
+          "need_fulltext": false
+        },
+        "reading_priority": {
+          "score": 2,
+          "reason_zh": "综述性强但主题（激光雷达测量）偏离项目核心，摘要与第4-6节结论已足够判断其背景参考价值，无需通读全文。",
+          "must_read_sections": [
+            "4.2 过去工作分类",
+            "6 总结与讨论"
+          ],
+          "key_figures_or_tables": [
+            "Table 1 按湍流量分组的研究列表",
+            "Fig. 4 历年研究数量"
+          ]
+        },
+        "technical_tags": {
+          "model_or_theory": [
+            "Mann(1994)各向异性谱张量模型",
+            "Kolmogorov惯性子区",
+            "von Kármán谱",
+            "Taylor假设"
+          ],
+          "experiment_or_data": [
+            "C-W多普勒激光雷达",
+            "脉冲多普勒激光雷达",
+            "气象塔杯式/超声风速仪对比"
+          ],
+          "parameterization": [
+            "探体体积平均滤波函数φ(s)",
+            "Lorentzian权重函数",
+            "高斯脉冲滤波"
+          ],
+          "equations_or_metrics": [
+            "Rij自协方差矩阵",
+            "Dij结构函数",
+            "Fij一维谱",
+            "ε耗散率",
+            "湍流强度I",
+            "积分长度尺度ℓij"
+          ],
+          "materials_or_particles": [
+            "大气气溶胶后向散射",
+            "CO2激光"
+          ],
+          "spatial_temporal_scale": [
+            "大气边界层0-200m（风机高度）",
+            "对流边界层0.1-1.3km",
+            "30min观测时段"
+          ]
+        },
+        "llm_search_text": {
+          "compact_zh": "Sathe与Mann(2013)在Atmospheric Measurement Techniques发表的地基测风激光雷达湍流测量综述，系统回顾1972-2012年间80余项研究。文章聚焦三种扫描构型（staring、VAD、RHI）下径向速度的数学表达与数据处理算法，包括Wilson(1970)部分傅里叶分解、Eberhard等(1989)、Smalikho(1995)、Banakh等(1996)、Frehlich(1997)及Mann等(2010)的探体体积平均修正方法。核心挑战是从激光雷达大探体体积获取未滤波湍流统计量。按所估湍流量分类：耗散率ε研究最多(29项)，其次为雷诺应力Rij(17项)、积分长度尺度(16项)、径向速度方差(12项)等。结论指出多数现有算法依赖各向同性湍流模型，建议改用Mann(1994)各向异性模型，未来应发展无需湍流模型的算法；三台staring激光雷达交于一点可降低水平均匀性假设、适用于复杂地形。对风吹雪/风沙跃移耦合模拟项目仅具ABL湍流统计量背景参考价值。",
+          "compact_en": "Sathe and Mann (2013), published in Atmospheric Measurement Techniques, review turbulence measurements using ground-based wind lidars over 1972-2012. The review covers three scanning configurations (staring, VAD, RHI), the mathematical formulation of radial velocity, and data-processing algorithms that correct for probe-volume averaging (Wilson 1970; Eberhard et al. 1989; Smalikho 1995; Banakh et al. 1996; Frehlich 1997; Mann et al. 2010). The central challenge remains obtaining unfiltered turbulence statistics from the large lidar probe volume. Studies are classified by estimated quantity: dissipation rate epsilon (29), Reynolds stress Rij (17), integral length scales (16), radial velocity variance (12), filtered spectra and structure functions. Most algorithms combine an isotropic turbulence model with lidar measurements; the authors recommend the anisotropic Mann (1994) model and future model-free approaches. Relevant to ABL turbulence characterization but only tangential to wind-blown snow/sand transport modeling."
+        }
+      },
+      "metadata": {
+        "schema_version": "1.0",
+        "source_id": "000003",
+        "source_type": "network_search",
+        "entry_type": "article",
+        "citation_key": null,
+        "title": {
+          "original": "A review of turbulence measurements using ground-based wind lidars",
+          "translated_zh": "",
+          "short_zh": ""
+        },
+        "authors": [
+          {
+            "full_name": "Sathe",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Mann",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          }
+        ],
+        "first_author": {
+          "family": "",
+          "display": "Sathe"
+        },
+        "year": 2013,
+        "date": {
+          "published": "2013-11-19",
+          "online": "",
+          "accessed": ""
+        },
+        "container": {
+          "journal": "Atmospheric Measurement Techniques",
+          "booktitle": "",
+          "conference": "",
+          "series": "",
+          "publisher": "Copernicus GmbH",
+          "institution": "",
+          "school": ""
+        },
+        "publication": {
+          "volume": "6",
+          "number": "11",
+          "issue": "11",
+          "pages": "3147-3167",
+          "article_number": "",
+          "edition": ""
+        },
+        "identifiers": {
+          "doi": "10.5194/amt-6-3147-2013",
+          "arxiv_id": "",
+          "isbn": "",
+          "issn": "1867-8548",
+          "pmid": "",
+          "pmcid": "",
+          "openalex_id": "",
+          "semantic_scholar_id": "",
+          "crossref_id": ""
+        },
+        "links": {
+          "url": "https://doi.org/10.5194/amt-6-3147-2013",
+          "pdf_url": "",
+          "publisher_url": "",
+          "repository_url": ""
+        },
+        "abstract": "",
+        "keywords": [],
+        "language": "en",
+        "source": {
+          "kind": "network_search",
+          "provider": "manual_doi",
+          "query": "",
+          "retrieved_at": "",
+          "raw_record": {
+            "doi": "10.5194/amt-6-3147-2013",
+            "provider": "manual_doi"
+          }
+        },
+        "pdf": {
+          "status": "present",
+          "path": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述/2013_Sathe_地基测风激光雷达湍流测量综述.pdf",
+          "sha256": "8773356b7c4452d3c6faf88ef4359db42979cdd34708819c758bdf12dfdc9c07",
+          "file_size": 1130422
+        },
+        "metadata_match": {
+          "status": "matched",
+          "source": "crossref",
+          "confidence": 0.95,
+          "matched_at": "2026-06-29T19:19:03",
+          "warnings": [
+            "preserved non-empty metadata field: source_type",
+            "preserved non-empty metadata field: source.kind",
+            "preserved non-empty metadata field: pdf.status"
+          ],
+          "candidates": []
+        },
+        "bibtex": {
+          "status": "not_generated",
+          "last_generated_at": "",
+          "note": "BibTeX is generated later by API/writing workflow from metadata.json."
+        },
+        "notes": "",
+        "content": {
+          "markdown_sha256": "ff157ef6b1639855dbce44f75ec0d2b3d25217106f14a4b8ffdf8ee22107051b"
         }
       }
     },
@@ -2047,6 +3405,580 @@
         ],
         "content": {
           "markdown_sha256": "146059b059726e6bb423ef394ed75f80577c20d8dc1700ee2b38cf4e7f2fb9a1"
+        }
+      }
+    },
+    {
+      "paper_number": "0000000000000016",
+      "paper_id": "2014_Wang_探空估算大气混合层高度",
+      "folder_name": "2014_Wang_探空估算大气混合层高度",
+      "folder_path": "data/papers/2014_Wang_探空估算大气混合层高度",
+      "main_md": "data/papers/2014_Wang_探空估算大气混合层高度/2014_Wang_探空估算大气混合层高度.md",
+      "pdf": "data/papers/2014_Wang_探空估算大气混合层高度/2014_Wang_探空估算大气混合层高度.pdf",
+      "images_dir": "data/papers/2014_Wang_探空估算大气混合层高度/images",
+      "catalog_file": "data/papers/2014_Wang_探空估算大气混合层高度/2014_Wang_探空估算大气混合层高度.catalog.json",
+      "metadata_file": "data/papers/2014_Wang_探空估算大气混合层高度/2014_Wang_探空估算大气混合层高度.metadata.json",
+      "catalog": {
+        "schema_version": "1.1",
+        "display": {
+          "title_original": "Estimation of atmospheric mixing layer height from radiosonde data",
+          "title_zh": "基于探空数据的大气混合层高度估算",
+          "short_name_zh": "探空估算大气混合层高度",
+          "year": 2014,
+          "first_author": "Wang",
+          "authors_short": "X.Y. Wang, K.C. Wang",
+          "venue": "Atmos. Meas. Tech.",
+          "doi": "10.5194/amt-7-1701-2014"
+        },
+        "classification": {
+          "primary_domain": "大气科学/大气边界层",
+          "domains": [
+            "大气边界层",
+            "大气探测",
+            "空气污染气象学"
+          ],
+          "topics": [
+            "混合层高度",
+            "探空观测",
+            "边界层云"
+          ],
+          "keywords_en": [
+            "mixing layer height",
+            "radiosonde",
+            "atmospheric boundary layer",
+            "potential temperature",
+            "relative humidity",
+            "cloud"
+          ],
+          "keywords_zh": [
+            "混合层高度",
+            "探空",
+            "大气边界层",
+            "位温",
+            "相对湿度",
+            "云"
+          ]
+        },
+        "research_card": {
+          "one_sentence_summary_zh": "提出一种融合温度、湿度和云信息的方法，从北美79站高分辨率探空数据估算一致的大气混合层高度。",
+          "research_question_zh": "如何克服现有单一变量（位温、相对湿度、比湿、折射率）方法在估算混合层高度时的不一致性，特别是在有云条件下？",
+          "research_background_zh": "混合层高度是影响近地面污染物浓度、天气和气候变化的重要参数。现有基于探空廓线的方法（位温θ、相对湿度RH、比湿q、大气折射率N）之间存在显著差异，差异来源包括温湿廓线在非充分混合边界层中的不一致、比湿和折射率随高度可测性变化、云内湿度仪器误差以及云的普遍存在。",
+          "object_zh": "北美79个探空站1998-2008年高垂直分辨率（约30m）探空数据",
+          "study_type": "观测数据分析与方法开发",
+          "method_zh": "提出集成方法：先用1-2-1平滑确定同时满足四个变量梯度准则的高度h0，再结合基于相对湿度阈值的云层检测（Wang-Poore-Zhang方法）在云附近寻找稳定层，确定最终一致高度h_con。",
+          "data_or_experiment_zh": "使用SPARC数据中心提供的高时间分辨率（6s，约30m垂直分辨率）探空数据，包含北美79站1998-2008年位势高度、温度、相对湿度和露点温度，每日00:00和12:00 UTC两次观测。",
+          "model_or_algorithm_zh": "1-2-1平滑器、梯度极值定位、多变量一致性判据（四变量中至少三个同时满足）、基于RH阈值的分层云层检测、云附近稳定层扫描（上下各90m）",
+          "key_variables": [
+            "混合层高度h",
+            "位温θ",
+            "相对湿度RH",
+            "比湿q",
+            "大气折射率N",
+            "云"
+          ],
+          "main_results_zh": [
+            "h_con与h_N相关性最高(0.97)，与h_q次之(0.96)，与h_θ相关性最低(0.86)",
+            "考虑云效应使h降低约38m（h_con=1675m，h0=1713m）",
+            "北美气候态混合层高度为1675±303m",
+            "强东西梯度：美国中西部>1800m，阿拉斯加和美国西海岸<1400m",
+            "72.3%混合层为晴空，27.7%为云盖；云盖情形中约三分之一云增强湍流，三分之二云抑制湍流"
+          ],
+          "main_conclusion_zh": "融合温湿和云信息的方法能产生比单一变量方法更一致、更可靠的混合层高度估计；北美混合层高度呈显著东西梯度，受地形、土壤湿度、纬度和冷上升流影响。",
+          "limitations_zh": "难以与卫星激光雷达进行详细验证（观测本地太阳时差异大）；未考虑混合层高度的日循环；限制在4000m可能排除深对流云情形；仅限北美区域。",
+          "usefulness_for_project_zh": "为大气边界层高度确定提供方法论参考，边界层结构认知对高山风吹雪和风沙跃移模拟中的湍流边界条件设定有借鉴价值；云-边界层相互作用分析对耦合模拟有启发。",
+          "recommended_use_cases_zh": [
+            "边界层高度参数化方法参考",
+            "探空数据处理与云检测",
+            "边界层结构分析"
+          ]
+        },
+        "evidence_profile": {
+          "evidence_type": "观测数据分析",
+          "data_source": "SPARC高分辨率探空数据集",
+          "experiment_or_simulation_setup": "",
+          "materials_or_region": "北美79个探空站",
+          "spatial_scale": "北美区域",
+          "temporal_scale": "1998-2008年",
+          "sample_size_or_cases": "79站，57站满足长期平均准则",
+          "main_equations_or_metrics": [
+            "N=(n-1)×10^6=77.6P/T+3.73×10^5·e/T²",
+            "相关系数、偏差、标准差",
+            "1-2-1平滑器"
+          ]
+        },
+        "screening": {
+          "relevance_score": 4,
+          "reading_priority": 3,
+          "read_decision": "maybe_read",
+          "reason_zh": "直接涉及大气边界层主题，提供边界层高度确定方法和云检测技术，对项目边界层耦合模拟有参考价值，但非风吹雪/风沙跃移核心。",
+          "best_for_sections": [
+            "大气边界层",
+            "边界层高度参数化"
+          ],
+          "not_useful_for": [
+            "风吹雪耦合模拟",
+            "积雪水文",
+            "风沙跃移"
+          ],
+          "need_fulltext": true
+        },
+        "reading_priority": {
+          "score": 3,
+          "reason_zh": "边界层高度估算方法对理解湍流边界条件有用，但与项目核心（风吹雪、风沙跃移）关联较间接。",
+          "must_read_sections": [
+            "2.2.3 一致性混合层高度方法",
+            "3.1 统计特性",
+            "3.3 北美气候态"
+          ],
+          "key_figures_or_tables": [
+            "图2 廓线与h对比",
+            "表2 方法对比统计",
+            "图7 北美气候态h分布"
+          ]
+        },
+        "technical_tags": {
+          "model_or_theory": [
+            "混合层高度集成方法",
+            "云-边界层相互作用"
+          ],
+          "experiment_or_data": [
+            "探空观测",
+            "SPARC数据集"
+          ],
+          "parameterization": [
+            "RH阈值云检测",
+            "1-2-1平滑",
+            "梯度极值定位"
+          ],
+          "equations_or_metrics": [
+            "大气折射率N公式",
+            "相关系数/偏差/标准差"
+          ],
+          "materials_or_particles": [],
+          "spatial_temporal_scale": [
+            "北美区域",
+            "1998-2008",
+            "约30m垂直分辨率"
+          ]
+        },
+        "llm_search_text": {
+          "compact_zh": "本文提出一种融合温度、湿度和云信息的方法，从高分辨率探空数据估算一致的大气混合层高度。现有方法（位温θ、相对湿度RH、比湿q、大气折射率N）在估算混合层高度时存在显著差异，尤其在有云条件下。作者先用1-2-1平滑确定同时满足四变量梯度准则的高度h0，再结合基于RH阈值的云层检测在云附近寻找稳定层，确定最终一致高度h_con。方法应用于SPARC数据中心北美79站1998-2008年约30m垂直分辨率探空数据。结果显示h_con与h_N相关性最高(0.97)，考虑云效应使h降低约38m；北美气候态混合层高度为1675±303m，呈强东西梯度（美国中西部>1800m，阿拉斯加和西海岸<1400m）。该方法对大气边界层高度参数化和边界层结构认知有参考价值。",
+          "compact_en": "This paper proposes an integrated method combining temperature, humidity, and cloud information to estimate a consistent atmospheric mixing layer height (h) from high-resolution radiosonde data. Existing methods based on potential temperature, relative humidity, specific humidity, and refractivity show substantial discrepancies, especially under cloudy conditions. The method first identifies height h0 meeting gradient criteria of four variables, then uses RH-threshold cloud detection to find stable layers near clouds for the final consistent height h_con. Applied to SPARC radiosonde data at 79 North American stations (1998-2008, ~30m vertical resolution). Results show h_con correlates best with h_N (0.97); cloud effects reduce h by ~38m. Climatological h over North America is 1675±303m with a strong east-west gradient."
+        }
+      },
+      "metadata": {
+        "schema_version": "1.0",
+        "source_id": "000004",
+        "source_type": "network_search",
+        "entry_type": "article",
+        "citation_key": null,
+        "title": {
+          "original": "Estimation of atmospheric mixing layer height from radiosonde data",
+          "translated_zh": "",
+          "short_zh": ""
+        },
+        "authors": [
+          {
+            "full_name": "Wang",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Wang",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          }
+        ],
+        "first_author": {
+          "family": "",
+          "display": "Wang"
+        },
+        "year": 2014,
+        "date": {
+          "published": "2014-06-12",
+          "online": "",
+          "accessed": ""
+        },
+        "container": {
+          "journal": "Atmospheric Measurement Techniques",
+          "booktitle": "",
+          "conference": "",
+          "series": "",
+          "publisher": "Copernicus GmbH",
+          "institution": "",
+          "school": ""
+        },
+        "publication": {
+          "volume": "7",
+          "number": "6",
+          "issue": "6",
+          "pages": "1701-1709",
+          "article_number": "",
+          "edition": ""
+        },
+        "identifiers": {
+          "doi": "10.5194/amt-7-1701-2014",
+          "arxiv_id": "",
+          "isbn": "",
+          "issn": "1867-8548",
+          "pmid": "",
+          "pmcid": "",
+          "openalex_id": "",
+          "semantic_scholar_id": "",
+          "crossref_id": ""
+        },
+        "links": {
+          "url": "https://doi.org/10.5194/amt-7-1701-2014",
+          "pdf_url": "",
+          "publisher_url": "",
+          "repository_url": ""
+        },
+        "abstract": "",
+        "keywords": [],
+        "language": "en",
+        "source": {
+          "kind": "network_search",
+          "provider": "manual_doi",
+          "query": "",
+          "retrieved_at": "",
+          "raw_record": {
+            "doi": "10.5194/amt-7-1701-2014",
+            "provider": "manual_doi"
+          }
+        },
+        "pdf": {
+          "status": "present",
+          "path": "data/papers/2014_Wang_探空估算大气混合层高度/2014_Wang_探空估算大气混合层高度.pdf",
+          "sha256": "594d7f7bba765820e110da208392919c279599852a66c74425b33bbb86de5e82",
+          "file_size": 1391614
+        },
+        "metadata_match": {
+          "status": "matched",
+          "source": "crossref",
+          "confidence": 0.95,
+          "matched_at": "2026-06-29T19:19:04",
+          "warnings": [
+            "preserved non-empty metadata field: source_type",
+            "preserved non-empty metadata field: source.kind",
+            "preserved non-empty metadata field: pdf.status"
+          ],
+          "candidates": []
+        },
+        "bibtex": {
+          "status": "not_generated",
+          "last_generated_at": "",
+          "note": "BibTeX is generated later by API/writing workflow from metadata.json."
+        },
+        "notes": "",
+        "content": {
+          "markdown_sha256": "aa95e9fd3cb1640f2483a1e55665555ba6aeb3432a7c2221b33220f606a3cfe4"
+        }
+      }
+    },
+    {
+      "paper_number": "0000000000000017",
+      "paper_id": "2015_Filhol_雪床形态综述与形成模型",
+      "folder_name": "2015_Filhol_雪床形态综述与形成模型",
+      "folder_path": "data/papers/2015_Filhol_雪床形态综述与形成模型",
+      "main_md": "data/papers/2015_Filhol_雪床形态综述与形成模型/2015_Filhol_雪床形态综述与形成模型.md",
+      "pdf": "data/papers/2015_Filhol_雪床形态综述与形成模型/2015_Filhol_雪床形态综述与形成模型.pdf",
+      "images_dir": "data/papers/2015_Filhol_雪床形态综述与形成模型/images",
+      "catalog_file": "data/papers/2015_Filhol_雪床形态综述与形成模型/2015_Filhol_雪床形态综述与形成模型.catalog.json",
+      "metadata_file": "data/papers/2015_Filhol_雪床形态综述与形成模型/2015_Filhol_雪床形态综述与形成模型.metadata.json",
+      "catalog": {
+        "schema_version": "1.1",
+        "display": {
+          "title_original": "Snow bedforms: A review, new data, and a formation model",
+          "title_zh": "雪床形态：综述、新数据与形成模型",
+          "short_name_zh": "雪床形态综述与形成模型",
+          "year": 2015,
+          "first_author": "Filhol",
+          "authors_short": "Filhol and Sturm",
+          "venue": "J. Geophys. Res. Earth Surf.",
+          "doi": "10.1002/2015jf003529"
+        },
+        "classification": {
+          "primary_domain": "snow_aeolian_bedforms",
+          "domains": [
+            "blowing_snow_physics",
+            "snow_aeolian_geomorphology",
+            "cryosphere_surface_processes"
+          ],
+          "topics": [
+            "snow bedforms",
+            "sastrugi",
+            "snow dunes",
+            "barchans",
+            "sintering",
+            "saltation",
+            "laser scanning",
+            "snow surface roughness"
+          ],
+          "keywords_en": [
+            "snow bedforms",
+            "sastrugi",
+            "barchan dunes",
+            "sintering",
+            "saltation",
+            "snow waves",
+            "ripple marks",
+            "laser scanning",
+            "windblown snow"
+          ],
+          "keywords_zh": [
+            "雪床形态",
+            "雪脊",
+            "新月形雪丘",
+            "烧结",
+            "跃移",
+            "雪浪",
+            "波痕",
+            "激光扫描",
+            "风吹雪"
+          ]
+        },
+        "research_card": {
+          "one_sentence_summary_zh": "综述七类风成雪床形态，基于阿拉斯加北坡激光扫描新数据比较雪/沙新月丘形态，并建立烧结限制雪丘生长的形成模型，提出风速-阈值风速双轴新分类。",
+          "research_question_zh": "哪些因素决定雪床形态的形状与相互关系？烧结如何限制雪丘发育并使侵蚀形态（雪脊）成为最常见类型？",
+          "research_background_zh": "雪床形态由风与运动雪粒共同作用形成，年覆盖可达地表11%，集中于极区，影响地表能量平衡、微波遥感测雪与冰芯古气候解读，但定量研究与文献远少于沙丘研究。",
+          "object_zh": "风成雪床形态（横向沙丘/雪浪、新月丘、鲸背丘、波痕、岩尾、坑、雪脊）的形态、成因、动力学与分类。",
+          "study_type": "review + field observation + theoretical model",
+          "method_zh": "综述约30篇历史文献；用Leica ScanStation C10激光扫描仪在阿拉斯加北坡9个冻原/湖冰站点采集三维DEM（4cm分辨率）做形态分析；建立耦合Bagnold-Iversen输运通量、雪丘传播速度与Gow-Ramseier烧结硬化的数学模型。",
+          "data_or_experiment_zh": "2012-2014年阿拉斯加北坡9个站点激光扫描DEM（3个离散新月丘场+6个复合表面场），及文献中的雪浪/新月丘/波痕/雪脊形态参数。",
+          "model_or_algorithm_zh": "雪丘形成模型：Bagnold-Iversen风沙通量方程 + 雪丘传播速度c=Q/(ρbulk·h) + Gow-Ramseier烧结硬化H=0.836+0.152A + Kotlyakov阈值风速-硬度关系，联合得Uth=10.57+1.01A，再由雪丘年龄A=L/c闭环。",
+          "key_variables": [
+            "风速U",
+            "阈值风速Uth",
+            "跃移通量qs",
+            "雪丘高度h",
+            "雪丘传播速度c",
+            "雪硬度H",
+            "烧结年龄A",
+            "粗糙度z0"
+          ],
+          "main_results_zh": [
+            "确认七类雪床形态，其中雪脊（侵蚀型）最普遍，新月丘与雪浪较罕见",
+            "雪新月丘与沙新月丘足迹（宽:长）相似，但雪丘更扁平（高:长1:70、高:宽1:55，沙为1:15与1:11）",
+            "烧结通常在24h内锁定雪粒，使雪丘在数小时至数天内停止生长并转向侵蚀",
+            "模型显示0.6m高雪丘维持5cm/min传播需风速从20增至29m/s，1m高需37m/s，远超北极常见概率",
+            "提出以风速U与阈值风速Uth为双轴的雪床形态新分类，侵蚀区位于U<Uth之上，沉积区随通量增大由新月丘→新月丘链→雪浪过渡",
+            "复合表面（多次事件叠加形态）是野外最常见类型"
+          ],
+          "main_conclusion_zh": "烧结是雪床形态与沙床形态差异的关键：它限制雪丘尺寸与寿命，使侵蚀形态（雪脊）成为最常见雪床形态。",
+          "limitations_zh": "烧结模型基于24h线性拟合与有限的南极实测硬度数据；激光扫描为静态快照无法直接观测形成过程；复合表面风-雪反馈机制难以量化；形态数据多来自一次性访问。",
+          "usefulness_for_project_zh": "直接相关——提供风吹雪跃移/蠕移输运机制、风成雪床形态分类、烧结对雪粒可蚀性的参数化，以及雪面粗糙度对能量平衡与积累的影响，支撑风吹雪耦合模拟的雪面形态、可蚀性与粗糙度模块。",
+          "recommended_use_cases_zh": [
+            "方法-风沙输运通量方程与烧结参数化",
+            "引言-风吹雪床形态与雪面粗糙度背景",
+            "讨论-雪面可蚀性与阈值风速",
+            "验证-激光扫描雪面形态数据参照"
+          ]
+        },
+        "evidence_profile": {
+          "evidence_type": "review + field observation + theoretical model",
+          "data_source": "Alaska North Slope terrestrial laser scans + literature compilation",
+          "experiment_or_simulation_setup": "Leica ScanStation C10激光扫描9个站点生成4cm分辨率DEM，3个离散新月丘场形态分析+6个复合表面；文献雪浪/新月丘/波痕/雪脊参数汇总；烧结-阈值风速解析模型",
+          "materials_or_region": "North Slope of Alaska (tundra + lake ice, 68.6-69.8°N); Antarctica/Greenland literature data",
+          "spatial_scale": "cm to tens of meters (bedform scale); regional (North Slope sites)",
+          "temporal_scale": "hours to days (bedform lifetime); <24h sintering window",
+          "sample_size_or_cases": "9 laser scan sites; ~30 literature studies; 7 bedform types",
+          "main_equations_or_metrics": [
+            "U(z)=U*/κ·ln(z/z0)",
+            "qs∝ρair·U*²(U*-U*th)/g",
+            "c=α·Q/(ρbulk·h)",
+            "H=0.836+0.152A",
+            "Uth=10.57+1.01A",
+            "A=L/c",
+            "barchan width:length:height ratios"
+          ]
+        },
+        "screening": {
+          "relevance_score": 5,
+          "reading_priority": 4,
+          "read_decision": "must_read",
+          "reason_zh": "风成雪床形态是风吹雪-雪面相互作用的核心表现，本文系统综述七类形态、跃移/蠕移机制、烧结可蚀性参数化与雪面粗糙度，直接支撑项目风吹雪耦合模拟与积雪水文研究。",
+          "best_for_sections": [
+            "introduction",
+            "method",
+            "discussion"
+          ],
+          "not_useful_for": [
+            "遥感算法开发",
+            "气候尺度统计"
+          ],
+          "need_fulltext": true
+        },
+        "reading_priority": {
+          "score": 4,
+          "reason_zh": "需要烧结-阈值风速参数化方程、雪丘传播模型与激光扫描形态数据，是雪面可蚀性与粗糙度模块的关键参考。",
+          "must_read_sections": [
+            "2. Snow Bedform Descriptions",
+            "3. Bedform Morphology Using a Laser Scanner",
+            "4. A Model of Snow Bedform Formation",
+            "5. A New Classification of Snow Bedforms"
+          ],
+          "key_figures_or_tables": [
+            "Figure 1 bedform photographs",
+            "Figure 12 dune height vs propagation speed with sintering",
+            "Figure 13 U-Uth classification",
+            "Table 2 barchan metrics",
+            "Table 4 snow vs sand barchan morphology"
+          ]
+        },
+        "technical_tags": {
+          "model_or_theory": [
+            "Bagnold windblown flux",
+            "Iversen saltation flux",
+            "dune propagation model",
+            "sintering hardening model",
+            "U-Uth bedform classification"
+          ],
+          "experiment_or_data": [
+            "terrestrial laser scanning (Leica C10)",
+            "Alaska North Slope field DEMs",
+            "literature bedform metrics compilation"
+          ],
+          "parameterization": [
+            "sintering hardness-age relation",
+            "threshold wind speed-hardness relation",
+            "saltation flux"
+          ],
+          "equations_or_metrics": [
+            "qs∝ρair·U*²(U*-U*th)/g",
+            "c=α·Q/(ρbulk·h)",
+            "Uth=10.57+1.01A",
+            "barchan width:length:height ratios"
+          ],
+          "materials_or_particles": [
+            "snow particles (ρ=917 kg/m³)",
+            "saltating snow grains",
+            "wind-packed snow slabs"
+          ],
+          "spatial_temporal_scale": [
+            "bedform scale (cm-m)",
+            "event-scale (hours-days)",
+            "<24h sintering window"
+          ]
+        },
+        "llm_search_text": {
+          "compact_zh": "Filhol与Sturm(2015, JGR Earth Surface)综述风成雪床形态，确认七类（横向沙丘/雪浪、新月丘、鲸背丘、波痕、岩尾、坑、雪脊），基于阿拉斯加北坡9站点激光扫描DEM比较雪/沙新月丘形态，发现雪丘更扁平但足迹相似。建立耦合Bagnold风沙通量、雪丘传播与烧结硬化的数学模型，证明烧结在24h内锁定雪粒、限制雪丘尺寸并使侵蚀型雪脊成为最常见形态，提出以风速与阈值风速为双轴的新分类。直接支撑风吹雪跃移输运、雪面可蚀性参数化与积雪水文粗糙度研究。",
+          "compact_en": "Filhol and Sturm (2015, JGR Earth Surface) review snow bedforms, identifying seven types (transverse dunes/snow waves, barchans, whalebacks, ripple marks, crag and tails, pits, sastrugi). Using terrestrial laser scans of nine Alaska North Slope sites, they show snow barchans are flatter than sand barchans but share similar footprints. A mathematical model coupling Bagnold windblown flux, dune propagation, and sintering hardening demonstrates that sintering locks snow within 24h, limits dune size, and makes erosional sastrugi the most common bedform. A new wind-speed vs threshold-wind-speed classification is proposed. Directly relevant to blowing snow saltation transport, snow erodibility parameterization, and snow surface roughness."
+        }
+      },
+      "metadata": {
+        "schema_version": "1.0",
+        "source_id": "000006",
+        "source_type": "network_search",
+        "entry_type": "article",
+        "citation_key": null,
+        "title": {
+          "original": "Snow bedforms: A review, new data, and a formation model",
+          "translated_zh": "",
+          "short_zh": ""
+        },
+        "authors": [
+          {
+            "full_name": "Filhol",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Sturm",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          }
+        ],
+        "first_author": {
+          "family": "",
+          "display": "Filhol"
+        },
+        "year": 2015,
+        "date": {
+          "published": "2015-09",
+          "online": "",
+          "accessed": ""
+        },
+        "container": {
+          "journal": "Journal of Geophysical Research: Earth Surface",
+          "booktitle": "",
+          "conference": "",
+          "series": "",
+          "publisher": "American Geophysical Union (AGU)",
+          "institution": "",
+          "school": ""
+        },
+        "publication": {
+          "volume": "120",
+          "number": "9",
+          "issue": "9",
+          "pages": "1645-1669",
+          "article_number": "",
+          "edition": ""
+        },
+        "identifiers": {
+          "doi": "10.1002/2015jf003529",
+          "arxiv_id": "",
+          "isbn": "",
+          "issn": "2169-9003",
+          "pmid": "",
+          "pmcid": "",
+          "openalex_id": "",
+          "semantic_scholar_id": "",
+          "crossref_id": ""
+        },
+        "links": {
+          "url": "https://doi.org/10.1002/2015jf003529",
+          "pdf_url": "",
+          "publisher_url": "",
+          "repository_url": ""
+        },
+        "abstract": "",
+        "keywords": [],
+        "language": "en",
+        "source": {
+          "kind": "network_search",
+          "provider": "manual_doi",
+          "query": "",
+          "retrieved_at": "",
+          "raw_record": {
+            "doi": "10.1002/2015jf003529",
+            "provider": "manual_doi"
+          }
+        },
+        "pdf": {
+          "status": "present",
+          "path": "data/papers/2015_Filhol_雪床形态综述与形成模型/2015_Filhol_雪床形态综述与形成模型.pdf",
+          "sha256": "f47885e6a2d50f0e636ad6a46cbbdd7ca11574cac2330a417753f98e167f60f3",
+          "file_size": 10995805
+        },
+        "metadata_match": {
+          "status": "matched",
+          "source": "crossref",
+          "confidence": 0.95,
+          "matched_at": "2026-06-29T19:19:06",
+          "warnings": [
+            "preserved non-empty metadata field: source_type",
+            "preserved non-empty metadata field: source.kind",
+            "preserved non-empty metadata field: pdf.status"
+          ],
+          "candidates": []
+        },
+        "bibtex": {
+          "status": "not_generated",
+          "last_generated_at": "",
+          "note": "BibTeX is generated later by API/writing workflow from metadata.json."
+        },
+        "notes": "",
+        "content": {
+          "markdown_sha256": "5d6ef0ea999d42b0379818629794b2b9d2e959ae65b0fbf74a00d944e72faed1"
         }
       }
     },
@@ -3632,6 +5564,401 @@
         "notes": "",
         "content": {
           "markdown_sha256": "1971242006a1cb68b127f6bcbb6b2fc888819a479218f6231837c6d3af817a64"
+        }
+      }
+    },
+    {
+      "paper_number": "0000000000000018",
+      "paper_id": "2023_Kotthaus_地基遥感边界层高度综述",
+      "folder_name": "2023_Kotthaus_地基遥感边界层高度综述",
+      "folder_path": "data/papers/2023_Kotthaus_地基遥感边界层高度综述",
+      "main_md": "data/papers/2023_Kotthaus_地基遥感边界层高度综述/2023_Kotthaus_地基遥感边界层高度综述.md",
+      "pdf": "data/papers/2023_Kotthaus_地基遥感边界层高度综述/2023_Kotthaus_地基遥感边界层高度综述.pdf",
+      "images_dir": "data/papers/2023_Kotthaus_地基遥感边界层高度综述/images",
+      "catalog_file": "data/papers/2023_Kotthaus_地基遥感边界层高度综述/2023_Kotthaus_地基遥感边界层高度综述.catalog.json",
+      "metadata_file": "data/papers/2023_Kotthaus_地基遥感边界层高度综述/2023_Kotthaus_地基遥感边界层高度综述.metadata.json",
+      "catalog": {
+        "schema_version": "1.1",
+        "display": {
+          "title_original": "Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations",
+          "title_zh": "基于地基遥感的边界层高度：能力与局限综述",
+          "short_name_zh": "地基遥感边界层高度综述",
+          "year": 2023,
+          "first_author": "Kotthaus",
+          "authors_short": "Kotthaus et al.",
+          "venue": "Atmos. Meas. Tech.",
+          "doi": "10.5194/amt-16-433-2023"
+        },
+        "classification": {
+          "primary_domain": "大气边界层地基遥感观测",
+          "domains": [
+            "大气边界层",
+            "地基遥感",
+            "大气探测",
+            "边界层高度反演"
+          ],
+          "topics": [
+            "ABL高度反演方法",
+            "地基遥感廓线观测",
+            "边界层子层结构与日变化",
+            "仪器协同与网络化观测"
+          ],
+          "keywords_en": [
+            "atmospheric boundary layer",
+            "ABL height",
+            "ground-based remote sensing",
+            "ceilometer",
+            "Doppler wind lidar",
+            "microwave radiometer",
+            "retrieval methods",
+            "boundary layer sub-layer"
+          ],
+          "keywords_zh": [
+            "大气边界层",
+            "边界层高度",
+            "地基遥感",
+            "激光云高仪",
+            "多普勒测风激光雷达",
+            "微波辐射计",
+            "反演方法",
+            "边界层子层"
+          ]
+        },
+        "research_card": {
+          "one_sentence_summary_zh": "综述地基遥感仪器（微波辐射计、雷达风廓线仪、多普勒测风激光雷达、激光云高仪等）探测大气边界层及其子层高度的能力与局限，系统梳理基于温度、湿度、风、湍流和气溶胶的各类边界层高度反演方法及其在日变化不同阶段的适用性与不确定性。",
+          "research_question_zh": "各类地基遥感仪器与反演算法在探测大气边界层及子层（对流边界层CBL、稳定边界层SBL、残留层RL、混合层MBL）高度时的能力、局限与不确定性如何？如何在日变化不同阶段和不同大气条件（稳定度、云、低空急流）下选择与协同使用这些方法？",
+          "research_background_zh": "大气边界层（ABL）是地表与大气直接相互作用的最底层，对空气质量、数值天气预报（NWP）、温室气体评估和可再生能源等应用至关重要。无线电探空时间分辨率不足（每日2–4次）且气球漂移引入空间误差，难以捕捉ABL日变化；近年来地基遥感技术（MWR、RWP、DWL、ALC等）与算法的发展使连续高分辨率廓线观测成为可能，欧洲等地密集观测网络（E-PROFILE、ACTRIS、ICOS、ARM）正在形成，亟需梳理各类仪器与方法的能力与局限以指导网络设计、算法实现与结果解释。",
+          "object_zh": "地基遥感廓线观测技术（仪器类型）与边界层高度反演方法（基于热力、动力/湍流、气溶胶的各类方法）",
+          "study_type": "综述（review）",
+          "method_zh": "系统综述。按大气变量（热力、动力/湍流、示踪物）分类介绍仪器测量原理与能力局限；按物理量分类梳理ABL子层高度反演方法（parcel法、bulk Richardson法、Heffter法、梯度法、小波协方差变换WCT、湍流阈值法、AI/模糊逻辑等），并按日变化阶段（夜间稳定层、清晨增长、午后对流峰值、傍晚衰减）和云况讨论各方法性能与仪器协同。",
+          "data_or_experiment_zh": "无原创数据（综述文章，明确声明未使用数据集）。基于文献综述，引用大量观测网络（E-PROFILE、ACTRIS、ICOS、ARM、MWRnet、EARLINET、MPLnet、IGRA/GUAN/GRUAN探空、AMDAR/IAGOS）与野外实验（JCAL、FESSTVaL等）的已有结果进行方法对比。",
+          "model_or_algorithm_zh": "不涉及新模型/算法开发，仅综述已有算法。热力法：parcel法、bulk Richardson法、Heffter法、θ/θv梯度法、MWR亮温Tb回归法；风/湍流法：速度方差阈值、TKE、耗散率ε、折射率结构参数Cn²峰值、模糊逻辑与机器学习；气溶胶法：梯度/拐点、二维边缘检测、小波协方差变换WCT、轮廓拟合、扩展Kalman滤波、K-means(KABL/ISABL)、AdaBoost(ADABL)、STRATfinder/pathfinderTURB/COBOLT/CABAM等时序追踪与图论算法。",
+          "key_variables": [
+            "ABLH/边界层高度",
+            "CBLH/对流边界层高度",
+            "SBLH/稳定边界层高度",
+            "RLH/残留层高度",
+            "MBLH/混合边界层高度",
+            "SBIH/地表逆温高度",
+            "EZD/夹卷区厚度"
+          ],
+          "main_results_zh": [
+            "午后对流充分发展时各方法一致性最好（相差数百米内）；清晨增长与傍晚衰减阶段不确定性最大。",
+            "浅层探测依赖仪器近端能力（盲区），深层对流依赖信噪比；高功率激光雷达近端盲区大，ALC/MWR更适合浅层，存在近端与远端能力的反比关系。",
+            "气溶胶法在夜间/清晨易混淆MBLH与RLH，层归属（layer attribution）是最大不确定来源；含时序一致性约束的二代算法表现更优。",
+            "SBLH探测不确定性约30%–40%；低空急流（LLJ）、多子层并存与云况显著增加反演难度。",
+            "多仪器/多方法协同（如MWR温度+ALC气溶胶、DWL风+MWR温度算bulk Richardson）被普遍认为是提升边界层刻画与不确定性评估的最有前景途径。"
+          ],
+          "main_conclusion_zh": "地基遥感是连续监测ABL这一'最欠采样大气层'的强大手段。仪器与算法多样性既是不确定性量化的挑战，也是协同过程研究的优势；网络化、协同化观测与标准化数据处理是获得高质量边界层高度产品的关键。多传感器协同可同时推进反演方法/产品与过程研究/模式评估，并有望描绘ABL动力学的四维复杂性。",
+          "limitations_zh": "为综述文章，无原创观测/模拟；ABL高度缺乏'绝对真值'参考标准，方法评估多依赖相互比较，存在系统性偏差。各方法性能高度依赖仪器型号、固件、扫描策略与数据处理，难以给出普适定量结论；对山地/城市等复杂下垫面及云况的系统性定量分析仍不足；直接多变量、长时序相互比较研究仍然稀少。",
+          "usefulness_for_project_zh": "为本项目'大气边界层'研究主题提供基础概念框架：系统界定ABL子层（CBL/SBL/RL/EZ）及其日变化理想模型，厘清各遥感仪器的能力边界与ABL高度反演方法谱系及典型阈值/不确定性区间。对高山风吹雪/风沙跃移耦合模拟而言，可指导ABL高度这一关键参数的定义、取值范围与不确定性区间，并为模式结果与观测对比验证提供方法学参考。但其遥感观测视角与项目模拟视角存在差距，不直接涉及雪/沙输运过程。",
+          "recommended_use_cases_zh": [
+            "ABL子层结构与日变化的概念参考",
+            "边界层高度参数取值范围与不确定性区间",
+            "模式结果与观测对比验证的方法学参考",
+            "多仪器协同与多源数据融合思路借鉴"
+          ]
+        },
+        "evidence_profile": {
+          "evidence_type": "综述/文献综合（review/synthesis）",
+          "data_source": "文献综述（无原创数据集）；引用观测网络数据：E-PROFILE、ACTRIS、EARLINET、ICOS、ARM、MWRnet、MPLnet、IGRA/GUAN/GRUAN探空、AMDAR/IAGOS",
+          "experiment_or_simulation_setup": "无自有实验/模拟。综述对比基于已有野外实验（如JCAL、FESSTVaL）与多站点、多仪器、多方法相互比较的文献结果。",
+          "materials_or_region": "全球（侧重欧洲），涉及城市（伦敦、巴黎、首尔、香港、纽约）、山地、极地等多类下垫面",
+          "spatial_scale": "单站垂直廓线至区域/全球观测网络；ABL垂直范围数十米至>3 km",
+          "temporal_scale": "分钟至小时级时间分辨率；覆盖日变化至季节/年际/年代际长期统计",
+          "sample_size_or_cases": "综述数百篇文献；涉及全球约1300个探空站、>370台ALC（欧洲E-PROFILE）、>100台MWR、<100台RWP等",
+          "main_equations_or_metrics": [
+            "bulk Richardson数Rib（临界阈值0.10–0.50，ERA-Interim取0.25）",
+            "parcel法（干绝热线与温度廓线交点）",
+            "Heffter法（θ梯度>0.005 K m⁻¹且逆变层θ变化>2 K）",
+            "垂直速度方差阈值（0.04–0.16 m²s⁻²或廓线最大值10%）",
+            "TKE阈值（廓线最大值5%或0.101/0.200 m²s⁻²）",
+            "耗散率ε阈值（10⁻⁴ m²s⁻³）",
+            "小波协方差变换WCT",
+            "MWR-RMSD：温度≈0.8 K，湿度0.2–1.5 g m⁻³",
+            "SBLH不确定性约30%–40%"
+          ]
+        },
+        "screening": {
+          "relevance_score": 4,
+          "reading_priority": 3,
+          "read_decision": "maybe_read",
+          "reason_zh": "直接覆盖项目'大气边界层'主题，是ABL高度地基遥感反演的权威综述，提供子层结构与日变化的基础框架及ABL高度参数的不确定性区间，对耦合模拟中边界层参数化与模式验证有参考价值。但属观测/遥感视角的综述，不涉及风吹雪、风沙跃移或积雪水文过程，与项目核心模拟目标为间接相关，故列为maybe_read。",
+          "best_for_sections": [
+            "research_card.research_background_zh",
+            "evidence_profile.main_equations_or_metrics",
+            "technical_tags"
+          ],
+          "not_useful_for": [
+            "风吹雪/风沙跃移具体过程",
+            "积雪水文过程",
+            "耦合模拟数值方法实现细节"
+          ],
+          "need_fulltext": false
+        },
+        "reading_priority": {
+          "score": 3,
+          "reason_zh": "ABL主题权威综述，提供边界层高度反演方法谱系与不确定性区间，对项目ABL参数化与模式验证有参考价值；但遥感观测视角与项目耦合模拟核心目标间接相关，优先级中等。",
+          "must_read_sections": [
+            "Abstract",
+            "Sect. 1（ABL子层定义与日变化理想模型，Fig.2）",
+            "Sect. 3.1（热力法：parcel/bulk Richardson阈值）",
+            "Sect. 5 Conclusions"
+          ],
+          "key_figures_or_tables": [
+            "Fig.2（ABL日变化理想廓线与子层结构）",
+            "Table 1（ABL高度反演大气变量分类）",
+            "Table 2（仪器类型与观测网络）",
+            "Fig.1（论文入口导航）"
+          ]
+        },
+        "technical_tags": {
+          "model_or_theory": [
+            "parcel method",
+            "bulk Richardson number",
+            "Heffter method",
+            "idealised ABL diurnal evolution (Stull/Beyrich/De Wekker)"
+          ],
+          "experiment_or_data": [
+            "MWR",
+            "IRS/AERI",
+            "DWL",
+            "RWP",
+            "ALC",
+            "Raman lidar",
+            "DIAL",
+            "RASS",
+            "sodar",
+            "radiosonde",
+            "UAS/AMDAR/IAGOS"
+          ],
+          "parameterization": [
+            "ABLH/CBLH/SBLH/RLH/MBLH definitions",
+            "Rib critical threshold (0.10–0.50)",
+            "velocity variance / TKE / ε thresholds",
+            "WCT wavelet covariance",
+            "fuzzy logic / AI layer attribution"
+          ],
+          "equations_or_metrics": [
+            "Rib",
+            "θv gradient",
+            "σw²/TKE/ε thresholds",
+            "WCT",
+            "transition zone EZD",
+            "RMSD (MWR T≈0.8 K)"
+          ],
+          "materials_or_particles": [
+            "aerosol backscatter (βatt)",
+            "water vapour",
+            "air temperature",
+            "refractive index Cn²"
+          ],
+          "spatial_temporal_scale": [
+            "vertical: tens of m to >3 km",
+            "temporal: <1 min to hourly",
+            "diurnal to inter-annual",
+            "station to global network"
+          ]
+        },
+        "llm_search_text": {
+          "compact_zh": "Kotthaus等(2023)在AMT发表综述，系统评估地基遥感探测大气边界层(ABL)高度的能力与局限。ABL是地表-大气相互作用最底层，对空气质量、数值天气预报、温室气体评估和可再生能源至关重要。文章按热力、动力/湍流、示踪物三类大气变量，介绍微波辐射计(MWR)、红外光谱仪(IRS)、多普勒测风激光雷达(DWL)、雷达风廓线仪(RWP)、激光云高仪(ALC)、拉曼激光雷达、DIAL、RASS、声雷达、探空等仪器的测量原理、能力与局限，并梳理ABL子层(对流CBL/稳定SBL/残留层RL/混合层MBL)高度反演方法：热力法(parcel法、bulk Richardson法、Heffter法、梯度法、Tb回归)、风/湍流法(速度方差、TKE、耗散率、Cn²)、气溶胶法(梯度、小波协方差变换WCT、二维边缘检测、轮廓拟合、Kalman滤波、K-means、AdaBoost、STRATfinder/pathfinderTURB/CABAM等时序追踪)。核心结论：午后对流充分发展时各方法一致性最好(数百米内)，清晨增长与傍晚衰减不确定性最大；浅层探测依赖近端能力(盲区)，深层对流依赖信噪比；气溶胶法夜间易混淆MBLH与RLH，层归属是最大不确定来源；SBLH不确定性约30%–40%。多仪器协同(如MWR+ALC、DWL+MWR算Rib)被普遍认为是最有前景途径；网络化与标准化处理是高质量边界层高度产品的关键。",
+          "compact_en": "Kotthaus et al. (2023, AMT) review capabilities and limitations of ground-based remote sensing for atmospheric boundary layer (ABL) height retrieval. They cover instruments (microwave radiometers, infrared spectrometers, Doppler wind lidars, radar wind profilers, automatic lidars/ceilometers, Raman/DIAL lidars, RASS, sodars, radiosondes) and retrieval methods based on thermodynamic (parcel, bulk Richardson, Heffter, gradient), wind/turbulence (velocity variance, TKE, eddy dissipation rate, Cn²), and aerosol (gradient, wavelet covariance transform, profile fitting, Kalman filter, K-means, AdaBoost, STRATfinder/pathfinderTURB/CABAM) variables for ABL sub-layer heights (CBLH, SBLH, RLH, MBLH). Key findings: methods agree best during peak afternoon convection (within a few hundred metres), with largest uncertainty during morning growth and evening decay; shallow-layer detection depends on near-range capabilities, deep convection on SNR; aerosol methods risk confusing MBLH and RLH at night (layer attribution is the main uncertainty source); SBLH uncertainty ~30%–40%. Multi-instrument synergy (e.g. MWR+ALC, DWL+MWR for Rib) is identified as the most promising approach. Network harmonisation and standardised processing are key to high-quality ABL height products."
+        }
+      },
+      "metadata": {
+        "schema_version": "1.0",
+        "source_id": "000002",
+        "source_type": "network_search",
+        "entry_type": "article",
+        "citation_key": null,
+        "title": {
+          "original": "Atmospheric boundary layer height from ground-based remote sensing: a review of capabilities and limitations",
+          "translated_zh": "",
+          "short_zh": ""
+        },
+        "authors": [
+          {
+            "full_name": "Kotthaus",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Bravo-Aranda",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Collaud Coen",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Guerrero-Rascado",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Costa",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Cimini",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "O'Connor",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Hervo",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Alados-Arboledas",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Jiménez-Portaz",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Mona",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Ruffieux",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Illingworth",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          },
+          {
+            "full_name": "Haeffelin",
+            "family": "",
+            "given": "",
+            "orcid": "",
+            "affiliation": ""
+          }
+        ],
+        "first_author": {
+          "family": "",
+          "display": "Kotthaus"
+        },
+        "year": 2023,
+        "date": {
+          "published": "2023-01-26",
+          "online": "",
+          "accessed": ""
+        },
+        "container": {
+          "journal": "Atmospheric Measurement Techniques",
+          "booktitle": "",
+          "conference": "",
+          "series": "",
+          "publisher": "Copernicus GmbH",
+          "institution": "",
+          "school": ""
+        },
+        "publication": {
+          "volume": "16",
+          "number": "2",
+          "issue": "2",
+          "pages": "433-479",
+          "article_number": "",
+          "edition": ""
+        },
+        "identifiers": {
+          "doi": "10.5194/amt-16-433-2023",
+          "arxiv_id": "",
+          "isbn": "",
+          "issn": "1867-8548",
+          "pmid": "",
+          "pmcid": "",
+          "openalex_id": "",
+          "semantic_scholar_id": "",
+          "crossref_id": ""
+        },
+        "links": {
+          "url": "https://doi.org/10.5194/amt-16-433-2023",
+          "pdf_url": "",
+          "publisher_url": "",
+          "repository_url": ""
+        },
+        "abstract": "",
+        "keywords": [],
+        "language": "en",
+        "source": {
+          "kind": "network_search",
+          "provider": "manual_doi",
+          "query": "",
+          "retrieved_at": "",
+          "raw_record": {
+            "doi": "10.5194/amt-16-433-2023",
+            "provider": "manual_doi"
+          }
+        },
+        "pdf": {
+          "status": "present",
+          "path": "data/papers/2023_Kotthaus_地基遥感边界层高度综述/2023_Kotthaus_地基遥感边界层高度综述.pdf",
+          "sha256": "1d34542e0d2635dc8fe949d6922de9a537127eb41a7ef5a600abd16cc6385c0a",
+          "file_size": 3037973
+        },
+        "metadata_match": {
+          "status": "matched",
+          "source": "crossref",
+          "confidence": 0.95,
+          "matched_at": "2026-06-29T19:19:01",
+          "warnings": [
+            "preserved non-empty metadata field: source_type",
+            "preserved non-empty metadata field: source.kind",
+            "preserved non-empty metadata field: pdf.status"
+          ],
+          "candidates": []
+        },
+        "bibtex": {
+          "status": "not_generated",
+          "last_generated_at": "",
+          "note": "BibTeX is generated later by API/writing workflow from metadata.json."
+        },
+        "notes": "",
+        "content": {
+          "markdown_sha256": "ecfefee1038862d04c1e08b110abb555978b106b001f8b3b0bf359f90e036e11"
         }
       }
     },

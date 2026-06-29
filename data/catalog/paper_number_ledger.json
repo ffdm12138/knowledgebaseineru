@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "max_number": "0000000000000011",
+  "max_number": "0000000000000018",
   "items": {
     "0000000000000001": {
       "folder_name": "2014_Vionnet_高山风吹雪耦合模拟",
@@ -56,6 +56,41 @@
       "folder_name": "2025_Huang_雪粒破碎增强升华",
       "folder_path": "data/papers/2025_Huang_雪粒破碎增强升华",
       "created_at": "2026-06-29T17:48:37"
+    },
+    "0000000000000012": {
+      "folder_name": "2001_Massom_南极海冰积雪物理特性综述",
+      "folder_path": "data/papers/2001_Massom_南极海冰积雪物理特性综述",
+      "created_at": "2026-06-29T19:35:35"
+    },
+    "0000000000000013": {
+      "folder_name": "2008_Baars_激光雷达边界层顶监测",
+      "folder_path": "data/papers/2008_Baars_激光雷达边界层顶监测",
+      "created_at": "2026-06-29T19:35:35"
+    },
+    "0000000000000014": {
+      "folder_name": "2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现",
+      "folder_path": "data/papers/2012_Vionnet_Crocus_详细雪层方案_SURFEX_实现",
+      "created_at": "2026-06-29T19:35:36"
+    },
+    "0000000000000015": {
+      "folder_name": "2013_Sathe_地基测风激光雷达湍流测量综述",
+      "folder_path": "data/papers/2013_Sathe_地基测风激光雷达湍流测量综述",
+      "created_at": "2026-06-29T19:35:36"
+    },
+    "0000000000000016": {
+      "folder_name": "2014_Wang_探空估算大气混合层高度",
+      "folder_path": "data/papers/2014_Wang_探空估算大气混合层高度",
+      "created_at": "2026-06-29T19:35:36"
+    },
+    "0000000000000017": {
+      "folder_name": "2015_Filhol_雪床形态综述与形成模型",
+      "folder_path": "data/papers/2015_Filhol_雪床形态综述与形成模型",
+      "created_at": "2026-06-29T19:35:37"
+    },
+    "0000000000000018": {
+      "folder_name": "2023_Kotthaus_地基遥感边界层高度综述",
+      "folder_path": "data/papers/2023_Kotthaus_地基遥感边界层高度综述",
+      "created_at": "2026-06-29T19:35:37"
     }
   }
 }
