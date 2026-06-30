@@ -21,7 +21,7 @@ This document freezes the quality rules proven by the local
   `write/jobs/<job_id>/article/<paper_number>/`.
 - `references.bib` must still be generated from copied metadata only.
 - TeX must not directly reference `data/papers`, `data/raw`, `data/paper_raw`,
-  or `data/llm_work`.
+  or other non-job-local data paths.
 - Runtime products under `write/jobs/*` must not be committed.
 
 ## Quality Check

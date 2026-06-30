@@ -22,7 +22,7 @@ job-local `article/` directory.
 
 Do not read `data/papers` directly. The job-local `article/` copy is the only
 paper source for this writing pass.
-Do not read `data/paper_raw`, `data/raw`, or `data/llm_work` directly.
+Do not read `data/paper_raw`, `data/raw`, or non-job-local data paths directly.
 
 ## Writing Rules
 
@@ -56,7 +56,7 @@ Do not read `data/paper_raw`, `data/raw`, or `data/llm_work` directly.
 - `references.bib` remains metadata-derived only. Never create citation facts
   from catalog text, Markdown prose, or memory.
 - TeX must not reference `data/papers`, `data/raw`, `data/paper_raw`, or
-  `data/llm_work` directly.
+  non-job-local data paths directly.
 - `write/jobs/*` runtime products are never committed.
 - Run `scripts/check_write_quality_text.py --job-id <job_id>` after the article
   has been human/agent polished. A mechanical smoke article is not quality

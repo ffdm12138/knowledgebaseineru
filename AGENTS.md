@@ -26,7 +26,7 @@
   两者仅通过 `paper_number`/`paper_id` 关联。
 - `references.bib` 只从复制的 metadata 生成，绝不从 catalog 或正文拼接。
 - `write/jobs` 是写作运行时，不提交（只跟踪 `.gitkeep`）；TeX 不得直接读 `data/papers`、`data/raw`、
-  `data/paper_raw`、`data/llm_work`，只能读 job-local 复制副本。
+  `data/paper_raw`，只能读 job-local 复制副本。
 - 不做 RAG / embedding / vector DB / ChromaDB；不内置 LLM client，所有 prompt/写作步骤只生成文本或模板。
 - Sci-Hub resolver 是 unsafe optional：默认 disabled，不属于 OA_ONLY 主流程；仅 `AccessMode.CUSTOM` 且
   `allow_scihub=True` 时才启用，且不得放宽该条件。
@@ -38,6 +38,9 @@
 - 真实入库 / 转换 / 写作验收命令必须使用 `conda run -n mineru ...`
   （PATH 上的 `python` 是 Windows Store 别名，会静默退出 code 49）。
 - Windows 控制台先 `set PYTHONIOENCODING=utf-8`，避免 GBK 下中文/JSON 输出失败。
+- MinerU 正式转换必须使用 GPU：默认 `MINERU_REQUIRE_GPU=true`，建议 `CUDA_VISIBLE_DEVICES=0`。
+  `stage_raw_pdfs_to_paper_raw.py` 不需要 GPU；`convert_paper_raw_batch.py` / MinerU conversion 必须 GPU。
+  CPU/no-GPU 只允许调试：显式设置 `MINERU_ALLOW_CPU=true` 或 `MINERU_REQUIRE_GPU=false`。
 
 ## 4. 数据边界
 
@@ -48,20 +51,36 @@
 
 ## 5. 主流程
 
-入库主流程（命令链）：
+入库主流程分两条路径。手动 PDF 路径必须先 MinerU 转换、再从转换后的 md 解析 metadata：
 
 ```bash
-conda run -n mineru python scripts/stage_raw_pdfs_to_paper_raw.py --apply
-conda run -n mineru python scripts/match_paper_raw_metadata.py --all --apply
-conda run -n mineru python scripts/convert_paper_raw_batch.py --all --apply
+# Manual PDF path: convert first, resolve metadata from converted md second.
+set MINERU_REQUIRE_GPU=true
+set CUDA_VISIBLE_DEVICES=0
+set MINERU_RUNNER=cli_api_proxy
+set MINERU_API_URL=http://127.0.0.1:8000
+conda run -n mineru python scripts/stage_raw_pdfs_to_paper_raw.py --move --dry-run --report reports/stage_raw_dryrun.json
+conda run -n mineru python scripts/stage_raw_pdfs_to_paper_raw.py --move --apply --report reports/stage_raw_move.json
+conda run -n mineru python scripts/convert_paper_raw_batch.py --all --apply --report reports/convert_paper_raw.json
+conda run -n mineru python scripts/resolve_paper_raw_metadata.py --all-unmatched --apply --allow-network
 conda run -n mineru python scripts/curate_paper_raw.py --all-ready --apply
 conda run -n mineru python scripts/commit_paper_raw_to_papers.py --all-ready --apply
 conda run -n mineru python scripts/rebuild_all_catalog.py --apply
 conda run -n mineru python scripts/validate_v2_library.py
 ```
 
-网络 metadata 先 `stage_network_metadata_to_paper_raw.py --apply` 与 `fetch_pdf_for_paper_raw.py --all --apply`，
-再接 match/convert/curate/commit。
+手动 PDF 导入时，metadata resolver 必须基于 MinerU 转换完成后的 md，因此顺序是先转换，再解析/匹配
+metadata。不要在没有 md 时跑 resolver；初始 unmatched 的手动 PDF 不要用 `--only-preflight-ready`
+挡住转换（该 flag 适合已有 matched metadata 的网络路径）。
+手动 PDF 正常导入时，`data/raw/` 是待处理队列；成功 stage 后对应 PDF 应从 raw 消失。
+正常 SOP 必须使用 `stage_raw_pdfs_to_paper_raw.py --move --apply`。copy 模式只用于调试、备份、
+测试或明确的一次性检查，不是默认导入规范。
+批量转换应先启动持久 `mineru-api`（可用 `start_fast_api_mode.bat`，或按本地 MinerU 安装启动），
+再设置 `MINERU_RUNNER=cli_api_proxy` 与 `MINERU_API_URL=http://127.0.0.1:8000`，避免每篇 PDF 冷启动。
+
+网络 metadata 路径（metadata 已带 DOI，先行）：先 `stage_network_metadata_to_paper_raw.py --apply`
+与 `fetch_pdf_for_paper_raw.py --all --apply`，再接 `convert_paper_raw_batch.py` → `curate_paper_raw.py`
+→ `commit_paper_raw_to_papers.py`（网络 metadata 已有合法 DOI，无需 resolve 步骤）。
 
 写作主流程：selected catalog / paper numbers → `write/jobs/<job_id>/article/` → TeX/BibTeX →
 compile/check（`check_write_tex_project.py`）→ quality check（`check_write_quality_text.py`）。

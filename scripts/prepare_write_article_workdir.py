@@ -1,8 +1,9 @@
 """Prepare an ignored write/jobs/<job_id> article workspace from all.catalog.
 
 Global all.catalog is a content-only screening index.  The generated
-selected_catalog.json is a per-job working snapshot and may cache metadata for
-writer compatibility, but citation truth comes from copied article metadata.
+selected_catalog.json is a per-job content-only working snapshot; bibliographic
+metadata is **not** cached there — citation truth comes from the copied
+``article/<paper_number>/*.metadata.json``.
 """
 from __future__ import annotations
 
@@ -42,10 +43,7 @@ def _validate_paper_number(paper_number: str) -> str:
 
 
 def _entry_catalog(entry: dict) -> dict:
-    """all.catalog v2 entries are flat (content at top level); legacy entries
-    nested content under "catalog". Handle both."""
-    if isinstance(entry.get("catalog"), dict) and entry["catalog"]:
-        return entry["catalog"]
+    """all.catalog v2 entries are flat content entries."""
     return entry
 
 
@@ -95,6 +93,10 @@ def _matches_filter(entry: dict, args: argparse.Namespace) -> bool:
 
 
 def _is_forbidden_source(path: Path) -> bool:
+    """显式安全防护：article 来源必须是正式 papers 目录，禁止 raw/paper_raw/llm_work。
+
+    token 直接以字面量出现以便防回流扫描识别（不是旧 workflow 入口）。
+    """
     rel = path.resolve().as_posix().lower()
     forbidden = ("/data/raw", "/data/paper_raw", "/data/llm_work")
     return any(rel.endswith(item) or f"{item}/" in rel for item in forbidden)
@@ -112,34 +114,24 @@ def _source_dir_for_entry(entry: dict, papers_dir: Path) -> Path:
     raise FileNotFoundError(f"formal paper folder not found for {paper_id or entry.get('paper_number')}")
 
 
-def _compact_selected_entry(entry: dict, source: Path, target: Path) -> dict:
-    """Build one per-job selected_catalog entry.
+def _compact_selected_entry(entry: dict, source: Path) -> dict:
+    """Build one per-job selected_catalog entry (strictly content-only).
 
-    NOTE: this is a WRITE-JOB SNAPSHOT, not the global all.catalog. It bundles
-    both catalog (content) and metadata (bibliographic) so write modules
-    (bib.py / writer/*) can read everything by paper_number without re-hitting
-    disk. The global all.catalog itself stays content-only & separated.
-
-    Reads catalog.json (content) and metadata.json (bibliographic) from the
-    formal paper folder so write modules that still expect `metadata`/`catalog`
-    keep working. The global all.catalog entry itself stays content-only.
+    NOTE: this is a WRITE-JOB SNAPSHOT, not the global all.catalog. It keeps
+    content fields flat and carries **no** bibliographic metadata and **no**
+    path fields — metadata lives in the copied
+    ``article/<paper_number>/*.metadata.json`` and path tracking lives in
+    ``reports/prepare_article_report.json``. Reads catalog.json (content) from
+    the formal paper folder.
     """
     paper_id = str(entry.get("paper_id") or source.name)
     catalog_path = source / f"{paper_id}.catalog.json"
-    metadata_path = source / f"{paper_id}.metadata.json"
     catalog = {}
     if catalog_path.exists():
         catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
-    metadata = {}
-    if metadata_path.exists():
-        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     return {
         "paper_number": str(entry.get("paper_number") or ""),
         "paper_id": paper_id,
-        "formal_paper_dir": normalize_repo_path(source),
-        "source_dir": normalize_repo_path(source),  # deprecated alias of formal_paper_dir
-        "catalog_folder_path": normalize_repo_path(source),  # deprecated compat alias
-        "article_dir": normalize_repo_path(target),
         # content (from catalog.json)
         "content_identity": catalog.get("content_identity") or {},
         "classification": catalog.get("classification") or {},
@@ -147,9 +139,6 @@ def _compact_selected_entry(entry: dict, source: Path, target: Path) -> dict:
         "research_card": catalog.get("research_card") or {},
         "evidence_profile": catalog.get("evidence_profile") or {},
         "content_notes": catalog.get("content_notes") or {},
-        "catalog": catalog,
-        # bibliographic (from metadata.json) — kept for write-module compat
-        "metadata": metadata,
     }
 
 
@@ -214,18 +203,28 @@ def prepare_workdir(args: argparse.Namespace) -> dict:
         source = _source_dir_for_entry(entry, papers_dir)
         _check_formal_folder(source, paper_id)
         target = article_dir / paper_number
-        item = _compact_selected_entry(entry, source, target)
-        item.update({"_source_abs": str(source), "status": "planned"})
+        item = _compact_selected_entry(entry, source)
+        # Path tracking is kept private here and exposed only in the report
+        # (not in selected_catalog, which is strictly content-only).
+        item.update({"_source_abs": str(source), "_target_abs": str(target),
+                     "status": "planned"})
         planned.append(item)
 
-    public_planned = [{k: v for k, v in item.items() if not k.startswith("_")} for item in planned]
+    def _content_only(item: dict) -> dict:
+        return {k: v for k, v in item.items() if not k.startswith("_")}
+
+    def _report_item(item: dict) -> dict:
+        out = _content_only(item)
+        out["formal_paper_dir"] = normalize_repo_path(Path(item["_source_abs"]))
+        out["article_dir"] = normalize_repo_path(Path(item["_target_abs"]))
+        return out
 
     report = {
         "job_id": job_id,
         "write_dir": normalize_repo_path(job_dir),
         "dry_run": not args.apply,
         "selected_count": len(planned),
-        "papers": public_planned,
+        "papers": [_report_item(item) for item in planned],
         "created_at": datetime.now().isoformat(timespec="seconds"),
     }
 
@@ -244,13 +243,12 @@ def prepare_workdir(args: argparse.Namespace) -> dict:
         shutil.copytree(source, target)
         item["status"] = "copied"
 
-    public_planned = [{k: v for k, v in item.items() if not k.startswith("_")} for item in planned]
-    report["papers"] = public_planned
+    report["papers"] = [_report_item(item) for item in planned]
     selected_catalog = {
         "schema_version": "1.0",
         "job_id": job_id,
         "source_catalog": normalize_repo_path(all_catalog_path),
-        "papers": public_planned,
+        "papers": [_content_only(item) for item in planned],
     }
     job_json = {
         "schema_version": "1.0",

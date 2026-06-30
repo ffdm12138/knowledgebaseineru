@@ -50,6 +50,13 @@ def _should_pack(rel_path: str) -> bool:
     # 跳过 _test_batch 目录
     if path.parts and path.parts[0] == "_test_batch":
         return False
+    # 跳过 write/ 工作区运行产物（硬排除，不依赖 .gitignore，覆盖 fallback 扫描）。
+    # 只保留 write/README.md、write/.gitkeep、write/jobs/.gitkeep；其余（含
+    # write/jobs/<job>/** 与 legacy write/<job>/** 下的 .tex/.md/.bib/.pdf 等）一律排除。
+    if path.parts and path.parts[0] == "write":
+        _WRITE_KEEP = {"write/README.md", "write/.gitkeep", "write/jobs/.gitkeep"}
+        if rel not in _WRITE_KEEP:
+            return False
     # 跳过数据目录中的版权文件（data/raw, data/papers），但保留 .gitkeep
     _DATA_SKIP_DIRS = {
         "data/raw",

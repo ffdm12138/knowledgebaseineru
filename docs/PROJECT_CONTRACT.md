@@ -8,6 +8,8 @@
 - 不内置 LLM client；所有 prompt 和写作步骤只生成文本或模板。
 - 所有新文献先进入 `data/paper_raw/<000001>/`。
 - MinerU 只能处理 `data/paper_raw/<000001>/<000001>.pdf`。
+- MinerU conversion requires GPU / MinerU 正式转换必须使用 GPU；默认 `MINERU_REQUIRE_GPU=true`。
+  CPU/no-GPU 只允许显式调试：`MINERU_ALLOW_CPU=true` 或 `MINERU_REQUIRE_GPU=false`。
 - 正式资产只保存在 `data/papers/<paper_id>/`，同目录保存 PDF、Markdown、metadata、catalog、images 和 paper number。
 - API 与写作只读取本地生成的 `data/catalog/all.catalog.json`、`data/catalog/paper_index.json`、`data/catalog/paper_number_ledger.json` 和 `data/papers/<paper_id>/`；源码快照只提交对应 `.template.json` 空模板，不提交真实库索引。
 - metadata 管书目信息和 BibTeX 事实；catalog（schema v2.0）只管正文内容理解（分类、研究卡片、证据画像、精读筛选 `screening`），**不含** DOI/作者/年份/期刊/卷期页等书目字段。两者仅通过 `paper_number`/`paper_id` 关联。
@@ -25,17 +27,17 @@
 - `paper_number` 为 16 位长期编号，只递增不回收。
 - 测试不得访问真实网络；网络 provider 必须 mock。
 - 正式入库必须通过 `validate_v2_library.py` 与 `audit_metadata_quality.py` 的硬错误检查；未通过的 `paper_raw` 不得入库。
-- `write/jobs/` 是写作运行时，不提交（只跟踪 `.gitkeep`）；TeX 不得直接引用 `data/papers`、`data/raw`、`data/paper_raw` 或 `data/llm_work`，只能读 job-local 复制副本。
+- `write/jobs/` 是写作运行时，不提交（只跟踪 `.gitkeep`）；TeX 不得直接引用 `data/papers`、`data/raw` 或 `data/paper_raw`，只能读 job-local 复制副本。
 - Sci-Hub resolver 是 unsafe optional：默认 disabled，不属于 `OA_ONLY` 主流程；仅 `AccessMode.CUSTOM` 且 `allow_scihub=True` 时才启用，且不得放宽该条件。
 - 每次代码改动后必须运行测试并生成 `mineru_snapshot.zip`。
 
-## 唯一正式流程
+## 唯一正式流程（两条路径）
 
+Network metadata path（metadata 先行，已有 DOI）:
 ```text
-data/raw/*.pdf 或网络 metadata
+network metadata (with DOI)
 -> data/paper_raw/<000001>/
--> metadata match 或 manual confirm
--> PDF attach 或 fetch
+-> PDF fetch
 -> MinerU convert
 -> curation
 -> commit 到 data/papers/<paper_id>/
@@ -43,7 +45,30 @@ data/raw/*.pdf 或网络 metadata
 -> writing v0.1 按 paper_number 复制到 write/jobs/<job_id>/article/<paper_number>/
 ```
 
-`data/llm_work` is legacy/API compatibility and must not be used as the writing v0.1 main path.
+Manual PDF path（先转换，再从转换后的 md 解析 metadata）:
+```text
+data/raw/*.pdf
+-> stage_raw_pdfs_to_paper_raw --move --apply
+-> data/paper_raw/<000001>/
+-> MinerU convert         # 转换在 metadata resolve 之前
+-> resolve metadata       # 读转换后的 md，抽取候选，联网验证/查询
+-> curation
+-> commit 到 data/papers/<paper_id>/
+-> rebuild all.catalog
+-> writing v0.1 按 paper_number 复制到 write/jobs/<job_id>/article/<paper_number>/
+```
+
+手动 PDF 导入时，metadata resolver 依赖转换后的 Markdown，必须在 MinerU 转换之后运行
+（先转换，再解析）。两条路径 curation/commit 前都要求 `metadata_match.status` 为 `matched`
+或 `manual_confirmed` 且 `identifiers.doi` 非空。
+手动 PDF 正常导入时，`data/raw/` is a queue / raw 是待处理队列；成功 stage 必须消费 raw 中的
+PDF，并移动到 `data/paper_raw/<source_id>/<source_id>.pdf`。copy 模式只允许用于调试、备份、
+测试或明确的一次性检查，不是默认手动导入 SOP。
+`stage_raw_pdfs_to_paper_raw.py` 不需要 GPU；`convert_paper_raw_batch.py` / MinerU conversion
+必须 GPU，建议 `CUDA_VISIBLE_DEVICES=0`，批量转换优先 `MINERU_RUNNER=cli_api_proxy` +
+`MINERU_API_URL=http://127.0.0.1:8000`。
+
+Writing uses only job-local article copies under `write/jobs/<job_id>/article/<paper_number>/`.
 
 ## 正式目录
 

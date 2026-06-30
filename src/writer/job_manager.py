@@ -1,6 +1,7 @@
-"""写作任务管理：创建/列出/加载 write/<job>/ 目录结构
+"""写作任务管理：创建/列出/加载 write/jobs/<job>/ 目录结构
 
-任务目录命名：write/001_<topic_slug>_<suffix>/，suffix 防并发碰撞。
+任务目录命名：write/jobs/001_<topic_slug>_<suffix>/，suffix 防并发碰撞。
+
 """
 import json
 import os
@@ -14,7 +15,7 @@ from config.settings import PROJECT_ROOT
 from filelock import FileLock
 from src.utils.atomic_io import atomic_write_json
 
-WRITE_DIR = PROJECT_ROOT / "write"
+WRITE_DIR = PROJECT_ROOT / "write" / "jobs"
 
 # 任务标准子目录
 JOB_SUBDIRS = ["input", "planning", "reading/paper_notes", "tex/sections",

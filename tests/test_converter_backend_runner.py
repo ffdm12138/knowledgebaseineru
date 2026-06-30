@@ -51,7 +51,7 @@ def test_success_returns_all_fields():
         out = Path(td) / "out"
         _make_output(out, "in")
 
-        conv = MinerUConverter()
+        conv = MinerUConverter(log_dir="")
         with _mock_converter_deps(
             subprocess_result=MagicMock(returncode=0, stdout="", stderr="")
         ):
@@ -64,7 +64,7 @@ def test_success_returns_all_fields():
 
 def test_file_not_found_returns_all_fields():
     """文件不存在时返回含全部字段。"""
-    conv = MinerUConverter()
+    conv = MinerUConverter(log_dir="")
     with _mock_converter_deps():
         result = conv.convert_via_cli("/nonexistent/x.pdf", "/tmp/out",
                                       backend="hybrid-engine", method="auto",
@@ -79,7 +79,7 @@ def test_subprocess_failure_returns_all_fields():
     with tempfile.TemporaryDirectory() as td:
         src = Path(td) / "in.pdf"
         src.write_bytes(b"%PDF-1.4 fake")
-        conv = MinerUConverter()
+        conv = MinerUConverter(log_dir="")
         with _mock_converter_deps(
             subprocess_result=MagicMock(returncode=1, stdout="", stderr="boom")
         ):
@@ -97,7 +97,7 @@ def test_timeout_returns_all_fields():
     with tempfile.TemporaryDirectory() as td:
         src = Path(td) / "in.pdf"
         src.write_bytes(b"%PDF-1.4 fake")
-        conv = MinerUConverter()
+        conv = MinerUConverter(log_dir="")
         with _mock_converter_deps(
             subprocess_result=subprocess.TimeoutExpired(cmd=["mineru"], timeout=1)
         ):
@@ -113,7 +113,7 @@ def test_no_legacy_backend_key():
     with tempfile.TemporaryDirectory() as td:
         src = Path(td) / "in.pdf"
         src.write_bytes(b"%PDF-1.4 fake")
-        conv = MinerUConverter()
+        conv = MinerUConverter(log_dir="")
         with _mock_converter_deps(
             subprocess_result=MagicMock(returncode=0, stdout="", stderr="")
         ):

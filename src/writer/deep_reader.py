@@ -1,8 +1,8 @@
-"""全文精读：从 llm_work 读取全文生成精读笔记模板 + 证据表 + 候选图。
+"""全文精读：从 write/jobs/<job_id>/article/ 读取全文生成精读笔记模板 + 证据表 + 候选图。
 
 默认要求先运行 ``prepare-workset``（产出 ``workset_manifest.json``），
-从 ``data/llm_work/<job_id>/<paper_number>/`` 读取全文与图片，
-不直接读取 ``data/papers/``。传 ``--from-papers`` 可回退到旧行为。
+从 ``write/jobs/<job_id>/article/<paper_number>/`` 读取全文与图片，
+不直接读取 ``data/papers/``。
 
 状态语义：
   deep_read() 只设置 deep_read_prompt_generated=True，不设置 deep_read_notes_filled。
@@ -12,15 +12,16 @@
 """
 import json
 import re
+import shutil
 from pathlib import Path
 
 from src.writer.job_manager import JobManager
-from src.library import PaperLibrary
 from src.catalog import Catalog
-from src.naming import validate_paper_id
+from src.naming import safe_child, validate_paper_id
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
+from src.writer.bib_manager import job_local_bib_keys, resolve_work_dir
 from src.writer.safe_write import write_text_safely
-from config.settings import PAPER_MD_MAX_CHARS, LLM_WORK_DIR
+from config.settings import PAPERS_DIR, PAPER_MD_MAX_CHARS
 from src import bib as bibmod
 
 _WORKSET_MANIFEST = "planning/workset_manifest.json"
@@ -65,11 +66,11 @@ NOTE_TEMPLATE = """# {pid}
 （待填，标注正式 Markdown 中可定位的位置）
 
 ## Figure candidates
-（待填：列出 data/papers/{pid}/images/ 中值得引用的图及理由）
+（待填：列出 images/ 中值得引用的图及理由）
 """
 
 
-def _figure_candidates_block(pid: str, library: PaperLibrary) -> str:
+def _figure_candidates_block(pid: str, library) -> str:
     imgs = library.list_images(pid)
     if not imgs:
         return f"- {pid}: 无图片\n"
@@ -83,6 +84,8 @@ def _load_workset(job_id: str, jm: JobManager, jdir: Path) -> tuple[dict | None,
     """Load workset_manifest.json and build paper_id → work_dir mapping.
 
     Returns (manifest, pid_to_work_dir).  manifest is None if not prepared.
+    ``work_dir`` values are resolved against the job root (relative or absolute),
+    so the manifest stays portable.
     """
     wp = jdir / _WORKSET_MANIFEST
     if not wp.exists():
@@ -93,12 +96,12 @@ def _load_workset(job_id: str, jm: JobManager, jdir: Path) -> tuple[dict | None,
         pid = entry.get("paper_id", "")
         wd = entry.get("work_dir", "")
         if pid and wd:
-            mapping[pid] = wd
+            mapping[pid] = str(resolve_work_dir(jdir, wd))
     return manifest, mapping
 
 
 class _WorksetLibrary:
-    """Minimal PaperLibrary-like facade over llm_work directories."""
+    """Minimal PaperLibrary-like facade over copied article directories."""
     def __init__(self, pid_to_dir: dict[str, str], max_chars: int = PAPER_MD_MAX_CHARS):
         by_id: dict[str, Path] = {}
         for pid, rel in pid_to_dir.items():
@@ -132,24 +135,103 @@ class _WorksetLibrary:
         return out
 
 
+_FORBIDDEN_SOURCE_TOKENS = ("/data/raw", "/data/paper_raw", "/data/llm_work")
+
+
+def _is_forbidden_source(path: Path) -> bool:
+    """article 副本来源必须是正式 papers 目录，禁止 raw/paper_raw/llm_work。
+
+    这是显式的安全防护（防止用户手工传入旧 data/llm_work 目录），
+    不是旧 workflow 入口；token 直接以字面量出现以便防回流扫描识别。
+    """
+    rel = path.resolve().as_posix().lower()
+    return any(rel.endswith(t) or f"{t}/" in rel for t in _FORBIDDEN_SOURCE_TOKENS)
+
+
+def prepare_workset(job_id: str, jm: JobManager | None = None,
+                    overwrite: bool = False,
+                    papers_dir: Path = PAPERS_DIR,
+                    catalog: Catalog | None = None,
+                    apply: bool = True) -> dict:
+    """Plan or copy selected papers into write/jobs/<job_id>/article/<paper_number>/."""
+    jm = jm or JobManager()
+    catalog = catalog or Catalog()
+    sel = load_selected(job_id, jm)
+    if sel.get("selection_status") != "confirmed":
+        raise RuntimeError("selected_papers.json is not confirmed，拒绝复制 workset")
+
+    jdir = jm.job_dir(job_id)
+    article_dir = safe_child(jdir, "article")
+
+    copied: list[dict] = []
+    skipped: list[dict] = []
+    for item in sel.get("selected_papers", []):
+        pid = item.get("paper_id", "")
+        entry = catalog.get(pid)
+        if entry is None:
+            skipped.append({"paper_id": pid, "reason": "not_in_catalog"})
+            continue
+        number = str(entry.get("paper_number", "") or "")
+        if not number:
+            skipped.append({"paper_id": pid, "reason": "no_paper_number"})
+            continue
+        source = safe_child(papers_dir, pid)
+        if _is_forbidden_source(source) or not source.exists():
+            skipped.append({"paper_id": pid, "paper_number": number,
+                            "reason": "formal_folder_missing_or_forbidden"})
+            continue
+        target = safe_child(article_dir, number)
+        if target.exists():
+            if not overwrite:
+                skipped.append({"paper_id": pid, "paper_number": number, "reason": "exists"})
+                continue
+            if apply:
+                shutil.rmtree(target)
+        if apply:
+            article_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(source, target)
+            status = "copied"
+        else:
+            status = "planned"
+        # work_dir is job-relative (article/<paper_number>) so the manifest stays
+        # portable; readers resolve it against the job root (see resolve_work_dir).
+        try:
+            rel_work_dir = target.relative_to(jdir).as_posix()
+        except ValueError:
+            rel_work_dir = str(target)
+        copied.append({"paper_id": pid, "paper_number": number,
+                        "work_dir": rel_work_dir, "status": status})
+
+    manifest = {
+        "job_id": job_id,
+        "dry_run": not apply,
+        "copied": copied,
+        "skipped": skipped,
+        "work_root": "write/jobs/<job_id>/article/",
+    }
+    if apply:
+        manifest_path = jdir / "planning" / "workset_manifest.json"
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2),
+                                 encoding="utf-8")
+    return manifest
+
+
 def deep_read(job_id: str, paper_ids: list[str] | None = None,
               force: bool = False,
-              from_papers: bool = False,
               jm: JobManager | None = None,
-              library: PaperLibrary | None = None,
               catalog: Catalog | None = None) -> dict:
     """对 selected_papers 生成精读笔记模板 + 证据表 + 候选图 + 精读 prompt。
 
-    默认从 data/llm_work/<job_id>/<paper_number>/ 读取全文与图片
-    （要求先运行 prepare-workset）。传 from_papers=True 回退到直接
-    读取 data/papers/（旧行为，安全性由调用方保证）。
+    默认从 write/jobs/<job_id>/article/<paper_number>/ 读取全文与图片
+    （要求先运行 prepare-workset --apply）。
 
     前置：catalog_selection_confirmed=True。
     paper_ids 为 None 时取 selected_papers.json 中已确认的列表。
     """
     jm = jm or JobManager()
-    library = library or PaperLibrary()
-    catalog = catalog or Catalog()
+    # ``catalog`` is retained in the signature for callers/tests but no longer
+    # used here: cite keys now come from job-local article metadata.
     jdir = jm.job_dir(job_id)
     meta = jm.load_meta(job_id) or {}
     if meta.get("steps", {}).get("deep_read_notes_filled") and not force:
@@ -171,25 +253,19 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
         except ValueError as e:
             raise RuntimeError(f"Invalid paper_id: {pid!r} — {e}")
 
-    # Resolve reading source: workset (preferred) or data/papers (legacy escape hatch).
+    # Resolve reading source from the prepared job-local article workset.
     manifest, pid_to_dir = _load_workset(job_id, jm, jdir)
-    reading_lib = library
-    source_label = "data/papers"
-    if not from_papers:
-        if manifest is None:
-            raise RuntimeError(
-                "workset_manifest.json not found. "
-                "Run `write_review.py prepare-workset --job ... --apply` first, "
-                "or pass from_papers=True to read directly from data/papers/.")
-        missing = [pid for pid in paper_ids if pid not in pid_to_dir]
-        if missing:
-            raise RuntimeError(
-                f"workset missing papers: {missing}. "
-                "Re-run prepare-workset to copy them into llm_work.")
-        reading_lib = _WorksetLibrary(pid_to_dir)
-        source_label = f"data/llm_work/{job_id}"
-
-    lib = reading_lib
+    if manifest is None:
+        raise RuntimeError(
+            "workset_manifest.json not found. "
+            "Run `write_review.py prepare-workset --job ... --apply` first.")
+    missing = [pid for pid in paper_ids if pid not in pid_to_dir]
+    if missing:
+        raise RuntimeError(
+            f"workset missing papers: {missing}. "
+            "Re-run prepare-workset to copy them into write/jobs/<job_id>/article/.")
+    source_label = f"write/jobs/{job_id}/article"
+    lib = _WorksetLibrary(pid_to_dir)
     for pid in paper_ids:
         if not lib.exists(pid):
             raise RuntimeError(f"找不到 Markdown ({source_label}): {pid}")
@@ -197,8 +273,9 @@ def deep_read(job_id: str, paper_ids: list[str] | None = None,
     notes_dir = jdir / "reading" / "paper_notes"
     notes_dir.mkdir(parents=True, exist_ok=True)
 
-    bib_key_of = {p["paper_id"]: bibmod.bib_key_for_entry(p)
-                  for p in catalog.list_papers()}
+    # Cite keys come from the job-local copied article metadata, not the global
+    # catalog — they must match export_job_bib / copy_figures exactly.
+    bib_key_of = job_local_bib_keys(pid_to_dir)
     full_texts = lib.read_multiple(paper_ids)
 
     created_notes = []

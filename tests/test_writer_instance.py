@@ -2,7 +2,18 @@
 import tempfile
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-from src.writer.job_manager import JobManager
+from config.settings import PROJECT_ROOT
+from src.writer.job_manager import WRITE_DIR, JobManager
+
+
+def test_write_dir_default_is_write_jobs():
+    """JobManager 默认根目录必须是 write/jobs/（writing v0.1 主路径）。"""
+    assert WRITE_DIR == PROJECT_ROOT / "write" / "jobs"
+    jm = JobManager()
+    # job_dir 落在 write/jobs/ 下
+    jdir = jm.job_dir("001_demo_abcdef")
+    assert jdir.parent == WRITE_DIR
+    assert jdir.parent.name == "jobs"
 
 
 def test_job_manager_uses_instance_write_dir():

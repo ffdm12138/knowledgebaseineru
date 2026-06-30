@@ -98,8 +98,8 @@ def validate_job(job_id: str, jm: JobManager | None = None) -> dict:
                     readme = jdir / "figures" / pid_dir / "README.md"
                     if not readme.exists():
                         errors.append(f"figures/{pid_dir}/ 缺少 README.md（图源记录）")
-                    elif "original_path" not in readme.read_text(encoding="utf-8"):
-                        errors.append(f"figures/{pid_dir}/README.md 缺少 original_path")
+                    elif "source_article_image" not in readme.read_text(encoding="utf-8"):
+                        errors.append(f"figures/{pid_dir}/README.md 缺少 source_article_image")
 
     evidence = must["reading/evidence_table.md"]
     if evidence.exists():

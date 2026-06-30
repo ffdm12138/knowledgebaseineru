@@ -11,6 +11,11 @@
 - 真实入库 / 转换 / 写作验收必须用 `conda run -n mineru ...`；Windows 先 `set PYTHONIOENCODING=utf-8`。
 - 不提交运行时数据：`write/jobs` runtime 与真实 `data/papers`/`data/raw`/`data/paper_raw`/`data/import_work`
   不进入 staged / snapshot。
+- 手动 PDF 正常导入时，`data/raw/` is a queue / raw 是待处理队列；stage 必须使用
+  `stage_raw_pdfs_to_paper_raw.py --move --apply`，copy 模式只用于调试、备份、测试或明确的一次性检查。
+- MinerU 正式转换必须使用 GPU：`MINERU_REQUIRE_GPU=true`、`CUDA_VISIBLE_DEVICES=0`。
+  `stage_raw_pdfs_to_paper_raw.py` 不需要 GPU；`convert_paper_raw_batch.py` 必须 GPU。
+  `MINERU_ALLOW_CPU=true` / `MINERU_REQUIRE_GPU=false` 只用于调试。
 
 ## 关键边界速查
 
@@ -20,5 +25,7 @@
 - `write/jobs` 是运行时不提交；TeX 不直读 `data/papers`。
 - 不做 RAG / embedding / vector DB / ChromaDB；不内置 LLM client。
 - Sci-Hub 是 unsafe optional，default disabled，不属于 OA_ONLY 主流程。
+- Manual PDF path: stage with `--move --apply`, convert first, then resolve metadata from converted Markdown.
+- Batch conversion should prefer persistent mineru-api: `MINERU_RUNNER=cli_api_proxy` and `MINERU_API_URL=http://127.0.0.1:8000`.
 
 每次代码改动后运行：`conda run -n mineru pytest -q` 与 `conda run -n mineru python scripts/pack_repo.py`。

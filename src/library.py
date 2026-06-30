@@ -2,8 +2,8 @@
 
 New code should use src.services.paper_library.PaperLibrary directly. This
 module preserves the older src.library.PaperLibrary import path while resolving
-assets through paper_index.json / formal data/papers folders, not legacy
-all.catalog path fields.
+assets through paper_index.json / formal data/papers folders, without reading
+old all.catalog path fields.
 """
 from __future__ import annotations
 
@@ -26,6 +26,9 @@ class PaperLibrary:
 
     def _entry(self, paper_or_number: str) -> dict | None:
         return self._service.resolve(paper_or_number)
+
+    def resolve(self, paper_or_number: str) -> dict | None:
+        return self._entry(paper_or_number)
 
     def exists(self, paper_or_number: str) -> bool:
         return self._entry(paper_or_number) is not None

@@ -67,6 +67,7 @@ def check_directory_hygiene(
     papers_dir: Path = PAPERS_DIR,
     paper_raw_dir: Path = PAPER_RAW_DIR,
     write_jobs_dir: Path = WRITE_JOBS_DIR,
+    write_root: Path | None = None,
 ) -> dict:
     warnings: list[str] = []
     catalog = _read_json(all_catalog_path, {"papers": []})
@@ -143,9 +144,27 @@ def check_directory_hygiene(
                 if ignored is False:
                     warnings.append(f"write/jobs real artifact is not gitignored: {rel}")
             if path.name == "selected_catalog.json":
+                # selected_catalog must be strictly content-only: no path fields,
+                # no bibliographic metadata. Enforce the boundary here.
                 selected = _read_json(path, {})
+                forbidden_keys = {
+                    "metadata", "formal_paper_dir", "article_dir",
+                    "source_dir", "folder_path", "main_md",
+                    "metadata_file", "catalog_file",
+                }
                 for item in selected.get("papers") or []:
-                    source = str(item.get("source_dir") or item.get("catalog_folder_path") or "")
+                    if not isinstance(item, dict):
+                        continue
+                    bad = sorted(k for k in item.keys() if k in forbidden_keys)
+                    if bad:
+                        warnings.append(
+                            f"{rel} selected_catalog paper carries non-content keys: {bad}")
+            if path.name == "prepare_article_report.json":
+                # Path tracking lives in the report (not selected_catalog); guard
+                # that article sources point only at the formal papers dir.
+                rep = _read_json(path, {})
+                for item in rep.get("papers") or []:
+                    source = str(item.get("formal_paper_dir") or item.get("article_dir") or "")
                     token = _contains_restricted_path(source)
                     if token and token != "data/papers":
                         warnings.append(f"{rel} article source references non-formal path {token}: {source}")
@@ -154,6 +173,20 @@ def check_directory_hygiene(
                 token = _contains_restricted_path(text)
                 if token:
                     warnings.append(f"{rel} contains direct {token} path")
+
+    # Stale write runtime artifact guard. Scan direct write/ child directories
+    # outside write/jobs/ and warn on real artifacts without deleting them.
+    _write_root = write_root if write_root is not None else write_jobs_dir.parent
+    if _write_root.exists():
+        for child in sorted(_write_root.iterdir()):
+            if not child.is_dir() or child.name == "jobs":
+                continue
+            for path in child.rglob("*"):
+                if not path.is_file():
+                    continue
+                if path.suffix.lower() in _REAL_ARTIFACT_SUFFIXES:
+                    rel = normalize_repo_path(path)
+                    warnings.append(f"stale write runtime artifact present: {rel}")
 
     return {
         "valid": True,

@@ -51,7 +51,6 @@ DATA_DIR = _env_path("MINERU_DATA_DIR", PROJECT_ROOT / "data")
 RAW_DIR = DATA_DIR / "raw"
 PAPER_RAW_DIR = DATA_DIR / "paper_raw"
 PAPERS_DIR = DATA_DIR / "papers"
-LLM_WORK_DIR = DATA_DIR / "llm_work"
 MINERU_TMP_DIR = DATA_DIR / "tmp" / "mineru_raw_output"  # MinerU 原始输出临时目录，处理完可清空
 MINERU_LOG_DIR = DATA_DIR / "logs"          # MinerU 转换性能日志
 
@@ -159,7 +158,7 @@ SUPPORTED_FORMATS = {".pdf", ".docx", ".pptx", ".xlsx", ".png", ".jpg", ".jpeg"}
 
 # 确保目录存在（导入即创建，有副作用）
 for d in [
-    RAW_DIR, PAPER_RAW_DIR, PAPERS_DIR, LLM_WORK_DIR,
+    RAW_DIR, PAPER_RAW_DIR, PAPERS_DIR,
     MINERU_TMP_DIR, MINERU_LOG_DIR,
     CATALOG_DIR, DISCOVERY_DIR,
     JOBS_DIR, UPLOAD_STAGING_DIR,

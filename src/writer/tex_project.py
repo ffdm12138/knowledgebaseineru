@@ -11,13 +11,10 @@ import re
 from pathlib import Path
 
 from src.writer.job_manager import JobManager
-from src.writer.bib_manager import export_job_bib, validate_job_citations
+from src.writer.bib_manager import export_job_bib, validate_job_citations, load_workset_manifest, job_local_bib_keys
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
 from src.writer.story_builder import extract_note_sections
 from src.writer.safe_write import write_text_safely
-from src.catalog import Catalog
-from src.library import PaperLibrary
-from src import bib as bibmod
 
 TODO_MARKERS = ["TODO", "待填", "（待填）", "TEMPLATE_ONLY", "由大模型补全", "待补全"]
 MIN_TEX_CHARS = 120  # 正文去空白后最小字符数（与 validate_write_job 一致）
@@ -130,17 +127,16 @@ def latex_escape(s: str) -> str:
 
 def build_tex(job_id: str, title: str | None = None,
               force: bool = False, template_only: bool = False,
-              jm: JobManager | None = None,
-              catalog: Catalog | None = None,
-              library: PaperLibrary | None = None) -> dict:
+              jm: JobManager | None = None) -> dict:
     """生成 LaTeX 项目 + references.bib + 写作 prompt。
 
     默认要求 story_plan_filled=True；template_only=True 可在未完成前序时生成空模板。
     覆盖保护：force=False 时已有文件跳过；force=True 先备份。
+
+    完全 job-local：references.bib 与 notes summary 的 cite key 均来自
+    ``article/<paper_number>/*.metadata.json``，不访问全局 Catalog / PaperLibrary。
     """
     jm = jm or JobManager()
-    catalog = catalog or Catalog()
-    library = library or PaperLibrary()
     jdir = jm.job_dir(job_id)
     tex_dir = jdir / "tex"
     (tex_dir / "sections").mkdir(parents=True, exist_ok=True)
@@ -163,9 +159,23 @@ def build_tex(job_id: str, title: str | None = None,
                                         METHOD_TEX, force=force),
     }
 
-    # references.bib：从全局库按 selected 抽取（export_job_bib 内部校验 confirmed）
-    bib_keys = _selected_bib_keys(job_id, jdir, catalog, jm=jm)
-    bib_info = export_job_bib(job_id, bib_keys, jm=jm)
+    # references.bib is generated from job-local article metadata for the
+    # selected papers (requires prepare-workset --apply). In template-only mode
+    # we tolerate a missing workset so the empty-template escape hatch still
+    # works before the pipeline has been run.
+    try:
+        bib_keys = _selected_bib_keys(job_id, jdir, jm=jm)
+        bib_info = export_job_bib(job_id, bib_keys, jm=jm)
+    except RuntimeError:
+        if not template_only:
+            raise
+        bib_keys = []
+        bib_path = tex_dir / "references.bib"
+        bib_path.write_text(
+            "% references.bib: workset not prepared yet (template-only mode).\n"
+            "% Run prepare-workset --apply, then re-run tex to populate it.\n",
+            encoding="utf-8")
+        bib_info = {"references_bib": str(bib_path), "count": 0}
 
     # 写作 prompt（含完整证据链）
     norm = _read(jdir / "input" / "normalized_task.md")
@@ -174,7 +184,7 @@ def build_tex(job_id: str, title: str | None = None,
     evidence = _read(jdir / "reading" / "evidence_table.md")
     sel_json = _read_json(jdir / "planning" / "selected_papers.json")
     fig_cand = _read(jdir / "reading" / "figure_candidates.md")
-    notes_summary = _build_notes_summary(job_id, jdir, catalog)
+    notes_summary = _build_notes_summary(job_id, jdir, jm=jm)
 
     prompt = f"""请基于下面的研究任务、故事线与精读证据，撰写博士论文标准的 introduction.tex 与 method.tex。
 
@@ -235,12 +245,14 @@ def _read_json(p: Path) -> str:
     return _read(p) if p.exists() else "{}"
 
 
-def _build_notes_summary(job_id: str, jdir: Path, catalog: Catalog) -> str:
+def _build_notes_summary(job_id: str, jdir: Path, jm: JobManager | None = None) -> str:
     notes_dir = jdir / "reading" / "paper_notes"
     if not notes_dir.exists():
         return ""
-    bib_map = {p["paper_id"]: bibmod.bib_key_for_entry(p)
-               for p in catalog.list_papers()}
+    try:
+        bib_map = job_local_bib_keys(load_workset_manifest(job_id, jm))
+    except RuntimeError:
+        bib_map = {}
     out = ""
     for n in sorted(notes_dir.glob("*.md")):
         pid = n.stem
@@ -252,15 +264,20 @@ def _build_notes_summary(job_id: str, jdir: Path, catalog: Catalog) -> str:
     return out
 
 
-def _selected_bib_keys(job_id: str, jdir: Path, catalog: Catalog,
-                       jm: JobManager = None) -> list[str]:
-    """从 selected_papers.json（已确认）取 bib_key 列表"""
-    bib_map = {p["paper_id"]: bibmod.bib_key_for_entry(p)
-               for p in catalog.list_papers()}
+def _selected_bib_keys(job_id: str, jdir: Path,
+                       jm: JobManager | None = None) -> list[str]:
+    """从 selected_papers.json（已确认）取 bib_key 列表。
+
+    Keys are derived from the job-local copied article metadata via
+    ``job_local_bib_keys`` (no global catalog), so the prompt's available-key
+    list matches the keys ``export_job_bib`` writes into ``references.bib``.
+    """
     sel = load_selected(job_id, jm)  # 传 jm，不从默认目录错读
+    pid_to_work_dir = load_workset_manifest(job_id, jm)
+    bib_map = job_local_bib_keys(pid_to_work_dir)
     keys = []
     for it in sel.get("selected_papers", []):
-        bk = it.get("bib_key") or bib_map.get(it.get("paper_id", ""), "")
+        bk = bib_map.get(it.get("paper_id", ""), "")
         if bk:
             keys.append(bk)
     return keys

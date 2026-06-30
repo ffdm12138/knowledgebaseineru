@@ -1,9 +1,8 @@
 """Per-job BibTeX helpers.
 
-v2 不再维护全局 references.bib。每篇论文的 BibTeX 由
-``src/services/v2_library.py::bibtex_from_metadata`` 从 ``metadata.json``
-（书目信息事实源）按需生成；写作任务据此抽取条目写入 job 内 ``tex/references.bib``。
-bib_key 取自 ``metadata.citation_key``，缺省回退到 ``paper_id``。
+Each paper's BibTeX is generated from per-paper ``metadata.json`` via
+``src/services/v2_library.py::bibtex_from_metadata``. Writing jobs write the
+selected entries into job-local ``tex/references.bib``.
 """
 import re
 

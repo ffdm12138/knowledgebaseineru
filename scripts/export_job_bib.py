@@ -1,7 +1,10 @@
-"""从全局 references.bib 抽取指定文献生成 write/<job>/tex/references.bib
+"""Generate write/jobs/<job>/tex/references.bib from job-local article metadata.
+
+引用事实来自 ``write/jobs/<job>/article/<paper_number>/*.metadata.json``（由
+``prepare-workset --apply`` 复制），不再读全局 all.catalog / data/papers。
 
 用法:
-  python scripts/export_job_bib.py --job 001_xxx --from-selected   # 从 selected_papers.json（须 confirmed）
+  python scripts/export_job_bib.py --job 001_xxx --from-selected   # 从 selected_papers.json（须 confirmed，且须先 prepare-workset --apply）
   python scripts/export_job_bib.py --job 001_xxx --keys k1 k2
 """
 import sys

@@ -145,7 +145,10 @@ def doctor_write_pipeline(args: argparse.Namespace) -> dict[str, Any]:
 
     errors: list[str] = []
     if not all_catalog.exists():
-        errors.append(f"missing all.catalog: {all_catalog}")
+        errors.append(
+            f"missing all.catalog: {all_catalog}。snapshot 默认只带 all.catalog.template.json，"
+            "不含真实 all.catalog；本地运行 `python scripts/rebuild_all_catalog.py --apply` 重建后再检查。"
+        )
     if not tracked_jobs["ok"]:
         errors.append("write/jobs has tracked runtime files")
     missing_scripts = [item["path"] for item in key_scripts if not item["exists"]]

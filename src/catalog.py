@@ -65,10 +65,7 @@ def build_compact_catalog_text(
     for entry in papers:
         pid = entry.get("paper_id", "")
         number = entry.get("paper_number", "")
-        catalog = entry  # all.catalog entry IS the content (flat, not nested under "catalog")
-        # accept either flat (v2 all.catalog) or nested (legacy) shape
-        if "catalog" in entry and isinstance(entry["catalog"], dict):
-            catalog = entry["catalog"]
+        catalog = entry  # all.catalog entry IS the flat content entry
         content_identity = catalog.get("content_identity") or {}
         classification = catalog.get("classification") or {}
         screening = catalog.get("screening") or {}
@@ -97,7 +94,7 @@ def build_compact_catalog_text(
         domain_bits = []
         if classification.get("primary_domain"):
             domain_bits.append(str(classification["primary_domain"]))
-        topics = classification.get("topic_tags") or classification.get("topics") or []
+        topics = classification.get("topic_tags") or []
         if topics:
             domain_bits.append(",".join(topics))
         domain = " / ".join(domain_bits)

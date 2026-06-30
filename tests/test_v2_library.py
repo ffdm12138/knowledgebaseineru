@@ -5,7 +5,6 @@ import pytest
 
 from src.services.v2_library import (
     AllCatalogBuilder,
-    LlmWorkService,
     PaperCurationService,
     PaperNumberLedger,
     PaperRawAllocator,
@@ -16,6 +15,7 @@ from src.services.v2_library import (
     migrate_catalog_to_v2_0,
     validate_catalog_schema,
 )
+from src.services.paper_library import PaperLibrary
 
 
 def _curated_raw(root: Path, pid: str = "2024_wang_测试论文") -> Path:
@@ -150,20 +150,18 @@ def test_all_catalog_rebuild_drops_deleted_folders_without_reusing_number(tmp_pa
     assert ledger_data["max_number"] == "0000000000000001"
 
 
-def test_llm_work_copy_by_paper_number(tmp_path):
+def test_paper_library_resolves_by_paper_number(tmp_path):
     raw_folder = _curated_raw(tmp_path)
     papers = tmp_path / "papers"
     all_catalog = tmp_path / "catalog" / "all.catalog.json"
     ledger = tmp_path / "catalog" / "paper_number_ledger.json"
     V2PaperCommitService(papers_dir=papers, all_catalog_path=all_catalog, ledger_path=ledger).commit_paper_raw(raw_folder)
 
-    result = LlmWorkService(all_catalog_path=all_catalog, llm_work_dir=tmp_path / "llm_work").copy_to_session(
-        "0000000000000001",
-        "session_1",
-    )
+    library = PaperLibrary(all_catalog_path=all_catalog, papers_dir=papers)
+    result = library.resolve("0000000000000001")
 
     assert result["paper_id"] == "2024_wang_测试论文"
-    assert (tmp_path / "llm_work" / "session_1" / "0000000000000001" / "2024_wang_测试论文.md").exists()
+    assert library.markdown_path("0000000000000001").exists()
 
 
 def test_v2_commit_quarantines_duplicate_doi(tmp_path):

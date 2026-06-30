@@ -105,3 +105,27 @@ def test_hygiene_warns_stuck_import_status(tmp_path):
     assert report["valid"] is True
     assert any("stuck at metadata_candidates_found" in w for w in report["warnings"])
 
+
+def test_hygiene_warns_stale_write_job_dir(tmp_path):
+    """stale write runtime artifacts outside write/jobs are warned, not deleted."""
+    write_root = tmp_path / "write"
+    write_jobs_dir = write_root / "jobs"
+    legacy_job = write_root / "001_legacy"
+    (legacy_job / "tex").mkdir(parents=True)
+    (legacy_job / "tex" / "main.tex").write_text("% legacy job", encoding="utf-8")
+    all_catalog = tmp_path / "data" / "catalog" / "all.catalog.json"
+    _write_json(all_catalog, {"papers": []})
+
+    report = check_directory_hygiene(
+        project_root=tmp_path,
+        all_catalog_path=all_catalog,
+        papers_dir=tmp_path / "data" / "papers",
+        paper_raw_dir=tmp_path / "data" / "paper_raw",
+        write_jobs_dir=write_jobs_dir,
+        write_root=write_root,
+    )
+
+    assert report["valid"] is True
+    assert any("stale write runtime artifact present" in w for w in report["warnings"])
+    # 不删除
+    assert (legacy_job / "tex" / "main.tex").exists()

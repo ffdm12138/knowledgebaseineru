@@ -40,8 +40,12 @@ def _filter_by_topics(papers: list[dict], topics: list[str] | None) -> list[dict
     wanted = set(topics)
     out = []
     for item in papers:
-        classification = ((item.get("catalog") or {}).get("classification") or {})
-        item_topics = set(classification.get("topics") or [])
+        classification = item.get("classification") or {}
+        item_topics = set(
+            (classification.get("topic_tags") or [])
+            + (classification.get("domains") or [])
+            + (classification.get("methods") or [])
+        )
         if wanted & item_topics:
             out.append(item)
     return out
@@ -65,13 +69,13 @@ def match_catalog(
 
     candidates = []
     for item in papers:
-        cat = item.get("catalog") or {}
-        metadata = item.get("metadata") or {}
+        content_identity = item.get("content_identity") or {}
+        screening = item.get("screening") or {}
         candidates.append({
             "paper_number": item.get("paper_number"),
             "paper_id": item.get("paper_id"),
-            "title": ((metadata.get("title") or {}).get("original") or ""),
-            "catalog_priority": (cat.get("reading_priority") or {}).get("score"),
+            "title": content_identity.get("content_title") or "",
+            "catalog_priority": screening.get("reading_priority") or screening.get("method_quality_score"),
             "candidate_reason": "",
             "expected_use": "",
             "need_fulltext": None,

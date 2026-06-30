@@ -26,7 +26,7 @@ def test_cli_command_includes_hybrid_engine_and_effort(monkeypatch, tmp_path):
     monkeypatch.setattr("src.converter.snapshot_nvidia_smi", lambda: {"available": False})
     monkeypatch.setattr("src.converter.MinerULock.acquire", lambda self, timeout=None: True)
     monkeypatch.setattr("src.converter.MinerULock.release", lambda self: None)
-    converter = MinerUConverter(timeout=1)
+    converter = MinerUConverter(timeout=1, log_dir="")
 
     result = converter.convert_via_cli(
         pdf,
@@ -54,7 +54,7 @@ def test_api_url_returns_structured_failure_not_notimplemented(monkeypatch, tmp_
         message = "down"
 
     monkeypatch.setattr("src.converter.preflight_mineru_api", lambda api_url: Health())
-    result = MinerUConverter(timeout=1).convert(
+    result = MinerUConverter(timeout=1, log_dir="").convert(
         pdf,
         tmp_path / "out",
         api_url="http://127.0.0.1:8000",
@@ -78,7 +78,7 @@ def test_env_api_runner_uses_api_without_explicit_url(monkeypatch, tmp_path):
     monkeypatch.setenv("MINERU_API_URL", "http://127.0.0.1:9000")
     monkeypatch.setattr(MinerUConverter, "convert_via_api", fake_api)
 
-    result = MinerUConverter(timeout=1).convert(pdf, tmp_path / "out")
+    result = MinerUConverter(timeout=1, log_dir="").convert(pdf, tmp_path / "out")
 
     assert result["runner"] == "api"
     assert captured["api_url"] == "http://127.0.0.1:9000"
@@ -93,7 +93,7 @@ def test_cli_runner_returns_gpu_preflight_failure(monkeypatch, tmp_path):
         message = "gpu missing"
 
     monkeypatch.setattr("src.converter.preflight_gpu", lambda: Health())
-    result = MinerUConverter(timeout=1).convert_via_cli(pdf, tmp_path / "out")
+    result = MinerUConverter(timeout=1, log_dir="").convert_via_cli(pdf, tmp_path / "out")
 
     assert result["success"] is False
     assert "GPU preflight failed" in result["error"]
@@ -106,7 +106,7 @@ def test_cli_runner_rejects_explicit_api_url(monkeypatch, tmp_path):
     monkeypatch.setenv("MINERU_RUNNER", "cli")
     monkeypatch.delenv("MINERU_API_URL", raising=False)
 
-    result = MinerUConverter(timeout=1).convert(
+    result = MinerUConverter(timeout=1, log_dir="").convert(
         pdf, tmp_path / "out", api_url="http://127.0.0.1:8000")
 
     assert result["success"] is False
@@ -141,7 +141,7 @@ def test_cli_api_proxy_command_includes_api_url(monkeypatch, tmp_path):
     monkeypatch.setattr("src.converter.MinerULock.acquire", lambda self, timeout=None: True)
     monkeypatch.setattr("src.converter.MinerULock.release", lambda self: None)
 
-    result = MinerUConverter(timeout=1).convert_via_cli(
+    result = MinerUConverter(timeout=1, log_dir="").convert_via_cli(
         pdf, output, backend="hybrid-engine", method="auto", effort="medium",
         api_url="http://127.0.0.1:8000",
     )
@@ -180,7 +180,7 @@ def test_cli_api_proxy_with_env_api_url(monkeypatch, tmp_path):
     monkeypatch.setattr("src.converter.MinerULock.release", lambda self: None)
 
     # 不传 api_url → 应该用 env MINERU_API_URL
-    result = MinerUConverter(timeout=1).convert(
+    result = MinerUConverter(timeout=1, log_dir="").convert(
         pdf, output, backend="hybrid-engine", method="auto", effort="medium")
 
     assert result["success"] is True
@@ -215,7 +215,7 @@ def test_cli_runner_no_api_url(monkeypatch, tmp_path):
     monkeypatch.setattr("src.converter.MinerULock.acquire", lambda self, timeout=None: True)
     monkeypatch.setattr("src.converter.MinerULock.release", lambda self: None)
 
-    result = MinerUConverter(timeout=1).convert(
+    result = MinerUConverter(timeout=1, log_dir="").convert(
         pdf, output, backend="hybrid-engine", method="auto", effort="medium")
 
     assert result["success"] is True

@@ -25,8 +25,10 @@ def list_papers():
         return "文献库为空。请先运行 v2 paper_raw CLI 完成入库。"
     lines = ["| # | paper_number | paper_id | title |", "|---|---|---|---|"]
     for i, item in enumerate(papers, 1):
-        metadata = item.get("metadata") or {}
-        title = (metadata.get("title") or {}).get("original") or ""
+        # all.catalog v2 是 content-only：标题取 content_identity.content_title；
+        # 不假设 catalog 条目含 metadata 字段。正式书目标题需另行从 metadata 读取。
+        content_identity = item.get("content_identity") or {}
+        title = content_identity.get("content_title") or ""
         lines.append(f"| {i} | `{item.get('paper_number','')}` | `{item.get('paper_id','')}` | {title} |")
     return "\n".join(lines)
 

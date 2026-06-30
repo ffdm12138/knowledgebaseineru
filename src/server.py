@@ -19,10 +19,10 @@ from src.catalog import Catalog
 from src.library import PaperLibrary
 from src.naming import validate_job_id, validate_paper_id
 from src.prompt_builder import PromptBuilder
-from src.services.v2_library import AllCatalogBuilder, LlmWorkService, bibtex_from_metadata
+from src.services.v2_library import AllCatalogBuilder, bibtex_from_metadata
 from src.writer.bib_manager import portability_check, validate_catalog_citations, validate_job_citations
 from src.writer.catalog_matcher import confirm_selected_papers, match_catalog
-from src.writer.deep_reader import deep_read, mark_deep_reading_filled
+from src.writer.deep_reader import deep_read, mark_deep_reading_filled, prepare_workset
 from src.writer.figure_manager import copy_figures
 from src.writer.job_manager import JobManager
 from src.writer.job_validator import validate_job
@@ -83,6 +83,10 @@ class DeepReadRequest(BaseModel):
     force: bool = False
 
 
+class PrepareWorksetRequest(BaseModel):
+    overwrite: bool = False
+
+
 class BuildStoryRequest(BaseModel):
     force: bool = False
 
@@ -95,11 +99,6 @@ class BuildTexRequest(BaseModel):
 
 class CopyFiguresRequest(BaseModel):
     figures: list[dict] | None = None
-
-
-class CopyPaperNumberRequest(BaseModel):
-    session_id: str
-    overwrite: bool = False
 
 
 class BibtexRequest(BaseModel):
@@ -138,12 +137,10 @@ async def upload_disabled():
 
 @app.get("/papers/by-number/{paper_number}")
 async def get_by_number(paper_number: str):
-    try:
-        return LlmWorkService().resolve_paper_number(paper_number)
-    except ValueError as exc:
-        raise HTTPException(400, str(exc))
-    except KeyError as exc:
-        raise HTTPException(404, str(exc))
+    entry = library.resolve(paper_number)
+    if entry is None:
+        raise HTTPException(404, f"paper_number not found: {paper_number}")
+    return entry
 
 
 @app.get("/papers/by-number/{paper_number}/markdown", response_class=PlainTextResponse)
@@ -165,18 +162,6 @@ async def get_image_by_number(paper_number: str, image_name: str):
     if not path.exists():
         raise HTTPException(404, "image asset not found")
     return FileResponse(path)
-
-
-@app.post("/papers/by-number/{paper_number}/copy-to-llm-work")
-async def copy_paper_number_to_llm_work(paper_number: str, req: CopyPaperNumberRequest):
-    try:
-        return LlmWorkService().copy_to_session(paper_number, req.session_id, overwrite=req.overwrite)
-    except ValueError as exc:
-        raise HTTPException(400, str(exc))
-    except KeyError as exc:
-        raise HTTPException(404, str(exc))
-    except FileExistsError as exc:
-        raise HTTPException(409, str(exc))
 
 
 @app.post("/bibtex")
@@ -309,11 +294,22 @@ async def write_confirm_papers(job_id: str, req: ConfirmPapersRequest):
     return confirm_selected_papers(job_id, selected, confirmed_by=req.confirmed_by, jm=job_manager, catalog=catalog)
 
 
+@app.post("/write/jobs/{job_id}/prepare-workset")
+async def write_prepare_workset(job_id: str, req: PrepareWorksetRequest = Body(default_factory=PrepareWorksetRequest)):
+    _check_job_id(job_id)
+    if not job_manager.load_meta(job_id):
+        raise HTTPException(404, f"job not found: {job_id}")
+    try:
+        return prepare_workset(job_id, jm=job_manager, catalog=catalog, overwrite=req.overwrite, apply=True)
+    except RuntimeError as exc:
+        raise HTTPException(400, str(exc))
+
+
 @app.post("/write/jobs/{job_id}/deep-read")
 async def write_deep_read(job_id: str, req: DeepReadRequest):
     _check_job_id(job_id)
     try:
-        return deep_read(job_id, req.paper_ids, force=req.force, jm=job_manager, library=library, catalog=catalog)
+        return deep_read(job_id, req.paper_ids, force=req.force, jm=job_manager, catalog=catalog)
     except RuntimeError as exc:
         raise HTTPException(400, str(exc))
 
@@ -349,7 +345,7 @@ async def write_mark_story(job_id: str):
 async def write_build_tex(job_id: str, req: BuildTexRequest):
     _check_job_id(job_id)
     try:
-        return build_tex(job_id, title=req.title, force=req.force, template_only=req.template_only, jm=job_manager, catalog=catalog, library=library)
+        return build_tex(job_id, title=req.title, force=req.force, template_only=req.template_only, jm=job_manager)
     except RuntimeError as exc:
         raise HTTPException(400, str(exc))
 

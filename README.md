@@ -1,4 +1,4 @@
-# MinerU v2 文献资产库
+# 文献工坊 (PaperMill)
 
 本项目是本地文献资产库、AI 可读目录和博士论文级综述写作工作区。它只保留纯 v2 `paper_raw` 工作流，不做向量库、RAG、embedding，也不内置 LLM client。所有 prompt 和写作步骤只生成可复制文本或结构化模板。
 
@@ -41,18 +41,27 @@ conda run -n mineru python scripts/doctor_ingest_pipeline.py
 
 ## 唯一数据流
 
+两条入库路径，区别在于 metadata 与 MinerU 转换的先后：
+
 ```text
-手动 PDF 或网络 metadata
--> data/paper_raw/<000001>/
--> metadata 匹配或人工确认
--> PDF 获取或绑定
--> MinerU 批量转换
--> curation 生成 catalog 并补齐 metadata 空字段
--> commit 到 data/papers/<year_author_中文标题>/
--> 分配 16 位 paper_number
--> 重建 data/catalog/all.catalog.json
--> 写作流程按 paper_number 复制到 write/jobs/<job_id>/article/<paper_number>/
+Network metadata path（metadata 先行，已有 DOI）:
+  stage_network_metadata_to_paper_raw  -> fetch_pdf_for_paper_raw
+  -> convert_paper_raw_batch -> curate_paper_raw
+  -> commit_paper_raw_to_papers -> rebuild_all_catalog
+
+Manual PDF path（先转换，再从转换后的 md 解析 metadata）:
+  stage_raw_pdfs_to_paper_raw --move --apply
+  -> convert_paper_raw_batch        # MinerU 转换在 metadata resolve 之前
+  -> resolve_paper_raw_metadata     # 读转换后的 md，抽取候选并联网验证/查询
+  -> curate_paper_raw
+  -> commit_paper_raw_to_papers -> rebuild_all_catalog
 ```
+
+For manual PDF imports, metadata resolver depends on converted Markdown and must run
+after MinerU conversion. 手动 PDF 导入时，metadata resolver 必须基于 MinerU 转换完成后的
+md，因此顺序是先转换，再解析/匹配 metadata。两条路径 commit 前都必须通过 metadata 与
+catalog 校验，随后分配 16 位 paper_number、重建 `data/catalog/all.catalog.json`，写作流程
+按 `paper_number` 复制到 `write/jobs/<job_id>/article/<paper_number>/`。
 
 正式资产只允许位于：
 
@@ -71,12 +80,14 @@ data/papers/<paper_id>/<16位编号>.paper.number
 
 - **metadata**（`<paper_id>.metadata.json`）：BibTeX/书目信息事实源（DOI、作者、年份、期刊、卷期页、链接、metadata_match）。
 - **catalog**（`<paper_id>.catalog.json`，schema v2.0，**content-only**）：大模型快速筛选精读文献的内容索引。只含正文内容理解（content_identity、classification、screening、research_card、evidence_profile、content_notes、provenance），**不含** DOI/作者/年份/期刊/卷期页等书目字段（这些只在 metadata）。catalog 与 metadata 仅通过 `paper_number`/`paper_id` 关联。
-- **paper_number**（16 位）：API 与写作流程主键。大模型先看 `all.catalog.json`（content-only）选号，再按 `paper_number` 读 metadata 取书目信息。writing v0.1 主流程使用 `write/jobs/<job_id>/article/<paper_number>/`，当前主入口为 `create_write_job.py` / `prepare_write_article_workdir.py`。`copy_paper_to_llm_work.py` 与 `data/llm_work` 仅为 legacy / API compatibility，**不是** writing v0.1 主路径。`all.catalog` 是内容索引不是书目库；references/BibTeX 只从 metadata 生成。
+- **paper_number**（16 位）：API 与写作流程主键。大模型先看 `all.catalog.json`（content-only）选号，再按 `paper_number` 读 metadata 取书目信息。writing 主流程使用 `write/jobs/<job_id>/article/<paper_number>/`，当前主入口为 `create_write_job.py` / `prepare_write_article_workdir.py`。`all.catalog` 是内容索引不是书目库；references/BibTeX 只从 metadata 生成。写作有两层入口：**推荐稳定主入口是 catalog-to-TeX mini loop**（`create_write_job.py` → `write_catalog_tex_article.py` → `check_write_tex_project.py` → `check_write_quality_text.py`）；`write_review.py` 与 `src/server.py` 的 `/write/jobs/*` HTTP API 是 lower-level / experimental 多阶段入口（不是 legacy，但不是默认主入口）。两者共用 `write/jobs/<job_id>/article/<paper_number>/`，都不读已退役的 llm work 目录。
 
 ## Metadata 完整性门槛
 
 - 网络/搜索 metadata 导入必须有 DOI，并写入 `metadata.identifiers.doi`；没有 DOI 的候选不得 stage 到 `paper_raw`。
 - 手动 PDF 可以先进入 `data/paper_raw/<000001>/` 并保持 `metadata_match.status = unmatched`，但匹配或人工确认没有 DOI 时不得 curation/commit。
+- 手动 PDF 正常导入时，`data/raw/` is a queue / raw 是待处理队列；成功 stage 会把 PDF 移到
+  `data/paper_raw/<source_id>/<source_id>.pdf`，因此 raw 中对应 PDF 应消失。
 - curation、formal commit 和正式库 validate 都要求 DOI 非空；不完整的 `paper_raw` 留在原工作区，写 `.import_status.json` 说明原因。
 - LLM/curator 只能补空 metadata 字段，不能编造 DOI，也不能覆盖已有非空 DOI。
 - BibTeX 和 APA 参考文献只从 metadata 读取标题、作者、venue、卷期页、DOI 和 URL，不从 catalog 或 MinerU 正文拼接。
@@ -90,16 +101,68 @@ data/papers/<paper_id>/<16位编号>.paper.number
 
 要点速记：
 
-- 手动 PDF 放 `data/raw/`；`stage_raw_pdfs_to_paper_raw.py --apply` 默认复制（`--move` 才移动）。
-- 网络/搜索 metadata 必须有合法 DOI 才能进入 `paper_raw`。
+- MinerU conversion requires GPU / MinerU 正式转换必须使用 GPU。`stage_raw_pdfs_to_paper_raw.py`
+  不需要 GPU；`convert_paper_raw_batch.py` / MinerU conversion 默认 `MINERU_REQUIRE_GPU=true`，
+  且建议 `CUDA_VISIBLE_DEVICES=0`。CPU/no-GPU 只允许调试：显式设置 `MINERU_ALLOW_CPU=true`
+  或 `MINERU_REQUIRE_GPU=false`。
+- 手动 PDF 放 `data/raw/`；正常导入 SOP 使用 `stage_raw_pdfs_to_paper_raw.py --move --apply`
+  消费 raw 队列。copy 模式只用于调试、备份、测试或明确的一次性检查，不是默认导入规范。
+  手动 PDF 路径顺序：
+  `convert_paper_raw_batch.py` 先转换；
+  `resolve_paper_raw_metadata.py` 再从转换后的 md 解析/联网验证 metadata
+  （不要在没有 md 时跑 resolver；也不要用 `--only-preflight-ready` 挡住初始
+  unmatched 的手动 PDF 转换）。
+- 网络/搜索 metadata 必须有合法 DOI 才能进入 `paper_raw`。网络路径 metadata 已带 DOI，先 `fetch_pdf_for_paper_raw.py` 取 PDF，再转换，无需 resolve 步骤。
 - `curate_paper_raw.py` 不调用大模型：`--dry-run` 写 curation prompt，`--apply` 应用 content-only catalog；
   metadata 空字段由 `resolve_paper_raw_metadata.py` / enrichment 补齐，不在 curate 阶段处理。详见
   [skills/paper_raw_catalog_curator/](skills/paper_raw_catalog_curator/)。
-- MinerU 默认 `hybrid-engine + medium + auto`，批量转换默认单进程防 GPU OOM。
+- MinerU 默认 `hybrid-engine + medium + auto`，批量转换默认单进程防 GPU OOM。批量转换优先使用
+  持久 `mineru-api` 服务：`MINERU_RUNNER=cli_api_proxy` 与 `MINERU_API_URL=http://127.0.0.1:8000`；
+  `MINERU_RUNNER=cli` 是 fallback，批量时可能每篇 PDF 冷启动 MinerU。Windows 可用
+  `start_fast_api_mode.bat` 启动持久 `mineru-api`，或按本地 MinerU 安装启动服务后设置环境变量。
+
+GPU conversion setup (Windows cmd):
+
+```bat
+set MINERU_REQUIRE_GPU=true
+set CUDA_VISIBLE_DEVICES=0
+set MINERU_RUNNER=cli_api_proxy
+set MINERU_API_URL=http://127.0.0.1:8000
+```
+
+PowerShell:
+
+```powershell
+$env:MINERU_REQUIRE_GPU="true"
+$env:CUDA_VISIBLE_DEVICES="0"
+$env:MINERU_RUNNER="cli_api_proxy"
+$env:MINERU_API_URL="http://127.0.0.1:8000"
+```
+
+Linux / bash:
+
+```bash
+export MINERU_REQUIRE_GPU=true
+export CUDA_VISIBLE_DEVICES=0
+export MINERU_RUNNER=cli_api_proxy
+export MINERU_API_URL=http://127.0.0.1:8000
+```
+
+## Default writing entry
+
+1. Select papers by `paper_number` from `data/catalog/all.catalog.json`.
+2. Create a writing job with `scripts/create_write_job.py`.
+3. Generate the TeX project with `scripts/write_catalog_tex_article.py`.
+4. Validate with `scripts/check_write_tex_project.py` and `scripts/check_write_quality_text.py`.
+
+`skills/catalog_tex_writer` is the default article-writing skill for this path.
+
+`skills/paper_raw_metadata_resolver`, `skills/paper_raw_catalog_curator`, and `skills/literature_library_manager` are support / ingest / library-management skills, not competing article-writing skills.
+
+`scripts/write_review.py` (with `src/writer/*` and the `src/server.py` `/write/jobs/*` HTTP API) remains available as an advanced / experimental multi-stage writer workflow, but it is not the default recommended entry. Both paths use `write/jobs/<job_id>/article/<paper_number>/` and neither reads the legacy/forbidden llm work directory.
 
 ## 数据与版权边界
 
-`data/raw/`、`data/paper_raw/`、`data/papers/`、`data/llm_work/` 中的文献资产按版权数据处理，不进入源码分发。
+`data/raw/`、`data/paper_raw/`、`data/papers/` 中的文献资产按版权数据处理，不进入源码分发。
 真实 `data/papers` 不进入 snapshot，但本地真实库必须通过 `validate_v2_library.py` 和
 `audit_metadata_quality.py` 的硬错误检查。`write/jobs/` 运行产物不提交（只跟踪 `.gitkeep`）。
-

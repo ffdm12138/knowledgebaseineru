@@ -1,148 +1,247 @@
-"""任务级 BibTeX：catalog citation 校验 + job bib 导出 + \\cite 一致性。
+"""Job-level BibTeX export and citation validation.
 
-v2 不再有全局 references.bib；每篇 BibTeX 由 bibtex_from_metadata 从 metadata.json
-生成，写作时抽取选中论文写入 job 内 tex/references.bib。bib_key = metadata.citation_key or paper_id。
+Each BibTeX entry is generated from the **job-local** copied article metadata
+(``write/jobs/<job_id>/article/<paper_number>/*.metadata.json``) and written into
+the job-local ``tex/references.bib`` file. The job-level export/validate paths
+never touch the global ``Catalog()`` / ``PaperLibrary()``; only
+``validate_catalog_citations`` (a global all.catalog audit helper) does.
 """
+from __future__ import annotations
+
+import json
 import re
 from pathlib import Path
 
-from src.writer.job_manager import JobManager
-from src.writer.catalog_matcher import load_selected
-from src.catalog import Catalog
 from src import bib as bibmod
+from src.catalog import Catalog
+from src.services.paper_library import PaperLibrary
+from src.writer.catalog_matcher import load_selected
+from src.writer.job_manager import JobManager
 
 
-def _bib_map(papers: list[dict]) -> dict[str, str]:
-    """paper_id -> bib_key (metadata.citation_key or paper_id)。"""
-    return {p.get("paper_id", ""): bibmod.bib_key_for_entry(p) for p in papers}
+def resolve_work_dir(jdir: Path, work_dir: str) -> Path:
+    """Resolve a manifest ``work_dir`` value to an absolute article path.
 
-
-def validate_catalog_citations(catalog_data: dict | None = None) -> list[str]:
-    """校验 catalog 中每篇可生成的 BibTeX。返回错误列表（空=通过）。
-
-    v2：bib_key = metadata.citation_key or paper_id，必须非空且唯一；
-    bibtex_from_metadata 生成的条目以 @ 开头、entry key == bib_key、含 title/author/year；
-    metadata.identifiers.doi 有值时 bibtex 应含 doi。
+    New manifests store job-relative paths (e.g. ``article/0000000000000001``);
+    older manifests stored absolute paths. Both are accepted: an absolute path
+    is used as-is, a relative one is joined to the job root. This keeps the job
+    portable (the manifest has no machine-specific absolute path).
     """
-    cat = catalog_data or Catalog().load()
-    errors = []
-    seen = set()
-    for p in cat.get("papers", []):
-        ctx = f"paper_id={p.get('paper_id', '?')}"
-        bk = bibmod.bib_key_for_entry(p)
-        if not bk:
-            errors.append(f"{ctx} bib_key 为空")
-        elif bk in seen:
-            errors.append(f"{ctx} bib_key 重复: {bk}")
-        else:
-            seen.add(bk)
-        bt = bibmod.bibtex_for_entry(p).strip()
-        if not bt or not bt.startswith("@"):
-            errors.append(f"{ctx} bibtex 生成失败或不以 @ 开头")
-            continue
-        m = re.match(r"@\w+\s*\{\s*([^,\s]+)", bt)
-        if m and m.group(1) != bk:
-            errors.append(f"{ctx} bibtex entry key({m.group(1)}) != bib_key({bk})")
-        for field in ("title", "author", "year"):
-            if not re.search(rf"\b{field}\s*=", bt, re.IGNORECASE):
-                errors.append(f"{ctx} bibtex 缺少 {field} 字段")
-        meta = p.get("metadata") or {}
-        doi = ((meta.get("identifiers") or {}).get("doi") or "").strip()
-        if doi and "doi" not in bt.lower():
-            errors.append(f"{ctx} metadata 有 doi 但 bibtex 未写 doi")
-    return errors
+    p = Path(work_dir)
+    return p if p.is_absolute() else (jdir / p)
 
 
-def export_job_bib(job_id: str, bib_keys: list[str] | None = None,
-                   jm: JobManager | None = None) -> dict:
-    """为 job 抽取 selected_papers 对应的 BibTeX，逐篇生成写入 job 的 tex/references.bib。
+def load_workset_manifest(job_id: str, jm: JobManager | None = None) -> dict[str, Path]:
+    """Read ``planning/workset_manifest.json`` and return ``{paper_id: work_dir}``.
 
-    bib_keys 为 None 时从 selected_papers.json（必须 confirmed）取。
-    v2 直接由 bibtex_from_metadata 生成，不再依赖全局 references.bib。
+    Raises ``RuntimeError`` if the manifest is missing — i.e. ``prepare-workset
+    --apply`` has not been run. Job-level BibTeX/cite-key generation is strictly
+    job-local, so the manifest is the entry point to the copied article metadata.
+    ``work_dir`` values are resolved against the job root (see ``resolve_work_dir``).
     """
     jm = jm or JobManager()
     jdir = jm.job_dir(job_id)
-    papers = Catalog().list_papers()
-    by_id = {p.get("paper_id"): p for p in papers}
+    manifest_path = jdir / "planning" / "workset_manifest.json"
+    if not manifest_path.exists():
+        raise RuntimeError(
+            "workset_manifest.json not found. "
+            "Run `write_review.py prepare-workset --job ... --apply` first.")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    mapping: dict[str, Path] = {}
+    for entry in manifest.get("copied", []):
+        pid = entry.get("paper_id", "")
+        wd = entry.get("work_dir", "")
+        if pid and wd:
+            mapping[pid] = resolve_work_dir(jdir, wd)
+    return mapping
+
+
+def _read_article_metadata(work_dir: Path) -> dict | None:
+    """Read the single ``*.metadata.json`` from a copied article work_dir.
+
+    Returns ``None`` when the copied article has no metadata file.
+    """
+    metas = sorted(Path(work_dir).glob("*.metadata.json"))
+    if not metas:
+        return None
+    return json.loads(metas[0].read_text(encoding="utf-8"))
+
+
+def job_local_bib_keys(pid_to_work_dir: dict[str, Path]) -> dict[str, str]:
+    """Map ``paper_id -> bib_key`` derived from job-local article metadata.
+
+    No global ``Catalog`` / ``PaperLibrary`` access. Falls back to
+    ``sanitize_paper_id(pid)`` when the copied article has no metadata, matching
+    the metadata-empty branch of ``bib_key_for_entry``. This is the single source
+    of truth shared by ``export_job_bib`` / ``validate_job_bib`` /
+    ``deep_read`` / ``copy_figures`` so every cite key agrees.
+    """
+    keys: dict[str, str] = {}
+    for pid, wd in pid_to_work_dir.items():
+        meta = _read_article_metadata(Path(wd))
+        raw = (meta.get("citation_key") if meta else "") or pid or ""
+        keys[pid] = bibmod.sanitize_paper_id(str(raw))
+    return keys
+
+
+def _metadata_for_entry(entry: dict, library: PaperLibrary) -> dict:
+    embedded = entry.get("metadata")
+    if isinstance(embedded, dict) and embedded:
+        return embedded
+    key = entry.get("paper_number") or entry.get("paper_id") or ""
+    return library.load_metadata(str(key)) or {}
+
+
+def validate_catalog_citations(catalog_data: dict | None = None) -> list[str]:
+    """Validate that catalog entries can produce complete BibTeX records."""
+    cat = catalog_data or Catalog().load()
+    library = PaperLibrary()
+    errors: list[str] = []
+    seen: set[str] = set()
+
+    for entry in cat.get("papers", []):
+        ctx = f"paper_id={entry.get('paper_id', '?')}"
+        bib_key = bibmod.bib_key_for_entry(entry)
+        if not bib_key:
+            errors.append(f"{ctx} missing bib_key")
+        elif bib_key in seen:
+            errors.append(f"{ctx} duplicate bib_key: {bib_key}")
+        else:
+            seen.add(bib_key)
+
+        bibtex = bibmod.bibtex_for_entry(entry).strip()
+        if not bibtex or not bibtex.startswith("@"):
+            errors.append(f"{ctx} failed to generate BibTeX entry")
+            continue
+
+        match = re.match(r"@\w+\s*\{\s*([^,\s]+)", bibtex)
+        if match and match.group(1) != bib_key:
+            errors.append(f"{ctx} bibtex entry key({match.group(1)}) != bib_key({bib_key})")
+
+        for field in ("title", "author", "year"):
+            if not re.search(rf"\b{field}\s*=", bibtex, re.IGNORECASE):
+                errors.append(f"{ctx} bibtex missing {field} field")
+
+        metadata = _metadata_for_entry(entry, library)
+        doi = str(((metadata.get("identifiers") or {}).get("doi") or "")).strip()
+        if doi and "doi" not in bibtex.lower():
+            errors.append(f"{ctx} metadata has DOI but BibTeX does not include doi")
+
+    return errors
+
+
+def export_job_bib(
+    job_id: str,
+    bib_keys: list[str] | None = None,
+    jm: JobManager | None = None,
+) -> dict:
+    """Export selected papers into the job-local ``tex/references.bib`` file.
+
+    BibTeX entries are generated **only** from the copied article metadata in
+    ``write/jobs/<job_id>/article/<paper_number>/*.metadata.json`` — never from
+    the global ``Catalog`` / ``PaperLibrary``. Requires ``prepare-workset --apply``
+    (so ``workset_manifest.json`` exists). Missing article metadata or DOI raises
+    rather than silently emitting an empty ``references.bib``.
+    """
+    jm = jm or JobManager()
+    job_dir = jm.job_dir(job_id)
+    pid_to_work_dir = load_workset_manifest(job_id, jm)
+    key_to_pid = {v: k for k, v in job_local_bib_keys(pid_to_work_dir).items()}
 
     if bib_keys is None:
-        sel = load_selected(job_id, jm)
-        if sel.get("selection_status") != "confirmed":
-            raise RuntimeError("selected_papers.json is not confirmed，拒绝导出 references.bib")
-        bib_map = _bib_map(papers)
-        entries: list[dict] = []
-        for it in sel.get("selected_papers", []):
-            pid = it.get("paper_id", "")
-            entry = by_id.get(pid)
-            bk = it.get("bib_key") or bib_map.get(pid, "")
-            if entry and bk:
-                entries.append(entry)
-        bib_keys = [bibmod.bib_key_for_entry(e) for e in entries]
+        selected = load_selected(job_id, jm)
+        if selected.get("selection_status") != "confirmed":
+            raise RuntimeError("selected_papers.json is not confirmed; refusing to export references.bib")
+        pids = [item.get("paper_id", "") for item in selected.get("selected_papers", [])]
     else:
-        wanted = set(bib_keys)
-        entries = [p for p in papers if bibmod.bib_key_for_entry(p) in wanted]
+        pids = [key_to_pid[k] for k in bib_keys if k in key_to_pid]
 
-    blocks = [bibmod.bibtex_for_entry(e) for e in entries]
-    out = jdir / "tex" / "references.bib"
+    blocks: list[str] = []
+    for pid in pids:
+        if pid not in pid_to_work_dir:
+            raise RuntimeError(
+                f"paper_id={pid} not in workset_manifest; run prepare-workset --apply.")
+        meta = _read_article_metadata(pid_to_work_dir[pid])
+        if not meta:
+            raise RuntimeError(
+                f"job-local article metadata missing for paper_id={pid}; "
+                "run prepare-workset --apply to copy it.")
+        doi = str(((meta.get("identifiers") or {}).get("doi") or "")).strip()
+        if not doi:
+            raise RuntimeError(
+                f"paper_id={pid} metadata lacks identifiers.doi; "
+                "cannot export references.bib without DOI.")
+        key = job_local_bib_keys({pid: pid_to_work_dir[pid]})[pid]
+        blocks.append(bibmod.bibtex_from_metadata(meta, key=key))
+
+    out = job_dir / "tex" / "references.bib"
     out.parent.mkdir(parents=True, exist_ok=True)
-    header = f"% write/{job_id} 引用库，由 {len(blocks)} 条 BibTeX 从 metadata 生成。\n\n"
+    header = f"% Generated for write/jobs/{job_id} from job-local article metadata; {len(blocks)} BibTeX entries.\n\n"
     out.write_text(header + "\n\n".join(blocks) + "\n", encoding="utf-8")
     return {"references_bib": str(out), "count": len(blocks)}
 
 
 def validate_job_bib(job_id: str, jm: JobManager | None = None) -> list[str]:
-    """校验 job 的 references.bib：entry key 不重复、与 selected 对应。返回错误列表。"""
+    """Validate job-local ``references.bib`` against confirmed selected papers."""
     jm = jm or JobManager()
-    jdir = jm.job_dir(job_id)
-    bib_path = jdir / "tex" / "references.bib"
-    errors = []
+    job_dir = jm.job_dir(job_id)
+    bib_path = job_dir / "tex" / "references.bib"
+    errors: list[str] = []
     if not bib_path.exists():
-        return ["缺少 tex/references.bib"]
-    blocks = bibmod.parse_blocks(bib_path.read_text(encoding="utf-8"))
+        return ["missing tex/references.bib"]
+
     raw = bib_path.read_text(encoding="utf-8")
+    blocks = bibmod.parse_blocks(raw)
     keys = re.findall(r"@\w+\s*\{\s*([^,\s]+)", raw)
     if len(keys) != len(set(keys)):
-        errors.append("references.bib 中存在重复 entry key")
-    sel = load_selected(job_id, jm)
-    if sel.get("selection_status") == "confirmed":
-        bib_map = _bib_map(Catalog().list_papers())
-        sel_keys = set()
-        for it in sel.get("selected_papers", []):
-            bk = it.get("bib_key") or bib_map.get(it.get("paper_id", ""), "")
-            if bk:
-                sel_keys.add(bk)
-        extra = set(blocks.keys()) - sel_keys
+        errors.append("references.bib contains duplicate entry keys")
+
+    selected = load_selected(job_id, jm)
+    if selected.get("selection_status") == "confirmed":
+        try:
+            pid_to_work_dir = load_workset_manifest(job_id, jm)
+        except RuntimeError as exc:
+            errors.append(str(exc))
+            return errors
+        bib_map = job_local_bib_keys(pid_to_work_dir)
+        selected_keys: set[str] = set()
+        for item in selected.get("selected_papers", []):
+            pid = item.get("paper_id", "")
+            if pid in bib_map:
+                selected_keys.add(bib_map[pid])
+        extra = set(blocks.keys()) - selected_keys
         if extra:
-            errors.append(f"references.bib 含 selected_papers 之外的条目: {sorted(extra)}")
+            errors.append(f"references.bib contains entries outside selected_papers: {sorted(extra)}")
     return errors
 
 
 def _extract_cite_keys(tex_text: str) -> set[str]:
-    """从 TeX 文本提取所有 \\cite{...} 中的 key（支持多 key 与 cite变体）。
-    跳过 % 注释行，避免模板里的占位 \\cite{bib_key} 被误判。"""
-    keys = set()
+    """Extract keys from uncommented LaTeX cite commands."""
+    keys: set[str] = set()
     for line in tex_text.splitlines():
-        code = line.split("%", 1)[0] if line.lstrip().startswith("%") else line
         if line.lstrip().startswith("%"):
             continue
-        for m in re.finditer(r"\\cite[a-zA-Z]*\s*\{([^}]*)\}", code):
-            for k in m.group(1).split(","):
-                k = k.strip()
-                if k:
-                    keys.add(k)
+        code = line.split("%", 1)[0]
+        for match in re.finditer(r"\\cite[a-zA-Z]*\s*\{([^}]*)\}", code):
+            for key in match.group(1).split(","):
+                key = key.strip()
+                if key:
+                    keys.add(key)
     return keys
 
 
 def validate_job_citations(job_id: str, jm: JobManager | None = None) -> dict:
-    """校验 job 的 TeX 引用与 references.bib 一致性"""
+    """Validate that TeX citations and job-local BibTeX keys agree."""
     jm = jm or JobManager()
-    jdir = jm.job_dir(job_id)
-    bib_path = jdir / "tex" / "references.bib"
+    job_dir = jm.job_dir(job_id)
+    bib_path = job_dir / "tex" / "references.bib"
     bib_keys = set(bibmod.parse_blocks(bib_path.read_text(encoding="utf-8")).keys()) if bib_path.exists() else set()
 
-    cited = set()
-    for tex in jdir.rglob("*.tex"):
-        cited |= _extract_cite_keys(tex.read_text(encoding="utf-8"))
+    cited: set[str] = set()
+    tex_dir = job_dir / "tex"
+    if tex_dir.exists():
+        for tex in tex_dir.rglob("*.tex"):
+            cited |= _extract_cite_keys(tex.read_text(encoding="utf-8"))
 
     missing = cited - bib_keys
     unused = bib_keys - cited
@@ -156,51 +255,44 @@ def validate_job_citations(job_id: str, jm: JobManager | None = None) -> dict:
 
 
 def portability_check(job_id: str, jm: JobManager | None = None) -> dict:
-    """检查 job 的 tex 项目是否完全自包含、可整体挪走。
-
-    确认所有引用资源都能在 job 目录内解析：
-    - \\bibliography{...} 指向的 .bib 在 tex/ 内
-    - \\input{...}/\\include{...} 指向的 .tex 存在
-    - \\includegraphics{...} 指向的图在 job 内
-    - 不依赖 data/ 等外部绝对路径
-    """
+    """Check whether the job-local TeX project is self-contained."""
     jm = jm or JobManager()
-    jdir = jm.job_dir(job_id)
-    tex_dir = jdir / "tex"
-    errors = []
+    job_dir = jm.job_dir(job_id)
+    tex_dir = job_dir / "tex"
+    errors: list[str] = []
 
     def _resolve(base: Path, ref: str) -> Path:
-        p = (base / ref).resolve()
-        return p
+        return (base / ref).resolve()
 
-    for tex in tex_dir.rglob("*.tex"):
-        text = tex.read_text(encoding="utf-8")
-        for line in text.splitlines():
-            if line.lstrip().startswith("%"):
-                continue
-            for m in re.finditer(r"\\(?:bibliography|addbibresource)\s*\{([^}]*)\}", line):
-                ref = m.group(1).strip()
-                cand = _resolve(tex.parent, ref)
-                if not cand.exists() and not cand.with_suffix(".bib").exists():
-                    errors.append(f"{tex.name}: \\bibliography{{{ref}}} 在 tex/ 内找不到")
-            for m in re.finditer(r"\\(?:input|include)\s*\{([^}]*)\}", line):
-                ref = m.group(1).strip()
-                cand = _resolve(tex.parent, ref)
-                if not (cand.exists() or cand.with_suffix(".tex").exists()):
-                    errors.append(f"{tex.name}: \\input{{{ref}}} 找不到")
-            for m in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}", line):
-                ref = m.group(1).strip()
-                resolved = _resolve(tex.parent, ref)
-                try:
-                    resolved.relative_to(jdir.resolve())
-                except ValueError:
-                    errors.append(f"{tex.name}: \\includegraphics{{{ref}}} 指向 job 目录外，不可移植")
+    if tex_dir.exists():
+        for tex in tex_dir.rglob("*.tex"):
+            text = tex.read_text(encoding="utf-8")
+            for line in text.splitlines():
+                if line.lstrip().startswith("%"):
                     continue
-                if not resolved.exists():
-                    errors.append(f"{tex.name}: \\includegraphics{{{ref}}} 文件不存在（在 job 内但缺失）")
+                for match in re.finditer(r"\\(?:bibliography|addbibresource)\s*\{([^}]*)\}", line):
+                    ref = match.group(1).strip()
+                    candidate = _resolve(tex.parent, ref)
+                    if not candidate.exists() and not candidate.with_suffix(".bib").exists():
+                        errors.append(f"{tex.name}: bibliography reference not found in tex project: {ref}")
+                for match in re.finditer(r"\\(?:input|include)\s*\{([^}]*)\}", line):
+                    ref = match.group(1).strip()
+                    candidate = _resolve(tex.parent, ref)
+                    if not (candidate.exists() or candidate.with_suffix(".tex").exists()):
+                        errors.append(f"{tex.name}: input/include reference not found: {ref}")
+                for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}", line):
+                    ref = match.group(1).strip()
+                    resolved = _resolve(tex.parent, ref)
+                    try:
+                        resolved.relative_to(job_dir.resolve())
+                    except ValueError:
+                        errors.append(f"{tex.name}: graphics reference points outside job directory: {ref}")
+                        continue
+                    if not resolved.exists():
+                        errors.append(f"{tex.name}: graphics file does not exist inside job directory: {ref}")
 
     return {
         "portable": len(errors) == 0,
         "errors": errors,
-        "note": "job 目录可整体复制/挪走，所有引用资源均自包含" if not errors else "存在外部依赖，不可直接挪走",
+        "note": "job directory is self-contained" if not errors else "external or missing references found",
     }

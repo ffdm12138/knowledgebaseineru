@@ -5,18 +5,36 @@
   不设置 story_plan_filled。
   mark_story_filled() 校验 story_plan 非模板后设置 story_plan_filled=True。
 """
+import json
 import re
 from pathlib import Path
 
 from src.writer.job_manager import JobManager
 from src.writer.catalog_matcher import load_selected, selected_paper_ids
 from src.writer.safe_write import write_text_safely
+from src.writer.bib_manager import load_workset_manifest, job_local_bib_keys
 from src.catalog import Catalog
-from src import bib as bibmod
 
 
-def _bib_key(entry: dict) -> str:
-    return bibmod.bib_key_for_entry(entry)
+def _job_local_research_cards(pid_to_work_dir: dict[str, Path]) -> dict[str, dict]:
+    """``{paper_id: research_card}`` read from copied ``article/<n>/<pid>.catalog.json``.
+
+    Keeps build_story job-local: content summaries come from the copied article
+    catalog, not the global all.catalog.
+    """
+    out: dict[str, dict] = {}
+    for pid, wd in pid_to_work_dir.items():
+        cat_path = Path(wd) / f"{pid}.catalog.json"
+        if cat_path.exists():
+            try:
+                cat = json.loads(cat_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                cat = {}
+            out[pid] = cat.get("research_card") or {}
+        else:
+            out[pid] = {}
+    return out
+
 
 TODO_MARKERS = ["TODO", "待填", "（待填）", "TEMPLATE_ONLY", "由大模型补全", "待补全"]
 
@@ -66,7 +84,9 @@ def build_story(job_id: str, force: bool = False, jm: JobManager | None = None,
     前置：deep_read_notes_filled=True。
     """
     jm = jm or JobManager()
-    catalog = catalog or Catalog()
+    # ``catalog`` is retained in the signature for callers/tests but no longer
+    # used here: cite keys and research_card summaries now come from the
+    # job-local copied article workspace.
     jdir = jm.job_dir(job_id)
     meta = jm.load_meta(job_id) or {}
     if meta.get("steps", {}).get("story_plan_filled") and not force:
@@ -84,14 +104,15 @@ def build_story(job_id: str, force: bool = False, jm: JobManager | None = None,
     evidence = _read(read_dir / "evidence_table.md")
     fig_cand = _read(read_dir / "figure_candidates.md")
 
-    # 结构化抽取每篇笔记
+    # 结构化抽取每篇笔记；cite key 与 research_card 均来自 job-local article 副本。
+    pid_to_work_dir = load_workset_manifest(job_id, jm)
+    bib_map = job_local_bib_keys(pid_to_work_dir)
+    research_cards = _job_local_research_cards(pid_to_work_dir)
+    one_sentence_map = {pid: rc.get("one_sentence_summary_zh", "") for pid, rc in research_cards.items()}
+    relevance_map = {pid: rc.get("usefulness_for_project_zh", "") for pid, rc in research_cards.items()}
+
     notes_dir = read_dir / "paper_notes"
     notes_summary = ""
-    bib_map = {p["paper_id"]: _bib_key(p) for p in catalog.list_papers()}
-    one_sentence_map = {p["paper_id"]: ((p.get("catalog") or {}).get("research_card") or {}).get("one_sentence_summary_zh", "")
-                        for p in catalog.list_papers()}
-    relevance_map = {p["paper_id"]: ((p.get("catalog") or {}).get("research_card") or {}).get("usefulness_for_project_zh", "")
-                     for p in catalog.list_papers()}
 
     if notes_dir.exists():
         for n in sorted(notes_dir.glob("*.md")):

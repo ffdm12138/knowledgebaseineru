@@ -13,12 +13,17 @@ v2.0 content-only catalog from MinerU Markdown/PDF/images.
 
 - `metadata` 是书目信息事实源（BibTeX/书目）。
 - `catalog` 是筛选事实源（大模型快速判断是否值得精读）。
-- 本 skill 不生成 metadata patch，不修改 metadata 字段。
+- 本 skill **不是 metadata resolver**；不生成 metadata patch，不修改 metadata 字段，
+  不生成 DOI/作者/年份/期刊/venue/container/publication/BibTeX。
 - 若发现 metadata 疑似错误，写入 catalog 的 `content_notes.warnings`，不要直接改。
 - 不得编造 DOI；`metadata.identifiers.doi` 已有值时不得覆盖。
 - 如果 metadata 缺 DOI，本 skill 只能提示需要可靠 metadata match 或人工补 DOI，不能生成可入库结果。
 - 不得生成 16 位 `paper_number`。
 - 不得移动或修改 `data/papers` 正式库；不得入库。
+- catalog curator 必须在转换完成产出 md 之后运行（读 md 生成 catalog）。
+- 正式 commit 到 `data/papers/` 需要 metadata 和 catalog **都**通过校验（
+  metadata 要求 `metadata_match.status` 为 matched/manual_confirmed、DOI 非空、
+  title/author/year/venue 齐全；catalog 要求 schema v2.0、无禁止书目字段）。
 - 不确定的字段留空，不要编造。
 
 ## 输入
@@ -59,9 +64,9 @@ data/paper_raw/<source_id>/
 ### 禁止字段（递归检查，命中即校验失败）
 
 catalog 任何层级都不得出现：`doi`、`authors`、`author`、`first_author`、`journal`、`venue`、
-`publisher`、`year`、`volume`、`issue`、`pages`、`article_number`、`url`、`publisher_url`、
-`repository_url`、`bibtex`、`citation_key`、`identifiers`、`metadata_match`、`crossref`、
-`openalex`、`semantic_scholar`、`external_metadata`。如正文中出现 DOI，只能写进
+`publisher`、`container`、`publication`、`year`、`volume`、`issue`、`pages`、`article_number`、
+`url`、`publisher_url`、`repository_url`、`bibtex`、`citation_key`、`identifiers`、`metadata_match`、
+`crossref`、`openalex`、`semantic_scholar`、`external_metadata`。如正文中出现 DOI，只能写进
 `evidence_profile.page_or_section_evidence` 或 `content_notes.warnings`，不得写入 catalog 顶层。
 
 ## paper_id 命名规则

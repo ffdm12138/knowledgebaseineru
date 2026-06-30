@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "paper_raw catalog v2.0 (content-only)",
-  "description": "catalog v2.0 carries ONLY content understanding (from MinerU Markdown). It must NOT contain bibliographic fields (doi/authors/year/journal/venue/...). Those live in metadata.json. Linked by paper_number/paper_id. Forbidden keys are checked recursively by src/services/v2_library.py::find_forbidden_catalog_keys().",
+  "description": "catalog v2.0 carries ONLY content understanding (from MinerU Markdown). It must NOT contain bibliographic fields (doi/authors/year/journal/venue/container/publication/bibtex/...). Those live in metadata.json. Linked by paper_number/paper_id. Forbidden keys are checked recursively by src/services/v2_library.py::find_forbidden_catalog_keys().",
   "type": "object",
   "required": [
     "schema_version",

@@ -21,7 +21,8 @@ class MinerURunner(str, Enum):
 class MinerURuntimeConfig:
     runner: MinerURunner = MinerURunner.CLI
     api_url: str = "http://127.0.0.1:8000"
-    require_gpu: bool = False
+    require_gpu: bool = True
+    allow_cpu: bool = False
     cuda_path: str = ""
     cuda_visible_devices: str = ""
     backend: str = "hybrid-engine"
@@ -51,11 +52,13 @@ def runtime_config_from_env() -> MinerURuntimeConfig:
     valid = {r.value for r in MinerURunner}
     if runner not in valid:
         raise ValueError(f"invalid MINERU_RUNNER: {runner}. Valid: {sorted(valid)}")
+    allow_cpu = _env_bool("MINERU_ALLOW_CPU", False)
     return MinerURuntimeConfig(
         runner=MinerURunner(runner),
         api_url=os.environ.get("MINERU_API_URL", "http://127.0.0.1:8000").strip()
         or "http://127.0.0.1:8000",
-        require_gpu=_env_bool("MINERU_REQUIRE_GPU", False),
+        require_gpu=_env_bool("MINERU_REQUIRE_GPU", not allow_cpu),
+        allow_cpu=allow_cpu,
         cuda_path=os.environ.get("CUDA_PATH", "").strip(),
         cuda_visible_devices=os.environ.get("CUDA_VISIBLE_DEVICES", "").strip(),
         backend=os.environ.get("MINERU_BACKEND", "hybrid-engine").strip() or "hybrid-engine",
@@ -113,10 +116,20 @@ def preflight_gpu(require_gpu: bool | None = None) -> MinerURuntimeHealth:
     required = config.require_gpu if require_gpu is None else require_gpu
     nvidia_smi = shutil.which("nvidia-smi") is not None
     if not nvidia_smi:
+        if required:
+            message = (
+                "GPU is required for MinerU ingest conversion, but nvidia-smi was not found. "
+                "Set up NVIDIA/CUDA, or explicitly set MINERU_ALLOW_CPU=true only for debugging."
+            )
+        else:
+            message = (
+                "CPU/debug fallback active: GPU check skipped because nvidia-smi was not found. "
+                "This is not formal ingest SOP."
+            )
         return MinerURuntimeHealth(
             ok=not required,
             runner=config.runner.value,
-            message="nvidia-smi not found" if required else "GPU check skipped; nvidia-smi not found",
+            message=message,
             nvidia_smi=False,
         )
     try:
@@ -131,10 +144,22 @@ def preflight_gpu(require_gpu: bool | None = None) -> MinerURuntimeHealth:
         ok = result.returncode == 0
     except Exception:
         ok = False
+    if ok:
+        message = "nvidia-smi ok"
+    elif required:
+        message = (
+            "GPU is required for MinerU ingest conversion, but nvidia-smi failed. "
+            "Set up NVIDIA/CUDA, or explicitly set MINERU_ALLOW_CPU=true only for debugging."
+        )
+    else:
+        message = (
+            "CPU/debug fallback active: GPU check skipped because nvidia-smi failed. "
+            "This is not formal ingest SOP."
+        )
     return MinerURuntimeHealth(
         ok=ok or not required,
         runner=config.runner.value,
-        message="nvidia-smi ok" if ok else "nvidia-smi failed",
+        message=message,
         nvidia_smi=ok,
     )
 

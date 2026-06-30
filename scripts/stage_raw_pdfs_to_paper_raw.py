@@ -53,8 +53,27 @@ def main() -> int:
     move = bool(args.move)
     operation = "move" if move else "copy"
 
+    if write and not move:
+        warning = (
+            "WARNING: Manual PDF staging is running in copy mode.\n"
+            "data/raw PDFs will remain in place.\n"
+            "Normal manual ingest SOP is --move --apply so data/raw behaves as a queue.\n"
+            "Use --move for normal ingestion, or keep copy mode only for debugging/backup/tests."
+        )
+        print(warning, file=sys.stderr)
+        logger.warning(warning.replace("\n", " "))
+    elif not write:
+        print(f"DRY RUN: staging mode = {operation}", file=sys.stderr)
+
     for pdf, planned_id in zip(pdfs, ids):
-        item = {"source_pdf": str(pdf), "planned_source_id": planned_id, "operation": operation, "status": "planned"}
+        item = {
+            "source_pdf": str(pdf),
+            "planned_source_id": planned_id,
+            "operation": operation,
+            "staging_mode": operation,
+            "move": move,
+            "status": "planned",
+        }
         if not _is_pdf(pdf):
             item.update({"status": "failed", "error": "file does not look like a PDF"})
             logger.warning("{} skipped: {}", pdf, item["error"])

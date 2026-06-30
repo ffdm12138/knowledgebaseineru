@@ -58,6 +58,36 @@ def test_runtime_config_from_env(monkeypatch):
     assert config.require_gpu is True
 
 
+def test_runtime_config_requires_gpu_by_default(monkeypatch):
+    monkeypatch.delenv("MINERU_REQUIRE_GPU", raising=False)
+    monkeypatch.delenv("MINERU_ALLOW_CPU", raising=False)
+
+    config = runtime_config_from_env()
+
+    assert config.require_gpu is True
+    assert config.allow_cpu is False
+
+
+def test_runtime_config_allow_cpu_escape_hatch(monkeypatch):
+    monkeypatch.delenv("MINERU_REQUIRE_GPU", raising=False)
+    monkeypatch.setenv("MINERU_ALLOW_CPU", "true")
+
+    config = runtime_config_from_env()
+
+    assert config.require_gpu is False
+    assert config.allow_cpu is True
+
+
+def test_runtime_config_require_gpu_overrides_allow_cpu(monkeypatch):
+    monkeypatch.setenv("MINERU_ALLOW_CPU", "true")
+    monkeypatch.setenv("MINERU_REQUIRE_GPU", "true")
+
+    config = runtime_config_from_env()
+
+    assert config.require_gpu is True
+    assert config.allow_cpu is True
+
+
 def test_describe_runtime_serializes_runner():
     data = describe_runtime(MinerURuntimeConfig(runner=MinerURunner.CLI))
 
@@ -72,3 +102,34 @@ def test_require_gpu_true_fails_when_nvidia_smi_missing(monkeypatch):
 
     assert health.ok is False
     assert health.nvidia_smi is False
+    assert "GPU is required for MinerU ingest conversion" in health.message
+    assert "MINERU_ALLOW_CPU=true" in health.message
+
+
+def test_allow_cpu_missing_nvidia_smi_is_debug_fallback(monkeypatch):
+    monkeypatch.delenv("MINERU_REQUIRE_GPU", raising=False)
+    monkeypatch.setenv("MINERU_ALLOW_CPU", "true")
+    monkeypatch.setattr("src.mineru_runtime.shutil.which", lambda name: None)
+
+    health = preflight_gpu()
+
+    assert health.ok is True
+    assert health.nvidia_smi is False
+    assert "CPU/debug fallback active" in health.message
+
+
+def test_require_gpu_true_fails_when_nvidia_smi_fails(monkeypatch):
+    monkeypatch.setenv("MINERU_REQUIRE_GPU", "true")
+    monkeypatch.setattr("src.mineru_runtime.shutil.which", lambda name: "nvidia-smi")
+
+    class Result:
+        returncode = 1
+
+    monkeypatch.setattr("src.mineru_runtime.subprocess.run", lambda *args, **kwargs: Result())
+
+    health = preflight_gpu()
+
+    assert health.ok is False
+    assert health.nvidia_smi is False
+    assert "GPU is required for MinerU ingest conversion" in health.message
+    assert "nvidia-smi failed" in health.message

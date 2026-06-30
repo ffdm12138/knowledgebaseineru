@@ -6,25 +6,27 @@
     {
       "paper_number": "0000000000000001",
       "paper_id": "2024_author_example_one",
-      "source_dir": "data/papers/2024_author_example_one",
-      "article_dir": "write/jobs/example_catalog_article/article/0000000000000001",
-      "display": {
-        "title_original": "Example paper one",
-        "year": 2024,
-        "authors_short": "Author et al.",
-        "venue": "Example Journal",
-        "doi": "10.1234/example.1"
+      "content_identity": {
+        "content_title": "Example paper one"
       },
       "classification": {
         "primary_domain": "example_domain",
-        "topics": ["example topic"]
+        "topic_tags": ["example topic"]
       },
       "screening": {
         "relevance_score": 5,
         "read_decision": "must_read"
       },
       "research_card": {
-        "one_sentence_summary_zh": "示例文献一提供方法背景。"
+        "research_problem": "Example research problem",
+        "method_summary": "Example method summary",
+        "main_findings": ["Example finding"]
+      },
+      "evidence_profile": {
+        "key_claims": []
+      },
+      "content_notes": {
+        "short_summary": "Example paper used to demonstrate the job-local selected snapshot."
       }
     }
   ]

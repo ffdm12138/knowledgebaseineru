@@ -24,7 +24,7 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_stage_raw_pdfs_default_apply_copies_and_keeps_raw(tmp_path, monkeypatch):
+def test_stage_raw_pdfs_default_apply_copies_and_keeps_raw_with_warning(tmp_path, monkeypatch, capsys):
     raw = tmp_path / "raw"
     paper_raw = tmp_path / "paper_raw"
     raw.mkdir()
@@ -42,7 +42,10 @@ def test_stage_raw_pdfs_default_apply_copies_and_keeps_raw(tmp_path, monkeypatch
         "--apply",
     ])
 
+    captured = capsys.readouterr()
     assert rc == 0
+    assert "Manual PDF staging is running in copy mode" in captured.err
+    assert "Normal manual ingest SOP is --move --apply" in captured.err
     assert pdf.exists()
     staged_pdf = paper_raw / "000001" / "000001.pdf"
     assert staged_pdf.exists()
@@ -55,6 +58,8 @@ def test_stage_raw_pdfs_default_apply_copies_and_keeps_raw(tmp_path, monkeypatch
     report_data = json.loads(report.read_text(encoding="utf-8"))
     item = report_data[0]
     assert item["operation"] == "copy"
+    assert item["staging_mode"] == "copy"
+    assert item["move"] is False
     assert item["original_sha256"] == original_sha
     assert item["staged_sha256"] == original_sha
 
@@ -65,6 +70,7 @@ def test_stage_raw_pdfs_explicit_move_removes_raw(tmp_path, monkeypatch):
     raw.mkdir()
     pdf = raw / "paper.pdf"
     pdf.write_bytes(b"%PDF explicit move")
+    report = tmp_path / "stage_report.json"
     original_sha = _sha(pdf)
     monkeypatch.syspath_prepend(str(_REPO_ROOT))
 
@@ -72,6 +78,7 @@ def test_stage_raw_pdfs_explicit_move_removes_raw(tmp_path, monkeypatch):
         "stage_raw_pdfs_to_paper_raw.py",
         "--raw-dir", str(raw),
         "--paper-raw-dir", str(paper_raw),
+        "--report", str(report),
         "--apply",
         "--move",
     ])
@@ -82,3 +89,39 @@ def test_stage_raw_pdfs_explicit_move_removes_raw(tmp_path, monkeypatch):
     assert manifest["operation"] == "move"
     assert manifest["original_sha256"] == original_sha
     assert manifest["staged_sha256"] == original_sha
+    report_data = json.loads(report.read_text(encoding="utf-8"))
+    item = report_data[0]
+    assert item["operation"] == "move"
+    assert item["staging_mode"] == "move"
+    assert item["move"] is True
+
+
+def test_stage_raw_pdfs_dry_run_reports_planned_mode(tmp_path, monkeypatch, capsys):
+    raw = tmp_path / "raw"
+    paper_raw = tmp_path / "paper_raw"
+    raw.mkdir()
+    pdf = raw / "paper.pdf"
+    pdf.write_bytes(b"%PDF dry run")
+    report = tmp_path / "stage_report.json"
+    monkeypatch.syspath_prepend(str(_REPO_ROOT))
+
+    rc = _run_stage([
+        "stage_raw_pdfs_to_paper_raw.py",
+        "--raw-dir", str(raw),
+        "--paper-raw-dir", str(paper_raw),
+        "--report", str(report),
+        "--dry-run",
+        "--move",
+    ])
+
+    captured = capsys.readouterr()
+    assert rc == 0
+    assert "DRY RUN: staging mode = move" in captured.err
+    assert pdf.exists()
+    assert not (paper_raw / "000001" / "000001.pdf").exists()
+    report_data = json.loads(report.read_text(encoding="utf-8"))
+    item = report_data[0]
+    assert item["operation"] == "move"
+    assert item["staging_mode"] == "move"
+    assert item["move"] is True
+    assert item["status"] == "planned"

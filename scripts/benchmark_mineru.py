@@ -82,10 +82,12 @@ def _check_gpu_busy(snap: dict) -> tuple[bool, str]:
 def _print_env_warnings(config):
     """如果关键环境变量未设置，打印 warning。"""
     if not config.require_gpu:
-        print("  ** WARNING: MINERU_REQUIRE_GPU is not true in this shell.")
-        print("    If this is unintended, run:")
+        print("  ** WARNING: MinerU formal ingest conversion requires GPU.")
+        print("    CPU/no-GPU mode is debug-only. If this is unintended, run:")
         print("    set MINERU_REQUIRE_GPU=true        (cmd)")
         print("    $env:MINERU_REQUIRE_GPU='true'     (PowerShell)")
+        if config.allow_cpu:
+            print("    MINERU_ALLOW_CPU=true is active; unset it for formal ingestion.")
     if config.runner.value != "cli":
         print(f"  ** NOTE: MINERU_RUNNER={config.runner.value} (not cli)")
     if not config.cuda_path:
@@ -128,10 +130,13 @@ def main() -> int:
     print(f"  PDF:          {pdf_path} ({pdf_path.stat().st_size / 1024:.0f} KB)")
     print(f"  MINERU_RUNNER:        {os.environ.get('MINERU_RUNNER', '(not set)')}")
     print(f"  MINERU_REQUIRE_GPU:   {os.environ.get('MINERU_REQUIRE_GPU', '(not set)')}")
+    print(f"  MINERU_ALLOW_CPU:     {os.environ.get('MINERU_ALLOW_CPU', '(not set)')}")
     print(f"  MINERU_API_URL:       {os.environ.get('MINERU_API_URL', '(not set)')}")
     print(f"  CUDA_PATH:            {os.environ.get('CUDA_PATH') or '(not set, default=' + config.cuda_path + ')'}")
     print(f"  CUDA_VISIBLE_DEVICES: {os.environ.get('CUDA_VISIBLE_DEVICES', '(not set)')}")
     print(f"  Runner (effective):   {config.runner.value}")
+    print(f"  Require GPU:          {config.require_gpu}")
+    print(f"  Allow CPU fallback:   {config.allow_cpu}")
     print(f"  Backend:      {args.backend}")
     print(f"  Method:       {args.method}")
     print(f"  Effort:       {args.effort} (仅 hybrid-engine)")

@@ -166,3 +166,21 @@ def test_create_job_rejects_arbitrary_input_file(bad_input_file):
     assert resp.status_code == 400, f"Expected 400, got {resp.status_code}: {resp.text}"
     assert "input_file" in resp.text.lower() or "input_file" in resp.text, \
         f"Error message should mention input_file restriction: {resp.text}"
+
+
+def test_create_write_job_lands_under_write_jobs(monkeypatch, tmp_path):
+    """POST /write/jobs 必须落到 write/jobs/<job_id>/，而非旧 write/<job_id>/。"""
+    import src.server as server
+    from src.writer.job_manager import JobManager
+
+    write_root = tmp_path / "write" / "jobs"
+    monkeypatch.setattr(server, "job_manager", JobManager(write_dir=write_root))
+
+    resp = client.post("/write/jobs", json={"topic": "api 路径测试"})
+    assert resp.status_code == 200, f"{resp.status_code}: {resp.text}"
+    job_id = resp.json()["job_id"]
+
+    # 新路径存在
+    assert (write_root / job_id).exists()
+    # 旧路径 write/<job_id>/ 不被创建
+    assert not (tmp_path / "write" / job_id).exists()

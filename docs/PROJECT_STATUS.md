@@ -22,18 +22,44 @@
 
 ## 2. 当前主流程
 
-### 入库主流程
+### 入库主流程（两条路径）
 
+Network metadata path（metadata 先行，已有 DOI）:
 ```text
-data/raw 或 network metadata
+network metadata (with DOI)
 -> data/paper_raw/<000001>/
--> metadata match / resolve（必须有合法 DOI）
+-> fetch_pdf_for_paper_raw
 -> MinerU convert（hybrid-engine + medium + auto）
 -> catalog curation（content-only）
 -> commit data/papers/<paper_id>/
 -> rebuild data/catalog/all.catalog.json
 -> validate / audit / doctor
 ```
+
+Manual PDF path（先转换，再从转换后的 md 解析 metadata）:
+```text
+data/raw/*.pdf
+-> stage_raw_pdfs_to_paper_raw --move --apply
+-> data/paper_raw/<000001>/
+-> MinerU convert（hybrid-engine + medium + auto）
+-> resolve_paper_raw_metadata（读转换后的 md，抽取候选并联网验证/查询）
+-> catalog curation（content-only）
+-> commit data/papers/<paper_id>/
+-> rebuild data/catalog/all.catalog.json
+-> validate / audit / doctor
+```
+
+手动 PDF 导入时，metadata resolver 必须基于 MinerU 转换完成后的 md，因此顺序是**先转换，再解析 metadata**。
+`data/raw/` is a queue / raw 是待处理队列；正常 stage 必须 `--move --apply`，成功后 raw 中对应
+PDF 应消失。copy 模式只用于调试、备份、测试或明确的一次性检查，不是默认导入规范。
+MinerU conversion requires GPU / MinerU 正式转换必须使用 GPU：默认 `MINERU_REQUIRE_GPU=true`，
+建议 `CUDA_VISIBLE_DEVICES=0`。`stage_raw_pdfs_to_paper_raw.py` 不需要 GPU；`convert_paper_raw_batch.py`
+必须 GPU。CPU/no-GPU 只允许调试：显式 `MINERU_ALLOW_CPU=true` 或 `MINERU_REQUIRE_GPU=false`。
+批量转换优先使用持久 `mineru-api`：`MINERU_RUNNER=cli_api_proxy` 与
+`MINERU_API_URL=http://127.0.0.1:8000`。
+手动 PDF 初始 unmatched，不要用 `--only-preflight-ready` 挡住转换。网络 metadata 已有 DOI，可安全使用
+`--only-preflight-ready`。两条路径 commit 前都要求 `metadata_match.status` 为 `matched` 或
+`manual_confirmed`、DOI 非空、catalog 合法。
 
 ### 写作主流程
 
@@ -50,14 +76,21 @@ selected catalog / paper numbers
 - `metadata` 是书目信息事实源（DOI / 作者 / 年份 / 期刊 / 卷期页）。
 - `catalog`（schema v2.0）是 content-only，不含书目字段。
 - `write/jobs/` 是运行时，不提交（只跟踪 `.gitkeep`）。
-- `data/llm_work` is legacy/API compatibility; `write/jobs/<job_id>/article/` is the writing v0.1 main path.
-- TeX 不得直接读 `data/papers`、`data/raw`、`data/paper_raw`、`data/llm_work`。
+- `write/jobs/<job_id>/article/` is the only writing article workspace.
+- TeX 不得直接读 `data/papers`、`data/raw` 或 `data/paper_raw`。
 - 真实入库 / 转换 / 写作必须使用 `conda run -n mineru`。
 - snapshot 不含真实 data 与 `write/jobs` 运行产物。
 
 ## 4. 当前待办
 
 - writer v0.2 P0（已实现）：`doctor_write_pipeline.py`、`create_write_job.py`。
+- Writing system status（已明确）：
+  - Default article-writing skill: `skills/catalog_tex_writer`.
+  - Support skills (not article-writing): `paper_raw_metadata_resolver`、`paper_raw_catalog_curator`、`literature_library_manager`.
+  - Advanced workflow: `scripts/write_review.py` / `src/writer/*`（含 `src/server.py` `/write/jobs/*` HTTP API），是 advanced / experimental multi-stage writer workflow，不是 legacy、不是默认推荐入口。
+  - 默认稳定主入口是 catalog-to-TeX mini loop（`create_write_job.py` → `write_catalog_tex_article.py` → `check_write_tex_project.py` → `check_write_quality_text.py`）。
+  - Active writing workspace: `write/jobs/<job_id>/article/<paper_number>/`；BibTeX/cite-key 只从 copied article metadata 生成。
+  - Deprecated workspace: the legacy llm work directory is forbidden and must not be used by active writing flows.
 - 第三方解耦（本轮完成）：`src/fetch/proxy.py` 已抽出共享代理逻辑；
   Sci-Hub 标注为 unsafe optional / 默认 disabled / 不属于 OA_ONLY 主流程。
 - 后续可选（planned only）：

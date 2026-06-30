@@ -22,7 +22,6 @@ from filelock import FileLock
 
 from config.settings import (
     ALL_CATALOG_PATH,
-    LLM_WORK_DIR,
     MINERU_BACKEND,
     MINERU_EFFORT,
     MINERU_LANG,
@@ -202,6 +201,8 @@ FORBIDDEN_CATALOG_KEYS = {
     "journal",
     "venue",
     "publisher",
+    "container",
+    "publication",
     "year",
     "volume",
     "issue",
@@ -1423,68 +1424,6 @@ class V2PaperCommitService:
                     "errors": [str(exc)],
                 }
             raise
-
-
-class LlmWorkService:
-    def __init__(
-        self,
-        *,
-        all_catalog_path: str | Path = ALL_CATALOG_PATH,
-        llm_work_dir: str | Path = LLM_WORK_DIR,
-        papers_dir: str | Path = PAPERS_DIR,
-    ):
-        self.all_catalog_path = Path(all_catalog_path)
-        self.llm_work_dir = Path(llm_work_dir)
-        self.papers_dir = Path(papers_dir)
-
-    def resolve_paper_number(self, paper_number: str) -> dict:
-        """Resolve a 16-digit paper_number to a content catalog entry.
-
-        Returns the all.catalog entry (content only). Path resolution uses
-        paper_index.json or papers_dir/<paper_id>.
-        """
-        if not _PAPER_NUMBER_RE.match(paper_number):
-            raise ValueError(f"invalid paper_number: {paper_number}")
-        for entry in _read_json(self.all_catalog_path, {"papers": []}).get("papers", []):
-            if entry.get("paper_number") == paper_number:
-                return entry
-        raise KeyError(f"paper_number not found: {paper_number}")
-
-    def _folder_for(self, entry: dict) -> Path:
-        pid = entry.get("paper_id") or ""
-        # all.catalog no longer carries folder_path; resolve via paper_index or papers_dir
-        index_path = self.all_catalog_path.parent / "paper_index.json"
-        index = _read_json(index_path, {"papers": []})
-        for item in index.get("papers", []):
-            if item.get("paper_number") == entry.get("paper_number") or item.get("paper_id") == pid:
-                for key in ("metadata_path", "catalog_path", "markdown_path", "pdf_path"):
-                    p = item.get(key)
-                    if p:
-                        return resolve_stored_path(p).parent
-        if pid:
-            return self.papers_dir / pid
-        raise KeyError(f"cannot resolve folder for paper_number {entry.get('paper_number')}")
-
-    def copy_to_session(self, paper_number: str, session_id: str, *, overwrite: bool = False) -> dict:
-        if not re.match(r"^[A-Za-z0-9_\-一-鿿]+$", session_id or ""):
-            raise ValueError(f"invalid session_id: {session_id!r}")
-        entry = self.resolve_paper_number(paper_number)
-        source = self._folder_for(entry)
-        if not source.exists():
-            raise FileNotFoundError(f"formal paper folder not found: {source}")
-        dest = safe_child(self.llm_work_dir, session_id, paper_number)
-        if dest.exists():
-            if not overwrite:
-                raise FileExistsError(f"llm_work target already exists: {dest}")
-            shutil.rmtree(dest)
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(source, dest)
-        return {
-            "paper_number": paper_number,
-            "paper_id": entry.get("paper_id"),
-            "session_id": session_id,
-            "work_dir": normalize_repo_path(dest),
-        }
 
 
 def bibtex_from_metadata(metadata: dict, *, key: str | None = None) -> str:

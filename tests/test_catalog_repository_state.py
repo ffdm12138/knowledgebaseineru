@@ -193,8 +193,14 @@ def test_prepare_reads_metadata_from_papers_not_all_catalog(tmp_path):
     selected = json.loads(selected_path.read_text(encoding="utf-8"))
     assert report["selected_count"] == 1
     assert "metadata" not in entry
-    assert selected["papers"][0]["metadata"]["identifiers"]["doi"] == "10.5555/repository-state.1"
-    assert selected["papers"][0]["catalog"]["schema_version"] == "2.0"
+    # selected_catalog is content-only; DOI truth lives in the copied article metadata.
+    assert "metadata" not in selected["papers"][0]
+    article_meta = json.loads(
+        (write_dir / "repo_state_job" / "article" / number / f"{pid}.metadata.json")
+        .read_text(encoding="utf-8"))
+    assert article_meta["identifiers"]["doi"] == "10.5555/repository-state.1"
+    assert "catalog" not in selected["papers"][0]
+    assert selected["papers"][0]["content_identity"]["content_title"] == "Repository State Paper"
 
 
 def test_all_catalog_builder_skips_invalid_source_catalog(tmp_path):

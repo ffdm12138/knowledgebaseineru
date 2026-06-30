@@ -10,10 +10,12 @@ from scripts.validate_v2_library import validate_v2_library
 from src.services.v2_library import (
     AllCatalogBuilder,
     PaperNumberLedger,
+    bibtex_from_metadata,
     find_forbidden_catalog_keys,
     migrate_catalog_to_v2_0,
     validate_catalog_schema,
     validate_metadata_completeness_for_commit,
+    validate_metadata_schema,
     empty_catalog,
     empty_metadata,
 )
@@ -150,9 +152,13 @@ def test_catalog_curator_skill_declares_content_only():
     tl = text.lower()
     assert "v2.0" in text
     assert "content" in tl
+    assert "converted" in tl or "转换完成" in text or "转换后" in text
+    assert "markdown" in tl or "md" in tl
     # must declare it does NOT carry bibliographic fields
     assert "禁止" in text or "forbidden" in tl or "不得" in text
     assert "doi" in tl and ("不负责" in text or "禁止" in text or "不得" in text)
+    assert "bibtex" in tl and ("不生成" in text or "不得" in text)
+    assert "metadata" in tl and "catalog" in tl and ("都" in text or "both" in tl)
     # must declare it does not produce metadata patch
     assert "不生成 metadata patch" in text or "不负责" in text
 
@@ -175,3 +181,59 @@ def test_validate_rejects_all_catalog_with_embedded_metadata(tmp_path):
     all_catalog.write_text(json.dumps(data), encoding="utf-8")
     errors, _ = validate_v2_library(papers_dir=tmp_path / "papers", all_catalog_path=all_catalog, check_paths=False)
     assert any("must not embed metadata" in e for e in errors)
+
+
+def test_catalog_rejects_container_and_publication():
+    """Bibliographic wrappers container/publication must be forbidden in catalog."""
+    c = _valid_catalog()
+    c["container"] = {"journal": "Test Journal"}
+    errors = validate_catalog_schema(c)
+    assert any("forbidden bibliographic key: container" in e for e in errors)
+    assert "container" in find_forbidden_catalog_keys(c)
+
+    c2 = _valid_catalog()
+    c2["publication"] = {"volume": "8", "pages": "1-2"}
+    errors2 = validate_catalog_schema(c2)
+    assert any("forbidden bibliographic key: publication" in e for e in errors2)
+    assert "publication" in find_forbidden_catalog_keys(c2)
+
+
+def test_curator_example_catalog_is_content_only():
+    """The bundled curator example must be a valid v2.0 content-only catalog."""
+    path = _REPO_ROOT / "skills" / "paper_raw_catalog_curator" / "examples" / "example_catalog.json"
+    catalog = json.loads(path.read_text(encoding="utf-8"))
+    assert catalog["schema_version"] == "2.0"
+    assert validate_catalog_schema(catalog) == []
+    assert find_forbidden_catalog_keys(catalog) == []
+    for forbidden in ("doi", "authors", "year", "journal", "venue", "container", "publication", "bibtex"):
+        assert forbidden not in json.dumps(catalog), f"example catalog leaked {forbidden}"
+
+
+def test_pdf_resolver_simplified_metadata_is_rejected():
+    """A simplified {title, doi, authors} object must NOT pass the formal metadata
+    path — guards against any future resolver emitting a simplified旁路 format."""
+    simplified = {
+        "title": "A bulk blowing-snow model",
+        "doi": "10.1023/A:100052170",
+        "authors": "Déry and Yau",
+    }
+    # (a) schema-shape validator rejects it (missing nested title/authors/identifiers/...)
+    assert validate_metadata_schema(simplified) != []
+
+    # (b) commit completeness gate does not accept it. The simplified shape is
+    #     malformed (title is a string, not an object), so the gate either raises
+    #     or returns errors — either way it is NOT an empty accept.
+    def _completeness(meta):
+        try:
+            return validate_metadata_completeness_for_commit(meta)
+        except (TypeError, AttributeError):
+            return ["simplified metadata rejected by validator"]
+
+    assert _completeness(simplified) != []
+
+    # (c) bibtex cannot be produced correctly from the simplified shape: the doi
+    #     lives at the wrong path so no doi line is emitted, and no year line
+    bib = bibtex_from_metadata(simplified, key="dery1999")
+    assert "doi = {" not in bib
+    assert "year = {" not in bib
+    assert bib.startswith("@article{")

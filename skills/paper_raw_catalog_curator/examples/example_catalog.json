@@ -1,76 +1,74 @@
 {
-  "schema_version": "1.1",
-  "display": {
-    "title_original": "A bulk blowing-snow model",
-    "title_zh": "一种体相吹雪模型",
-    "short_name_zh": "体相吹雪模型",
-    "year": 1999,
-    "first_author": "Déry",
-    "authors_short": "Déry and Yau",
-    "venue": "Boundary-Layer Meteorology",
-    "doi": "10.1023/A:100052170"
+  "schema_version": "2.0",
+  "paper_number": "",
+  "paper_id": "",
+  "source_id": "000001",
+  "asset_refs": {
+    "markdown": "data/paper_raw/000001/000001.md",
+    "pdf": "data/paper_raw/000001/000001.pdf",
+    "images_dir": "data/paper_raw/000001/images",
+    "figures": []
+  },
+  "content_identity": {
+    "content_title": "A bulk blowing-snow model",
+    "md_title_candidates": ["A bulk blowing-snow model"],
+    "content_language": "en",
+    "document_type": "theoretical_model"
   },
   "classification": {
     "primary_domain": "blowing_snow_physics",
-    "domains": ["blowing_snow_physics", "abl_pbl"],
-    "topics": ["blowing snow", "bulk model", "sublimation"],
-    "keywords_en": ["blowing snow", "bulk model", "sublimation", "boundary layer"],
-    "keywords_zh": ["吹雪", "体相模型", "升华", "边界层"]
-  },
-  "research_card": {
-    "one_sentence_summary_zh": "建立一维体相吹雪模型，刻画吹雪的输运与升华过程。",
-    "research_question_zh": "如何用体相（bulk）方法统一描述吹雪的输运、升华与边界层相互作用？",
-    "research_background_zh": "吹雪影响极区与寒区的水文和质量平衡，但早期模型多为单粒子轨迹方法，难以耦合到气候尺度。",
-    "object_zh": "吹雪粒子群在边界层中的体相输运与升华。",
-    "study_type": "theoretical model",
-    "method_zh": "一维体相模型，将粒子群视为连续相，建立质量与动量守恒方程。",
-    "data_or_experiment_zh": "理论推导，结合典型边界层条件进行理想化试验。",
-    "model_or_algorithm_zh": "一维 bulk 吹雪模型，含升华参数化。",
-    "key_variables": ["粒子数浓度", "升华率", "摩擦速度", "雪面质量通量"],
-    "main_results_zh": [
-      "体相方法可复现吹雪层的质量通量剖面",
-      "升华在低湿度环境下显著消耗吹雪质量"
-    ],
-    "main_conclusion_zh": "体相模型为吹雪-边界层耦合提供了可扩展到气候尺度的统一框架。",
-    "limitations_zh": "理想化一维假设，缺乏多场观测验证。",
-    "usefulness_for_project_zh": "为体相吹雪参数化与升华计算提供理论基础与方程原型。",
-    "recommended_use_cases_zh": ["方法章节-模型方程", "引言-吹雪物理背景", "讨论-升华参数化对比"]
-  },
-  "evidence_profile": {
-    "evidence_type": "theoretical model",
-    "data_source": "theoretical derivation",
-    "experiment_or_simulation_setup": "一维理想化边界层试验",
-    "materials_or_region": "blowing snow particles",
-    "spatial_scale": "boundary-layer scale",
-    "temporal_scale": "steady-state / event-scale",
-    "sample_size_or_cases": "",
-    "main_equations_or_metrics": ["bulk mass conservation", "sublimation parameterization"]
+    "secondary_domains": ["abl_pbl"],
+    "topic_tags": ["blowing snow", "bulk model", "sublimation"],
+    "methods_tags": ["one-dimensional bulk model", "mass and momentum conservation"],
+    "phenomena_tags": ["sublimation", "mass flux profile"],
+    "material_tags": ["blowing snow particles"],
+    "model_tags": ["bulk blowing-snow model"]
   },
   "screening": {
-    "relevance_score": 5,
-    "reading_priority": 4,
     "read_decision": "must_read",
-    "reason_zh": "项目核心引用，提供体相吹雪模型方程原型。",
-    "best_for_sections": ["method", "introduction", "discussion"],
-    "not_useful_for": ["实验观测对比"],
-    "need_fulltext": true
+    "relevance_score": 5,
+    "novelty_score": 4,
+    "method_quality_score": 4,
+    "reason": "项目核心引用，提供体相吹雪模型方程原型。"
   },
-  "reading_priority": {
-    "score": 4,
-    "reason_zh": "需要方程细节与升华参数化。",
-    "must_read_sections": ["model derivation", "sublimation"],
-    "key_figures_or_tables": ["mass flux profile", "sublimation rate"]
+  "research_card": {
+    "research_problem": "如何用体相（bulk）方法统一描述吹雪的输运、升华与边界层相互作用。",
+    "core_question": "体相方法能否复现吹雪层的质量通量剖面并刻画升华耗损？",
+    "hypothesis_or_objective": "建立一维体相吹雪模型，统一刻画吹雪输运与升华过程。",
+    "study_object": "吹雪粒子群在边界层中的体相输运与升华。",
+    "method_summary": "一维体相模型，将粒子群视为连续相，建立质量与动量守恒方程并参数化升华。",
+    "data_or_experiment": "理论推导，结合典型边界层条件进行理想化试验。",
+    "main_findings": [
+      "体相方法可复现吹雪层的质量通量剖面。",
+      "升华在低湿度环境下显著消耗吹雪质量。"
+    ],
+    "mechanisms": ["bulk mass conservation", "sublimation parameterization"],
+    "limitations": ["理想化一维假设", "缺乏多场观测验证"],
+    "usefulness_for_user": "为体相吹雪参数化与升华计算提供理论基础与方程原型。"
   },
-  "technical_tags": {
-    "model_or_theory": ["bulk blowing-snow model"],
-    "experiment_or_data": [],
-    "parameterization": ["sublimation"],
-    "equations_or_metrics": ["mass flux", "sublimation rate"],
-    "materials_or_particles": ["blowing snow particles"],
-    "spatial_temporal_scale": ["boundary-layer", "event-scale"]
+  "evidence_profile": {
+    "key_claims": [
+      "体相模型可复现吹雪层质量通量剖面",
+      "低湿度下升华显著消耗吹雪质量"
+    ],
+    "important_equations": ["bulk mass conservation", "sublimation parameterization"],
+    "important_figures": ["mass flux profile", "sublimation rate"],
+    "important_tables": [],
+    "quoted_terms": ["bulk blowing-snow model", "sublimation parameterization"],
+    "page_or_section_evidence": ["model derivation", "sublimation"]
   },
-  "llm_search_text": {
-    "compact_zh": "Déry and Yau (1999) 提出一维体相吹雪模型，将吹雪粒子群视为连续相，建立质量与动量守恒方程并参数化升华，复现吹雪层质量通量剖面，揭示低湿度下升华显著消耗吹雪质量，为体相吹雪-边界层耦合提供理论框架与方程原型。",
-    "compact_en": "Dery and Yau (1999) develop a 1-D bulk blowing-snow model treating the particle population as a continuous phase, with mass/momentum conservation and a sublimation parameterization, reproducing mass-flux profiles and showing sublimation strongly depletes blowing snow under low humidity."
+  "content_notes": {
+    "short_summary": "建立一维体相吹雪模型，刻画吹雪的输运与升华过程。",
+    "long_summary": "Déry and Yau (1999) 提出一维体相吹雪模型，将吹雪粒子群视为连续相，建立质量与动量守恒方程并参数化升华，复现吹雪层质量通量剖面，揭示低湿度下升华显著消耗吹雪质量，为体相吹雪-边界层耦合提供理论框架与方程原型。",
+    "possible_use_in_writing": ["方法章节-模型方程", "引言-吹雪物理背景", "讨论-升华参数化对比"],
+    "open_questions": ["理想化一维假设在多场观测下的适用性"],
+    "warnings": []
+  },
+  "provenance": {
+    "generated_from": "mineru_markdown",
+    "markdown_path": "data/paper_raw/000001/000001.md",
+    "generated_at": "",
+    "generator": "paper_raw_catalog_curator",
+    "notes": "示例 v2.0 content-only catalog；书目字段（DOI/作者/年份/期刊/BibTeX）不在 catalog，由 metadata.json 承载，经 paper_number/paper_id 关联。"
   }
 }

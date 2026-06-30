@@ -1,11 +1,20 @@
 """paper_raw metadata resolver — resolve metadata candidates for unmatched PDFs.
 
-This module closes the PDF-first gap: when a ``data/paper_raw/<source_id>/`` paper
-has no DOI (or only partial metadata), it mines the PDF filename, PDF text, and the
-MinerU-converted Markdown for a DOI, and (with ``--allow-network``) falls back to a
-network title search. It produces scored candidates with evidence, and a guarded
-``apply`` that fills ONLY empty metadata fields (via ``merge_missing_metadata``) and
-may set ``metadata_match.status`` to ``matched``/``manual_confirmed``.
+This module closes the PDF-first gap: for manual PDF imports, MinerU conversion
+must produce ``data/paper_raw/<source_id>/<source_id>.md`` before metadata
+resolution runs. The converted Markdown is the primary evidence for DOI/title/
+author/year/venue candidates; PDF filename and PDF text are optional hints, never
+the sole metadata source. With ``--allow-network`` the resolver verifies extracted
+candidates online or searches online when local candidates are missing. It produces
+scored candidates with evidence.
+
+The LLM-facing metadata resolver skill never sets ``metadata_match.status``; it only
+emits candidate patches + evidence + source + confidence + mismatch reason. This
+service may set ``metadata_match.status`` (matched / manual_confirmed) **only** in the
+deterministic ``apply`` step, after schema-compatible metadata and
+DOI/title/author/year/venue validation gates pass, or after explicit --manual-confirm.
+大模型 skill 不盖章；脚本 apply 层在确定性校验通过或人工确认后才可以盖章。The ``apply``
+fills ONLY empty metadata fields (via ``merge_missing_metadata``).
 
 Hard rules:
 - Never fabricate DOI/author/year/venue/volume/pages. Facts come only from an

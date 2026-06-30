@@ -49,7 +49,13 @@ items remain planned only.
   but v0.2 needs clearer command guidance and error diagnostics.
 - The repository currently contains both the older multi-stage `write_review.py`
   workflow and the newer catalog-to-TeX mini loop. v0.2 should first productize
-  the validated mini loop rather than trying to merge both paths.
+  the validated mini loop rather than trying to merge both paths. Both already
+  work under `write/jobs/<job_id>/` with job-local BibTeX/cite-key; the
+  **recommended main entry is the catalog-to-TeX mini loop**
+  (`scripts/create_write_job.py` → `write_catalog_tex_article.py` →
+  `check_write_tex_project.py`), while the multi-stage `write_review.py` is kept
+  as the lower-level / experimental entry. This is a product-boundary note, not
+  legacy cleanup.
 
 ## 3. Writer v0.2 Candidate Features
 
@@ -137,7 +143,7 @@ These should remain deterministic checks, not an embedded LLM client.
 - Do not introduce an LLM client.
 - Do not commit or pack `write/jobs/*` runtime products.
 - Do not let TeX directly reference `data/papers`, `data/raw`,
-  `data/paper_raw`, or `data/llm_work`.
+  `data/paper_raw`, or other non-job-local data paths.
 - Do not modify ingest code.
 - Do not modify catalog or metadata schema.
 - Do not turn writer v0.2 into an automatic paper-writing system. Its job is to

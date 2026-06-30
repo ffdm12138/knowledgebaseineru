@@ -4,7 +4,7 @@
   create          创建任务
   match           生成目录匹配 prompt + candidates（不确认 selected）
   confirm-papers  确认 selected_papers（设置 catalog_selection_confirmed）
-  prepare-workset 将 selected_papers 全文复制到 data/llm_work/<job_id>/<paper_number>/
+  prepare-workset 将 selected_papers 全文复制到 write/jobs/<job_id>/article/<paper_number>/
   deep-read       生成精读 prompt + 笔记模板（要求 selected 已确认）
   mark-deep-read  校验精读笔记已填 → 设置 deep_read_notes_filled
   story           生成故事线 prompt + 模板（要求 deep_read_notes_filled）
@@ -23,14 +23,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from loguru import logger
 from src.writer.job_manager import JobManager
 from src.writer.topic_parser import normalize_task
-from src.writer.catalog_matcher import (match_catalog, confirm_selected_papers,
-                                        load_selected)
-from src.writer.deep_reader import deep_read, mark_deep_reading_filled
+from src.writer.catalog_matcher import match_catalog, confirm_selected_papers
+from src.writer.deep_reader import deep_read, mark_deep_reading_filled, prepare_workset
 from src.writer.story_builder import build_story, mark_story_filled
 from src.writer.tex_project import build_tex, mark_tex_content_filled
 from src.writer.figure_manager import copy_figures
 from src.catalog import Catalog
-from src.services.v2_library import LlmWorkService
 
 
 def cmd_create(args):
@@ -57,44 +55,19 @@ def cmd_match(args):
 
 
 def cmd_prepare_workset(args):
-    """将 selected_papers 中每篇论文全文复制到 data/llm_work/<job_id>/<paper_number>/。"""
-    jm = JobManager()
-    sel = load_selected(args.job, jm)
-    if sel.get("selection_status") != "confirmed":
-        logger.error("selected_papers.json is not confirmed，拒绝复制")
+    """将 selected_papers 全文复制到 write/jobs/<job_id>/article/<paper_number>/。"""
+    try:
+        manifest = prepare_workset(args.job, overwrite=args.overwrite, apply=args.apply)
+    except RuntimeError as exc:
+        logger.error(str(exc))
         return
-    catalog = Catalog()
-    lw = LlmWorkService()
-    copied = []
-    skipped = []
-    for item in sel.get("selected_papers", []):
-        pid = item.get("paper_id", "")
-        entry = catalog.get(pid)
-        if entry is None:
-            logger.warning(f"paper_id not in catalog: {pid}")
-            skipped.append({"paper_id": pid, "reason": "not_in_catalog"})
-            continue
-        number = entry.get("paper_number", "")
-        if not number:
-            logger.warning(f"paper_id has no paper_number: {pid}")
-            skipped.append({"paper_id": pid, "reason": "no_paper_number"})
-            continue
-        try:
-            result = lw.copy_to_session(number, args.job, overwrite=args.overwrite)
-            copied.append({"paper_id": pid, "paper_number": number, "work_dir": result["work_dir"]})
-            logger.info(f"复制: {pid} ({number}) -> {result['work_dir']}")
-        except FileExistsError:
-            logger.warning(f"目标已存在: {number}，跳过（用 --overwrite 覆盖）")
-            skipped.append({"paper_id": pid, "paper_number": number, "reason": "exists"})
-    manifest = {"job_id": args.job, "copied": copied, "skipped": skipped,
-                "work_root": f"data/llm_work/{args.job}/"}
-    manifest_path = jm.job_dir(args.job) / "planning" / "workset_manifest.json"
-    import json
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    logger.info(f"workset 准备完成: {len(copied)} 复制, {len(skipped)} 跳过")
-    logger.info(f"manifest: {manifest_path}")
-    logger.info(f"下一步: deep-read --job {args.job}（LLM 应只读 data/llm_work/{args.job}/）")
+    action = "复制" if args.apply else "计划"
+    logger.info(f"workset {action}完成: {len(manifest['copied'])} 项, {len(manifest['skipped'])} 跳过")
+    for item in manifest["copied"]:
+        logger.info(f"{action}: {item['paper_id']} ({item['paper_number']}) -> {item['work_dir']}")
+    for item in manifest["skipped"]:
+        logger.warning(f"跳过: {item}")
+    logger.info(f"下一步: deep-read --job {args.job}（LLM 应只读 write/jobs/{args.job}/article/）")
 
 
 def cmd_confirm_papers(args):
@@ -119,12 +92,12 @@ def cmd_confirm_papers(args):
     info = confirm_selected_papers(args.job, selected, confirmed_by="manual")
     logger.info(f"已确认精读文献 {len(info['paper_ids'])} 篇: {info['paper_ids']}")
     logger.info(f"  selected: {info['selected_path']}")
-    logger.info(f"  下一步: deep-read --job {args.job}")
+    logger.info(f"  下一步: prepare-workset --job {args.job} --apply")
+    logger.info(f"  然后: deep-read --job {args.job}")
 
 
 def cmd_deep_read(args):
-    info = deep_read(args.job, paper_ids=args.papers, force=args.force,
-                     from_papers=args.from_papers)
+    info = deep_read(args.job, paper_ids=args.papers, force=args.force)
     logger.info(f"精读 prompt+模板已生成: {args.job}，{len(info['notes'])} 篇笔记")
     logger.info(f"  来源: {info.get('source', '?')}")
     logger.info(f"  prompt: {info['prompt_path']}")
@@ -225,7 +198,7 @@ def main():
     m = sub.add_parser("match")
     m.add_argument("--job", required=True)
     m.add_argument("--topics", nargs="+", default=None,
-                   help="按 all.catalog 中 catalog.classification.topics 过滤")
+                   help="按 all.catalog flat classification.topic_tags / domains / methods 过滤")
     m.set_defaults(func=cmd_match)
 
     cp = sub.add_parser("confirm-papers"); cp.add_argument("--job", required=True)
@@ -233,7 +206,7 @@ def main():
     cp.add_argument("--paper-numbers", nargs="+", default=None, help="16 位 paper_number 列表")
     cp.set_defaults(func=cmd_confirm_papers)
 
-    pw = sub.add_parser("prepare-workset", help="将 selected_papers 全文复制到 data/llm_work/<job_id>/<paper_number>/")
+    pw = sub.add_parser("prepare-workset", help="将 selected_papers 全文复制到 write/jobs/<job_id>/article/<paper_number>/")
     pw.add_argument("--job", required=True)
     pw.add_argument("--overwrite", action="store_true", help="若目标已存在则覆盖")
     pw.add_argument("--apply", action="store_true"); pw.set_defaults(func=cmd_prepare_workset)
@@ -242,8 +215,6 @@ def main():
     d.add_argument("--papers", nargs="+", default=None,
                    help="可选，默认从 selected_papers.json 取")
     d.add_argument("--force", action="store_true", help="覆盖已填文件（先备份）")
-    d.add_argument("--from-papers", action="store_true",
-                   help="直接从 data/papers 读取（默认要求 prepare-workset）")
     d.set_defaults(func=cmd_deep_read)
 
     mdr = sub.add_parser("mark-deep-read"); mdr.add_argument("--job", required=True)

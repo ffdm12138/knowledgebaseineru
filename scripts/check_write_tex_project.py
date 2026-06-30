@@ -22,6 +22,7 @@ from src.utils.atomic_io import atomic_write_json
 WRITE_DIR = PROJECT_ROOT / "write" / "jobs"
 _CITE_RE = re.compile(r"\\cite\w*\s*\{([^}]+)\}")
 _GRAPHICS_RE = re.compile(r"\\includegraphics(?:\[[^\]]*\])?\s*\{([^}]+)\}")
+# 显式安全防护 token（字面量出现，便于防回流扫描识别）。
 _RESTRICTED_PATH_TOKENS = ("data/papers", "data/paper_raw", "data/raw", "data/llm_work")
 
 

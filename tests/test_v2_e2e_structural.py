@@ -11,7 +11,6 @@ import pytest
 
 from src.services.v2_library import (
     AllCatalogBuilder,
-    LlmWorkService,
     PaperNumberLedger,
     V2PaperCommitService,
     bibtex_from_metadata,
@@ -19,6 +18,7 @@ from src.services.v2_library import (
     empty_metadata,
 )
 from src.catalog import build_compact_catalog_text
+from src.services.paper_library import PaperLibrary
 
 # Import the validate_v2_library CLI's validation function
 import sys
@@ -208,8 +208,8 @@ class TestCompactCatalog:
         # (they come from metadata; the catalog content is content-only)
 
 
-class TestLlmWorkCopy:
-    def test_copy_by_paper_number_and_guards(self, tmp_path):
+class TestPaperLibraryAccess:
+    def test_resolve_by_paper_number_and_load_assets(self, tmp_path):
         f = _curated_raw(tmp_path, "2024_wang_测试论文")
         papers = tmp_path / "papers"
         ac = tmp_path / "c" / "all.json"
@@ -218,32 +218,16 @@ class TestLlmWorkCopy:
         svc.commit_paper_raw(f)
         AllCatalogBuilder(papers, ac, PaperNumberLedger(lg)).build(write=True)
 
-        lw = LlmWorkService(all_catalog_path=ac, llm_work_dir=tmp_path / "llm_work")
+        library = PaperLibrary(all_catalog_path=ac, papers_dir=papers)
         number = "0000000000000001"
 
-        # copy succeeds
-        r = lw.copy_to_session(number, "session_1")
+        r = library.resolve(number)
         assert r["paper_id"] == "2024_wang_测试论文"
-        target = tmp_path / "llm_work" / "session_1" / number
-        assert target.exists()
-        assert (target / "2024_wang_测试论文.md").exists()
+        assert library.markdown_path(number).exists()
+        assert library.read_markdown(number)
         assert (papers / "2024_wang_测试论文" / "2024_wang_测试论文.md").exists()  # source untouched
 
-        # exists without overwrite
-        with pytest.raises(FileExistsError):
-            lw.copy_to_session(number, "session_1")
-
-        # overwrite
-        r2 = lw.copy_to_session(number, "session_1", overwrite=True)
-        assert r2["paper_id"] == "2024_wang_测试论文"
-
-        # invalid number
-        with pytest.raises(ValueError):
-            lw.copy_to_session("1", "x")
-
-        # non-existent number
-        with pytest.raises(KeyError):
-            lw.copy_to_session("9999999999999999", "x")
+        assert library.resolve("9999999999999999") is None
 
 
 class TestBibtex:

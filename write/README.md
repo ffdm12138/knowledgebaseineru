@@ -5,7 +5,8 @@
 Committed files in this directory are only documentation and `.gitkeep`
 placeholders. Runtime writing jobs belong under `write/jobs/<job_id>/` and are
 ignored by git because they may contain copied PDFs, Markdown, images, TeX
-outputs, and reports.
+outputs, and reports. The article workspace is
+`write/jobs/<job_id>/article/<paper_number>/`.
 
 Use:
 

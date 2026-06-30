@@ -98,13 +98,17 @@ def _make_library(tmp_path: Path, count: int = 3) -> tuple[Path, Path, Path, lis
         entries.append({
             "paper_number": paper_number,
             "paper_id": paper_id,
-            "folder_path": str(folder),
-            "catalog": catalog,
-            "metadata": metadata,
+            "content_identity": catalog["content_identity"],
+            "classification": catalog["classification"],
+            "screening": catalog["screening"],
+            "research_card": catalog["research_card"],
+            "evidence_profile": catalog["evidence_profile"],
+            "content_notes": catalog["content_notes"],
+            "provenance": catalog["provenance"],
         })
     catalog_path.parent.mkdir(parents=True)
-    catalog_path.write_text(json.dumps({"schema_version": "1.0", "papers": entries}, ensure_ascii=False), encoding="utf-8")
-    write_dir = tmp_path / "write"
+    catalog_path.write_text(json.dumps({"schema_version": "2.0", "papers": entries}, ensure_ascii=False), encoding="utf-8")
+    write_dir = tmp_path / "write" / "jobs"
     return catalog_path, papers_dir, write_dir, entries
 
 
@@ -144,13 +148,13 @@ def test_prepare_by_paper_numbers_copies_and_writes_report(tmp_path):
     assert (job_dir / "selected_catalog.json").exists()
     assert (job_dir / "reports" / "prepare_article_report.json").exists()
     selected = json.loads((job_dir / "selected_catalog.json").read_text(encoding="utf-8"))
-    # selected_catalog entries carry content fields (from catalog.json) and, for
-    # write-module compatibility, the bibliographic metadata + full catalog dict
-    # (read from disk). all.catalog itself remains content-only & separated.
+    # selected_catalog entries carry flat content fields only; bibliographic
+    # metadata lives in the copied article/<paper_number>/*.metadata.json.
+    # all.catalog itself remains content-only & separated.
     p0 = selected["papers"][0]
     assert "classification" in p0 and "screening" in p0 and "research_card" in p0
-    assert "metadata" in p0  # write modules need bibliographic facts
-    assert "catalog" in p0
+    assert "metadata" not in p0  # content-only snapshot; metadata is in article/
+    assert "catalog" not in p0
     for entry in entries:
         copied = job_dir / "article" / entry["paper_number"] / f"{entry['paper_id']}.metadata.json"
         assert copied.exists()
