@@ -31,7 +31,12 @@ from src.fetch.resolvers.base import PdfResolver
 
 
 class SciHubResolver(PdfResolver):
-    """Sci-Hub resolver。仅 CUSTOM + allow_scihub=True 时启用。"""
+    """Sci-Hub resolver —— unsafe optional / 默认 disabled / 不属于 OA_ONLY 主流程。
+
+    仅当 ``AccessMode.CUSTOM`` 且 ``allow_scihub=True`` 时才被启用；
+    ``OA_ONLY`` 默认链路绝不包含 Sci-Hub。详见 ``access_policy.py``
+    与 ``docs/DEPENDENCIES_AND_EXTERNAL_TOOLS.md``。
+    """
     name = "scihub"
     access_modes = ("custom",)
 

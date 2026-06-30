@@ -10,9 +10,13 @@ import re
 import requests
 from loguru import logger
 
-from config.settings import FETCH_PROXY
 from src.discovery.models import normalize_doi
 from src.fetch.models import FetchResult
+from src.fetch.proxy import get_fetch_proxies
+
+# 注：Sci-Hub resolver 是 unsafe optional —— 默认 disabled，不属于 OA_ONLY
+# 主流程；仅 AccessMode.CUSTOM 且 allow_scihub=True 时才被 resolver_registry
+# 启用。详见 docs/DEPENDENCIES_AND_EXTERNAL_TOOLS.md 与 access_policy.py。
 
 SCI_HUB_DOMAINS = ["https://sci-hub.se", "https://sci-hub.ru", "https://sci-hub.st"]
 
@@ -20,9 +24,8 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
 
 def _get_proxies() -> dict | None:
-    if FETCH_PROXY:
-        return {"http": FETCH_PROXY, "https": FETCH_PROXY}
-    return None
+    """Legacy compatibility wrapper —— 代理逻辑已迁移到 ``src.fetch.proxy``。"""
+    return get_fetch_proxies()
 
 
 def resolve_scihub(doi: str) -> FetchResult:

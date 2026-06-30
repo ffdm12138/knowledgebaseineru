@@ -33,7 +33,7 @@ class AccessPolicy:
     allow_preprints: bool = True
     allow_manual_import: bool = True
     allow_custom_resolvers: bool = False
-    allow_scihub: bool = False  # 仅 CUSTOM 模式下显式启用
+    allow_scihub: bool = False  # unsafe optional：仅 CUSTOM 模式下显式启用，不属于 OA_ONLY 主流程
     custom_resolvers: list[str] = field(default_factory=list)
     max_attempts_per_resolver: int = 1
     timeout_seconds: int = 60

@@ -10,9 +10,9 @@ Springer: 无需密钥，直接构造 PDF URL
 import requests
 from loguru import logger
 
-from config.settings import ELSEVIER_API_KEY, FETCH_PROXY, WILEY_TDM_TOKEN
-from src.fetch.fetch_scihub import _get_proxies
+from config.settings import ELSEVIER_API_KEY, WILEY_TDM_TOKEN
 from src.fetch.models import FetchResult
+from src.fetch.proxy import get_fetch_proxies
 
 from .base import PdfResolver, ResolveContext
 
@@ -40,7 +40,7 @@ class WileyTdmResolver(PdfResolver):
             "User-Agent": USER_AGENT,
             "Wiley-TDM-Client-Token": token,
         }
-        proxies = _get_proxies()
+        proxies = get_fetch_proxies()
 
         try:
             resp = requests.get(
@@ -96,7 +96,7 @@ class SpringerDirectResolver(PdfResolver):
 
         url = f"https://link.springer.com/content/pdf/{doi}.pdf"
         headers = {"User-Agent": USER_AGENT}
-        proxies = _get_proxies()
+        proxies = get_fetch_proxies()
 
         try:
             resp = requests.get(
@@ -141,7 +141,7 @@ class ElsevierTdmResolver(PdfResolver):
             "X-ELS-APIKey": ELSEVIER_API_KEY,
             "Accept": "application/pdf",
         }
-        proxies = _get_proxies()
+        proxies = get_fetch_proxies()
 
         try:
             resp = requests.get(

@@ -1,0 +1,105 @@
+# Dependencies and External Tools
+
+本文档列出 MinerU v2 文献资产库的运行时依赖、本地可选接口、网络 metadata 服务、
+PDF access resolver 体系，以及明确不引入的依赖。目的是让新 agent 或未来维护者一眼看清
+“项目对外部世界有什么依赖、什么被禁止”。
+
+## 1. Core runtime dependencies
+
+| 依赖 | 用途 |
+| --- | --- |
+| `mineru[all]` | PDF / DOCX / 图片 → Markdown + 图片抽取，hybrid-engine 后端 |
+| `PyMuPDF` | PDF 文本 / DOI 辅助抽取（轻量、无需 GPU） |
+| `requests` | metadata 查询与 PDF fetch |
+| `pydantic` | 数据模型校验 |
+| `loguru` | 日志 |
+| `filelock` | 原子化 JSON 写入与并发锁 |
+| `pytest` | 测试 |
+
+这些是正式入库 / 转换 / 写作链路的硬依赖，不包含向量库或 RAG 相关包。
+
+## 2. Optional local interfaces
+
+可选的本地服务接口，非正式入库主流程所必需：
+
+- `FastAPI` / `uvicorn`：本地只读 API（`python -m src.server`），默认绑定 `127.0.0.1`。
+- `Gradio`：可选的交互界面。
+
+## 3. Network metadata services
+
+下列网络服务只用于产生 **candidate metadata** 或 **PDF URL**，绝不直接写
+`data/papers/`。candidate 必须先有合法 DOI，再走 `paper_raw` → match → curation →
+commit 才能进入正式库。
+
+- Crossref（DOI → 书目元数据）
+- OpenAlex（书目元数据 / OA 位置）
+- Semantic Scholar（书目元数据 / 引用）
+- Unpaywall（合法 OA PDF URL）
+- arXiv（预印本元数据与 PDF）
+- bioRxiv（预印本元数据与 PDF）
+- PMC OA（PubMed Central 开放获取）
+
+> 边界：网络 metadata 进入 `paper_raw` 前必须有合法 DOI；没有 DOI 的候选不得
+> stage。正式入库必须通过 `validate_v2_library.py` / `audit_metadata_quality.py`。
+
+## 4. PDF access resolvers
+
+PDF 获取由 `src/fetch/access_policy.py` + `src/fetch/resolver_registry.py` 统一调度，
+按 `AccessMode` 选择启用哪些 resolver：
+
+- **OA / direct resolvers**：`unpaywall`、`openalex`、`semantic_scholar`、`arxiv`、
+  `publisher_oa`、`springer_direct`、`biorxiv`、`pmc_oa`。真正开放获取 / 合法公开来源，
+  无需 token、不绕付费墙。属于 `OA_ONLY` 默认链路。
+- **publisher / TDM resolvers**：`wiley_tdm`、`elsevier_tdm`、`publisher_tdm`。需要
+  免费注册的 API token，属于机构 / 授权语义，仅在 `INSTITUTIONAL` 或 `CUSTOM` 下启用。
+- **institutional / browser-assisted / custom resolvers**：`institutional_browser`、
+  `browser_assisted`、`local_manual`、`custom`、`ref_downloader`。需要用户操作或机构订阅。
+- **Sci-Hub**：`unsafe optional`，默认 disabled，**不属于 OA_ONLY 主流程**。仅
+  `AccessMode.CUSTOM` 且 `allow_scihub=True` 时才启用。本仓库不放宽该启用条件。
+
+代理配置统一走 `src/fetch/proxy.py::get_fetch_proxies()`，读取 `FETCH_PROXY` 环境变量，
+返回 `requests` 可用的 proxies dict 或 `None`（直连）。合法 TDM / publisher resolver
+不再语义上依赖 Sci-Hub 模块。
+
+## 5. Explicitly removed / not used
+
+项目明确不引入、不 vendor：
+
+- ChromaDB
+- sentence-transformers
+- 任何向量数据库（vector database）
+- embedding / RAG 管线
+- 内置 LLM client（所有 prompt / 写作步骤只生成文本或结构化模板）
+
+## 6. Data boundary
+
+以下路径是运行时产物 / 版权语料，**不进入源码快照**（`pack_repo.py` 强制排除）：
+
+- `data/raw/`、`data/paper_raw/`、`data/papers/`、`data/llm_work/`、`data/import_work/`
+- `data/catalog/all.catalog.json`、`data/catalog/paper_index.json`、
+  `data/catalog/paper_number_ledger.json`（源码快照只提交对应 `.template.json` 空模板）
+- `write/jobs/`（写作运行时，只跟踪 `.gitkeep`）
+- 任何 PDF / Markdown / images / TeX 编译产物
+
+数据语义边界：
+
+- `all.catalog` 是 **content-only** 内容索引，不是书目库。
+- `metadata`（`<paper_id>.metadata.json`）是 BibTeX / DOI / authors / year / journal 的
+  事实源；catalog 与 metadata 仅通过 `paper_number` / `paper_id` 关联。
+
+## 7. Environment rule
+
+真实入库 / 转换 / 写作命令必须使用 mineru conda 环境，不要用 PATH 上的
+Windows Store python 别名（会静默退出）：
+
+```bash
+conda run -n mineru python scripts/<x>.py
+# 或绝对路径
+C:\Users\Admin\.conda\envs\mineru\python.exe scripts/<x>.py
+```
+
+Windows 下建议先设置编码，避免中文输出乱码：
+
+```bash
+set PYTHONIOENCODING=utf-8
+```
