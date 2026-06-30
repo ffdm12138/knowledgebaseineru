@@ -121,3 +121,47 @@ def test_project_contract_does_not_encourage_rag_or_embedding():
     for forbidden in ["use rag", "enable embedding", "引入 rag", "启用 embedding",
                       "引入 embedding", "启用 rag"]:
         assert forbidden not in lower, f"PROJECT_CONTRACT 出现鼓励性文字: {forbidden}"
+
+
+# ── 8. legacy 写作路径标注 ─────────────────────────────────────────
+def test_readme_does_not_describe_llm_work_as_writing_main_path():
+    """README 不得把 data/llm_work 描述为 writing v0.1 主路径。"""
+    text = _read("README.md")
+    for forbidden in [
+        "data/llm_work/ 精读写作",
+        "复制全文到 `data/llm_work/` 精读写作",
+        "data/llm_work/ 是 writing v0.1 主路径",
+    ]:
+        assert forbidden not in text, f"README 误把 data/llm_work 当主路径: {forbidden}"
+    # paper_number 段落必须把 write/jobs/article 标为主路径
+    assert "write/jobs/<job_id>/article/<paper_number>/" in text
+    # 必须显式说明 copy_paper_to_llm_work / data/llm_work 是 legacy/API
+    assert "legacy" in text.lower() or "api compatibility" in text.lower()
+
+
+def test_llm_usage_workflow_marked_legacy():
+    text = _read("docs/LLM_USAGE_WORKFLOW.md")
+    assert ("Legacy" in text) or ("legacy" in text), (
+        "docs/LLM_USAGE_WORKFLOW.md 缺少 Legacy 标注"
+    )
+
+
+def test_literature_review_writer_readme_marked_legacy():
+    text = _read("skills/literature_review_writer/README.md")
+    assert ("Legacy" in text) or ("legacy" in text), (
+        "skills/literature_review_writer/README.md 缺少 Legacy 标注"
+    )
+
+
+def test_project_contract_names_write_jobs_article_path():
+    text = _read("docs/PROJECT_CONTRACT.md")
+    assert "write/jobs/<job_id>/article/<paper_number>/" in text, (
+        "PROJECT_CONTRACT 未标注 writing v0.1 主路径 write/jobs/<job_id>/article/<paper_number>/"
+    )
+
+
+def test_agents_md_has_no_typo():
+    text = _read("AGENTS.md")
+    assert "网络(metadata" not in text, "AGENTS.md 残留 typo: 网络(metadata"
+    assert "网络 metadata" in text
+

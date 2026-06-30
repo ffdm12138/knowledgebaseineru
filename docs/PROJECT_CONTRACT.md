@@ -40,8 +40,10 @@ data/raw/*.pdf 或网络 metadata
 -> curation
 -> commit 到 data/papers/<paper_id>/
 -> rebuild all.catalog
--> API 按 paper_number 复制到 data/llm_work/
+-> writing v0.1 按 paper_number 复制到 write/jobs/<job_id>/article/<paper_number>/
 ```
+
+`data/llm_work` is legacy/API compatibility and must not be used as the writing v0.1 main path.
 
 ## 正式目录
 

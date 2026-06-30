@@ -51,7 +51,7 @@ conda run -n mineru python scripts/doctor_ingest_pipeline.py
 -> commit 到 data/papers/<year_author_中文标题>/
 -> 分配 16 位 paper_number
 -> 重建 data/catalog/all.catalog.json
--> API 按 paper_number 复制到 data/llm_work/
+-> 写作流程按 paper_number 复制到 write/jobs/<job_id>/article/<paper_number>/
 ```
 
 正式资产只允许位于：
@@ -71,7 +71,7 @@ data/papers/<paper_id>/<16位编号>.paper.number
 
 - **metadata**（`<paper_id>.metadata.json`）：BibTeX/书目信息事实源（DOI、作者、年份、期刊、卷期页、链接、metadata_match）。
 - **catalog**（`<paper_id>.catalog.json`，schema v2.0，**content-only**）：大模型快速筛选精读文献的内容索引。只含正文内容理解（content_identity、classification、screening、research_card、evidence_profile、content_notes、provenance），**不含** DOI/作者/年份/期刊/卷期页等书目字段（这些只在 metadata）。catalog 与 metadata 仅通过 `paper_number`/`paper_id` 关联。
-- **paper_number**（16 位）：API 与写作流程主键。大模型先看 `all.catalog.json`（content-only）选号，再按 `paper_number` 读 metadata 取书目信息、用 `copy_paper_to_llm_work.py` 复制全文到 `data/llm_work/` 精读写作。`all.catalog` 是内容索引不是书目库；references/BibTeX 只从 metadata 生成。
+- **paper_number**（16 位）：API 与写作流程主键。大模型先看 `all.catalog.json`（content-only）选号，再按 `paper_number` 读 metadata 取书目信息。writing v0.1 主流程使用 `write/jobs/<job_id>/article/<paper_number>/`，当前主入口为 `create_write_job.py` / `prepare_write_article_workdir.py`。`copy_paper_to_llm_work.py` 与 `data/llm_work` 仅为 legacy / API compatibility，**不是** writing v0.1 主路径。`all.catalog` 是内容索引不是书目库；references/BibTeX 只从 metadata 生成。
 
 ## Metadata 完整性门槛
 

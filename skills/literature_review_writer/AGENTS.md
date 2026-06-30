@@ -1,5 +1,10 @@
 # CLAUDE.md — literature_review_writer skill
 
+> **Legacy notice.** 本文描述旧的 `write_review.py` / `data/llm_work` 工作流。
+> 当前已冻结的 writing v0.1 主流程是：
+> `write/jobs/<job_id>/article/` -> TeX/BibTeX -> `check_write_tex_project.py` ->
+> `check_write_quality_text.py`。除非用户明确要求 legacy flow，否则不要使用此流程。
+
 本 skill 在 MinerU 文献资产库上做博士论文级综述写作。**不恢复 ChromaDB / embedding / 语义搜索**。
 
 ## 核心铁律（必须遵守）

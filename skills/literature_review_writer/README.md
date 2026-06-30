@@ -1,5 +1,10 @@
 # literature_review_writer
 
+> **Legacy notice.** 本文描述旧的 `write_review.py` / `data/llm_work` 工作流。
+> 当前已冻结的 writing v0.1 主流程是：
+> `write/jobs/<job_id>/article/` -> TeX/BibTeX -> `check_write_tex_project.py` ->
+> `check_write_quality_text.py`。除非用户明确要求 legacy flow，否则不要使用此流程。
+
 MinerU 文献资产库上的博士论文级综述写作 skill。
 
 ## 严格多阶段工作流

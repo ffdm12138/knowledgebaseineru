@@ -30,7 +30,7 @@
 - 不做 RAG / embedding / vector DB / ChromaDB；不内置 LLM client，所有 prompt/写作步骤只生成文本或模板。
 - Sci-Hub resolver 是 unsafe optional：默认 disabled，不属于 OA_ONLY 主流程；仅 `AccessMode.CUSTOM` 且
   `allow_scihub=True` 时才启用，且不得放宽该条件。
-- 网络(metadata 进入 `paper_raw` 前必须有合法 DOI；没有 DOI 的候选不得 stage。
+- 网络 metadata 进入 `paper_raw` 前必须有合法 DOI；没有 DOI 的候选不得 stage。
 - 正式入库必须通过 `validate_v2_library.py` 与 `audit_metadata_quality.py` 的硬错误检查。
 
 ## 3. 运行环境

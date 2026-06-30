@@ -1,5 +1,11 @@
 # LLM Usage Workflow
 
+> **Legacy notice.** This document describes the older `write_review.py` /
+> `data/llm_work` workflow. The frozen writing v0.1 main path is catalog-first:
+> `write/jobs/<job_id>/article/` -> TeX/BibTeX -> `check_write_tex_project.py`
+> -> `check_write_quality_text.py`. Do not use this legacy workflow unless
+> explicitly requested.
+
 The repository does not call any LLM. It prepares model-readable assets and prompts.
 
 ## Metadata Boundaries

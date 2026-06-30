@@ -50,6 +50,7 @@ selected catalog / paper numbers
 - `metadata` 是书目信息事实源（DOI / 作者 / 年份 / 期刊 / 卷期页）。
 - `catalog`（schema v2.0）是 content-only，不含书目字段。
 - `write/jobs/` 是运行时，不提交（只跟踪 `.gitkeep`）。
+- `data/llm_work` is legacy/API compatibility; `write/jobs/<job_id>/article/` is the writing v0.1 main path.
 - TeX 不得直接读 `data/papers`、`data/raw`、`data/paper_raw`、`data/llm_work`。
 - 真实入库 / 转换 / 写作必须使用 `conda run -n mineru`。
 - snapshot 不含真实 data 与 `write/jobs` 运行产物。
