@@ -38,6 +38,28 @@ Do not read `data/paper_raw`, `data/raw`, or `data/llm_work` directly.
   Methods or Mechanisms, Discussion, Conclusion; roughly 1000-2000 Chinese
   characters or equivalent English; at least three citations.
 
+## Quality Acceptance
+
+- Do not use template sentences such as `X指出：X`,
+  `指出：...指出`, smoke-test prose, or acceptance-demo prose as article text.
+- Before writing, extract five elements for every selected paper: study object,
+  method/data, key conclusion, role in the review, and limitation/uncertainty.
+- Organize the review around a problem chain or mechanism chain. Do not write a
+  paper-by-paper list with one paragraph per citation.
+- Every selected paper must be used substantively at least once in the body,
+  not only parked in `references.bib`.
+- Quantitative claims must preserve the number, unit, direction/magnitude, and
+  uncertainty where available, and must be traceable to copied Markdown under
+  `article/<paper_number>/`.
+- `references.bib` remains metadata-derived only. Never create citation facts
+  from catalog text, Markdown prose, or memory.
+- TeX must not reference `data/papers`, `data/raw`, `data/paper_raw`, or
+  `data/llm_work` directly.
+- `write/jobs/*` runtime products are never committed.
+- Run `scripts/check_write_quality_text.py --job-id <job_id>` after the article
+  has been human/agent polished. A mechanical smoke article is not quality
+  accepted until this check passes.
+
 ## Output Checklist
 
 - `tex/main.tex`
@@ -47,3 +69,5 @@ Do not read `data/paper_raw`, `data/raw`, or `data/llm_work` directly.
 - `tex/sections/discussion.tex`
 - `reports/write_article_report.json`
 - Run `scripts/check_write_tex_project.py --job-id <job_id>` before handoff.
+- Run `scripts/check_write_quality_text.py --job-id <job_id>` before quality
+  acceptance.
