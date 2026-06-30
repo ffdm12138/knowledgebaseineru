@@ -1,4 +1,4 @@
-# CLAUDE.md — literature_review_writer skill
+# AGENTS.md — literature_review_writer skill
 
 > **Legacy notice.** 本文描述旧的 `write_review.py` / `data/llm_work` 工作流。
 > 当前已冻结的 writing v0.1 主流程是：

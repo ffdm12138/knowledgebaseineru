@@ -23,7 +23,7 @@ raw PDF or network metadata
 - `src/server.py`: v2 read/API work surface; it never commits directly to `data/papers/`.
 - `scripts/*paper_raw*.py`: the only formal import CLIs.
 - `src/bib.py`: per-paper BibTeX via `bibtex_from_metadata` from `metadata.json` (no global `references.bib`); `src/writer/bib_manager.py` exports a per-job `tex/references.bib`.
-- `scripts/copy_paper_to_llm_work.py`: copy formal paper folders to `data/llm_work/<session_id>/<paper_number>/` by 16-digit `paper_number`.
+- `scripts/copy_paper_to_llm_work.py`: copy formal paper folders to `data/llm_work/<session_id>/<paper_number>/` by 16-digit `paper_number`. `copy_paper_to_llm_work.py` / `data/llm_work` is legacy/API compatibility. The writing v0.1 main workspace is `write/jobs/<job_id>/article/<paper_number>/`; TeX/writer v0.1 must not directly read `data/papers` or `data/llm_work`, it should use job-local copied article folders.
 
 ## Facts
 
@@ -32,7 +32,7 @@ raw PDF or network metadata
 - `data/catalog/all.catalog.json` is the local generated content-only catalog index (per-paper catalog schema v2.0; no bibliographic metadata); the repository commits `all.catalog.template.json` instead of real local state.
 - `data/catalog/paper_index.json` is the local generated paper_number → asset path index (metadata/catalog/markdown/pdf/images), no bibliographic fields; the repository commits `paper_index.template.json`.
 - `data/catalog/paper_number_ledger.json` owns local long-term numbering; the repository commits `paper_number_ledger.template.json`, not the real ledger.
-- `data/llm_work/` contains copied paper folders for model-facing work sessions.
+- `data/llm_work/` is legacy/API compatibility for copied paper folders (model-facing work sessions); the writing v0.1 main path is `write/jobs/<job_id>/article/<paper_number>/`.
 - Network/search metadata records must carry DOI before they can be staged into `paper_raw`.
 - Manual PDF records may start without DOI, but curation and formal commit require `metadata.identifiers.doi`.
 - Formal library metadata completeness is enforced in `src/services/v2_library.py` and `scripts/validate_v2_library.py`; incomplete `paper_raw` folders stay outside `data/papers/`.

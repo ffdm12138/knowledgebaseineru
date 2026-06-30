@@ -165,3 +165,36 @@ def test_agents_md_has_no_typo():
     assert "网络(metadata" not in text, "AGENTS.md 残留 typo: 网络(metadata"
     assert "网络 metadata" in text
 
+
+# ── 9. 其余文档中 data/llm_work 必须标 legacy/API compatibility ─────
+def test_architecture_llm_work_marked_legacy():
+    """ARCHITECTURE.md 若出现 data/llm_work，必须同时出现 legacy 或 API compatibility。"""
+    text = _read("docs/ARCHITECTURE.md")
+    if "data/llm_work" in text:
+        assert ("legacy" in text.lower()) or ("api compatibility" in text.lower()), (
+            "docs/ARCHITECTURE.md 提到 data/llm_work 但未标 legacy/API compatibility"
+        )
+        assert "write/jobs/<job_id>/article/<paper_number>/" in text, (
+            "docs/ARCHITECTURE.md 未指向 writing v0.1 主路径"
+        )
+
+
+def test_literature_library_manager_skill_llm_work_marked_legacy():
+    """literature_library_manager/SKILL.md 若出现 data/llm_work，必须同时出现 legacy 或 API compatibility。"""
+    text = _read("skills/literature_library_manager/SKILL.md")
+    if "data/llm_work" in text:
+        assert ("legacy" in text.lower()) or ("api compatibility" in text.lower()), (
+            "skills/literature_library_manager/SKILL.md 提到 data/llm_work 但未标 legacy/API compatibility"
+        )
+
+
+def test_literature_review_writer_agents_md_title():
+    text = _read("skills/literature_review_writer/AGENTS.md")
+    assert not text.lstrip().startswith("# CLAUDE.md"), (
+        "skills/literature_review_writer/AGENTS.md 标题不应为 # CLAUDE.md"
+    )
+    assert text.lstrip().startswith("# AGENTS.md"), (
+        "skills/literature_review_writer/AGENTS.md 标题应为 # AGENTS.md"
+    )
+
+

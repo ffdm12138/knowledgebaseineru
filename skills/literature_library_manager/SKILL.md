@@ -45,5 +45,5 @@ Facts:
 - `data/papers/` is formal storage.
 - `data/catalog/all.catalog.json` is the local generated API/writing content index (v2.0 content-only schema).
 - `data/catalog/paper_number_ledger.json` owns stable numbering.
-- `data/llm_work/` stores copied reading worksets.
+- `data/llm_work/` is legacy/API compatibility for copied reading worksets; the writing v0.1 main path is `write/jobs/<job_id>/article/<paper_number>/`.
 - `paper_number` (16 位) is the API/writing primary key.
