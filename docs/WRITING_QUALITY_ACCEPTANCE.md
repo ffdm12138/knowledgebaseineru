@@ -40,4 +40,5 @@ introduction/conclusion presence, and uncertainty/limitation coverage.
 
 Passing both checks means the writing workflow has moved beyond mechanical
 scaffolding into quality-review territory. It does not mean the prose is ready
-for submission without human scientific review.
+for submission without human scientific review. The quality check is a
+lightweight deterministic gate, not a scientific peer review.

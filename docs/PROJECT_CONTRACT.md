@@ -4,7 +4,7 @@
 
 ## 不可改变的规则
 
-- 不做向量库、RAG、embedding 或 ChromaDB。
+- 不做向量库（vector DB）、RAG、embedding 或 ChromaDB。
 - 不内置 LLM client；所有 prompt 和写作步骤只生成文本或模板。
 - 所有新文献先进入 `data/paper_raw/<000001>/`。
 - MinerU 只能处理 `data/paper_raw/<000001>/<000001>.pdf`。
@@ -24,6 +24,9 @@
 - commit 前必须本地查重：重复 DOI、PDF sha、标题/作者/年份或正文指纹不得新建正式 paper。
 - `paper_number` 为 16 位长期编号，只递增不回收。
 - 测试不得访问真实网络；网络 provider 必须 mock。
+- 正式入库必须通过 `validate_v2_library.py` 与 `audit_metadata_quality.py` 的硬错误检查；未通过的 `paper_raw` 不得入库。
+- `write/jobs/` 是写作运行时，不提交（只跟踪 `.gitkeep`）；TeX 不得直接引用 `data/papers`、`data/raw`、`data/paper_raw` 或 `data/llm_work`，只能读 job-local 复制副本。
+- Sci-Hub resolver 是 unsafe optional：默认 disabled，不属于 `OA_ONLY` 主流程；仅 `AccessMode.CUSTOM` 且 `allow_scihub=True` 时才启用，且不得放宽该条件。
 - 每次代码改动后必须运行测试并生成 `mineru_snapshot.zip`。
 
 ## 唯一正式流程

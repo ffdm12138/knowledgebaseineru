@@ -11,6 +11,8 @@ job-local `article/` directory.
 
 ## Required Reading Order
 
+权威边界见 `docs/PROJECT_CONTRACT.md`；本 skill 不与之冲突。
+
 1. Read `write/jobs/<job_id>/selected_catalog.json` first.
 2. For each selected `paper_number`, read
    `write/jobs/<job_id>/article/<paper_number>/<paper_id>.catalog.json`.

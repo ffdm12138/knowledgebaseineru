@@ -9,6 +9,8 @@ v2.0 content-only catalog from MinerU Markdown/PDF/images.
 
 ## 事实源与边界
 
+权威边界见 `docs/PROJECT_CONTRACT.md`；本 skill 不与之冲突。
+
 - `metadata` 是书目信息事实源（BibTeX/书目）。
 - `catalog` 是筛选事实源（大模型快速判断是否值得精读）。
 - 本 skill 不生成 metadata patch，不修改 metadata 字段。
