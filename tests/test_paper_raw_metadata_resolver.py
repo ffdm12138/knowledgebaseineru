@@ -615,6 +615,11 @@ def test_cli_write_candidates_no_apply(tmp_path, monkeypatch):
     assert rc == 0
     assert (folder / "000001.metadata.candidates.json").exists()
     assert (folder / "000001.metadata.resolve_report.json").exists()
+    patch_path = folder / "000001.metadata.patch.json"
+    assert patch_path.exists()
+    patch = json.loads(patch_path.read_text(encoding="utf-8"))
+    assert patch["identifiers"]["doi"] == "10.5194/tc-8-395-2014"
+    assert "metadata_match" not in patch
     assert (folder / ".import_status.json").exists()
     # metadata.json unchanged
     assert (folder / "000001.metadata.json").read_text(encoding="utf-8") == before
@@ -636,8 +641,10 @@ def test_cli_default_no_network_no_call(tmp_path, monkeypatch):
         "resolve_paper_raw_metadata.py", "--source-id", "000001",
         "--paper-raw-dir", str(tmp_path / "paper_raw"),
         "--all-catalog", str(cat), "--papers-dir", str(tmp_path / "papers"),
+        "--write-candidates",
     ])
     assert rc2 == 0
+    assert not (folder / "000001.metadata.patch.json").exists()
 
 
 # ── 13b. match_paper_raw_metadata multi-DOI conflict ──────────────────
@@ -669,6 +676,29 @@ def test_match_script_multi_doi_conflict(tmp_path, monkeypatch):
     assert meta["metadata_match"]["status"] == "unmatched"
     st = json.loads((folder / ".import_status.json").read_text(encoding="utf-8"))
     assert st["status"] == "metadata_candidate_conflict"
+
+
+def test_match_script_require_matched_exits_nonzero(tmp_path, monkeypatch):
+    md = ("# Title\n\nhttps://doi.org/10.5194/tc-8-395-2014\n\n"
+          "also https://doi.org/10.9999/another\n\n## Abstract\n")
+    _make_folder(tmp_path, md_text=md)
+    monkeypatch.syspath_prepend(str(_REPO_ROOT))
+    monkeypatch.setattr(mr, "extract_doi_from_pdf_file", lambda pdf: None)
+
+    saved = sys.argv
+    sys.argv = [
+        "match_paper_raw_metadata.py", "--source-id", "000001",
+        "--paper-raw-dir", str(tmp_path / "paper_raw"), "--apply", "--require-matched",
+    ]
+    try:
+        runpy.run_path(str(_REPO_ROOT / "scripts" / "match_paper_raw_metadata.py"), run_name="__main__")
+    except SystemExit as exc:
+        code = exc.code if isinstance(exc.code, int) else 1
+    else:
+        code = 0
+    finally:
+        sys.argv = saved
+    assert code == 1
 
 
 # ── 18. conservative author split ─────────────────────────────────────

@@ -12,8 +12,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from loguru import logger
 
 from config.settings import PAPER_RAW_DIR
+from src.discovery.models import normalize_doi
 from src.fetch.access_policy import AccessMode, AccessPolicy
 from src.fetch.fetch_pipeline import fetch_pdf
+from src.services.metadata_quality import is_valid_normalized_doi
 from src.services.v2_library import PaperRawAllocator
 from src.utils.atomic_io import atomic_write_json
 
@@ -51,13 +53,31 @@ def main() -> int:
             report.append(item)
             continue
         metadata = json.loads(meta_path.read_text(encoding="utf-8"))
-        doi = ((metadata.get("identifiers") or {}).get("doi") or "").strip()
+        doi = normalize_doi(((metadata.get("identifiers") or {}).get("doi") or "").strip())
         title = ((metadata.get("title") or {}).get("original") or "").strip()
         year = metadata.get("year")
         if not doi:
             item.update({"status": "failed", "error": "metadata.identifiers.doi is required for fetch"})
+            if write:
+                atomic_write_json(folder / ".import_status.json", {
+                    "status": "doi_invalid",
+                    "reason": item["error"],
+                    "source_id": source_id,
+                }, indent=2)
             report.append(item)
             continue
+        if not is_valid_normalized_doi(doi):
+            item.update({"status": "failed", "error": "metadata.identifiers.doi must be a valid DOI for fetch", "doi": doi})
+            if write:
+                atomic_write_json(folder / ".import_status.json", {
+                    "status": "doi_invalid",
+                    "reason": item["error"],
+                    "source_id": source_id,
+                    "doi": doi,
+                }, indent=2)
+            report.append(item)
+            continue
+        metadata.setdefault("identifiers", {})["doi"] = doi
         logger.info("{} fetch {} for {}", "FETCH" if write else "DRY-RUN", doi, source_id)
         if write:
             fetch_root = folder / ".fetch"

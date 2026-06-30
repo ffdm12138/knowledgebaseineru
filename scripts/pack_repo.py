@@ -72,6 +72,8 @@ def _should_pack(rel_path: str) -> bool:
             return False
     if rel.startswith("data/locks/") and path.suffix == ".lock":
         return False
+    if rel == "reports/doctor_ingest_pipeline_report.json":
+        return False
     # 跳过本地生成的 catalog 索引/账本（含真实库内容，绝不进快照）。
     # 源码快照只提交对应 *.template.json 空模板与 .gitkeep。
     # 这条规则在无 .git 元数据、只能走文件系统扫描时同样生效。
@@ -80,6 +82,7 @@ def _should_pack(rel_path: str) -> bool:
         "data/catalog/paper_index.json",
         "data/catalog/paper_number_ledger.json",
         "data/catalog/catalog_migration_report.json",
+        "data/catalog/metadata_quality_report.json",
     }
     if rel in _GENERATED_CATALOG_FILES:
         return False

@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from loguru import logger
 
 from config.settings import PAPER_RAW_DIR, RAW_DIR
+from src.file_fingerprint import compute_sha256
 from src.services.v2_library import PaperRawAllocator
 
 
@@ -35,8 +36,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Stage data/raw/*.pdf into v2 paper_raw workspaces.")
     parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
     parser.add_argument("--paper-raw-dir", type=Path, default=PAPER_RAW_DIR)
-    parser.add_argument("--copy", action="store_true", help="copy PDFs instead of moving them")
-    parser.add_argument("--move", action="store_true", help="move PDFs (default when --apply)")
+    parser.add_argument("--copy", action="store_true", help="copy PDFs into paper_raw (default)")
+    parser.add_argument("--move", action="store_true", help="move PDFs into paper_raw")
     parser.add_argument("--apply", action="store_true", help="write changes; default is dry-run")
     parser.add_argument("--dry-run", action="store_true", help="force dry-run")
     parser.add_argument("--report", type=Path, default=None)
@@ -47,19 +48,30 @@ def main() -> int:
     ids = _next_ids(args.paper_raw_dir, len(pdfs))
     report: list[dict] = []
     allocator = PaperRawAllocator(args.paper_raw_dir)
-    move = not args.copy
+    if args.copy and args.move:
+        parser.error("--copy and --move are mutually exclusive")
+    move = bool(args.move)
+    operation = "move" if move else "copy"
 
     for pdf, planned_id in zip(pdfs, ids):
-        item = {"source_pdf": str(pdf), "planned_source_id": planned_id, "status": "planned"}
+        item = {"source_pdf": str(pdf), "planned_source_id": planned_id, "operation": operation, "status": "planned"}
         if not _is_pdf(pdf):
             item.update({"status": "failed", "error": "file does not look like a PDF"})
             logger.warning("{} skipped: {}", pdf, item["error"])
             report.append(item)
             continue
+        original_sha = compute_sha256(pdf)
+        item["original_path"] = str(pdf)
+        item["original_sha256"] = original_sha
         if write:
             try:
                 result = allocator.allocate_from_pdf(pdf, source_type="manual_pdf", move=move)
                 item.update(result)
+                manifest_path = Path(result["folder"]) / "stage_manifest.json"
+                if manifest_path.exists():
+                    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                    item["staged_path"] = manifest.get("staged_path", result.get("pdf", ""))
+                    item["staged_sha256"] = manifest.get("staged_sha256", "")
                 item["status"] = "staged"
             except Exception as exc:
                 item.update({"status": "failed", "error": str(exc)})

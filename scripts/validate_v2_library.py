@@ -15,6 +15,7 @@ from src.services.v2_library import (
     find_legacy_all_catalog_entry_keys,
     PaperNumberLedger,
     metadata_reference_warnings_for_commit,
+    metadata_doi,
     validate_all_catalog_entry,
     validate_catalog_schema,
     validate_metadata_completeness_for_commit,
@@ -29,6 +30,44 @@ def _formal_metadata_errors(ctx: str, metadata: dict) -> list[str]:
             errors.append(f"{ctx} metadata.identifiers.doi is required in formal library")
         else:
             errors.append(f"{ctx} {err}")
+    return errors
+
+
+def _paper_number_from_markers(markers: list[Path]) -> str:
+    if not markers:
+        return ""
+    marker = markers[0]
+    try:
+        data = json.loads(marker.read_text(encoding="utf-8"))
+    except Exception:
+        data = {}
+    return str(data.get("paper_number") or marker.stem)
+
+
+def _asset_ref_exists(folder: Path, value: str) -> bool:
+    if not value:
+        return False
+    path = Path(value)
+    if not path.is_absolute():
+        path = folder / value
+    return path.exists()
+
+
+def _formal_catalog_errors(pid: str, folder: Path, catalog: dict, paper_number: str) -> list[str]:
+    errors: list[str] = []
+    if catalog.get("paper_id") != pid:
+        errors.append(f"{pid} catalog.paper_id must equal folder name")
+    if not paper_number:
+        errors.append(f"{pid} missing paper_number marker")
+    elif catalog.get("paper_number") != paper_number:
+        errors.append(f"{pid} catalog.paper_number must equal ledger/marker paper_number")
+    asset_refs = catalog.get("asset_refs") or {}
+    for field in ("markdown", "pdf", "metadata", "catalog", "images_dir"):
+        value = str(asset_refs.get(field) or "")
+        if not value:
+            errors.append(f"{pid} catalog.asset_refs.{field} missing")
+        elif not _asset_ref_exists(folder, value):
+            errors.append(f"{pid} catalog.asset_refs.{field} does not exist: {value}")
     return errors
 
 
@@ -47,6 +86,7 @@ def validate_v2_library(
     warnings.extend(ledger_warnings)
 
     formal_paper_ids: set[str] = set()
+    doi_to_paper_ids: dict[str, list[str]] = {}
     if papers_dir.exists():
         for folder in sorted(p for p in papers_dir.iterdir() if p.is_dir()):
             pid = folder.name
@@ -70,9 +110,13 @@ def validate_v2_library(
                 errors.append(f"{pid}: curation prompt must not enter formal library")
             if (folder / ".import_status.json").exists():
                 errors.append(f"{pid}: import_status marker must not enter formal library")
+            if (folder / "stage_manifest.json").exists():
+                errors.append(f"{pid}: paper_raw stage manifest must not enter formal library")
             if not has_any_v2_asset:
                 continue
             formal_paper_ids.add(pid)
+            markers = list(folder.glob("*.paper.number"))
+            paper_number = _paper_number_from_markers(markers)
             for name, path in required.items():
                 if not path.exists():
                     errors.append(f"{pid} missing {name}: {path}")
@@ -81,12 +125,19 @@ def validate_v2_library(
                 errors.extend([f"{pid} {err}" for err in validate_metadata_schema(metadata)])
                 errors.extend(_formal_metadata_errors(pid, metadata))
                 warnings.extend([f"{pid} {warning}" for warning in metadata_reference_warnings_for_commit(metadata)])
+                doi = metadata_doi(metadata)
+                if doi:
+                    doi_to_paper_ids.setdefault(doi, []).append(pid)
             if required["catalog"].exists():
                 catalog = json.loads(required["catalog"].read_text(encoding="utf-8"))
                 errors.extend([f"{pid} {err}" for err in validate_catalog_schema(catalog)])
-            markers = list(folder.glob("*.paper.number"))
+                errors.extend(_formal_catalog_errors(pid, folder, catalog, paper_number))
             if len(markers) > 1:
                 errors.append(f"{pid} has multiple .paper.number files")
+
+    for doi, paper_ids in sorted(doi_to_paper_ids.items()):
+        if len(paper_ids) > 1:
+            errors.append(f"duplicate metadata.identifiers.doi in formal library: {doi} ({', '.join(sorted(paper_ids))})")
 
     if not all_catalog_path.exists():
         if formal_paper_ids:

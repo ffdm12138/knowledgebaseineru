@@ -3,7 +3,8 @@
 Three-tier write semantics (do NOT let dry-run pollute paper_raw):
   - default / --dry-run: writes NOTHING, prints report JSON to stdout.
   - --write-candidates (without --apply): writes <id>.metadata.candidates.json,
-    <id>.metadata.resolve_report.json, .import_status.json; does NOT touch metadata.json.
+    <id>.metadata.resolve_report.json, <id>.metadata.patch.json when a usable
+    best candidate exists, and .import_status.json; does NOT touch metadata.json.
   - --apply (implies candidate/report writing): may modify <id>.metadata.json after gate/validation.
   - --report <path>: writes a summary JSON of all processed source_ids to <path> (any tier).
 
@@ -25,6 +26,7 @@ from src.services.metadata_resolver import (
     apply_resolution,
     resolve_metadata_candidates,
     write_candidates_json,
+    write_metadata_patch_json,
     write_resolve_report_json,
     STATUS_CANDIDATES_FOUND,
     STATUS_CANDIDATE_CONFLICT,
@@ -120,6 +122,7 @@ def main() -> int:
             if write_side_files:
                 write_candidates_json(folder, report)
                 write_resolve_report_json(folder, report)
+                write_metadata_patch_json(folder, report)
                 # write import_status marker (report-only tier)
                 if not apply_changes:
                     status = _import_status_for_report(report)

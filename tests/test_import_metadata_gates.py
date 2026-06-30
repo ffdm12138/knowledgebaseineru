@@ -46,6 +46,30 @@ def test_network_metadata_requires_doi(tmp_path, monkeypatch):
     assert data[0]["error"] == "network/search metadata import requires metadata.identifiers.doi"
 
 
+def test_network_metadata_rejects_invalid_doi(tmp_path, monkeypatch):
+    input_path = tmp_path / "candidates.jsonl"
+    input_path.write_text(json.dumps({"title": "Bad DOI", "year": 2024, "doi": "not-a-doi"}) + "\n", encoding="utf-8")
+    paper_raw = tmp_path / "paper_raw"
+    report = tmp_path / "report.json"
+    monkeypatch.syspath_prepend(str(_REPO_ROOT))
+
+    rc = _run_script(
+        "stage_network_metadata_to_paper_raw.py",
+        [
+            "stage_network_metadata_to_paper_raw.py",
+            "--input", str(input_path),
+            "--paper-raw-dir", str(paper_raw),
+            "--report", str(report),
+            "--apply",
+        ],
+    )
+
+    assert rc == 1
+    assert not paper_raw.exists() or not any(paper_raw.iterdir())
+    data = json.loads(report.read_text(encoding="utf-8"))
+    assert data[0]["error"] == "network_metadata_requires_valid_doi"
+
+
 def test_network_metadata_maps_publication_fields(tmp_path, monkeypatch):
     input_path = tmp_path / "candidates.jsonl"
     input_path.write_text(json.dumps({
@@ -77,6 +101,36 @@ def test_network_metadata_maps_publication_fields(tmp_path, monkeypatch):
     assert metadata["publication"]["number"] == "3"
     assert metadata["publication"]["issue"] == "3"
     assert metadata["publication"]["pages"] == "45-56"
+
+
+def test_fetch_rejects_invalid_doi_before_provider(tmp_path, monkeypatch):
+    paper_raw = tmp_path / "paper_raw"
+    folder = paper_raw / "000001"
+    folder.mkdir(parents=True)
+    metadata = empty_metadata("000001", source_type="network_search")
+    metadata["identifiers"]["doi"] = "not-a-doi"
+    (folder / "000001.metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
+
+    def _boom(*args, **kwargs):
+        raise AssertionError("fetch provider should not be called")
+
+    import src.fetch.fetch_pipeline as fetch_pipeline
+    monkeypatch.setattr(fetch_pipeline, "fetch_pdf", _boom)
+    monkeypatch.syspath_prepend(str(_REPO_ROOT))
+
+    rc = _run_script(
+        "fetch_pdf_for_paper_raw.py",
+        [
+            "fetch_pdf_for_paper_raw.py",
+            "--source-id", "000001",
+            "--paper-raw-dir", str(paper_raw),
+            "--apply",
+        ],
+    )
+
+    assert rc == 1
+    status = json.loads((folder / ".import_status.json").read_text(encoding="utf-8"))
+    assert status["status"] == "doi_invalid"
 
 
 def test_validate_formal_library_requires_doi(tmp_path):

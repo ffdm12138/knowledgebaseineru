@@ -13,10 +13,12 @@ from loguru import logger
 
 from config.settings import PAPER_RAW_DIR
 from src.discovery.models import normalize_doi
+from src.services.metadata_quality import is_valid_normalized_doi
 from src.services.v2_library import PaperRawAllocator, empty_metadata, merge_missing_metadata
 
 
 DOI_REQUIRED_ERROR = "network/search metadata import requires metadata.identifiers.doi"
+DOI_INVALID_ERROR = "network_metadata_requires_valid_doi"
 
 
 def _records(path: Path) -> list[dict]:
@@ -125,6 +127,11 @@ def main() -> int:
         if not doi:
             item.update({"status": "failed", "error": DOI_REQUIRED_ERROR})
             logger.error("network metadata stage rejected: {}", DOI_REQUIRED_ERROR)
+            report.append(item)
+            continue
+        if not is_valid_normalized_doi(doi):
+            item.update({"status": "failed", "error": DOI_INVALID_ERROR, "doi": doi})
+            logger.error("network metadata stage rejected: invalid DOI {}", doi)
             report.append(item)
             continue
         record = {**record, "doi": doi}

@@ -130,6 +130,8 @@ def main() -> int:
     parser.add_argument("--all", action="store_true")
     parser.add_argument("--paper-raw-dir", type=Path, default=PAPER_RAW_DIR)
     parser.add_argument("--manual-confirm", action="store_true")
+    parser.add_argument("--require-matched", action="store_true",
+                        help="return non-zero if any processed source remains unmatched")
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--report", type=Path, default=None)
@@ -229,7 +231,11 @@ def main() -> int:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"applied": write, "items": report}, ensure_ascii=False, indent=2))
-    return 1 if any(i["status"] == "failed" for i in report) else 0
+    if any(i["status"] == "failed" for i in report):
+        return 1
+    if args.require_matched and any(i.get("status") not in {"matched", "manual_confirmed"} for i in report):
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

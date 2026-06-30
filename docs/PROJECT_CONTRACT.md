@@ -54,8 +54,14 @@ data/papers/<paper_id>/<16位编号>.paper.number
 ## 验收命令
 
 ```bash
+python scripts/doctor_ingest_pipeline.py
 python scripts/rebuild_all_catalog.py --apply
 python scripts/validate_v2_library.py
+python scripts/audit_metadata_quality.py
+python scripts/check_directory_hygiene.py
 pytest -q
 python scripts/pack_repo.py
 ```
+
+真实 `data/papers/` 文献资产和本地生成的 catalog 索引不进入源码快照；但本地真实库必须通过
+`validate_v2_library.py` 和 `audit_metadata_quality.py` 的硬错误检查。

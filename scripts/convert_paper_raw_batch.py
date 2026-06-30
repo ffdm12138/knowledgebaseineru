@@ -24,6 +24,16 @@ def _source_ids(root: Path, args) -> list[str]:
     raise ValueError("--source-id, --source-ids, or --all is required")
 
 
+def _preflight_status(root: Path, source_id: str) -> str:
+    path = root / source_id / ".import_status.json"
+    if not path.exists():
+        return ""
+    try:
+        return str((json.loads(path.read_text(encoding="utf-8")) or {}).get("status") or "")
+    except Exception:
+        return ""
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Convert v2 paper_raw PDFs into md/images.")
     parser.add_argument("--source-id", default=None)
@@ -32,6 +42,8 @@ def main() -> int:
     parser.add_argument("--paper-raw-dir", type=Path, default=PAPER_RAW_DIR)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--only-preflight-ready", action="store_true",
+                        help="only convert paper_raw folders whose .import_status.json status is ready_for_convert")
     parser.add_argument("--report", type=Path, default=None)
     args = parser.parse_args()
 
@@ -40,6 +52,14 @@ def main() -> int:
     report = []
     for source_id in _source_ids(args.paper_raw_dir, args):
         item = {"source_id": source_id, "status": "planned"}
+        if args.only_preflight_ready:
+            preflight_status = _preflight_status(args.paper_raw_dir, source_id)
+            item["preflight_status"] = preflight_status
+            if preflight_status != "ready_for_convert":
+                item["status"] = "skipped"
+                item["reason"] = "preflight status is not ready_for_convert"
+                report.append(item)
+                continue
         logger.info("{} convert paper_raw/{}", "CONVERT" if write else "DRY-RUN", source_id)
         if write:
             try:

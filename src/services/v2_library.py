@@ -37,6 +37,7 @@ from src.discovery.models import normalize_doi
 from src.file_fingerprint import compute_sha256
 from src.naming import safe_child, sanitize_paper_id, validate_paper_id
 from src.path_utils import normalize_repo_path, resolve_stored_path
+from src.services.metadata_quality import is_valid_normalized_doi
 from src.utils.atomic_io import atomic_write_json
 
 
@@ -449,8 +450,11 @@ def metadata_reference_warnings_for_commit(metadata: dict) -> list[str]:
 
 def validate_metadata_completeness_for_commit(metadata: dict) -> list[str]:
     errors: list[str] = []
-    if not metadata_doi(metadata):
+    doi = metadata_doi(metadata)
+    if not doi:
         errors.append("metadata.identifiers.doi is required for formal commit")
+    elif not is_valid_normalized_doi(doi):
+        errors.append("metadata.identifiers.doi must be a valid DOI for formal commit")
 
     title = ((metadata.get("title") or {}).get("original") or "").strip()
     if not title:
@@ -491,7 +495,7 @@ def validate_metadata_completeness_for_commit(metadata: dict) -> list[str]:
             errors.append("metadata first author family or full_name is required for formal commit")
 
     container = metadata.get("container") or {}
-    has_venue = any(str(container.get(key) or "").strip() for key in ("journal", "conference", "booktitle", "book_title"))
+    has_venue = any(str(container.get(key) or "").strip() for key in ("journal", "conference", "booktitle", "book_title", "venue"))
     if not has_venue:
         errors.append("metadata.container.journal, conference, or booktitle is required for formal commit")
 
@@ -727,6 +731,8 @@ class PaperRawAllocator:
         source_pdf = Path(source_pdf)
         if not source_pdf.exists():
             raise FileNotFoundError(f"PDF not found: {source_pdf}")
+        original_sha = compute_sha256(source_pdf)
+        original_size = source_pdf.stat().st_size
         source_id = self.allocate_id()
         folder = safe_child(self.paper_raw_dir, source_id)
         dest_pdf = folder / f"{source_id}.pdf"
@@ -745,6 +751,18 @@ class PaperRawAllocator:
             "file_size": dest_pdf.stat().st_size,
         }
         atomic_write_json(folder / f"{source_id}.metadata.json", data, indent=2)
+        atomic_write_json(folder / "stage_manifest.json", {
+            "source_id": source_id,
+            "operation": "move" if move else "copy",
+            "action": "move" if move else "copy",
+            "original_path": str(source_pdf),
+            "original_sha256": original_sha,
+            "original_file_size": original_size,
+            "staged_path": normalize_repo_path(dest_pdf),
+            "staged_sha256": data["pdf"]["sha256"],
+            "staged_file_size": data["pdf"]["file_size"],
+            "created_at": now_iso(),
+        }, indent=2)
         return {"source_id": source_id, "folder": str(folder), "pdf": str(dest_pdf)}
 
     def allocate_metadata(self, metadata: dict | None = None, *, source_type: str = "network_search") -> dict:
@@ -1094,14 +1112,19 @@ class AllCatalogBuilder:
                     self.last_errors.extend([f"{pid}: {err}" for err in catalog_errors])
                     continue
                 number = self.ledger.assign(folder)
-                asset_refs = (catalog.get("asset_refs") or {}) if isinstance(catalog, dict) else {}
-                # fill any empty asset path from the actual folder location
-                if not asset_refs.get("markdown"):
-                    asset_refs["markdown"] = normalize_repo_path(md_path)
-                if not asset_refs.get("pdf"):
-                    asset_refs["pdf"] = normalize_repo_path(pdf_path)
-                if not asset_refs.get("images_dir"):
-                    asset_refs["images_dir"] = normalize_repo_path(images_dir)
+                if write:
+                    try:
+                        catalog = _backfill_formal_catalog_links(folder, pid, number)
+                    except Exception as exc:
+                        self.last_errors.append(f"{pid}: failed to backfill formal catalog links: {exc}")
+                        continue
+                catalog_asset_refs = (catalog.get("asset_refs") or {}) if isinstance(catalog, dict) else {}
+                asset_refs = dict(catalog_asset_refs)
+                # all.catalog is a runtime index, so path-bearing refs are repo-normalized
+                # even when the per-paper catalog stores same-folder relative filenames.
+                asset_refs["markdown"] = normalize_repo_path(md_path)
+                asset_refs["pdf"] = normalize_repo_path(pdf_path)
+                asset_refs["images_dir"] = normalize_repo_path(images_dir)
                 asset_refs.setdefault("figures", [])
                 source_id = str((catalog.get("source_id") or "") if isinstance(catalog, dict) else "")
                 # content-only entry: catalog content + link fields, NO metadata
@@ -1151,6 +1174,37 @@ def _metadata_field(metadata: dict, path: tuple[str, ...], default: Any = "") ->
             return default
         cur = cur.get(key)
     return cur if cur not in (None, "") else default
+
+
+def _formal_catalog_asset_refs(pid: str) -> dict:
+    return {
+        "markdown": f"{pid}.md",
+        "pdf": f"{pid}.pdf",
+        "metadata": f"{pid}.metadata.json",
+        "catalog": f"{pid}.catalog.json",
+        "images_dir": "images/",
+        "figures": [],
+    }
+
+
+def _backfill_formal_catalog_links(folder: Path, pid: str, paper_number: str) -> dict:
+    catalog_path = folder / f"{pid}.catalog.json"
+    catalog = _read_json(catalog_path)
+    catalog["paper_id"] = pid
+    catalog["paper_number"] = paper_number
+    asset_refs = catalog.get("asset_refs") if isinstance(catalog.get("asset_refs"), dict) else {}
+    defaults = _formal_catalog_asset_refs(pid)
+    for key, value in defaults.items():
+        if key == "figures":
+            asset_refs.setdefault(key, [])
+        else:
+            asset_refs[key] = value
+    catalog["asset_refs"] = asset_refs
+    errors = validate_catalog_schema(catalog)
+    if errors:
+        raise ValueError("; ".join(errors))
+    atomic_write_json(catalog_path, catalog, indent=2)
+    return catalog
 
 
 class V2PaperCommitService:
@@ -1309,6 +1363,7 @@ class V2PaperCommitService:
         self.papers_dir.mkdir(parents=True, exist_ok=True)
         staging = self.papers_dir / f".{pid}.staging_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
         final = safe_child(self.papers_dir, pid)
+        final_installed = False
         try:
             shutil.copytree(src, staging)
             # Clean paper_raw transient artifacts that must never enter data/papers/:
@@ -1316,10 +1371,13 @@ class V2PaperCommitService:
             #   *.patch.json     — curator metadata patch, served its purpose in curation
             #   curation_prompt.md — generated prompt, served its purpose
             #   .import_status.json — status marker from failed operations
+            #   stage_manifest.json — raw intake provenance for the paper_raw workspace
             stg_output = staging / "output"
             if stg_output.exists():
                 shutil.rmtree(stg_output)
             for vestige in staging.glob("*.metadata.patch.json"):
+                vestige.unlink()
+            for vestige in staging.glob("stage_manifest.json"):
                 vestige.unlink()
             for vestige in staging.glob("curation_prompt.md"):
                 vestige.unlink()
@@ -1328,12 +1386,14 @@ class V2PaperCommitService:
             metadata["pdf"]["path"] = normalize_repo_path(staging / f"{pid}.pdf")
             atomic_write_json(staging / f"{pid}.metadata.json", metadata, indent=2)
             os.replace(staging, final)
+            final_installed = True
             metadata["pdf"]["path"] = normalize_repo_path(final / f"{pid}.pdf")
             atomic_write_json(final / f"{pid}.metadata.json", metadata, indent=2)
             number = self.ledger.assign(final)
+            _backfill_formal_catalog_links(final, pid, number)
+            all_catalog = AllCatalogBuilder(self.papers_dir, self.all_catalog_path, self.ledger).build(write=True)
             if src.exists():
                 shutil.rmtree(src)
-            all_catalog = AllCatalogBuilder(self.papers_dir, self.all_catalog_path, self.ledger).build(write=True)
             result = {
                 "success": True,
                 "status": "imported",
@@ -1345,10 +1405,23 @@ class V2PaperCommitService:
             if reference_warnings:
                 result["warnings"] = reference_warnings
             return result
-        except Exception:
+        except Exception as exc:
             shutil.rmtree(staging, ignore_errors=True)
-            if final.exists():
-                shutil.rmtree(final, ignore_errors=True)
+            if final_installed:
+                atomic_write_json(src / ".import_status.json", {
+                    "status": "commit_postcheck_failed",
+                    "reason": str(exc),
+                    "paper_id": pid,
+                    "paper_dir": normalize_repo_path(final),
+                    "created_at": now_iso(),
+                }, indent=2)
+                return {
+                    "success": False,
+                    "status": "commit_postcheck_failed",
+                    "paper_id": pid,
+                    "paper_dir": normalize_repo_path(final),
+                    "errors": [str(exc)],
+                }
             raise
 
 

@@ -67,6 +67,9 @@ def test_paper_raw_allocator_uses_monotonic_six_digit_ids(tmp_path):
     assert (paper_raw / "000004" / "000004.pdf").exists()
     metadata = json.loads((paper_raw / "000004" / "000004.metadata.json").read_text(encoding="utf-8"))
     assert metadata["pdf"]["sha256"]
+    manifest = json.loads((paper_raw / "000004" / "stage_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["original_path"] == str(pdf)
+    assert manifest["original_sha256"] == manifest["staged_sha256"]
 
 
 def test_v2_commit_assigns_number_and_builds_all_catalog(tmp_path):
@@ -86,11 +89,46 @@ def test_v2_commit_assigns_number_and_builds_all_catalog(tmp_path):
     assert result["paper_number"] == "0000000000000001"
     assert (papers / pid / f"{pid}.pdf").exists()
     assert (papers / pid / f"{pid}.md").exists()
+    assert not (papers / pid / "stage_manifest.json").exists()
     assert (papers / pid / "0000000000000001.paper.number").exists()
+    formal_catalog = json.loads((papers / pid / f"{pid}.catalog.json").read_text(encoding="utf-8"))
+    assert formal_catalog["paper_id"] == pid
+    assert formal_catalog["paper_number"] == "0000000000000001"
+    assert formal_catalog["asset_refs"]["markdown"] == f"{pid}.md"
+    assert formal_catalog["asset_refs"]["pdf"] == f"{pid}.pdf"
+    assert formal_catalog["asset_refs"]["metadata"] == f"{pid}.metadata.json"
+    assert formal_catalog["asset_refs"]["catalog"] == f"{pid}.catalog.json"
+    assert formal_catalog["asset_refs"]["images_dir"] == "images/"
+    for forbidden in ("doi", "authors", "year", "venue", "journal", "metadata"):
+        assert forbidden not in formal_catalog
     data = json.loads(all_catalog.read_text(encoding="utf-8"))
     assert data["papers"][0]["paper_id"] == pid
     assert data["papers"][0]["paper_number"] == "0000000000000001"
+    assert data["papers"][0]["asset_refs"]["markdown"].endswith(f"{pid}.md")
     assert not raw_folder.exists()
+
+
+def test_commit_postcheck_failure_keeps_raw_and_final(tmp_path, monkeypatch):
+    raw_folder = _curated_raw(tmp_path, "2024_wang_postcheck")
+    papers = tmp_path / "papers"
+
+    def _boom(self, *, write=True):
+        raise RuntimeError("catalog rebuild exploded")
+
+    monkeypatch.setattr(AllCatalogBuilder, "build", _boom)
+    result = V2PaperCommitService(
+        papers_dir=papers,
+        all_catalog_path=tmp_path / "catalog" / "all.catalog.json",
+        ledger_path=tmp_path / "catalog" / "paper_number_ledger.json",
+    ).commit_paper_raw(raw_folder)
+
+    final = papers / "2024_wang_postcheck"
+    assert result["status"] == "commit_postcheck_failed"
+    assert raw_folder.exists()
+    assert final.exists()
+    assert (final / "0000000000000001.paper.number").exists()
+    status = json.loads((raw_folder / ".import_status.json").read_text(encoding="utf-8"))
+    assert status["status"] == "commit_postcheck_failed"
 
 
 def test_all_catalog_rebuild_drops_deleted_folders_without_reusing_number(tmp_path):

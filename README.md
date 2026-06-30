@@ -46,7 +46,8 @@ data/papers/<paper_id>/<16位编号>.paper.number
 
 ## 手动 PDF 导入
 
-把 PDF 放到 `data/raw/` 根目录后运行：
+把 PDF 放到 `data/raw/` 根目录后运行。`stage_raw_pdfs_to_paper_raw.py --apply` 默认复制 PDF，
+只有显式传入 `--move` 才移动原始 PDF：
 
 ```bash
 python scripts/stage_raw_pdfs_to_paper_raw.py --apply
@@ -167,10 +168,15 @@ python scripts/benchmark_mineru.py "E:\papers\test.pdf" --repeat 2
 ## 验收
 
 ```bash
+python scripts/doctor_ingest_pipeline.py
 python scripts/rebuild_all_catalog.py --apply
 python scripts/validate_v2_library.py
+python scripts/audit_metadata_quality.py
+python scripts/check_directory_hygiene.py
 pytest -q
 python scripts/pack_repo.py
 ```
 
-`data/raw/`、`data/paper_raw/`、`data/papers/`、`data/llm_work/` 中的文献资产按版权数据处理，不进入源码分发。
+`data/raw/`、`data/paper_raw/`、`data/papers/`、`data/llm_work/` 中的文献资产按版权数据处理，不进入源码分发。真实
+`data/papers` 不进入 snapshot，但本地真实库必须通过 `validate_v2_library.py` 和
+`audit_metadata_quality.py` 的硬错误检查。
